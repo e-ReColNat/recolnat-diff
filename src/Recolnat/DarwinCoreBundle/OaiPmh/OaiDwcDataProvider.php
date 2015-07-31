@@ -14,8 +14,8 @@ class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
     private $extractor;
     public function __construct(Extractor $extractor)
     {
-        //$extractor->init(__DIR__.'/../Resources/files', 'example.zip');
         $this->extractor = $extractor;
+        $extractor->init(__DIR__.'/../Resources/files/example.zip');
     }
     /**
      * @return string Repository name

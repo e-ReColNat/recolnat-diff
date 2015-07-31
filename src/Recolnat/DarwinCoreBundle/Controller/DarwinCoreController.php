@@ -32,13 +32,12 @@ class DarwinCoreController extends Controller
      */
     public function loadAction($path)
     {
-        //$extractor = $this->get('dwc.extractor')->init(__DIR__.'/../Resources/files', 'canadensys_3.zip');
         $extractor = $this->get('dwc.extractor')->init($path);
-        //$extractor=new Extractor(__DIR__.'/../Resources/files', 'canadensys.zip');
-        //var_dump($extractor->getCore()->getData());
-        $core = $extractor->getCore()->getData();
+        $dataCore = $extractor->getCore()->getData();
         return array(
-            'core'          => $core
+            'dataCore'      => $dataCore,
+            'index'         => $extractor->getCore()->getIndexes(),
+            'path'          => $path,
         );
     }
     /**
@@ -46,9 +45,9 @@ class DarwinCoreController extends Controller
      * @Template()
      */
     public function compareAction() {
-        $extractor = $this->get('dwc.extractor')->init(__DIR__.'/../Resources/files', 'example.zip');
+        $extractor = $this->get('dwc.extractor')->init(__DIR__.'/../Resources/files/example.zip');
         $core = $extractor->getCore()->getData();
-        $extractor = $this->get('dwc.extractor')->init(__DIR__.'/../Resources/files', 'example2.zip');
+        $extractor = $this->get('dwc.extractor')->init(__DIR__.'/../Resources/files/example2.zip');
         $core2 = $extractor->getCore()->getData();
 
         return array(
@@ -58,18 +57,16 @@ class DarwinCoreController extends Controller
         );
     }
     /**
-     * @Route("/record/{id}", name="dwc-record")
+     * @Route("/record/{path}/{id}", name="dwc-record", requirements={"path"=".+"})
      * @Template()
      */
-    public function recordAction($id)
+    public function recordAction($path, $id)
     {
-        $extractor = $this->get('dwc.extractor')->init(__DIR__.'/../Resources/files', 'example.zip');
-        //$extractor=new Extractor(__DIR__.'/../Resources/files', 'canadensys.zip');
-        //var_dump($extractor->getCore()->getData());
+        $extractor = $this->get('dwc.extractor')->init(urldecode($path));
         
         return array(
             'extractor'     => $extractor,
-            'data'          => $data
+            'data'          => $extractor->getCore()->getRecord($id)
         );
     }
 }

@@ -233,7 +233,9 @@ class Extension
         if (array_key_exists($id, $this->data)) {
             return $this->data[$id];
         }
-        return null ;
+        else {
+            throw new \Exception(sprintf('can\'t find record #%s', $id));
+        }
     }
     public function isCore()
     {
