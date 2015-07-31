@@ -1,0 +1,43 @@
+{% extends '::base.html.twig' %}
+{% block content %}
+{{ core | length }} enregistrements parsés
+{% for row in core %}
+    <table class="table table-striped table-bordered table-hover table-condensed">
+    
+    {# 	<tr>#}
+    {# 	{% if loop.index == 1 %}#}
+    {# 	{% for index, key in row.getIndexes %}#}
+    {# 		<th>{{ index }}</th>#}
+    {# 	{%  endfor %}#}
+    {# 	</tr>#}
+    {# 	{%  endif %}#}
+    {# 	<tr>#}
+    {# 	{% for key,field in row.getDatas %}#}
+    {# 		<td>#}
+    {# 		{% if row.getFieldIndexes[key]['shortTerm'] == 'id' %}#}
+    {# 		{%  set id = attribute(row, row.getFieldIndexes[key]['shortTerm'])  %}#}
+    {# 		<a href="{{ path('dwc-record', {'id':id}) }}">#}
+    {# 		{% endif %}#}
+    {#  		{{ attribute(row, row.getFieldIndexes[key]['shortTerm']) }}#}
+    {#  		{% if row.getFieldIndexes[key]['shortTerm'] == 'id' %}#}
+    {#  		</a>#}
+    {#  		{% endif %}#}
+    {# 		</td>#}
+    {# 	{% endfor %}#}
+    {# 	<td>#}
+    {# 	</td>#}
+    {# 	</tr>#}
+        {% for name,value in row.getDatasWithIndexes %}
+        	<tr>
+        		<th>
+        		{{ name }}
+        		</th>
+        		<td>
+        		{{ value }}
+        		</td>
+        	</tr>
+    	{% endfor %}
+    
+    </table>
+{% endfor %}
+{% endblock %}

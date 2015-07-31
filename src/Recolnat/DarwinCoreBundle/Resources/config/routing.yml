@@ -1,0 +1,12 @@
+recolnat_oaipmh_dwc:
+    resource: "@RecolnatDarwinCoreBundle/Controller/OaiPmhDwcController.php"
+    type: annotation
+    prefix:     /OaiPmh
+    defaults:
+        _format: xml
+
+recolnat_darwin_core:
+    prefix:     /darwin
+    resource: "@RecolnatDarwinCoreBundle/Controller/DarwinCoreController.php"
+    type: annotation
+

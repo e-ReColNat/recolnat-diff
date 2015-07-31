@@ -1,0 +1,14 @@
+{% extends 'RecolnatDarwinCoreBundle:OaiPmhDwc:template.xml.twig' %}
+
+{% block content %}
+  <ListSets>
+    {% for position in resumption.starts..resumption.ends %}
+      {% set oaiSet = resumption.items[position] %}
+      <set>
+        <setSpec>{{ oaiSet.identifier }}</setSpec>
+        <setName>{{ oaiSet.name }}</setName>
+      </set>
+    {% endfor %}
+    {% include 'RecolnatDarwinCoreBundle:OaiPmhDwc:resumptionToken.xml.twig' %}
+  </ListSets>
+{% endblock %}

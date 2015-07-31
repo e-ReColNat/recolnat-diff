@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+{% block content %}
+{% for id,row in core %}
+    <table class="table table-striped table-bordered table-hover table-condensed">
+ 	{% set row2 = attribute(core2, id) %}
+        {% for name,value in row.getDatasWithIndexes %}
+        	<tr>
+        		<th>
+        		{{ name }}
+        		</th>
+        		<td>
+        		{{ value }}
+        		</td>
+        		<td>
+        		{{ row2.getData(name) }}
+        		</td>
+        		<td>
+        		{{  getDiff(value, row2.getData(name)) | raw}}
+        		</td>
+        	</tr>
+    	{% endfor %}
+    
+    </table>
+{% endfor %}
+{% endblock %}

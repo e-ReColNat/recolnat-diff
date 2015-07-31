@@ -1,0 +1,13 @@
+{% extends 'RecolnatDarwinCoreBundle:OaiPmhDwc:template.xml.twig' %}
+
+{% block content %}
+	<Identify>
+		<repositoryName>{{ dataProvider.repositoryName }}</repositoryName>
+		<baseURL>{{ url(app.request.attributes.get('_route')) }}</baseURL>
+		<protocolVersion>2.0</protocolVersion>
+		<adminEmail>{{ dataProvider.adminEmail }}</adminEmail>
+		<earliestDatestamp>{{ dataProvider.earliestDatestamp|date('Y-m-d') }}</earliestDatestamp>
+		<deletedRecord>no</deletedRecord>
+		<granularity>YYYY-MM-DD</granularity>
+	</Identify>
+{% endblock %}

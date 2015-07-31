@@ -1,0 +1,8 @@
+{% extends '::base.html.twig' %}
+{% block content %}
+{% for file in files %}
+<a href="{{path('dwc-load', {'path' : file.getRealPath})}}">
+ {{ file.getRelativePathname }}
+ </a><br/>
+{% endfor %}
+{% endblock %}
