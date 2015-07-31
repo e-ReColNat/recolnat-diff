@@ -25,6 +25,8 @@
 # Assets and user uploads
 /web/bundles/
 /web/uploads/
+/web/css/
+/web/js/
 
 # PHPUnit
 /app/phpunit.xml
@@ -35,3 +37,25 @@
 
 # Composer PHAR
 /composer.phar
+
+# Created by https://www.gitignore.io
+
+### Eclipse ###
+.metadata
+.gradle
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
+# Eclipse Core
+.project
+
+# PDT-specific
+.buildpath
+
