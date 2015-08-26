@@ -7,24 +7,16 @@
 			"" : "src/",
 			"SymfonyStandard\\" : "app/SymfonyStandard/"
 		},
-		"files": ["vendor/Krispian/PHP-FineDiff/finediff.php"]
+		"files" : [
+			"vendor/Krispian/PHP-FineDiff/finediff.php"
+		]
 	},
-	"repositories": 
-	        {
-	            "Krispian-PHP-FineDiff": {
-		            "type": "package",
-		            "package": {
-		                "name": "Krispian/PHP-FineDiff",
-		                "version": "dev-master",
-		                "source": {
-		                    "url": "https://github.com/Krispian/PHP-FineDiff.git",
-		                    "type": "git",
-		                    "reference": "master"
-		                }
-		            }
-		        }
-	        }
-	    ,
+	"repositories": [
+		{
+	    	"type": "git",
+	    	"url": "https://github.com/webmastard/OaiPmhServerBundle.git"
+	   	}
+  	],
 	"require" : {
 		"php" : ">=5.3.9",
 		"symfony/symfony" : "2.7.*",
@@ -37,8 +29,8 @@
 		"sensio/distribution-bundle" : "~4.0",
 		"sensio/framework-extra-bundle" : "~3.0,>=3.0.2",
 		"incenteev/composer-parameter-handler" : "~2.0",
-		"naoned/oai-pmh-server-bundle" : "dev-master",
-		"Krispian/PHP-FineDiff": "dev-master@dev"
+		"naoned/oai-pmh-server-bundle" : "dev-custom",
+		"Krispian/PHP-FineDiff" : "dev-master@dev"
 	},
 	"require-dev" : {
 		"sensio/generator-bundle" : "~2.3"

@@ -9,3 +9,7 @@ services:
         class: Recolnat\DarwinCoreBundle\Twig\RecordExtension
         tags:
             - { name: twig.extension }
+    recolnat.twig.fileExtension:
+        class: Recolnat\DarwinCoreBundle\Twig\FileExtension
+        tags:
+            - { name: twig.extension }

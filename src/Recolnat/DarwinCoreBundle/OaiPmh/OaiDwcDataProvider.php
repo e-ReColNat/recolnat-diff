@@ -75,7 +75,7 @@ class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
      * @param  \DataTime|null $until    Date of last change «until»
      * @return array|ArrayObject        List of items
      */
-    public function getRecords($setTitle = null, \DateTime $from = null, \DataTime $until = null)
+    public function getRecords($setTitle = null, \DateTime $from = null, \DateTime $until = null)
     {
         $recordSet = $this->extractor->getCore()->getData();
         $datas = array();
@@ -100,7 +100,7 @@ class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
      * @param  any   $record An item of elements furnished by getRecords method
      * @return array         Dublin core data
      */
-    public static function dublinizeRecord($record)
+    public function dublinizeRecord($record)
     {
         //var_dump($record);
         return array(

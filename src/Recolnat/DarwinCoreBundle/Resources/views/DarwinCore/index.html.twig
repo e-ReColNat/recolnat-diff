@@ -1,8 +1,9 @@
-{% extends '::base.html.twig' %}
+{% extends 'RecolnatDarwinCoreBundle::template.html.twig' %}
+{% block title %}Liste des fichiers darwin core{% endblock %}
 {% block content %}
 {% for file in files %}
-<a href="{{path('dwc-load', {'path' : file.getRealPath})}}">
- {{ file.getRelativePathname }}
+<a href="{{path('dwc-load', {'path' : file.getRealPath | url_encode})}}">
+ {{ file.getRelativePathname }} ({{ getHumanFilesize(file.getSize) }})
  </a><br/>
 {% endfor %}
 {% endblock %}

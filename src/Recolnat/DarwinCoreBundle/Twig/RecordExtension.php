@@ -7,7 +7,7 @@ class RecordExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'getDiff' => new \Twig_Function_Method($this, 'getDiff')
+            'getDiff' => new \Twig_SimpleFunction('getDiff', array($this, 'getDiff'))
         );
     }
     public function getDiff($text1, $text2) 

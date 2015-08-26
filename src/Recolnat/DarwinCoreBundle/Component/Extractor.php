@@ -148,7 +148,7 @@ class Extractor
     /**
      * @return string
      */
-    private function getFullPath()
+    public function getFullPath()
     {
         return $this->path . DIRECTORY_SEPARATOR . $this->filename;
     }
