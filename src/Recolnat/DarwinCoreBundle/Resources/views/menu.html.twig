@@ -1,0 +1,21 @@
+    <section class="menu-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="navbar-collapse collapse ">
+                        <ul id="menu-top" class="nav navbar-nav navbar-right">
+                            <li {% if app.request.get('_route') == 'dwc-index' %} class="menu-top-active" {% endif %}><a href="{{ path('dwc-index') }}">Fichiers</a></li>
+                            <li {% if app.request.get('_route') == 'dwc-compare' %} class="menu-top-active" {% endif %}><a href="{{ path('dwc-compare') }}">Compare</a></li>
+                            <!-- <li><a href="ui.html">UI Elements</a></li>
+                            <li><a href="table.html">Data Tables</a></li>
+                            <li><a href="forms.html">Forms</a></li>
+                            <li><a href="login.html">Login Page</a></li>
+                            <li><a class="menu-top-active" href="blank.html">Blank Page</a></li>-->
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- MENU SECTION END-->
