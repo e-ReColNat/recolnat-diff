@@ -3,35 +3,34 @@
     {% for id,occurence in diffHtml.getCore.getData %}
         {% set identity = identification.getRowData(id) %}
         {% if dwcDiff.rowHasChanges(id) %}
-        {% if identity %}
-            <div class="row">
-                <div class="col-xs-4">
-                    <div class="scientificname">
-                        {{ identity.getData('scientificname') }}
+            {% if identity %}
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class="scientificname">
+                            {{ identity.getData('scientificname') }}
+                        </div>
+                        <div class="scientificnameauthorship">
+                            {{ identity.getData('scientificnameauthorship') }}
+                        </div>
+                        <div class="catalognumber">
+                            Numéro d'inventaire : {{ occurence.getData('catalogNumber') }}
+                        </div>
                     </div>
-                    <div class="scientificnameauthorship">
-                        {{ identity.getData('scientificnameauthorship') }}
-                    </div>
-                    <div class="catalognumber">
-                        Numéro d'inventaire : {{ occurence.getData('catalogNumber') }}
+                    <div class="col-xs-8">
+                    <table class="table">
+                            {% for name,value in occurence.getDatasWithIndexes %}
+                                <tr>
+                                {% if dwcDiff.recordHasChange(id, occurence.getNumericIndex(name)) %}
+                                    <th>{{name}}</th>
+                                    <td>{{ occurence.getData(name) | raw }}</td>
+                                {% endif %}
+                                </tr>
+                            {% endfor %}
+
+                    </table>
                     </div>
                 </div>
-                <div class="col-xs-8">
-                <table class="table">
-                    
-                        {% for name,value in occurence.getDatasWithIndexes %}
-                            <tr>
-                            {% if dwcDiff.recordHasChange(id, occurence.getNumericIndex(name)) %}
-                                <th>{{name}}</th>
-                                <td>{{ occurence.getData(name) | raw }}</td>
-                            {% endif %}
-                            </tr>
-                        {% endfor %}
-                    
-                </table>
-                </div>
-            </div>
-                        {% endif %}
+            {% endif %}
         {% endif %}
      {% endfor %}
 {% endblock %}
