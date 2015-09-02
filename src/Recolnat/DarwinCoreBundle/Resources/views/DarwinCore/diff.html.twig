@@ -1,24 +1,37 @@
 {% extends 'RecolnatDarwinCoreBundle::template.html.twig' %}
 {% block content %}
-{% for id,row in core %}
-    <table class="table table-striped table-bordered table-hover table-condensed">
- 	{% set row2 = attribute(core2, id) %}
-        {% for name,value in row.getDatasWithIndexes %}
-        	<tr>
-        		<th>
-        		{{ name }}
-        		</th>
-        		<td>
-        		{{ value }}
-        		</td>
-        		<td>
-        		{{ row2.getData(name) }}
-        		</td>
-        		<td>
-        		{{  getDiff(value, row2.getData(name)) | raw}}
-        		</td>
-        	</tr>
-    	{% endfor %}
-    </table>
-{% endfor %}
+    {% for id,occurence in diffHtml.getCore.getData %}
+        {% set identity = identification.getRowData(id) %}
+        {% if dwcDiff.rowHasChanges(id) %}
+        {% if identity %}
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="scientificname">
+                        {{ identity.getData('scientificname') }}
+                    </div>
+                    <div class="scientificnameauthorship">
+                        {{ identity.getData('scientificnameauthorship') }}
+                    </div>
+                    <div class="catalognumber">
+                        Numéro d'inventaire : {{ occurence.getData('catalogNumber') }}
+                    </div>
+                </div>
+                <div class="col-xs-8">
+                <table class="table">
+                    
+                        {% for name,value in occurence.getDatasWithIndexes %}
+                            <tr>
+                            {% if dwcDiff.recordHasChange(id, occurence.getNumericIndex(name)) %}
+                                <th>{{name}}</th>
+                                <td>{{ occurence.getData(name) | raw }}</td>
+                            {% endif %}
+                            </tr>
+                        {% endfor %}
+                    
+                </table>
+                </div>
+            </div>
+                        {% endif %}
+        {% endif %}
+     {% endfor %}
 {% endblock %}

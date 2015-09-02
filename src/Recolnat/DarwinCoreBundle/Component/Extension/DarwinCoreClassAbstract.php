@@ -7,7 +7,7 @@ abstract Class DarwinCoreClassAbstract
      * 
      * @var array
      */
-    private $data = array();
+    public $data = array();
     /**
      * @var Extension
      */

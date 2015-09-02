@@ -5,66 +5,34 @@ use Symfony\Component\HttpFoundation\File\File;
 use Recolnat\DarwinCoreBundle\Exception\BadFileFormat;
 use Symfony\Component\Filesystem\Filesystem;
 use Recolnat\DarwinCoreBundle\Exception\UnableToExtractException;
-use Recolnat\DarwinCoreBundle\Exception\UnableToCreateDirException;
 use Recolnat\DarwinCoreBundle\Exception\BadXmlFile;
-use Recolnat\DarwinCoreBundle\Exception\DarwinCoreException;
 use Recolnat\DarwinCoreBundle\Component\Extension\Extension;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use Symfony\Component\Finder\SplFileInfo;
 
 class Extractor
 {
-
-    /**
-     * @var string
-     */
-    private $filename;
-
-    /**
-     * @var string
-     */
-    private $path;
-
-    /**
-     * @var File
-     */
-    private $file;
-
     /**
      * 
-     * @var Extension
+     * @var DarwinCoreArchive $darwinCoreArchive
      */
-    protected $core;
-    
-    /**
-     * @var \ArrayObject
-     */
-    protected $extensions;
-
+    public $darwinCoreArchive;
     /**
      * 
      * @param string $path
      * @param string $filename
      * @return Extractor
      */
-    public function init($path)
+    public function init(File $file)
     {
-        if (is_file($path)) {
-            $file = new \SplFileInfo($path);
-            $this->filename = $file->getFilename();
-            $this->path = $file->getPath();
-            $this->setFile();
-            $this->extract();
-            $this->parseMetaFile();
-        }
-        else {
-            throw new FileNotFoundException();
-        }
+        $this->darwinCoreArchive = new DarwinCoreArchive();
+        $this->file = $file;
+        $this->extract();
+        $this->parseMetaFile();
         return $this;
     }
     
     public function getCore() {
-        return $this->core;
+        return $this->darwinCoreArchive->getCore();
     }
     private function parseMetaFile() 
     {
@@ -87,15 +55,15 @@ class Extractor
             if (!($coreNode->hasChildNodes())) {
                 throw new \Exception('Core node has no childs');
             } 
-            $this->core = new Extension($coreNode, $this->getTmpDir());
+            $this->darwinCoreArchive->setCore(new Extension($coreNode, $this->getTmpDir()));
             $extensionNodes = $xmlMetaFile->getElementsByTagName('extension') ;
             
-            $this->extensions = new \ArrayObject(); 
+            //$this->extensions = new \ArrayObject(); 
             if (count($extensionNodes) > 0) {
                 foreach ($extensionNodes as $extension) {
-                    $this->extensions[] = new Extension($extension, $this->getTmpDir());
+                    $this->darwinCoreArchive->setExtension(new Extension($extension, $this->getTmpDir()));
                 }
-                $this->getCore()->setLinkedExtensions($this->extensions);
+                $this->getCore()->setLinkedExtensions($this->darwinCoreArchive->getExtensions());
             }
         }
     }
@@ -142,7 +110,7 @@ class Extractor
      */
     private function getTmpDir()
     {
-        return sprintf('/tmp/%s/', substr($this->filename, 0, - 4));
+        return sprintf('/tmp/%s/', substr($this->file->getFilename(), 0, - 4));
     }
 
     /**
@@ -150,6 +118,6 @@ class Extractor
      */
     public function getFullPath()
     {
-        return $this->path . DIRECTORY_SEPARATOR . $this->filename;
+        return $this->file->getPath() . DIRECTORY_SEPARATOR . $this->file->getFilename();
     }
 }

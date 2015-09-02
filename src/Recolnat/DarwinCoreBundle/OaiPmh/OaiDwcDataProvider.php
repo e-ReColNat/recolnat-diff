@@ -15,7 +15,7 @@ class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
     public function __construct(Extractor $extractor)
     {
         $this->extractor = $extractor;
-        $extractor->init(__DIR__.'/../Resources/files/example.zip');
+        //$extractor->init(__DIR__.'/../Resources/files/example.zip');
     }
     /**
      * @return string Repository name
@@ -102,7 +102,6 @@ class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
      */
     public function dublinizeRecord($record)
     {
-        //var_dump($record);
         return array(
             'dc_identifier'  => $record['id'],
             'dc_title'       => $record['catalogNumber'],

@@ -98,7 +98,7 @@ class Extension
     /**
      * @var int
      */
-    protected $coreId;
+    protected $coreId = null;
     
     /**
      * @var array
@@ -118,7 +118,7 @@ class Extension
     /**
      * @var array
      */
-    private $data;
+    public $data;
     /**
      * @var string
      */
@@ -131,7 +131,6 @@ class Extension
         $this->linkedExtensions = new \ArrayObject();
         $this->setPath($path);
         $this->collectData($node);
-        //var_dump($this->toXml());
     }
     private function collectData(\DOMNode $node)
     {
@@ -215,7 +214,7 @@ class Extension
         $className = __NAMESPACE__.'\\'.ucfirst($this->shortType);
         $rowCount=0;
         $this->file->setCsvControl($this->getFieldsTerminatedBy(), $this->getFieldsEnclosedBy());
-        while($rowCount<29000 && !$this->file->eof() && ($row = $this->file->fgetcsv()) && $row[0] !== null) {
+        while(!$this->file->eof() && ($row = $this->file->fgetcsv()) && $row[0] !== null) {
             $rowCount++;
             if ($this->getIgnoreHeaderLines() && $rowCount == 1) {
                 continue;
@@ -224,7 +223,7 @@ class Extension
                 $this->data[$row[$this->id]] = new $className($row, $this);
             }
             else {
-                $this->data[] = new $className($row, $this);
+                $this->data[$row[$this->coreId]] = new $className($row, $this);
             }
         }
     }
@@ -433,6 +432,22 @@ class Extension
     {
         return $this->data; 
     }
+    
+    /*Buggy method */
+     public function getRowData($id) {
+        
+        /*if (!is_null($this->coreId)) {
+            return $this->data[$id];
+        }
+        else {
+            
+        }
+        //|| $this->core*/
+        if (array_key_exists($id, $this->data)) {
+            return $this->data[$id];
+        }
+        return null;
+    }
     /**
      * @param array $data
      */
@@ -450,7 +465,6 @@ class Extension
     
     public function toXml($withExtensions = FALSE)
     {
-        //var_dump($this->getLinkedExtensions());
         $dwc = new \DOMDocument('1.0', 'UTF-8');
         $root = $dwc->createElementNS(
             'http://rs.tdwg.org/dwc/dwcrecord/',
@@ -463,15 +477,12 @@ class Extension
             $node = $dwc->importNode($class->toXml(), true);
             if ($withExtensions && $this->getLinkedExtensions()->count()>0) {
                 foreach ($this->getLinkedExtensions() as $linkedExtension) {
-                    /**
-                     * @var Extension $linkedExtension
-                     */
+                    /* @var Extension $linkedExtension */
                     foreach ($linkedExtension->getData() as $linkedData) {
                         if ($linkedData->getData('coreId') == $class->getData('id')) {
                             $node->appendChild($dwc->importNode($linkedData->toXml(), true));
                         }
                     }
-                    
                 }
             }
             $root->appendChild($node) ;
@@ -479,6 +490,9 @@ class Extension
         return $dwc->saveXML($root);
     }
 
+    /**
+     * @return ArrayObject
+     */
     public function getLinkedExtensions()
     {
         return $this->linkedExtensions;
@@ -489,5 +503,7 @@ class Extension
         $this->linkedExtensions = $linkedExtensions;
         return $this;
     }
- 
+    function getShortType() {
+        return $this->shortType;
+    }
 }

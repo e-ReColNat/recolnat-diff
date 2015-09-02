@@ -8,7 +8,7 @@ interface DarwinCoreClassInterface
      * Return the name of the extension for XML use (eg : dwc:Occurence)
      * @return String
      */
-    public function getDwcName();
+    //public function getDwcName();
     //public function createXmlNode(\DOMDocument $dwc, $key, $value);
 
 }
