@@ -3,7 +3,7 @@ namespace Recolnat\DarwinCoreBundle\Component\Extension;
 
 use Recolnat\DarwinCoreBundle\Component\Extension\DarwinCoreClassInterface;
 
-class Occurrence extends DarwinCoreClassAbstract implements DarwinCoreClassInterface
+class Occurrence extends Extension implements DarwinCoreClassInterface
 {
 
     public function __toString()

@@ -1,36 +1,34 @@
 {% extends 'RecolnatDarwinCoreBundle::template.html.twig' %}
 {% block content %}
-    {% for id,occurence in diffHtml.getCore.getData %}
-        {% set identity = identification.getRowData(id) %}
-        {% if dwcDiff.rowHasChanges(id) %}
-            {% if identity %}
-                <div class="row">
-                    <div class="col-xs-4">
-                        <div class="scientificname">
-                            {{ identity.getData('scientificname') }}
-                        </div>
-                        <div class="scientificnameauthorship">
-                            {{ identity.getData('scientificnameauthorship') }}
-                        </div>
-                        <div class="catalognumber">
-                            Numéro d'inventaire : {{ occurence.getData('catalogNumber') }}
-                        </div>
-                    </div>
-                    <div class="col-xs-8">
-                    <table class="table">
-                            {% for name,value in occurence.getDatasWithIndexes %}
-                                <tr>
-                                {% if dwcDiff.recordHasChange(id, occurence.getNumericIndex(name)) %}
-                                    <th>{{name}}</th>
-                                    <td>{{ occurence.getData(name) | raw }}</td>
-                                {% endif %}
-                                </tr>
-                            {% endfor %}
-
-                    </table>
-                    </div>
-                </div>
+    <table class="table">
+        {% for id,occurence in diffHtml.getCore.getData %}
+            {% set identity = identification.getData(id, 'scientificname') %}
+            {% if dwcDiff.rowHasChanges(id) %}
+                {% if identity %}
+                    <tr>
+                        <td>
+                            <div class="scientificname">
+                                {{ identity }}
+                            </div>
+                            <div class="scientificnameauthorship">
+                                {{ identification.getData(id, 'scientificnameauthorship') }}
+                            </div>
+                            <div class="catalognumber">
+                                Numéro d'inventaire : {{ dwc1.getCore.getData(id, 'catalogNumber') }}
+                            </div>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for name,data in diffHtml.getCore.getRowWithIndexes(id) %}
+                                    {% if dwcDiff.recordHasChange(id, name) %}
+                                        <li>{{name}} :  {{ data | raw }}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
             {% endif %}
-        {% endif %}
-     {% endfor %}
+        {% endfor %}
+    </table>
 {% endblock %}

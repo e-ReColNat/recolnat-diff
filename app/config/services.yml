@@ -7,8 +7,6 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
-    dwc.extractor:
-            class: Recolnat\DarwinCoreBundle\Component\Extractor
 
     naoned.oaipmh.data_provider:
             class: Recolnat\DarwinCoreBundle\OaiPmh\OaiDwcDataProvider

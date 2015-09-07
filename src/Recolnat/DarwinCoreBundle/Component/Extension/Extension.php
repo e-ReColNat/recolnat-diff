@@ -3,7 +3,7 @@ namespace Recolnat\DarwinCoreBundle\Component\Extension;
 
 use Recolnat\DarwinCoreBundle\Exception\DarwinCoreException;
 use Symfony\Component\Config\Definition\Exception\Exception;
-class Extension
+abstract class Extension
 {
     const  ALLOWED_EXTENSION = array(
         'Identification',
@@ -103,12 +103,12 @@ class Extension
     /**
      * @var array
      */
-    protected $fields = array();
+    public $fields = array();
     
     /**
      * @var array
      */
-    protected $indexes = array();
+    public $indexes = array();
     
     /**
      * 
@@ -124,76 +124,9 @@ class Extension
      */
     private $path;
     private $boolLinkedParse=FALSE;
-    
-    public function __construct(\DOMNode $node, $path)
-    {
-        $this->data = array();
-        $this->linkedExtensions = new \ArrayObject();
-        $this->setPath($path);
-        $this->collectData($node);
-    }
-    private function collectData(\DOMNode $node)
-    {
-        $filesNode = $node->getElementsByTagName('files') ;
-        if (count($filesNode) == 0) {
-            throw new \Exception('There is no files node');
-        }
-        if ($node->tagName == 'core') {
-            $this->setCore(TRUE);
-        }
-        /**
-         * @var $file \DOMElement
-         */
-        foreach ($filesNode as $file) {
-            $tmpFilePath=sprintf($this->path.'%s', trim($file->nodeValue));
-            if (!is_file($tmpFilePath)) {
-                throw new DarwinCoreException(sprintf('Can\'t find the file : %s', $tmpFilePath));
-            }
-            $this->setFile(new \SplFileObject($tmpFilePath));
-        }
-        $this->setEncoding($node->getAttribute('encoding'));
-        $this->setRowType($node->getAttribute('rowType'));
-        $this->setFieldsTerminatedBy($node->getAttribute('fieldsTerminatedBy'));
-        $this->setLinesTerminatedBy($node->getAttribute('linesTerminatedBy'));
-        $this->setFieldsEnclosedBy($node->getAttribute('fieldsEnclosedBy'));
-        $this->setIgnoreHeaderLines($node->getAttribute('ignoreHeaderLines'));
-        $this->setDateFormat($node->getAttribute('dateFormat'));
-        
-        $this->extractFields($node);
-        $this->parseCsvFile();
-    }
-    /**
-     * Parse index fields
-     * @param \DOMNode $node
-     * @return array
-     */
-    private function extractFields(\DOMNode $node)
-    {
-        $fields=array();
-        if ($node->tagName == 'core') {
-            $this->id = (int) $node->getElementsByTagName('id')->item(0)->getAttribute('index');
-            $fields[$this->id]['shortTerm'] = 'id' ;
-            $this->indexes[$fields[$this->id]['shortTerm']] = $this->id;
-        }
-        else {
-            $this->coreId = (int) $node->getElementsByTagName('coreid')->item(0)->getAttribute('index');
-            $fields[$this->coreId]['shortTerm'] = 'coreId' ;
-            $this->indexes[$fields[$this->coreId]['shortTerm']] = $this->coreId;
-        }
-        
-        
-        $fieldList = $node->getElementsByTagName('field');
-        if (count($fieldList) > 0) {
-            foreach ($fieldList as $field) {
-                $key = (int) $field->getAttribute('index');
-                $fields[$key] = $this->setIndexData($field);
-                $this->indexes[$fields[$key]['shortTerm']] = $key;
-            }
-        }
-        $this->fields = $fields;
-    }
 
-    private function setIndexData(\DOMElement $field) 
+
+    public function setIndexData(\DOMElement $field) 
     {
         $indexData=array();
         $term = explode('/', $field->getAttribute('term'));
@@ -209,25 +142,7 @@ class Extension
         return str_replace(array("\\t", "\\n", "\\r"), array("\t", "\n", "\r"), $text);
     }
     
-    private function parseCsvFile()
-    {
-        $className = __NAMESPACE__.'\\'.ucfirst($this->shortType);
-        $rowCount=0;
-        $this->file->setCsvControl($this->getFieldsTerminatedBy(), $this->getFieldsEnclosedBy());
-        while(!$this->file->eof() && ($row = $this->file->fgetcsv()) && $row[0] !== null) {
-            $rowCount++;
-            if ($this->getIgnoreHeaderLines() && $rowCount == 1) {
-                continue;
-            }
-            if ($this->isCore()) {
-                $this->data[$row[$this->id]] = new $className($row, $this);
-            }
-            else {
-                $this->data[$row[$this->coreId]] = new $className($row, $this);
-            }
-        }
-    }
-    
+  
     public function getRecord($id) {
         if (array_key_exists($id, $this->data)) {
             return $this->data[$id];
@@ -359,9 +274,6 @@ class Extension
 
     public function setRowType($rowType)
     {
-        if (empty($rowType)) {
-            throw new Exception('the attribute rowType is mandatory');
-        }
         $this->rowType = $rowType;
         $explodedType = explode('/', $rowType);
         $this->shortType = end($explodedType);
@@ -428,21 +340,26 @@ class Extension
     {
         return $this->indexes;
     }
-    public function getData()
-    {
-        return $this->data; 
-    }
     
-    /*Buggy method */
+    public function getData($id = NULL, $field = NULL)
+    {
+        if (is_null($id) && is_null($field)) {
+            return $this->data; 
+        }
+        if (!is_null($id) && is_null($field)) {
+            return $this->data[$id]; 
+        }
+        if (is_int($field)) {
+            $field = array_flip($this->getIndexes())[$field] ;
+        }
+        if (isset($this->indexes[$field])) {
+            return isset($this->data[$id][$this->indexes[$field]]) ? $this->data[$id][$this->indexes[$field]] : NULL ;
+        }
+    }
+     
+    
+
      public function getRowData($id) {
-        
-        /*if (!is_null($this->coreId)) {
-            return $this->data[$id];
-        }
-        else {
-            
-        }
-        //|| $this->core*/
         if (array_key_exists($id, $this->data)) {
             return $this->data[$id];
         }
@@ -503,7 +420,89 @@ class Extension
         $this->linkedExtensions = $linkedExtensions;
         return $this;
     }
-    function getShortType() {
+    public function getShortType() {
         return $this->shortType;
     }
+    /**
+     * @return array
+     */
+    public function getDatasWithIndexes() {
+        $datasWithIndexes = array();
+        foreach ($this->data as $id=>$row) {
+            foreach ($this->getIndexes() as $key => $value) {
+                if (isset($row[$value])) {
+                    $datasWithIndexes[$id][$key] = $row[$value];
+                }
+                else {
+                    $datasWithIndexes[$id][$key] = null;
+                }
+            }
+        }
+        return $datasWithIndexes;
+    }
+    /**
+     * @return array
+     */
+    public function getRowWithIndexes($id) {
+        $datasWithIndexes = array();
+        if (isset($this->data[$id])) {
+            $row = $this->data[$id];
+            foreach ($this->getIndexes() as $key => $value) {
+                if (isset($row[$value])) {
+                    $datasWithIndexes[$key] = $row[$value];
+                }
+                else {
+                    $datasWithIndexes[$key] = null;
+                }
+            }
+        }
+        return $datasWithIndexes;
+    }
+    /**
+     * @return int | null
+     * @param string $name
+     */
+    public function getNumericIndex($name) 
+    {
+        if (array_key_exists($name, $this->getIndexes())) {
+            return $this->getIndexes()[$name];
+        }
+        return null;
+    }
+    /**
+     * 
+     * @param string $name
+     * @return mixed|string
+     */
+    public function __get($name) 
+    {
+        return $this->getData($name);
+    }
+    
+    public function __set($name, $value)
+    {
+        $this->data[$name] = $value;
+    }
+    
+    public function __isset($name) {
+        return array_key_exists($name, $this->getIndexes());
+    }
+
+    private function isDateValid($str) 
+    {
+          if (!is_string($str)) {
+             return false;
+          }
+        
+          $stamp = strtotime($str); 
+        
+          if (!is_numeric($stamp)) {
+             return false; 
+          }
+        
+          if ( checkdate(date('m', $stamp), date('d', $stamp), date('Y', $stamp)) ) { 
+             return true; 
+          } 
+          return false; 
+    } 
 }

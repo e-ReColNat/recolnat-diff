@@ -3,7 +3,7 @@ namespace Recolnat\DarwinCoreBundle\Component\Extension;
 
 use Recolnat\DarwinCoreBundle\Component\Extension\DarwinCoreClassInterface;
 
-class Identification extends DarwinCoreClassAbstract implements DarwinCoreClassInterface
+class Identification extends Extension implements DarwinCoreClassInterface
 {
 
     public function __toString()

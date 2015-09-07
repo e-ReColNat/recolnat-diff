@@ -1,7 +1,7 @@
 <?php
 namespace Recolnat\DarwinCoreBundle\Component\Extension;
 
-abstract Class DarwinCoreClassAbstract
+abstract Class DarwinCoreClassAbstractbak
 {
     /**
      * 

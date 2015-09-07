@@ -1,25 +1,25 @@
 {% extends 'RecolnatDarwinCoreBundle::template.html.twig' %}
 {%  block title %}Extraction de {{ file }}{% endblock %}
 {% block content %}
-{{file }} : {{ dataCore | length }} enregistrements parsés
-{% for row in dataCore %}
-    <table class="table table-striped table-bordered table-hover table-condensed">
-        {% for name,value in row.getDatasWithIndexes %}
-        	<tr>
-        		<th>
-        		{{ name }}
-        		</th>
-        		<td>
-        		{% if name == 'id' %}
-            		<a href="{{ path('dwc-record', {'id':value, 'path':path|url_encode}) }}">
-        		{% endif %}
-         		{{ value }}
-         		{% if name == 'id' %}
-         			</a>
-         		{% endif %}
-        		</td>
-        	</tr>
-    	{% endfor %}
-    </table>
-{% endfor %}
+    {{file }} : {{ core.getData | length }} enregistrements parsés
+    {% for id, row in core.getDatasWithIndexes %}
+        <table class="table table-striped table-bordered table-hover table-condensed">
+            {% for name,value in row %}
+                <tr>
+                    <th>
+                        {{ name }}
+                    </th>
+                    <td>
+                        {% if name == 'id' %}
+                            <a href="{{ path('dwc-record', {'id':value, 'path':file|url_encode}) }}">
+                            {% endif %}
+                            {{ value }}
+                            {% if name == 'id' %}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
 {% endblock %}

@@ -36,12 +36,11 @@ class DarwinCoreController extends Controller {
     public function loadAction($path) {
         $path = urldecode($path);
         $extractor = $this->get('dwc.extractor')->init(new File(urldecode($path)));
-        $dataCore = $extractor->getCore()->getData();
+        /* @var $dwcArchive \Recolnat\DarwinCoreBundle\Component\DarwinCoreArchive */
+        $dwcArchive = $extractor->getDarwinCoreArchive() ;
 
         return array(
-            'dataCore' => $dataCore,
-            'index' => $extractor->getCore()->getIndexes(),
-            'path' => $path,
+            'core' => $dwcArchive->getCore(),
             'file' => $extractor->getFullPath()
         );
     }
@@ -94,12 +93,15 @@ class DarwinCoreController extends Controller {
     public function diffAction(Request $request) {
         $path1 = $request->get('path1');
         $path2 = $request->get('path2');
-        /* @var $dwcDiff DwcDiff  */
-        $dwcDiff = $this->get('dwc.diff')->init(new File($path1), new File($path2));
+        $dwc1 = $this->get('dwc.extractor')->init(new File($path1))->getDarwinCoreArchive() ;
+        $dwc2 = $this->get('dwc.extractor')->init(new File($path2))->getDarwinCoreArchive() ;
+        $dwcDiff = new DwcDiff($dwc1, $dwc2);
 
         $diffHtml = $dwcDiff->getDiff('html');
-        $identification = $dwcDiff->extractor1->darwinCoreArchive->getExtension('identification');
+        $identification = $dwc1->getExtension('identification');
         return array(
+            'dwc1'                  => $dwc1,
+            'dwc2'                  => $dwc2,
             'dwcDiff'              => $dwcDiff,
             'diffHtml'              => $diffHtml,
             'identification'     => $identification

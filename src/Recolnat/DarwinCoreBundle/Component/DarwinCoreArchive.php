@@ -15,7 +15,6 @@ class DarwinCoreArchive
      */
     public $extensions;
 
-
     public function __construct()
     {
         $this->extensions = new \ArrayObject();
@@ -38,7 +37,7 @@ class DarwinCoreArchive
 
     public function getExtension($shortType)
     {
-        foreach($this->core->getLinkedExtensions() as $extension) {
+        foreach($this->extensions as $extension) {
             /* @var $extension Extension */
             if (strtolower($extension->getShortType())  == strtolower($shortType)) {
                 return $extension;
@@ -59,4 +58,9 @@ class DarwinCoreArchive
         return $this;
     }
 
+    public function __clone() 
+    {
+        $this->core = clone $this->core;
+        $this->extensions = clone $this->extensions;
+    }
 }
