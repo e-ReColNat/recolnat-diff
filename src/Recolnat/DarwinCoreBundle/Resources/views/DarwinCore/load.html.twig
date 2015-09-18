@@ -2,24 +2,59 @@
 {%  block title %}Extraction de {{ file }}{% endblock %}
 {% block content %}
     {{file }} : {{ core.getData | length }} enregistrements parsés
-    {% for id, row in core.getDatasWithIndexes %}
-        <table class="table table-striped table-bordered table-hover table-condensed">
-            {% for name,value in row %}
-                <tr>
-                    <th>
-                        {{ name }}
-                    </th>
-                    <td>
-                        {% if name == 'id' %}
-                            <a href="{{ path('dwc-record', {'id':value, 'path':file|url_encode}) }}">
+    {{dump(core)}}
+    {% include 'RecolnatDarwinCoreBundle:DarwinCore:pagination.html.twig' %}
+    <table class="table">
+{#        {% for coreId, row in core.getDatasWithIndexes %}#}
+        {% for coreId in coreIds %}
+            {% set row = core.getRowData(coreId, true) %}
+            <tr>
+                <td>
+                    <table class="table table-striped table-bordered table-hover table-condensed">
+                        <caption>Core - {{core.getShortType}}</caption>
+                        {% for name,value in row %}
+                            {% if value is not empty %}
+                                <tr>
+                                    <th>
+                                        {{ name }}
+                                    </th>
+                                    <td>
+                                        {% if name =='id' %}
+                                            <a href="{{ path('dwc-record', {'id':value, 'path':file|url_encode}) }}">
+                                            {% endif %}
+                                            {{ value }}
+                                            {% if name == 'id' %}
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
                             {% endif %}
-                            {{ value }}
-                            {% if name == 'id' %}
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endfor %}
+                        {% endfor %}
+                    </table>
+                </td>
+                <td>
+                    {% set extensions = dwcArchive.getExtensionsRows(coreId) %}
+                    {% for extName, linkedExtension in extensions %}
+                        {% for id, rowExtension in linkedExtension.getDatasWithIndexes %}
+                            <table class="table table-striped table-bordered table-hover table-condensed">
+                                <caption>{{extName}}</caption>
+                                {% for nameExt,valueExt in rowExtension %}
+                                    {% if valueExt is not empty %}
+                                        <tr>
+                                            <th>
+                                                {{ nameExt }}
+                                            </th>
+                                            <td>
+                                                {{ valueExt }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </table>
+                        {% endfor %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

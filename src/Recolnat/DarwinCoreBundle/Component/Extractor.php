@@ -128,7 +128,7 @@ class Extractor
                 $extension->data[$row[$extension->getId()]] = $row;
             }
             else {
-                $extension->data[$row[$extension->getCoreId()]] = $row;
+                $extension->data[$row[$extension->getCoreId()]][] = $row;
             }
         }
     }

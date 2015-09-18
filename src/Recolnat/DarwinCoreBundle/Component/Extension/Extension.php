@@ -356,14 +356,26 @@ abstract class Extension
             return isset($this->data[$id][$this->indexes[$field]]) ? $this->data[$id][$this->indexes[$field]] : NULL ;
         }
     }
-     
-    
-
-     public function getRowData($id) {
+  
+     public function getRowData($id, $withIndexes = false) {
         if (array_key_exists($id, $this->data)) {
+            if ($withIndexes) {
+                return $this->getDatasWithIndexes()[$id];
+            }
             return $this->data[$id];
         }
         return null;
+    }
+    
+    public function getExtensionRows($coreId) {
+        return $this->getRowData($coreId);
+    }
+
+    public function getListId($offset=1, $length=0) {
+        return array_keys(array_slice($this->data, $offset, $length, true));
+    }
+    public function getPager($page=1, $maxPerPage=10) {
+        return $this->getListId(($page-1)*$maxPerPage, $maxPerPage) ;
     }
     /**
      * @param array $data
@@ -379,33 +391,60 @@ abstract class Extension
         $this->path = $path;
         return $this;
     }
-    
-    public function toXml($withExtensions = FALSE)
+/**
+     * @return \DOMElement
+     */
+    public function toXml()
     {
         $dwc = new \DOMDocument('1.0', 'UTF-8');
-        $root = $dwc->createElementNS(
-            'http://rs.tdwg.org/dwc/dwcrecord/',
-            'dwr:DarwinRecordSet'
-            );
+        $root = $dwc->createElementNS('http://rs.tdwg.org/dwc/terms/','dwc:'.$this->getDwcName());
         $dwc->appendChild($root) ;
-        $root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-        $root->setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'schemaLocation', 'http://rs.tdwg.org/dwc/dwcrecord/ http://purl.org/dc/terms/ http://rs.tdwg.org/dwc/xsd/tdwg_dwc_classes.xsd');
-        foreach ($this->getData() as $class) {
-            $node = $dwc->importNode($class->toXml(), true);
-            if ($withExtensions && $this->getLinkedExtensions()->count()>0) {
-                foreach ($this->getLinkedExtensions() as $linkedExtension) {
-                    /* @var Extension $linkedExtension */
-                    foreach ($linkedExtension->getData() as $linkedData) {
-                        if ($linkedData->getData('coreId') == $class->getData('id')) {
-                            $node->appendChild($dwc->importNode($linkedData->toXml(), true));
-                        }
+        foreach($this->getDatasWithIndexes() as $id => $row) {
+            $record = $dwc->createElement('record');
+            foreach($row as $name => $value) {
+                if ($this->isCore()) {
+                    if (!empty($value) && $name != 'id' && $name != 'coreId') {
+                        $term = $this->getField($this->getNumericIndex($name))['term'] ;
+                        $node = $this->createXmlNode($dwc, $term,$name, $value);
+                        $record->appendChild($node);
+                        $root->appendChild($record) ;
+                    }
+                }
+                else {
+                    if (!empty($value)) {
+                        foreach ($value as $extName => $extValue ) {
+                           if (!empty($extValue) && $extName != 'identificationid' && $extName != 'coreId') {
+                                $term = $this->getField($extName)['term'];
+                                $node = $this->createXmlNode($dwc, $term, $this->getField($extName)['shortTerm'], $extValue);
+                                $record->appendChild($node);
+                                $root->appendChild($record) ;
+                           }
+                       }
                     }
                 }
             }
-            $root->appendChild($node) ;
         }
-        return $dwc->saveXML($root);
+        return $root;
     }
+    
+    public function createXmlNode(\DOMDocument $dwc, $term, $name, $value)
+    {
+        $node=null;
+        $textNode = $dwc->createTextNode($value) ;
+        if (strstr($term, 'http://purl.org/dc/')) {
+            $node = $dwc->createElementNS('http://purl.org/dc/terms/', 'dc:'.$name);
+        }
+        if (strstr($term, 'http://rs.tdwg.org/dwc/')) {
+            $node = $dwc->createElementNS('http://rs.tdwg.org/dwc/terms/', 'dwc:'.$name);
+        }
+        if ($node instanceof \DOMElement) {
+            $node->appendChild($textNode);
+            return $node;
+        }
+        else {
+            throw new \Exception(sprintf('The namespace element %s in extension  can not be found'), $term, get_class($this));
+        }
+    }    
 
     /**
      * @return ArrayObject
@@ -428,13 +467,15 @@ abstract class Extension
      */
     public function getDatasWithIndexes() {
         $datasWithIndexes = array();
-        foreach ($this->data as $id=>$row) {
-            foreach ($this->getIndexes() as $key => $value) {
-                if (isset($row[$value])) {
-                    $datasWithIndexes[$id][$key] = $row[$value];
-                }
-                else {
-                    $datasWithIndexes[$id][$key] = null;
+        if (count($this->data)>0) {
+            foreach ($this->data as $id=>$row) {
+                foreach ($this->getIndexes() as $key => $value) {
+                    if (isset($row[$value])) {
+                        $datasWithIndexes[$id][$key] = $row[$value];
+                    }
+                    else {
+                        $datasWithIndexes[$id][$key] = null;
+                    }
                 }
             }
         }

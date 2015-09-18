@@ -1,18 +1,19 @@
 {% extends 'RecolnatDarwinCoreBundle::template.html.twig' %}
 {% block content %}
+    {{dump(dwcDiff)}}
     <table class="table">
         {% for id,occurence in diffHtml.getCore.getData %}
-            {% set identity = identification.getData(id, 'scientificname') %}
+{#            {% set identity = identification.getData(id, 'scientificname') %}#}
             {% if dwcDiff.rowHasChanges(id) %}
-                {% if identity %}
+{#                {% if identity %}#}
                     <tr>
                         <td>
-                            <div class="scientificname">
+                            {#<div class="scientificname">
                                 {{ identity }}
                             </div>
                             <div class="scientificnameauthorship">
                                 {{ identification.getData(id, 'scientificnameauthorship') }}
-                            </div>
+                            </div>#}
                             <div class="catalognumber">
                                 Numéro d'inventaire : {{ dwc1.getCore.getData(id, 'catalogNumber') }}
                             </div>
@@ -28,7 +29,7 @@
                         </td>
                     </tr>
                 {% endif %}
-            {% endif %}
+{#            {% endif %}#}
         {% endfor %}
     </table>
 {% endblock %}

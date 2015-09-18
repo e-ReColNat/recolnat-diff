@@ -12,6 +12,7 @@ use Naoned\OaiPmhServerBundle\Exception\NoSetHierarchyException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Naoned\OaiPmhServerBundle\Exception\IdDoesNotExistException;
 use Naoned\OaiPmhServerBundle\DataProvider\DataProviderInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 class OaiPmhDwcController extends Controller
 {
@@ -26,14 +27,17 @@ class OaiPmhDwcController extends Controller
     );
     
     private $queryParams = array();
+    /* @var $request \Symfony\Component\HttpFoundation\Request */
+    private $request;
     
     /**
      * @Route("/", name="oaipmhdwc")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction(\Symfony\Component\HttpFoundation\Request $request)
     {
-        $verb = $this->get('request')->get('verb');
+        $this->request = $request;
+        $verb = $this->request->query->get('verb');
         try {
             if (!in_array($verb, $this->availableVerbs)) {
                 throw new BadVerbException();
@@ -147,8 +151,12 @@ class OaiPmhDwcController extends Controller
         if (!array_key_exists('resumptionToken', $this->queryParams)) {
             $oaiPmhRuler->checkMetadataPrefix($this->queryParams);
         }
-    
-        $dataProvider = $this->getDataProvider();
+        $path = '/home/tpateffoz/www/test/src/Recolnat/DarwinCoreBundle/Resources/files/example.zip';
+        $extractor = $this->get('dwc.extractor')->init(new File($path));
+        /* @var $dwcArchive \Recolnat\DarwinCoreBundle\Component\DarwinCoreArchive */
+        $dwcArchive = $extractor->getDarwinCoreArchive() ;
+        $dataProvider = $this->getDataProvider($dwcArchive);
+        
         $searchParams = $oaiPmhRuler->getSearchParams(
             $this->queryParams,
             $this->get('session')
@@ -161,17 +169,28 @@ class OaiPmhDwcController extends Controller
             isset($searchParams['from']) ? new \DateTime($searchParams['from']) : null,
             isset($searchParams['until']) ? new \DateTime($searchParams['until']) : null
             );
-        if (!(is_array($records) || $records instanceof \ArrayObject)) {
+        /*if (!(is_array($records) || $records instanceof \ArrayObject)) {
             throw new \Exception('Implementation error: Records must be an array or an arrayObject');
-        }
+        }*/
         if (!count($records)) {
             throw new noRecordsMatchException();
         }
+        
         $resumption = $oaiPmhRuler->getResumption(
             $records,
             $searchParams,
             $this->get('session')
             );
+//        return $this->render(
+//            'RecolnatDarwinCoreBundle:OaiPmhDwc:listRecords.html.twig',
+//            array(
+//                'headersOnly'    => $headersOnly,
+//                'resumption'     => $resumption,
+//                'metadataPrefix' => $searchParams['metadataPrefix'],
+//                'queryParams'    => $this->queryParams,
+//                'records'        => $records,
+//            )
+//        );
         return $this->render(
             'RecolnatDarwinCoreBundle:OaiPmhDwc:listRecords.xml.twig',
             array(
@@ -181,7 +200,7 @@ class OaiPmhDwcController extends Controller
                 'queryParams'    => $this->queryParams,
                 'records'        => $records,
             )
-            );
+        );
     }
     
     private function listIdentifiersVerb()
@@ -257,10 +276,18 @@ class OaiPmhDwcController extends Controller
         return $record;
     }
     
-    private function getDataProvider()
+    /**
+     * @return \Recolnat\DarwinCoreBundle\OaiPmh\OaiDwcDataProvider
+     * @throws \Exception
+     */
+    private function getDataProvider($dwc = null)
     {
         $service = $this->container->getParameter('naoned.oaipmh_server.data_provider_service_name');
+        /* @var $dataProvider \Recolnat\DarwinCoreBundle\OaiPmh\OaiDwcDataProvider  */
         $dataProvider = $this->get($service);
+        if (!is_null($dwc)) {
+            $dataProvider->setDwc($dwc) ;
+        }
         if (!$dataProvider instanceof DataProviderInterface) {
             throw new \Exception(sprintf("Class of service %s must implement %s", $service, 'DataProviderInterface'));
         }
@@ -270,8 +297,10 @@ class OaiPmhDwcController extends Controller
     private function getAllArguments()
     {
         return array_merge(
-            $this->getRequest()->query->all(),
-            $this->getRequest()->request->all()
+                $this->request->query->all(),
+                $this->request->request->all()
+            //$this->getRequest()->query->all(),
+            //$this->getRequest()->request->all()
             );
     }
 }

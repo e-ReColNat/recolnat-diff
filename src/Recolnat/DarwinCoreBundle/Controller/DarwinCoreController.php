@@ -29,19 +29,29 @@ class DarwinCoreController extends Controller {
         );
     }
 
-    /**
-     * @Route("/load/{path}", name="dwc-load", requirements={"path"=".+"})
+    /** 
+     * @Route("/load/{path}/{page}", name="dwc-load", defaults={"page" = "1"})
      * @Template()
      */
-    public function loadAction($path) {
-        $path = urldecode($path);
-        $extractor = $this->get('dwc.extractor')->init(new File(urldecode($path)));
+    public function loadAction($path, $page) {
+        $pathDecode = rawurldecode($path);
+        $maxPerPage = 3;
+        $extractor = $this->get('dwc.extractor')->init(new File($pathDecode));
         /* @var $dwcArchive \Recolnat\DarwinCoreBundle\Component\DarwinCoreArchive */
         $dwcArchive = $extractor->getDarwinCoreArchive() ;
-
+        $coreIds = $dwcArchive->getCore()->getPager($page, $maxPerPage);
+        $pagination = array(
+            'page' => $page,
+            'route' => 'dwc-load',
+            'pages_count' => ceil(count($dwcArchive->getCore()->getData()) / $maxPerPage),
+            'route_params' => array('path' => $path)
+        );
         return array(
-            'core' => $dwcArchive->getCore(),
-            'file' => $extractor->getFullPath()
+            'dwcArchive'      => $dwcArchive,
+            'core'                  => $dwcArchive->getCore(),
+            'file'                     => $extractor->getFullPath(),
+            'pagination'        => $pagination,
+            'coreIds'             => $coreIds,
         );
     }
 
@@ -104,7 +114,7 @@ class DarwinCoreController extends Controller {
             'dwc2'                  => $dwc2,
             'dwcDiff'              => $dwcDiff,
             'diffHtml'              => $diffHtml,
-            'identification'     => $identification
+            'identification'     => $identification,
         );
     }
 

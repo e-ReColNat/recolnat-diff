@@ -46,7 +46,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" href="{{path('dwc-index')}}">
 					Recolnat - Darwin Core Archive - OAI-PMH                    
                 </a>
 
@@ -63,7 +63,7 @@
                             <div class="dropdown-menu dropdown-settings">
                                 <div class="media">
                                     <a class="media-left" href="#">
-                                        <img src="assets/img/64-64.jpg" alt="" class="img-rounded" />
+                                        <img src="{{ asset('assets/img/64-64.jpg') }}" alt="" class="img-rounded" />
                                     </a>
                                     <div class="media-body">
                                         <h4 class="media-heading">Jhon Deo Alex </h4>
@@ -127,8 +127,8 @@
     <!-- FOOTER SECTION END-->
     <!-- JAVASCRIPT AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
     <!-- CORE JQUERY SCRIPTS -->
-    <script src="assets/js/jquery-1.11.1.js"></script>
+    <script src="{{ asset('assets/js/jquery-1.11.1.js') }}"></script>
     <!-- BOOTSTRAP SCRIPTS  -->
-    <script src="assets/js/bootstrap.js"></script>
+    <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
 </body>
 </html>

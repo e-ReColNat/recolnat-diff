@@ -6,15 +6,18 @@ services:
         class: Recolnat\DarwinCoreBundle\OaiPmh\OaiPmhRuler
         calls:
             - [ setCountPerLoad, [ '%naoned.oaipmh_server.count_per_load%' ] ]
-
-#    dwc.diff:
-#            class: Recolnat\DarwinCoreBundle\Component\DwcDiff
-#            arguments: ["@dwc.extractor"]
+            
     recolnat.twig.darwincoreExtension:
         class: Recolnat\DarwinCoreBundle\Twig\RecordExtension
         tags:
             - { name: twig.extension }
+            
     recolnat.twig.fileExtension:
         class: Recolnat\DarwinCoreBundle\Twig\FileExtension
         tags:
             - { name: twig.extension }
+            
+    naoned.oaipmh.data_provider:
+            class: Recolnat\DarwinCoreBundle\OaiPmh\OaiDwcDataProvider
+            calls:
+                - [ setContainer, [@service_container] ]

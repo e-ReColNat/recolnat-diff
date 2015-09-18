@@ -3,19 +3,18 @@ namespace Recolnat\DarwinCoreBundle\OaiPmh;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Naoned\OaiPmhServerBundle\DataProvider\DataProviderInterface;
-use Recolnat\DarwinCoreBundle\Component\Extractor;
+use Recolnat\DarwinCoreBundle\Component\DarwinCoreArchive;
 
 class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
 {
     /**
      * 
-     * @var Extractor
+     * @var DarwinCoreArchive
      */
-    private $extractor;
-    public function __construct(Extractor $extractor)
-    {
-        $this->extractor = $extractor;
-        //$extractor->init(__DIR__.'/../Resources/files/example.zip');
+    private $dwc;
+    
+    public function setDwc(DarwinCoreArchive $dwc) {
+        $this->dwc = $dwc;
     }
     /**
      * @return string Repository name
@@ -47,7 +46,7 @@ class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
      */
     public function getRecord($identifier)
     {
-        return $this->extractor->getCore()->getRecord($identifier);
+        return $this->dwc->getCore()->getRecord($identifier);
     }
     
     /**
@@ -77,12 +76,14 @@ class OaiDwcDataProvider extends ContainerAware implements DataProviderInterface
      */
     public function getRecords($setTitle = null, \DateTime $from = null, \DateTime $until = null)
     {
-        $recordSet = $this->extractor->getCore()->getData();
+        /*
+        $recordSet = $this->dwc->getCore()->getDatasWithIndexes();
         $datas = array();
         foreach($recordSet as $record) {
             $datas[] = $record; 
         }
-        return $datas;
+        return $datas;*/
+        return $this->dwc;
     }
     
     /**
