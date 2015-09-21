@@ -2,20 +2,20 @@
 {% block title %}Choix des fichiers DWC-A à comparer{% endblock %}
 {% extends 'RecolnatDarwinCoreBundle::template.html.twig' %}
 {% block content %}
-<div class="row">
-{{ form_start(form) }}
-    {{ form_errors(form) }}
+    <div class="row">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
 
-	<div class="col-xs-4">
-	    {{ form_row(form.path1) }}
-    </div>
-	<div class="col-xs-4">
-	    {{ form_row(form.path2) }}
-    </div>
-    <div class="col-xs-12">
-        {{ form_row(form.send) }}
-    </div>
+        <div class="col-xs-4">
+            {{ form_row(form.path1) }}
+        </div>
+        <div class="col-xs-4">
+            {{ form_row(form.path2) }}
+        </div>
+        <div class="col-xs-12">
+            {{ form_row(form.send) }}
+        </div>
 
-{{ form_end(form) }}
-</div>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

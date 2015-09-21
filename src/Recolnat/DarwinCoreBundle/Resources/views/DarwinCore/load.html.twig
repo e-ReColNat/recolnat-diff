@@ -2,10 +2,8 @@
 {%  block title %}Extraction de {{ file }}{% endblock %}
 {% block content %}
     {{file }} : {{ core.getData | length }} enregistrements parsés
-    {{dump(core)}}
     {% include 'RecolnatDarwinCoreBundle:DarwinCore:pagination.html.twig' %}
     <table class="table">
-{#        {% for coreId, row in core.getDatasWithIndexes %}#}
         {% for coreId in coreIds %}
             {% set row = core.getRowData(coreId, true) %}
             <tr>

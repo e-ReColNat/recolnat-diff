@@ -22,10 +22,6 @@ abstract class Extension
      */
     protected $core = FALSE;
     
-    /**
-     * @var \SplFileObject
-     */
-    protected $file;
     
     /**
      * @var array
@@ -162,33 +158,6 @@ abstract class Extension
         return $this;
     }
 
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    public function setFile(\SplFileObject $file)
-    {
-        $file->setFlags(
-            \SplFileObject::READ_CSV | 
-            \SplFileObject::READ_AHEAD | 
-            \SplFileObject::SKIP_EMPTY | 
-            \SplFileObject::DROP_NEW_LINE);
-        $this->file = $file;
-        return $this;
-    }
-/*
-    public function getFiles()
-    {
-        return $this->files;
-    }
-
-    public function setFiles(array $files)
-    {
-        $this->files = $files;
-        return $this;
-    }
-*/
     public function getFieldsTerminatedBy()
     {
         return $this->translateQuoted($this->fieldsTerminatedBy);

@@ -51,17 +51,6 @@ class DwcDiff
         $this->dwc2 = $dwc2;
     }
 
-    /* public function init(File $dwc1, File $dwc2)
-      {
-      $this->dwc1 = $dwc1;
-      $this->dwc2 = $dwc2;
-      $cloneExtractor = clone $this->extractor ;
-      $this->extractor1 = $this->extractor->init($dwc1);
-      $this->extractor2 = $cloneExtractor->init($dwc2);
-
-      return $this;
-      } */
-
     public function compareFile()
     {
         $core1 = $this->dwc1->getCore();

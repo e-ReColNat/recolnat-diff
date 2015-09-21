@@ -111,20 +111,8 @@ class DarwinCoreArchive
                 $root->appendChild($dwc->importNode($linkedExtension->toXml(), true));
                 }
             }
-//        foreach ($this->getData() as $class) {
-//            $node = $dwc->importNode($class->toXml(), true);
-//            if ($withExtensions && $this->getLinkedExtensions()->count()>0) {
-//                foreach ($this->getLinkedExtensions() as $linkedExtension) {
-//                    // @var Extension $linkedExtension 
-//                    foreach ($linkedExtension->getData() as $linkedData) {
-//                        if ($linkedData->getData('coreId') == $class->getData('id')) {
-//                            $node->appendChild($dwc->importNode($linkedData->toXml(), true));
-//                        }
-//                    }
-//                }
-//            }
             $root->appendChild($node) ;
-//        }
+
         return $dwc->saveXML($root);
     }
     public function getRecord($coreId) {

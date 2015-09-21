@@ -68,7 +68,7 @@ class DarwinCoreController extends Controller {
         $formatedFileName = array();
         if (!empty($files)) {
             foreach ($files as $file) {
-                $formatedFileName[$file->getRealPath()] = $file->getFileName();
+                $formatedFileName[$file->getRealPath()] = $file->getFileName() .' '.$file->getSize();
             }
         }
         $form = $this->createFormBuilder()
@@ -101,13 +101,16 @@ class DarwinCoreController extends Controller {
      * @Template()
      */
     public function diffAction(Request $request) {
+        ini_set('max_execution_time', 60);
         $path1 = $request->get('path1');
         $path2 = $request->get('path2');
+
         $dwc1 = $this->get('dwc.extractor')->init(new File($path1))->getDarwinCoreArchive() ;
         $dwc2 = $this->get('dwc.extractor')->init(new File($path2))->getDarwinCoreArchive() ;
         $dwcDiff = new DwcDiff($dwc1, $dwc2);
-
+        
         $diffHtml = $dwcDiff->getDiff('html');
+
         $identification = $dwc1->getExtension('identification');
         return array(
             'dwc1'                  => $dwc1,

@@ -16,6 +16,8 @@ class Extractor
      * @var DarwinCoreArchive $darwinCoreArchive
      */
     public $darwinCoreArchive;
+    
+    private $file;
     /**
      * 
      * @param string $path
@@ -26,11 +28,32 @@ class Extractor
     {
         $this->darwinCoreArchive = new DarwinCoreArchive();
         $this->file = $file;
-        $this->extract();
-        $this->parseMetaFile();
+        if ($this->needExtraction()) {
+            $this->extract();
+            $this->parseMetaFile();
+            $this->serializeDwc();
+        }
+        else {
+            $this->unserializeDwc();
+        }
         return $this;
     }
     
+    private function needExtraction() 
+    {
+        if (is_file($this->getMd5FileName())) {
+            $md5File = new \SplFileObject($this->getMd5FileName(), 'r');
+            $md5 = $md5File->fgets();
+            if ($md5 == md5_file($this->file) && is_file($this->getSerializeObjectFileName())) {
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+    
+    private function getMd5FileName() {
+        return $this->getTmpDir().'md5sum';
+    }
     private function parseMetaFile() 
     {
         $xmlMetaFileFullPath = sprintf($this->getTmpDir().'%s', 'meta.xml') ;
@@ -52,15 +75,6 @@ class Extractor
             if (!($coreNode->hasChildNodes())) {
                 throw new \Exception('Core node has no childs');
             } 
-            /*$this->darwinCoreArchive->setCore(new Extension($coreNode, $this->getTmpDir()));
-            $extensionNodes = $xmlMetaFile->getElementsByTagName('extension') ;
-            
-            if (count($extensionNodes) > 0) {
-                foreach ($extensionNodes as $extension) {
-                    $this->darwinCoreArchive->setExtension(new Extension($extension, $this->getTmpDir()));
-                }
-                $this->darwinCoreArchive->getCore()->setLinkedExtensions($this->darwinCoreArchive->getExtensions());
-            }*/
             $this->darwinCoreArchive->setCore($this->createExtension($coreNode));
             $extensionNodes = $xmlMetaFile->getElementsByTagName('extension') ;
             
@@ -68,9 +82,23 @@ class Extractor
                 foreach ($extensionNodes as $extension) {
                     $this->darwinCoreArchive->setExtension($this->createExtension($extension));
                 }
-                //$this->darwinCoreArchive->getCore()->setLinkedExtensions($this->darwinCoreArchive->getExtensions());
             }
         }
+        $md5File = new \SplFileObject($this->getMd5FileName(), 'w+');
+        $md5File->fwrite(md5_file($this->file));
+    }
+    
+    private function getSerializeObjectFileName()
+    {
+        return $this->getTmpDir().'dwcSerialize.object' ;
+    }
+    private function serializeDwc() {
+        $serializeFile = new \SplFileObject($this->getSerializeObjectFileName(), 'w+');
+        $serializeFile->fwrite(serialize($this->darwinCoreArchive));
+    }
+    private function unserializeDwc() {
+        $serializeFile = new \SplFileObject($this->getSerializeObjectFileName(), 'r');
+        $this->darwinCoreArchive =  unserialize($serializeFile);
     }
     /**
      * 
@@ -117,7 +145,6 @@ class Extractor
             \SplFileObject::READ_AHEAD | 
             \SplFileObject::SKIP_EMPTY | 
             \SplFileObject::DROP_NEW_LINE);
-        $extension->setFile($file);
         $file->setCsvControl($extension->getFieldsTerminatedBy(), $extension->getFieldsEnclosedBy());
         while(!$file->eof() && ($row = $file->fgetcsv()) && $row[0] !== null) {
             $rowCount++;
