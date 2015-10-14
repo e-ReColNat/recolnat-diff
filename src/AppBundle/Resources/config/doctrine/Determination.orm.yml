@@ -1,0 +1,112 @@
+AppBundle\Entity\Determination:
+    type: entity
+    table: DETERMINATIONS
+    repositoryClass: AppBundle\Entity\Repository\DeterminationRepository
+    indexes:
+        deter_spec_idx_fk:
+            columns:
+                - OCCURRENCEID
+        deter_tax_idx_fk:
+            columns:
+                - TAXONID
+        deter_srcfileid_idx:
+            columns:
+                - SOURCEFILEID
+    id:
+        identificationid:
+            type: guid
+            nullable: false
+            id: true
+            column: IDENTIFICATIONID
+            generator:
+                strategy: SEQUENCE
+    fields:
+        created:
+            type: datetime
+            nullable: true
+            column: CREATED
+        dateidentified:
+            type: datetime
+            nullable: true
+            column: DATEIDENTIFIED
+        dwcaidentificationid:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: DWCAIDENTIFICATIONID
+        identificationqualifier:
+            type: text
+            nullable: true
+            length: null
+            options:
+                fixed: false
+            column: IDENTIFICATIONQUALIFIER
+        identificationreferences:
+            type: string
+            nullable: true
+            length: 1000
+            options:
+                fixed: false
+            column: IDENTIFICATIONREFERENCES
+        identificationremarks:
+            type: string
+            nullable: true
+            length: 1000
+            options:
+                fixed: false
+            column: IDENTIFICATIONREMARKS
+        identificationverifstatus:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: IDENTIFICATIONVERIFSTATUS
+        identifiedby:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: IDENTIFIEDBY
+        modified:
+            type: datetime
+            nullable: true
+            column: MODIFIED
+        sourcefileid:
+            type: string
+            nullable: false
+            length: 50
+            options:
+                fixed: false
+            column: SOURCEFILEID
+        typestatus:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: TYPESTATUS
+    manyToOne:
+        occurrenceid:
+            targetEntity: Specimen
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                OCCURRENCEID:
+                    referencedColumnName: OCCURRENCEID
+            orphanRemoval: false
+        taxonid:
+            targetEntity: Taxon
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                TAXONID:
+                    referencedColumnName: TAXONID
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

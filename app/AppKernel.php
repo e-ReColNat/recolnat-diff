@@ -2,7 +2,6 @@
 
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Naoned\OaiPmhServerBundle\NaonedOaiPmhServerBundle;
 
 class AppKernel extends Kernel
 {
@@ -18,8 +17,6 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new AppBundle\AppBundle(),
-        	new NaonedOaiPmhServerBundle(),
-            new Recolnat\DarwinCoreBundle\RecolnatDarwinCoreBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
@@ -27,6 +24,7 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+            $bundles[] = new atoum\AtoumBundle\AtoumAtoumBundle();
         }
 
         return $bundles;

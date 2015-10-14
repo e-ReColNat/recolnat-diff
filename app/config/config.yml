@@ -35,8 +35,6 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
-    form:
-        resources: ['bootstrap_3_layout.html.twig']
 
 # Assetic Configuration
 assetic:
@@ -54,13 +52,24 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   pdo_mysql
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
-        charset:  UTF8
+        default_connection: default
+        connections:
+            default:
+                driver:   oci8
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_name%"
+                user:     "%database_user%"
+                password: "%database_password%"
+                charset:  UTF8
+            diff:
+                driver:   oci8
+                host:     "%database_host_diff%"
+                port:     "%database_port_diff%"
+                dbname:   "%database_name_diff%"
+                user:     "%database_user_diff%"
+                password: "%database_password_diff%"
+                charset:  UTF8
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
@@ -70,8 +79,24 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
+        
+        default_entity_manager: default
+        entity_managers:
+            default:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: true
+                connection: default
+                mappings:
+                    AppBundle:  ~
+            diff:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                connection: diff
+                mappings:
+                    AppBundle: ~
+                        #prefix: AppBundle\Entity\Diff
+                        #type:   annotation
+                        #dir:    "%kernel.root_dir%/../src/ProjectGameBundle/Doctrine/EntityMapping/Foo1"
+                        #is_bundle: false
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -80,11 +105,3 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
-    
-naoned_oai_pmh_server:
-    data_provider_service_name: naoned.oaipmh.data_provider
-    count_per_load: 50
-
-recolnat_darwin_core:
-    data_provider_service_name: naoned.oaipmh.data_provider
-    count_per_load: 50

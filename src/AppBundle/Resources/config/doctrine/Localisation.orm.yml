@@ -1,0 +1,164 @@
+AppBundle\Entity\Localisation:
+    type: entity
+    table: LOCALISATIONS
+    repositoryClass: AppBundle\Entity\Repository\LocalisationRepository
+    indexes:
+        loc_srcfileid_idx:
+            columns:
+                - SOURCEFILEID
+    id:
+        locationid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: LOCATIONID
+            generator:
+                strategy: SEQUENCE
+    fields:
+        averagealtituderounded:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: AVERAGEALTITUDEROUNDED
+        continent:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: CONTINENT
+        country:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: COUNTRY
+        countrycode:
+            type: string
+            nullable: true
+            length: 3
+            options:
+                fixed: false
+            column: COUNTRYCODE
+        county:
+            type: string
+            nullable: true
+            length: 200
+            options:
+                fixed: false
+            column: COUNTY
+        decimallatitude:
+            type: float
+            nullable: true
+            precision: 24
+            scale: 0
+            column: DECIMALLATITUDE
+        decimallongitude:
+            type: float
+            nullable: true
+            precision: 24
+            scale: 0
+            column: DECIMALLONGITUDE
+        geodeticdatum:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: GEODETICDATUM
+        georeferencesources:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: GEOREFERENCESOURCES
+        hascoordinates:
+            type: boolean
+            nullable: true
+            column: HASCOORDINATES
+        locality:
+            type: string
+            nullable: true
+            length: 200
+            options:
+                fixed: false
+            column: LOCALITY
+        locationremarks:
+            type: text
+            nullable: true
+            length: null
+            options:
+                fixed: false
+            column: LOCATIONREMARKS
+        maximumdepthinmeters:
+            type: float
+            nullable: true
+            precision: 24
+            scale: 0
+            column: MAXIMUMDEPTHINMETERS
+        maximumelevationinmeters:
+            type: float
+            nullable: true
+            precision: 24
+            scale: 0
+            column: MAXIMUMELEVATIONINMETERS
+        minimumdepthinmeters:
+            type: float
+            nullable: true
+            precision: 24
+            scale: 0
+            column: MINIMUMDEPTHINMETERS
+        minimumelevationinmeters:
+            type: float
+            nullable: true
+            precision: 24
+            scale: 0
+            column: MINIMUMELEVATIONINMETERS
+        municipality:
+            type: string
+            nullable: true
+            length: 200
+            options:
+                fixed: false
+            column: MUNICIPALITY
+        sourcefileid:
+            type: string
+            nullable: false
+            length: 50
+            options:
+                fixed: false
+            column: SOURCEFILEID
+        stateprovince:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: STATEPROVINCE
+        verbatimcountry:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: VERBATIMCOUNTRY
+        verbatimelevation:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+            column: VERBATIMELEVATION
+        verbatimlocality:
+            type: string
+            nullable: true
+            length: 2000
+            options:
+                fixed: false
+            column: VERBATIMLOCALITY
+    lifecycleCallbacks: {  }

@@ -1,0 +1,45 @@
+services:
+    diff.manager:
+        class: AppBundle\Manager\DiffManager
+        arguments:
+            em: "@doctrine.orm.entity_manager"
+    diff.specimens:
+        class: AppBundle\Manager\DiffSpecimens
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+    diff.bibliographies:
+        class: AppBundle\Manager\DiffBibliographies
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+    diff.determinations:
+        class: AppBundle\Manager\DiffDeterminations
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+    diff.localisations:
+        class: AppBundle\Manager\DiffLocalisations
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+    diff.recoltes:
+        class: AppBundle\Manager\DiffRecoltes
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+    diff.stratigraphies:
+        class: AppBundle\Manager\DiffStratigraphies
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+    diff.taxons:
+        class: AppBundle\Manager\DiffTaxons
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+    diff.stats:
+        class: AppBundle\Manager\DiffStatsManager
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"

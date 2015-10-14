@@ -1,0 +1,214 @@
+AppBundle\Entity\Taxon:
+    type: entity
+    table: TAXONS
+    repositoryClass: AppBundle\Entity\Repository\TaxonRepository
+    indexes:
+        taxon_srcfileid_idx:
+            columns:
+                - SOURCEFILEID
+    id:
+        taxonid:
+            type: guid
+            nullable: false
+            id: true
+            column: TAXONID
+            generator:
+                strategy: SEQUENCE
+    fields:
+        acceptednameusage:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+            column: ACCEPTEDNAMEUSAGE
+        class:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: CLASS_
+        created:
+            type: datetime
+            nullable: true
+            column: CREATED
+        dwcataxonid:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: DWCATAXONID
+        family:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: FAMILY
+        genus:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: GENUS
+        higherclassification:
+            type: text
+            nullable: true
+            length: null
+            options:
+                fixed: false
+            column: HIGHERCLASSIFICATION
+        infraspecificepithet:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: INFRASPECIFICEPITHET
+        kingdom:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: KINGDOM
+        modified:
+            type: datetime
+            nullable: true
+            column: MODIFIED
+        nameaccordingto:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: NAMEACCORDINGTO
+        namepublishedin:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: NAMEPUBLISHEDIN
+        namepublishedinyear:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: NAMEPUBLISHEDINYEAR
+        nomenclaturalcode:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: NOMENCLATURALCODE
+        nomenclaturalstatus:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: NOMENCLATURALSTATUS
+        order:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: ORDER_
+        originalnameusage:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: ORIGINALNAMEUSAGE
+        parentnameusage:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: PARENTNAMEUSAGE
+        phylum:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: PHYLUM
+        scientificname:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: SCIENTIFICNAME
+        scientificnameauthorship:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: SCIENTIFICNAMEAUTHORSHIP
+        sourcefileid:
+            type: string
+            nullable: false
+            length: 50
+            options:
+                fixed: false
+            column: SOURCEFILEID
+        specificepithet:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: SPECIFICEPITHET
+        subgenus:
+            type: string
+            nullable: true
+            length: 150
+            options:
+                fixed: false
+            column: SUBGENUS
+        taxonomicstatus:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+            column: TAXONOMICSTATUS
+        taxonrank:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+            column: TAXONRANK
+        taxonremarks:
+            type: text
+            nullable: true
+            length: null
+            options:
+                fixed: false
+            column: TAXONREMARKS
+        verbatimtaxonrank:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: VERBATIMTAXONRANK
+        vernacularname:
+            type: string
+            nullable: true
+            length: 200
+            options:
+                fixed: false
+            column: VERNACULARNAME
+    lifecycleCallbacks: {  }

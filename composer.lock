@@ -4,20 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e1e7b1b1c30efdb0715b72b14aab38be",
-    "content-hash": "5b1dc9cd59e90f2d52982296dbdf5ce3",
+    "hash": "5602b1c3371c5c3535ea13c8754b3cf0",
+    "content-hash": "1488e637294166a0bd2f2470a440f056",
     "packages": [
-        {
-            "name": "Krispian/PHP-FineDiff",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Krispian/PHP-FineDiff.git",
-                "reference": "master"
-            },
-            "type": "library",
-            "time": "2015-07-17 09:24:05"
-        },
         {
             "name": "doctrine/annotations",
             "version": "v1.2.7",
@@ -297,30 +286,38 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.4.4",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "a370e5b95e509a7809d11f3d280acfc9310d464b"
+                "reference": "01dbcbc5cd0a913d751418e635434a18a2f2a75c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/a370e5b95e509a7809d11f3d280acfc9310d464b",
-                "reference": "a370e5b95e509a7809d11f3d280acfc9310d464b",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/01dbcbc5cd0a913d751418e635434a18a2f2a75c",
+                "reference": "01dbcbc5cd0a913d751418e635434a18a2f2a75c",
                 "shasum": ""
             },
             "require": {
-                "doctrine/common": "~2.4",
+                "doctrine/common": ">=2.4,<2.6-dev",
                 "php": ">=5.3.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*",
-                "symfony/console": "~2.0"
+                "phpunit/phpunit": "4.*",
+                "symfony/console": "2.*"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
             },
+            "bin": [
+                "bin/doctrine-dbal"
+            ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Doctrine\\DBAL\\": "lib/"
@@ -356,20 +353,20 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2015-01-12 21:57:01"
+            "time": "2015-09-16 16:29:33"
         },
         {
             "name": "doctrine/doctrine-bundle",
-            "version": "v1.5.1",
+            "version": "v1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "8c5cedb4f2f7ebb66a963ae46ad9daa1e31cee01"
+                "reference": "d63be7eb9a95d46720f7d6badac4e5bc2bcff2e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/8c5cedb4f2f7ebb66a963ae46ad9daa1e31cee01",
-                "reference": "8c5cedb4f2f7ebb66a963ae46ad9daa1e31cee01",
+                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/d63be7eb9a95d46720f7d6badac4e5bc2bcff2e3",
+                "reference": "d63be7eb9a95d46720f7d6badac4e5bc2bcff2e3",
                 "shasum": ""
             },
             "require": {
@@ -396,7 +393,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5.x-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
@@ -434,7 +431,7 @@
                 "orm",
                 "persistence"
             ],
-            "time": "2015-08-12 15:52:00"
+            "time": "2015-08-31 14:47:06"
         },
         {
             "name": "doctrine/doctrine-cache-bundle",
@@ -588,6 +585,60 @@
             "time": "2014-12-20 21:24:13"
         },
         {
+            "name": "doctrine/instantiator",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/instantiator.git",
+                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/8e884e78f9f0eb1329e445619e04456e64d8051d",
+                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3,<8.0-DEV"
+            },
+            "require-dev": {
+                "athletic/athletic": "~0.1.8",
+                "ext-pdo": "*",
+                "ext-phar": "*",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Instantiator\\": "src/Doctrine/Instantiator/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.com/"
+                }
+            ],
+            "description": "A small, lightweight utility to instantiate objects in PHP without invoking their constructors",
+            "homepage": "https://github.com/doctrine/instantiator",
+            "keywords": [
+                "constructor",
+                "instantiate"
+            ],
+            "time": "2015-06-14 21:17:01"
+        },
+        {
             "name": "doctrine/lexer",
             "version": "v1.0.1",
             "source": {
@@ -643,26 +694,30 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "v2.4.8",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "5aedac1e5c5caaeac14798822c70325dc242d467"
+                "reference": "e6a83bedbe67579cb0bfb688e982e617943a2945"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/5aedac1e5c5caaeac14798822c70325dc242d467",
-                "reference": "5aedac1e5c5caaeac14798822c70325dc242d467",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/e6a83bedbe67579cb0bfb688e982e617943a2945",
+                "reference": "e6a83bedbe67579cb0bfb688e982e617943a2945",
                 "shasum": ""
             },
             "require": {
-                "doctrine/collections": "~1.1",
-                "doctrine/dbal": "~2.4",
+                "doctrine/cache": "~1.4",
+                "doctrine/collections": "~1.2",
+                "doctrine/common": ">=2.5-dev,<2.6-dev",
+                "doctrine/dbal": ">=2.5-dev,<2.6-dev",
+                "doctrine/instantiator": "~1.0.1",
                 "ext-pdo": "*",
-                "php": ">=5.3.2",
-                "symfony/console": "~2.0"
+                "php": ">=5.4",
+                "symfony/console": "~2.5"
             },
             "require-dev": {
+                "phpunit/phpunit": "~4.0",
                 "satooshi/php-coveralls": "dev-master",
                 "symfony/yaml": "~2.1"
             },
@@ -676,7 +731,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4.x-dev"
+                    "dev-master": "2.6.x-dev"
                 }
             },
             "autoload": {
@@ -712,7 +767,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2015-08-31 13:19:01"
+            "time": "2015-08-31 12:59:39"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -970,42 +1025,6 @@
             "time": "2015-08-31 09:17:37"
         },
         {
-            "name": "naoned/oai-pmh-server-bundle",
-            "version": "dev-custom",
-            "target-dir": "Naoned/OaiPmhServerBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webmastard/OaiPmhServerBundle.git",
-                "reference": "f9631d513f571b0493520df2ebf51e0cf44bd077"
-            },
-            "require": {
-                "doctrine/common": "~2.5",
-                "php": ">=5.3.3",
-                "symfony/symfony": "~2.5"
-            },
-            "type": "bundle",
-            "autoload": {
-                "psr-0": {
-                    "Naoned\\OaiPmhServerBundle\\": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "vibby",
-                    "email": "vbeauvivre@naoned.fr"
-                }
-            ],
-            "description": "Bundle for Symfony2 that provides an Oai-Pmh server for your data",
-            "keywords": [
-                "oai-pmh",
-                "oaipmh"
-            ],
-            "time": "2015-08-25 08:44:46"
-        },
-        {
             "name": "psr/log",
             "version": "1.0.0",
             "source": {
@@ -1260,12 +1279,12 @@
             "version": "v2.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/AsseticBundle.git",
+                "url": "https://github.com/symfony/assetic-bundle.git",
                 "reference": "3ae5c8ca3079b6e0033cc9fbfb6500e2bc964da5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/AsseticBundle/zipball/3ae5c8ca3079b6e0033cc9fbfb6500e2bc964da5",
+                "url": "https://api.github.com/repos/symfony/assetic-bundle/zipball/3ae5c8ca3079b6e0033cc9fbfb6500e2bc964da5",
                 "reference": "3ae5c8ca3079b6e0033cc9fbfb6500e2bc964da5",
                 "shasum": ""
             },
@@ -1327,34 +1346,34 @@
         },
         {
             "name": "symfony/monolog-bundle",
-            "version": "v2.7.1",
+            "version": "v2.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/MonologBundle.git",
-                "reference": "9320b6863404c70ebe111e9040dab96f251de7ac"
+                "url": "https://github.com/symfony/monolog-bundle.git",
+                "reference": "78883d8c1cfa523ac3a28a482b7793036b243f7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/MonologBundle/zipball/9320b6863404c70ebe111e9040dab96f251de7ac",
-                "reference": "9320b6863404c70ebe111e9040dab96f251de7ac",
+                "url": "https://api.github.com/repos/symfony/monolog-bundle/zipball/78883d8c1cfa523ac3a28a482b7793036b243f7d",
+                "reference": "78883d8c1cfa523ac3a28a482b7793036b243f7d",
                 "shasum": ""
             },
             "require": {
                 "monolog/monolog": "~1.8",
                 "php": ">=5.3.2",
-                "symfony/config": "~2.3",
-                "symfony/dependency-injection": "~2.3",
-                "symfony/http-kernel": "~2.3",
-                "symfony/monolog-bridge": "~2.3"
+                "symfony/config": "~2.3|3.*",
+                "symfony/dependency-injection": "~2.3|3.*",
+                "symfony/http-kernel": "~2.3|3.*",
+                "symfony/monolog-bridge": "~2.3|3.*"
             },
             "require-dev": {
-                "symfony/console": "~2.3",
+                "symfony/console": "~2.3|3.*",
                 "symfony/yaml": "~2.3"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7.x-dev"
+                    "dev-master": "2.8.x-dev"
                 }
             },
             "autoload": {
@@ -1382,19 +1401,19 @@
                 "log",
                 "logging"
             ],
-            "time": "2015-01-04 20:21:17"
+            "time": "2015-09-29 17:13:11"
         },
         {
             "name": "symfony/swiftmailer-bundle",
             "version": "v2.3.8",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/SwiftmailerBundle.git",
+                "url": "https://github.com/symfony/swiftmailer-bundle.git",
                 "reference": "970b13d01871207e81d17b17ddda025e7e21e797"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/SwiftmailerBundle/zipball/970b13d01871207e81d17b17ddda025e7e21e797",
+                "url": "https://api.github.com/repos/symfony/swiftmailer-bundle/zipball/970b13d01871207e81d17b17ddda025e7e21e797",
                 "reference": "970b13d01871207e81d17b17ddda025e7e21e797",
                 "shasum": ""
             },
@@ -1443,20 +1462,20 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "1fdf23fe28876844b887b0e1935c9adda43ee645"
+                "reference": "619528a274647cffc1792063c3ea04c4fa8266a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/1fdf23fe28876844b887b0e1935c9adda43ee645",
-                "reference": "1fdf23fe28876844b887b0e1935c9adda43ee645",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/619528a274647cffc1792063c3ea04c4fa8266a0",
+                "reference": "619528a274647cffc1792063c3ea04c4fa8266a0",
                 "shasum": ""
             },
             "require": {
-                "doctrine/common": "~2.3",
+                "doctrine/common": "~2.4",
                 "php": ">=5.3.9",
                 "psr/log": "~1.0",
                 "twig/twig": "~1.20|~2.0"
@@ -1509,9 +1528,9 @@
             },
             "require-dev": {
                 "doctrine/data-fixtures": "1.0.*",
-                "doctrine/dbal": "~2.2",
+                "doctrine/dbal": "~2.4",
                 "doctrine/doctrine-bundle": "~1.2",
-                "doctrine/orm": "~2.2,>=2.2.3",
+                "doctrine/orm": "~2.4,>=2.4.5",
                 "egulias/email-validator": "~1.2",
                 "ircmaxell/password-compat": "~1.0",
                 "monolog/monolog": "~1.11",
@@ -1561,20 +1580,20 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2015-09-08 14:26:39"
+            "time": "2015-09-25 11:16:52"
         },
         {
             "name": "twig/twig",
-            "version": "v1.22.1",
+            "version": "v1.22.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "b7fc2469fa009897871fb95b68237286fc54a5ad"
+                "reference": "79249fc8c9ff62e41e217e0c630e2e00bcadda6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/b7fc2469fa009897871fb95b68237286fc54a5ad",
-                "reference": "b7fc2469fa009897871fb95b68237286fc54a5ad",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/79249fc8c9ff62e41e217e0c630e2e00bcadda6a",
+                "reference": "79249fc8c9ff62e41e217e0c630e2e00bcadda6a",
                 "shasum": ""
             },
             "require": {
@@ -1622,10 +1641,203 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-09-15 06:50:16"
+            "time": "2015-09-22 13:59:32"
         }
     ],
     "packages-dev": [
+        {
+            "name": "atoum/atoum",
+            "version": "2.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/atoum/atoum.git",
+                "reference": "aeee39e47e319dcc74594c21d6e4db96cd3f9bc3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/atoum/atoum/zipball/aeee39e47e319dcc74594c21d6e4db96cd3f9bc3",
+                "reference": "aeee39e47e319dcc74594c21d6e4db96cd3f9bc3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-hash": "*",
+                "ext-json": "*",
+                "ext-session": "*",
+                "ext-tokenizer": "*",
+                "ext-xml": "*",
+                "php": ">=5.3.3"
+            },
+            "replace": {
+                "mageekguy/atoum": "*"
+            },
+            "suggest": {
+                "ext-mbstring": "Provides support for UTF-8 strings"
+            },
+            "bin": [
+                "bin/atoum"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "classes/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Frédéric Hardy",
+                    "email": "frederic.hardy@atoum.org",
+                    "homepage": "http://blog.mageekbox.net"
+                },
+                {
+                    "name": "François Dussert",
+                    "email": "francois.dussert@atoum.org"
+                },
+                {
+                    "name": "Gérald Croes",
+                    "email": "gerald.croes@atoum.org"
+                },
+                {
+                    "name": "Julien Bianchi",
+                    "email": "julien.bianchi@atoum.org"
+                },
+                {
+                    "name": "Ludovic Fleury",
+                    "email": "ludovic.fleury@atoum.org"
+                }
+            ],
+            "description": "Simple modern and intuitive unit testing framework for PHP 5.3+",
+            "homepage": "http://www.atoum.org",
+            "keywords": [
+                "TDD",
+                "atoum",
+                "test",
+                "unit testing"
+            ],
+            "time": "2015-09-17 13:05:35"
+        },
+        {
+            "name": "atoum/atoum-bundle",
+            "version": "1.2.0",
+            "target-dir": "atoum/AtoumBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/atoum/AtoumBundle.git",
+                "reference": "3954c07a5afcb38c0eade3af22a9f271b60f7f5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/atoum/AtoumBundle/zipball/3954c07a5afcb38c0eade3af22a9f271b60f7f5f",
+                "reference": "3954c07a5afcb38c0eade3af22a9f271b60f7f5f",
+                "shasum": ""
+            },
+            "require": {
+                "atoum/atoum": ">=1.0,<3.0",
+                "fzaninotto/faker": "1.*",
+                "php": ">=5.3.3",
+                "symfony/console": "2.*",
+                "symfony/css-selector": "2.*",
+                "symfony/dom-crawler": "2.*",
+                "symfony/finder": "2.*",
+                "symfony/framework-bundle": "2.*"
+            },
+            "require-dev": {
+                "symfony/form": "2.*"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "atoum\\AtoumBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florian Lonqueu-Brochard",
+                    "email": "dev@florianlb.fr"
+                },
+                {
+                    "name": "Community contributors",
+                    "homepage": "https://github.com/atoum/AtoumBundle/graphs/contributors"
+                }
+            ],
+            "description": "Bundle around atoum unit testing framework",
+            "homepage": "https://github.com/atoum/AtoumBundle",
+            "keywords": [
+                "atoum",
+                "test",
+                "unit testing"
+            ],
+            "time": "2015-06-22 09:02:21"
+        },
+        {
+            "name": "fzaninotto/faker",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "d0190b156bcca848d401fb80f31f504f37141c8d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/d0190b156bcca848d401fb80f31f504f37141c8d",
+                "reference": "d0190b156bcca848d401fb80f31f504f37141c8d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "suggest": {
+                "ext-intl": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2015-05-29 06:29:14"
+        },
         {
             "name": "sensio/generator-bundle",
             "version": "v2.5.3",
@@ -1677,10 +1889,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "naoned/oai-pmh-server-bundle": 20,
-        "krispian/php-finediff": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

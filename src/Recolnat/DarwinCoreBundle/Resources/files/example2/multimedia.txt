@@ -1,8 +1,0 @@
-id	type	format	identifier	references	title	created	creator	contributor	publisher	
-70D11C38B93441EB8E730A5BA7C52120	StillImage	image/jpeg	http://dsiphoto.mnhn.fr/sonnerat/MPU/MPU_JPG_1_09_04/MPU001575.jpg				Montpellier, MPU, UM 2, CL & MD			
-8156BAE53D60498DBF87FE33D9798E18	StillImage	image/jpeg	http://dsiphoto.mnhn.fr/sonnerat/MPU/MPU_JPG_1_09_04/MPU001581.jpg				Montpellier, MPU, UM 2, CL & MD			
-9202E50D596A4BF2B1E0E0434AF6F021	StillImage	image/jpeg	http://dsiphoto.mnhn.fr/sonnerat/MPU/MPU_JPG_1_09_04/MPU001579.jpg				Montpellier, MPU, UM 2, CL & MD			
-B55195D3C472426786FB72EF663EC9DE	StillImage	image/jpeg	http://dsiphoto.mnhn.fr/sonnerat/apiINFO/IB/IB20040824/P00390201.jpg				Paris, Muséum National d'Histoire Naturelle, TM			
-C2C27D027469491B883A7DAD9F0621CB	StillImage	image/jpeg	http://dsiphoto.mnhn.fr/sonnerat/MPU/MPU_JPG_1_09_04/MPU001574.jpg				Montpellier, MPU, UM 2, CL & MD			
-C83BE52AF8434915896F96EC5E1AFCD9	StillImage	image/jpeg	http://dsiphoto.mnhn.fr/sonnerat/MPU/MPU_JPG_1_09_04/MPU001578.jpg				Montpellier, MPU, UM 2, CL & MD			
-E57DBB39FBDB46B5AB965A1035CEACCE	StillImage	image/jpeg	http://dsiphoto.mnhn.fr/sonnerat/MPU/MPU_JPG_1_09_04/MPU001580.jpg				Montpellier, MPU, UM 2, CL & MD			

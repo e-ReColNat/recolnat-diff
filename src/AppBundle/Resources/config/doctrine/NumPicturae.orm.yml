@@ -1,0 +1,33 @@
+AppBundle\Entity\NumPicturae:
+    type: entity
+    table: NUM_PICTURAE
+    repositoryClass: AppBundle\Entity\Repository\NumPicturaeRepository
+    id:
+        id:
+            type: smallint
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: ID
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombreLigne:
+            type: smallint
+            nullable: true
+            options:
+                unsigned: false
+            column: NOMBRE_LIGNE
+        nomDuLot:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+            column: NOM_DU_LOT
+        traiteLe:
+            type: datetime
+            nullable: true
+            column: TRAITE_LE
+    lifecycleCallbacks: {  }

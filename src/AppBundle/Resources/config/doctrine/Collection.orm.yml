@@ -1,0 +1,61 @@
+AppBundle\Entity\Collection:
+    type: entity
+    table: COLLECTIONS
+    repositoryClass: AppBundle\Entity\Repository\CollectionsRepository
+    indexes:
+        col_type_idx:
+            columns:
+                - TYPE
+        coll_instit_idx_fk:
+            columns:
+                - INSTITUTIONID
+    uniqueConstraints:
+        collectioncode_unique_key:
+            columns:
+                - COLLECTIONCODE
+                - INSTITUTIONID
+    id:
+        collectionid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: COLLECTIONID
+            generator:
+                strategy: SEQUENCE
+    fields:
+        collectioncode:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+            column: COLLECTIONCODE
+        collectionname:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+            column: COLLECTIONNAME
+        type:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+                default: default
+            column: TYPE
+    manyToOne:
+        institutionid:
+            targetEntity: Institution
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                INSTITUTIONID:
+                    referencedColumnName: INSTITUTIONID
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

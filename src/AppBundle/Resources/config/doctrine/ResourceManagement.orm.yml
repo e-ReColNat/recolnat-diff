@@ -1,0 +1,65 @@
+AppBundle\Entity\ResourceManagement:
+    type: entity
+    table: RESOURCE_MANAGEMENT
+    repositoryClass: AppBundle\Entity\Repository\ResourceManagementRepository
+    uniqueConstraints:
+        resource_mngmt_src_file_id_key:
+            columns:
+                - SOURCE_FILE_ID
+    id:
+        resourceId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: RESOURCE_ID
+            generator:
+                strategy: SEQUENCE
+    fields:
+        archiveUrl:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: ARCHIVE_URL
+        coltype:
+            type: string
+            nullable: true
+            length: 20
+            options:
+                fixed: false
+            column: COLTYPE
+        isdone:
+            type: boolean
+            nullable: true
+            options:
+                default: '0'
+            column: ISDONE
+        key:
+            type: string
+            nullable: true
+            length: 36
+            options:
+                fixed: false
+            column: KEY
+        lastUpdated:
+            type: datetime
+            nullable: true
+            column: LAST_UPDATED
+        name:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: NAME
+        sourceFileId:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+            column: SOURCE_FILE_ID
+    lifecycleCallbacks: {  }

@@ -1,9 +1,0 @@
-{% extends 'RecolnatDarwinCoreBundle::template.html.twig' %}
-
-{% block content %}
-  {{ records.toXml(true) | raw}}
-{#     {% for position in resumption.starts..resumption.ends %}#}
-{#       {% include 'RecolnatDarwinCoreBundle:OaiPmhDwc:record.xml.twig' with {record: resumption.items[position]} %}#}
-{#     {% endfor %}#}
-{#     {% include 'RecolnatDarwinCoreBundle:OaiPmhDwc:resumptionToken.xml.twig' %}#}
-{% endblock %}

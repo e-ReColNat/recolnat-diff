@@ -1,0 +1,22 @@
+AppBundle\Entity\MultimediaHasOccurrences:
+    type: entity
+    table: MULTIMEDIA_HAS_OCCURRENCES
+    indexes:
+        media_occ_occid_idx:
+            columns:
+                - OCCURRENCEID
+        media_occ_mediaid_idx:
+            columns:
+                - MULTIMEDIAID
+    id:
+        multimediaid:
+            type: guid
+            nullable: false
+            id: true
+            column: MULTIMEDIAID
+        occurrenceid:
+            type: guid
+            nullable: false
+            id: true
+            column: OCCURRENCEID
+    lifecycleCallbacks: {  }
