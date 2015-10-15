@@ -22,7 +22,7 @@ class DiffManager
     const SPECIMEN_CLASSNAME =  'AppBundle:Specimen';
     const RECOLTE_CLASSNAME =  'AppBundle:Recolte';
     const DETERMINATION_CLASSNAME =  'AppBundle:Determination';
-
+//institutioncode-collectioncode-catalognumber
     protected $class;
     protected $fullClassName;
 

@@ -9,34 +9,40 @@
             <div>
                 {% for class, classDiff in diffs %}
                     <h2>{{ class }}</h2>
-                    <h3>Stats</h3>
+                    <h3>{{'title.stats' | trans }}</h3>
                     <ul>
                     {% for fieldname, stats in classDiff.fields %}
-                        <li>{{fieldname}} : {{stats.compt}} différences</li>
+                        <li>{{ ('label.'~fieldname)|trans) }}{{fieldname}} : {{stats.compt}} différences</li>
                     {% endfor %}
                     </ul>
+                    <h3>Datas</h3>
                     {% for id, fields in classDiff.records %}
-                        <h3>{{ id }}</h3>
+                        <h4>{{ id }}</h4>
                         <ul>
-                        {% for fieldname in fields %}
-                            <li>{{fieldname}}</li>
+                        {% for fieldname, data in fields %}
+                            <li>{{fieldname}}
+                                <ul>
+                                    <li>R : {{ data.recolnat.timestamp is defined ? data.recolnat|date('m/d/Y') : data.recolnat }}</li>
+                                    <li>I : {{ data.institution.timestamp is defined ? data.institution|date('m/d/Y') : data.institution }}</li>
+                                </ul>
+                            </li>
                         {% endfor %}
                         </ul>
                     {% endfor %}
                 {% endfor %}
             </div>
-
         </div>
     </div>
 {% endblock %}
 
 {% block stylesheets %}
 <style>
-    body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+    body { background: #F5F5F5; font: 14px/1.5 sans-serif; }
     h1, h2 { line-height: 1.2; margin: 0 0 .5em; }
     h1 { font-size: 36px; }
-    h2 { font-size: 21px; margin-bottom: 1em; }
-    h3 { font-size: 16px; margin-bottom: 1em; }
+    h2 { font-size: 26px; margin-bottom: 1em; }
+    h3 { font-size: 20px; margin-bottom: 1em; }
+    h4 { font-size: 16px }
     p { margin: 0 0 1em 0; }
     a { color: #0000F0; }
     a:hover { text-decoration: none; }

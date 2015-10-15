@@ -13,13 +13,13 @@ abstract class DiffAbstract
     abstract public function init($ids);
     abstract protected function getIdSetter();
     
-    protected function addStat($fieldName, $occurrenceId)
+    protected function addStat($fieldName, $id, $dataR, $dataI)
     {
         if (!isset($this->stats['records'])) {
             $this->stats['records'] = array() ;
         }
-        if (!isset($this->stats['records'][$occurrenceId])) {
-            $this->stats['records'][$occurrenceId] = array() ;
+        if (!isset($this->stats['records'][$id])) {
+            $this->stats['records'][$id] = array() ;
         }
         
         if (!isset($this->stats['fields'])) {
@@ -33,8 +33,12 @@ abstract class DiffAbstract
             $this->stats['fields'][$fieldName]['id'] = [];
         }
          $this->stats['fields'][$fieldName]['compt']++ ; 
-         $this->stats['fields'][$fieldName]['id'][] = $occurrenceId;
-         $this->stats['records'][$occurrenceId][] = $fieldName;
+         $this->stats['fields'][$fieldName]['id'][] = $id;
+
+         //$this->stats['records'][$id] = $fieldName;
+         $this->stats['records'][$id][$fieldName] = [];
+         $this->stats['records'][$id][$fieldName]['recolnat'] = $dataR;
+         $this->stats['records'][$id][$fieldName]['institution'] = $dataI;
     }
     
     public function getStats()
@@ -53,9 +57,11 @@ abstract class DiffAbstract
             $recordInstitution = $this->recordsInstitution[$binOccurrenceId] ;
             foreach ($fieldNames as $fieldName) {
                 $getter = 'get'.$fieldName ;
+                $dataR = $recordRecolnat->{$getter}() ;
+                $dataI = $recordInstitution->{$getter}() ;
                 if (!(in_array($fieldName, $this->excludeFieldsName)) && 
-                        $recordRecolnat->{$getter}() !== $recordInstitution->{$getter}()) {
-                    $this->addStat($fieldName, $recordRecolnat->{$this->getIdSetter()}());
+                        $dataR !== $dataI) {
+                    $this->addStat($fieldName, $recordRecolnat->{$this->getIdSetter()}(), $dataR, $dataI);
                 }
             }
         }
