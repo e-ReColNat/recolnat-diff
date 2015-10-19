@@ -30,10 +30,10 @@ abstract class DiffAbstract
             $this->stats['fields'][$fieldName] = [] ;
             $this->stats['fields'][$fieldName]['compt']=0 ; 
             $this->stats['fields'][$fieldName]['compt']=0 ; 
-            $this->stats['fields'][$fieldName]['id'] = [];
+            $this->stats['fields'][$fieldName]['ids'] = [];
         }
          $this->stats['fields'][$fieldName]['compt']++ ; 
-         $this->stats['fields'][$fieldName]['id'][] = $id;
+         $this->stats['fields'][$fieldName]['ids'][] = $id;
 
          //$this->stats['records'][$id] = $fieldName;
          $this->stats['records'][$id][$fieldName] = [];
@@ -51,17 +51,19 @@ abstract class DiffAbstract
         $metadata = $this->emR->getMetadataFactory()->getMetadataFor('AppBundle:'.$class) ;
          
         $fieldNames = $metadata->getFieldNames();
-        foreach ($this->recordsRecolnat as $binOccurrenceId=>$recordRecolnat) {
+        foreach ($this->recordsRecolnat as $specimenId=>$recordRecolnat) {
+            
             /* @var $recordRecolnat \AppBundle\Entity\Specimen */
             /* @var $recordInstitution \AppBundle\Entity\Specimen */
-            $recordInstitution = $this->recordsInstitution[$binOccurrenceId] ;
+            $recordInstitution = $this->recordsInstitution[$specimenId] ;
             foreach ($fieldNames as $fieldName) {
-                $getter = 'get'.$fieldName ;
-                $dataR = $recordRecolnat->{$getter}() ;
-                $dataI = $recordInstitution->{$getter}() ;
-                if (!(in_array($fieldName, $this->excludeFieldsName)) && 
-                        $dataR !== $dataI) {
-                    $this->addStat($fieldName, $recordRecolnat->{$this->getIdSetter()}(), $dataR, $dataI);
+                if (!(in_array($fieldName, $this->excludeFieldsName)))  {
+                    $getter = 'get'.$fieldName ;
+                    $dataR = $recordRecolnat->{$getter}() ;
+                    $dataI = $recordInstitution->{$getter}() ;
+                    if ($dataR !== $dataI) {
+                    $this->addStat($fieldName,$specimenId, $dataR, $dataI);
+                    }
                 }
             }
         }

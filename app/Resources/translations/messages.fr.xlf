@@ -6,8 +6,6 @@
                 <source>title.stats</source> <target>Statistiques</target> </trans-unit>
             <trans-unit id="2" approved="yes">
                 <source>label.catalognumber</source> <target state="translated">Numéro d'inventaire</target> </trans-unit>
-            <trans-unit id="2">
-                <source>label.catalognumber</source> <target></target> </trans-unit>
         </body>
     </file>
 </xliff>

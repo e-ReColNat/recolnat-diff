@@ -7,12 +7,12 @@
                 <h1>Module de diff</h1>
             </div>
             <div>
-                {% for class, classDiff in diffs %}
+                {% for class, classDiff in diffs.classes %}
                     <h2>{{ class }}</h2>
                     <h3>{{'title.stats' | trans }}</h3>
                     <ul>
                     {% for fieldname, stats in classDiff.fields %}
-                        <li>{{ ('label.'~fieldname)|trans) }}{{fieldname}} : {{stats.compt}} différences</li>
+                        <li>{{ ('label.'~fieldname)|trans }}{{fieldname}} : {{stats.compt}} différences</li>
                     {% endfor %}
                     </ul>
                     <h3>Datas</h3>

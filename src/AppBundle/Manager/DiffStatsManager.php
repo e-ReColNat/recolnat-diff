@@ -38,11 +38,30 @@ class DiffStatsManager
                 $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD) ;
                 $diffClassManager->init($ids) ;
                 $this->addStats($class, $diffClassManager->getStats());
+                $this->computeStats($class);
             }
         }
         return $this;
     }
     
+    private function computeStats($class) {
+        if (!isset($this->stats['summary'])) {
+            $this->stats['summary'] = [];
+        }
+        if ($this->stats['classes'][$class]['fields']) {
+            foreach($this->stats['classes'][$class]['fields'] as $fieldName => $row) {
+                foreach ($row['ids'] as $id) {
+                    if (!isset($this->stats['summary'][$id])) {
+                        $this->stats['summary'][$id] = [];
+                    }
+                    if (!isset($this->stats['summary'][$id][$class])) {
+                        $this->stats['summary'][$id][$class] = 0 ;
+                    }
+                    $this->stats['summary'][$id][$class] ++  ;
+                }
+            }
+        }
+    }
     public function getStats()
     {
         return $this->stats;
@@ -50,6 +69,9 @@ class DiffStatsManager
 
     public function addStats($class, $stats)
     {
-        $this->stats[$class] = $stats;
+        if (!isset($this->stats['classes'])) {
+            $this->stats['classes'] = [];
+        }
+        $this->stats['classes'][$class] = $stats;
     }
 }

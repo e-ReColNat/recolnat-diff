@@ -42,9 +42,9 @@ class DiffLocalisations extends DiffAbstract
     public function init($ids)
     {
         $this->recordsRecolnat = $this->emR->getRepository('AppBundle:Localisation')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
         $this->recordsInstitution = $this->emD->getRepository('AppBundle:Localisation')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
 
         $this->compare('Localisation');
         return $this;

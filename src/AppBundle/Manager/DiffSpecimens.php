@@ -42,9 +42,9 @@ class DiffSpecimens extends DiffAbstract
     public function init($ids)
     {
         $this->recordsRecolnat = $this->emR->getRepository('AppBundle:Specimen')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
         $this->recordsInstitution = $this->emD->getRepository('AppBundle:Specimen')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
 
         $this->compare('Specimen');
         return $this;

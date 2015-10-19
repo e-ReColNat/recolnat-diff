@@ -42,9 +42,9 @@ class DiffTaxons extends DiffAbstract
     public function init($ids)
     {
         $this->recordsRecolnat = $this->emR->getRepository('AppBundle:Taxon')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
         $this->recordsInstitution = $this->emD->getRepository('AppBundle:Taxon')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
 
         $this->compare('Taxon');
         return $this;

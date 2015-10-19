@@ -42,9 +42,9 @@ class DiffStratigraphies extends DiffAbstract
     public function init($ids)
     {
         $this->recordsRecolnat = $this->emR->getRepository('AppBundle:Stratigraphy')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
         $this->recordsInstitution = $this->emD->getRepository('AppBundle:Stratigraphy')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
 
         $this->compare('Stratigraphy');
         return $this;

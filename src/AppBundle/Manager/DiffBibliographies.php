@@ -42,9 +42,9 @@ class DiffBibliographies extends DiffAbstract
     public function init($ids)
     {
         $this->recordsRecolnat = $this->emR->getRepository('AppBundle:Bibliography')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
         $this->recordsInstitution = $this->emD->getRepository('AppBundle:Bibliography')
-                ->findById($ids) ;
+                ->findBySpecimenCodes($ids) ;
 
         $this->compare('Bibliography');
         return $this;
