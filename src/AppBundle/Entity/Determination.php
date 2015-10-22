@@ -1,81 +1,86 @@
 <?php
 
 namespace AppBundle\Entity;
-
+use Doctrine\ORM\Mapping as ORM;
 /**
- * Determination
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\DeterminationRepository")
+* @ORM\Table(name="Determinations")
+*/
 class Determination
 {
     /**
-     * @var guid
-     */
+    * @ORM\Id
+    * @ORM\Column(type="rawid", length=16, name="identificationid", nullable=false)
+    */
     private $identificationid;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateidentified;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $dwcaidentificationid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $identificationqualifier;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $identificationreferences;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $identificationremarks;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $identificationverifstatus;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $identifiedby;
 
-    /**
-     * @var \DateTime
+     /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $modified;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $typestatus;
 
     /**
-     * @var \AppBundle\Entity\Specimen
-     */
-    private $occurrenceid;
+    * @var \AppBundle\Entity\Specimen
+    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="determinations", fetch="LAZY")
+    * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
+    */
+    protected $specimen;
 
     /**
-     * @var \AppBundle\Entity\Taxon
-     */
-    private $taxonid;
+     * @ORM\OneToOne(targetEntity="Taxon", inversedBy="determination")
+     * @ORM\JoinColumn(name="taxonid", referencedColumnName="taxonid")
+     **/
+    private $taxon;
 
 
     /**
@@ -85,7 +90,8 @@ class Determination
      */
     public function getIdentificationid()
     {
-        return strtoupper(bin2hex($this->identificationid));
+        //return strtoupper(bin2hex($this->identificationid));
+        return $this->identificationid;
     }
 
     /**
@@ -379,13 +385,13 @@ class Determination
     /**
      * Set taxonid
      *
-     * @param \AppBundle\Entity\Taxon $taxonid
+     * @param \AppBundle\Entity\Taxon $taxon
      *
      * @return Determination
      */
-    public function setTaxonid(\AppBundle\Entity\Taxon $taxonid = null)
+    public function setTaxon(\AppBundle\Entity\Taxon $taxon = null)
     {
-        $this->taxonid = $taxonid;
+        $this->taxon = $taxon;
 
         return $this;
     }
@@ -395,8 +401,19 @@ class Determination
      *
      * @return \AppBundle\Entity\Taxon
      */
-    public function getTaxonid()
+    public function getTaxon()
     {
-        return $this->taxonid;
+        return $this->taxon;
     }
+    
+    /**
+     * Get specimen
+     *
+     * @return \AppBundle\Entity\Specimen
+     */
+    public function getSpecimen()
+    {
+        return $this->specimen;
+    }
+
 }

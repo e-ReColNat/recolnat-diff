@@ -2,127 +2,139 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Localisation
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\LocalisationRepository")
+* @ORM\Table(name="Localisations")
+*/
 class Localisation
 {
-    /**
-     * @var integer
+     /** 
+     * @ORM\Id
+     * @ORM\Column(type="integer") 
      */
     private $locationid;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $averagealtituderounded;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $continent;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $country;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=3, nullable=true)
      */
     private $countrycode;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $county;
 
-    /**
-     * @var float
+    /** 
+     * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $decimallatitude;
 
-    /**
-     * @var float
+    /** 
+     * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $decimallongitude;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $geodeticdatum;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $georeferencesources;
 
-    /**
-     * @var boolean
+    /** 
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $hascoordinates;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $locality;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $locationremarks;
 
-    /**
-     * @var float
+    /** 
+     * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $maximumdepthinmeters;
 
-    /**
-     * @var float
+    /** 
+     * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $maximumelevationinmeters;
 
-    /**
-     * @var float
+    /** 
+     * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $minimumdepthinmeters;
 
-    /**
-     * @var float
+    /** 
+     * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $minimumelevationinmeters;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $municipality;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $stateprovince;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $verbatimcountry;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $verbatimelevation;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=2000, nullable=true)
      */
     private $verbatimlocality;
-
-
+    
+    /**
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Recolte", mappedBy="localisation", fetch="LAZY")
+    */
+    private $recoltes;
+    
+    public function __construct()
+    {
+        $this->recoltes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
     /**
      * Get locationid
      *
@@ -659,5 +671,14 @@ class Localisation
     public function getVerbatimlocality()
     {
         return $this->verbatimlocality;
+    }
+    
+    /**
+     * 
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getRecoltes() 
+    {
+        return $this->recoltes;
     }
 }

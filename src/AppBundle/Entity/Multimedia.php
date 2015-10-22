@@ -2,117 +2,121 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Multimedia
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\LocalisationRepository")
+* @ORM\Table(name="Localisations")
+*/
 class Multimedia
 {
-    /**
-     * @var guid
+     /** 
+     * @ORM\Id
+     * @ORM\Column(type="integer") 
      */
     private $multimediaid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $audience;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $contributor;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    private $created = 'sysdate';
+    private $created ;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $creator;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=false)
      */
     private $description;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=false)
      */
     private $discriminator;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $format;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=300, nullable=false)
      */
     private $identifier;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $license;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $modified;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
-    private $publisher = 'e-ReColNat';
+    private $publisher ;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $references;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $rights;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $rightsholder;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $source;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $sourcefileid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $title;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $type;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $occurrenceid;
+   /**
+     * @ORM\ManyToMany(targetEntity="Specimen", mappedBy="multimedias")
+     **/
+    private $specimens;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->occurrenceid = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->specimens = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

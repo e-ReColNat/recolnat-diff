@@ -2,27 +2,34 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Institution
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\InstitutionRepository")
+* @ORM\Table(name="Institutions")
+*/
 class Institution
 {
-    /**
-     * @var integer
+     /** 
+     * @ORM\Id
+     * @ORM\Column(type="integer") 
      */
     private $institutionid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=30, nullable=true)
      */
     private $institutioncode;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
 
-
+    /**
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Collection", mappedBy="institution", fetch="LAZY")
+    */
+    private $collections;
     /**
      * Get institutionid
      *
@@ -79,5 +86,10 @@ class Institution
     public function getSourcefileid()
     {
         return $this->sourcefileid;
+    }
+    
+    public function getCollections()
+    {
+        return $this->collections;
     }
 }

@@ -2,161 +2,168 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Taxon
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\TaxonRepository")
+* @ORM\Table(name="Taxons")
+*/
 class Taxon
 {
-    /**
-     * @var guid
+    /** 
+     * @ORM\Id
+     * @ORM\Column(type="rawid") 
      */
     private $taxonid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $acceptednameusage;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true, name="class_")
      */
     private $class;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $dwcataxonid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $family;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $genus;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $higherclassification;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $infraspecificepithet;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $kingdom;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $modified;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $nameaccordingto;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $namepublishedin;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $namepublishedinyear;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $nomenclaturalcode;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $nomenclaturalstatus;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true, name="order_")
      */
     private $order;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $originalnameusage;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $parentnameusage;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $phylum;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $scientificname;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $scientificnameauthorship;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $specificepithet;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $subgenus;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $taxonomicstatus;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $taxonrank;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $taxonremarks;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $verbatimtaxonrank;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $vernacularname;
-
+    /**
+     * @ORM\OneToOne(targetEntity="Determination", mappedBy="taxon")
+     **/
+    private $determination;
 
     /**
      * Get taxonid
@@ -165,7 +172,7 @@ class Taxon
      */
     public function getTaxonid()
     {
-        return strtoupper(bin2hex($this->taxonid));
+        return $this->taxonid;
     }
 
     /**
@@ -862,5 +869,20 @@ class Taxon
     public function getVernacularname()
     {
         return $this->vernacularname;
+    }
+    
+    /**
+     * Get determination
+     *
+     * @return \AppBundle\Entity\Determination
+     */
+    public function getDetermination()
+    {
+        return $this->determination;
+    }
+    
+    public function __toString()
+    {
+        return trim(sprintf('%s %s', $this->scientificname, $this->scientificnameauthorship)); 
     }
 }

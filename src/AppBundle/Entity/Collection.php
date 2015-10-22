@@ -1,37 +1,45 @@
 <?php
 
 namespace AppBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Collection
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\CollectionRepository")
+* @ORM\Table(name="Collections")
+*/
 class Collection
 {
-    /**
-     * @var integer
+     /** 
+     * @ORM\Id
+     * @ORM\Column(type="integer") 
      */
     private $collectionid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $collectioncode;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=250, nullable=true)
      */
     private $collectionname;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private $type = 'default';
+    private $type;
 
     /**
-     * @var \AppBundle\Entity\Institution
-     */
-    private $institutionid;
+    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Institution", inversedBy="collections", fetch="LAZY")
+    * @ORM\JoinColumn(name="institutionid", referencedColumnName="institutionid")
+    */
+    private $institution;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Specimen", mappedBy="collection")
+     **/
+    private $specimen;
 
     /**
      * Get collectionid
@@ -116,15 +124,15 @@ class Collection
     }
 
     /**
-     * Set institutionid
+     * Set institution
      *
-     * @param \AppBundle\Entity\Institution $institutionid
+     * @param \AppBundle\Entity\Institution $institution
      *
      * @return Collection
      */
-    public function setInstitutionid(\AppBundle\Entity\Institution $institutionid = null)
+    public function setInstitution(\AppBundle\Entity\Institution $institution = null)
     {
-        $this->institutionid = $institutionid;
+        $this->institution = $institution;
 
         return $this;
     }
@@ -134,8 +142,8 @@ class Collection
      *
      * @return \AppBundle\Entity\Institution
      */
-    public function getInstitutionid()
+    public function getInstitution()
     {
-        return $this->institutionid;
+        return $this->institution;
     }
 }

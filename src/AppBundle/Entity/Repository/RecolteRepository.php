@@ -36,9 +36,9 @@ class RecolteRepository extends RecolnatRepositoryAbstract
         $query = $qb
                 ->select('r')
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.eventid = r.eventid');
-        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+                ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
+        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
     }
 }

@@ -62,7 +62,7 @@ abstract class DiffAbstract
                     $dataR = $recordRecolnat->{$getter}() ;
                     $dataI = $recordInstitution->{$getter}() ;
                     if ($dataR !== $dataI) {
-                    $this->addStat($fieldName,$specimenId, $dataR, $dataI);
+                        $this->addStat($fieldName,$specimenId, $dataR, $dataI);
                     }
                 }
             }

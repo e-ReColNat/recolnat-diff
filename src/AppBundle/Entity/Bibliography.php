@@ -2,85 +2,90 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Bibliography
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\BibliographyRepository")
+* @ORM\Table(name="Bibliographies")
+*/
 class Bibliography
 {
-    /**
-     * @var guid
+    /** 
+     * @ORM\Id
+     * @ORM\Column(type="rawid") 
      */
     private $referenceid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=1500, nullable=true)
      */
     private $bibliographiccitation;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $creator;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $datePublication;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $identifier;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=3, nullable=true)
      */
     private $language;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $rights;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $source;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $subject;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $taxonremarks;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=600, nullable=true)
      */
     private $title;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $type;
 
     /**
-     * @var \AppBundle\Entity\Specimen
-     */
-    private $occurrenceid;
+    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="bibliographies", fetch="LAZY")
+    * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
+    */
+    protected $specimen;
 
 
     /**
@@ -90,7 +95,7 @@ class Bibliography
      */
     public function getReferenceid()
     {
-        return strtoupper(bin2hex($this->referenceid));
+        return$this->referenceid;
     }
 
     /**
@@ -406,26 +411,26 @@ class Bibliography
     }
 
     /**
-     * Set occurrenceid
+     * Set specimen
      *
-     * @param \AppBundle\Entity\Specimen $occurrenceid
+     * @param \AppBundle\Entity\Specimen $occurrence
      *
      * @return Bibliography
      */
-    public function setOccurrenceid(\AppBundle\Entity\Specimen $occurrenceid = null)
+    public function setSpecimen(\AppBundle\Entity\Specimen $occurrence = null)
     {
-        $this->occurrenceid = $occurrenceid;
+        $this->specimen = $occurrence;
 
         return $this;
     }
 
     /**
-     * Get occurrenceid
+     * Get specimen
      *
      * @return \AppBundle\Entity\Specimen
      */
-    public function getOccurrenceid()
+    public function getSpecimen()
     {
-        return $this->occurrenceid;
+        return $this->specimen;
     }
 }

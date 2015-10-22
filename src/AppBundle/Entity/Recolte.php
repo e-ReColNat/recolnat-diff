@@ -2,105 +2,110 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Recolte
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\RecolteRepository")
+* @ORM\Table(name="Recoltes")
+*/
 class Recolte
 {
-    /**
-     * @var guid
+    /** 
+     * @ORM\Id
+     * @ORM\Column(type="rawid") 
      */
     private $eventid;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $decade;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $eday;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $emonth;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $eventdate;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $eventremarks;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $eyear;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $fieldnotes;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $fieldnumber;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=500, nullable=true)
      */
     private $habitat;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=300, nullable=true)
      */
     private $recordedby;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $sday;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $smonth;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $sourcefileid;
 
-    /**
-     * @var integer
+    /** 
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $syear;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $verbatimeventdate;
 
     /**
-     * @var \AppBundle\Entity\Localisation
-     */
-    private $locationid;
+    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localisation", inversedBy="recoltes", fetch="LAZY")
+    * @ORM\JoinColumn(name="locationid", referencedColumnName="locationid")
+    */
+    private $localisation;
 
 
     /**
      * Get eventid
      *
-     * @return guid
+     * @return rawid
      */
     public function getEventid()
     {
-        return strtoupper(bin2hex($this->eventid));
+        return $this->eventid;
     }
 
     /**
@@ -470,7 +475,7 @@ class Recolte
      *
      * @return Recolte
      */
-    public function setLocationid(\AppBundle\Entity\Localisation $locationid = null)
+    public function setLocation(\AppBundle\Entity\Localisation $locationid = null)
     {
         $this->locationid = $locationid;
 
@@ -482,8 +487,9 @@ class Recolte
      *
      * @return \AppBundle\Entity\Localisation
      */
-    public function getLocationid()
+    public function getLocalisation()
     {
-        return $this->locationid;
+        return $this->localisation;
     }
+
 }

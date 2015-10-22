@@ -10,6 +10,16 @@ use Doctrine\ORM\Query\Expr\Join ;
  */
 class DeterminationRepository extends RecolnatRepositoryAbstract
 {
+//    public function find($id) {
+//        $query = $this->getEntityManager()->createQueryBuilder()
+//                ->select('d')
+//                ->addSelect('bin2hex(occurrenceid)', 'occurrenceid')
+//                ->from('AppBundle\Entity\Determination', 'd')
+//                ->where('identificationid = :identificationid')
+//                ->setParameter('identificationid', $id)
+//                ->getQuery() ;
+//        return $query->getResult() ;
+//    }
     /**
      * 
      * @param array $ids
@@ -37,9 +47,25 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $query = $qb
                 ->select('d')
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = d.occurrenceid');
-        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+                ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
+        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
+    }
+    
+    /**
+     * 
+     * @param rawid $occurrenceId
+     * @return \AppBundle\Entity\Determination | null
+     */
+    public function findBestDetermination($occurrenceId)
+    {
+        $qb = $this->createQueryBuilder('d');
+        
+        $query = $qb
+                ->select('d')
+                ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
+        $query->setParameter('occurrenceid', $occurrenceId);
+        return $this->orderResultSetBySpecimenId($query->getQuery()->getOneOrNullResult()) ;
     }
 }

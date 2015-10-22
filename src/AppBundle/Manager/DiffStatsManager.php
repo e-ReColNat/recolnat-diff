@@ -27,10 +27,12 @@ class DiffStatsManager
     {
         $this->emR = $emR;
         $this->emD = $emD;
+        $this->stats['summary'] = [];
     }
     
     public function init($arrayIds) {
         $this->arrayIds = $arrayIds;
+        //$this->arrayIds = array('recoltes'=>$arrayIds['recoltes']);
         if (count($this->arrayIds) > 0) {
             foreach ($this->arrayIds as $class => $ids) {
                 $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($class)) ;
@@ -45,10 +47,7 @@ class DiffStatsManager
     }
     
     private function computeStats($class) {
-        if (!isset($this->stats['summary'])) {
-            $this->stats['summary'] = [];
-        }
-        if ($this->stats['classes'][$class]['fields']) {
+        if (isset($this->stats['classes'][$class]['fields'])) {
             foreach($this->stats['classes'][$class]['fields'] as $fieldName => $row) {
                 foreach ($row['ids'] as $id) {
                     if (!isset($this->stats['summary'][$id])) {
@@ -73,5 +72,9 @@ class DiffStatsManager
             $this->stats['classes'] = [];
         }
         $this->stats['classes'][$class] = $stats;
+    }
+    
+    public function getAllSpecimensId()  {
+        return array_keys($this->stats['summary']) ;
     }
 }

@@ -2,101 +2,105 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * Stratigraphy
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\StratigraphyRepository")
+* @ORM\Table(name="Stratigraphies")
+*/
 class Stratigraphy
 {
-    /**
-     * @var integer
+    /** 
+     * @ORM\Id
+     * @ORM\Column(type="integer") 
      */
     private $geologicalcontextid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $bed;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $earliestageorloweststage;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $earliesteonorlowesteonothem;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $earliestepochorlowestseries;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $earliesteraorlowesterathem;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $earliestperiodorlowestsystem;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $formation;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $group;
+    private $group_;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $highestbiostratigraphiczone;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $latestageorhigheststage;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $latesteonorhighesteonothem;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $latestepochorhighestseries;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $latesteraorhighesterathem;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $latestperiodorhighestsystem;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $lowestbiostratigraphiczone;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $member;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
-
+    
 
     /**
      * Get geologicalcontextid
@@ -297,9 +301,12 @@ class Stratigraphy
      */
     public function getGroup()
     {
-        return $this->group;
+        return $this->group_;
     }
 
+    public function getGroup_() {
+        return $this->getGroup();
+    }
     /**
      * Set highestbiostratigraphiczone
      *
@@ -515,4 +522,5 @@ class Stratigraphy
     {
         return $this->sourcefileid;
     }
+
 }

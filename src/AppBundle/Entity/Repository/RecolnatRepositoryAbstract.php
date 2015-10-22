@@ -14,12 +14,12 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
      */
     abstract public function findBySpecimenCodes($specimenCodes);
     
-    public function getExprConcatSpecimenCode(\Doctrine\ORM\QueryBuilder $qb) 
+    public static function getExprConcatSpecimenCode(\Doctrine\ORM\QueryBuilder $qb, $alias='s') 
     {
         $concatFields = array(
-            's.institutioncode',
-            's.collectioncode',
-            's.catalognumber',
+            sprintf('%s.institutioncode', $alias),
+            sprintf('%s.collectioncode', $alias),
+            sprintf('%s.catalognumber', $alias),
         );
         foreach ($concatFields as $field) {
             if (!isset($searchIn)) {

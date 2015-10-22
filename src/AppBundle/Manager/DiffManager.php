@@ -44,27 +44,9 @@ class DiffManager
         foreach ($entitiesName as $indexName=>$entityName) {
             $results[$indexName] = $this->getDiff($entityName, $institutionCode);
         }
-        
-        /*foreach ($results as $className => $diff) {
-            if ($diff[''])
-        }*/
+
         return $results;
-        /*$diffSpecimensId=$this->getDiff('Specimen', $institutionCode);
-        $diffBibliographiesId=$this->getDiff('Bibliography', $institutionCode);
-        $diffDeterminationsId=$this->getDiff('Determination', $institutionCode);
-        $diffLocalisationsId=$this->getDiff('Localisation', $institutionCode);
-        $diffRecoltesId=$this->getDiff('Recolte', $institutionCode);
-        $diffStratigraphiesId=$this->getDiff('Stratigraphy', $institutionCode);
-        $diffTaxonsId=$this->getDiff('Taxon', $institutionCode);
-        return [
-            'specimens'               => $diffSpecimensId,
-            'bibliographies'          => $diffBibliographiesId,
-            'determinations'        => $diffDeterminationsId,
-            'localisations'             => $diffLocalisationsId,
-            'recoltes'                    => $diffRecoltesId,
-            'stratigraphies'          => $diffStratigraphiesId,
-            'taxons'                      => $diffTaxonsId
-        ];*/
+
     }
     
     public function getGenericDiffQuery()
@@ -74,23 +56,19 @@ class DiffManager
 
         $aliasR = 'r';
         $aliasI = 'i';
-        //$identifier = $metadata->getIdentifier()[0] ;
-        //$identifier = sprintf("%s||%s||%s", 'institutioncode', 'collectioncode', 'catalognumber') ;
-        //$identifier = 'institutioncode||collectioncode||catalognumber' ;
+
         $identifier = 'specimenId' ;
         $strQuery='SELECT ';
         $arrayFields = $this->formatFieldsName($metadata, $aliasR, $aliasI) ;
         $strFromClauseRecolnat = $this->getFromClause($aliasR, false);
         $strFromClauseDiff = $this->getFromClause($aliasI, true);
         $strUnionQuery = 'SELECT '.$identifier.' FROM ('.
-        //$strUnionQuery = 'SELECT '.$this->getID($identifier).'  as specimentId FROM ('.
                 $strQuery.implode(', ',$arrayFields['recolnat']).sprintf($strFromClauseRecolnat, self::RECOLNAT_DB.'.'.$metadata->getTableName()).
                 ' UNION '.
                 $strQuery. implode(', ', $arrayFields['institution']).sprintf($strFromClauseDiff, self::RECOLNAT_DIFF_DB.'.'.$metadata->getTableName()).
                 ') ';
         $sqlGroupByCount = 'GROUP BY %s HAVING COUNT(*) >1' ;
         return sprintf($strUnionQuery.$sqlGroupByCount, $identifier, $identifier, $identifier) ;
-        //return sprintf($strUnionQuery.$sqlGroupByCount, $identifier) ;
     }
 
     private function selectRawToHex($identifier) {
@@ -110,7 +88,8 @@ class DiffManager
         $fields = array_flip($metadata->getFieldNames() );
         unset($fields[$identifier]) ;
         $fields = array_flip($fields) ;
-        $fieldsName = array_keys($metadata->reflFields) ;
+
+        $fieldsName = $fields ;
         $arrayFieldsTypeR=[] ;
         $arrayFieldsTypeI=[] ;
         foreach ($fieldsName as $key=>$fieldName) {
@@ -147,6 +126,10 @@ class DiffManager
                 case 'order' :
                     $arrayFieldsTypeR[$key] = sprintf('%s.%s',$aliasR, 'order_') ;
                     $arrayFieldsTypeI[$key] = sprintf('%s.%s',$aliasI, 'order_') ;
+                    break;
+                case 'determinations' : 
+                    unset($arrayFieldsTypeR[$key]);
+                    unset($arrayFieldsTypeI[$key]);
                     break;
             }
         }

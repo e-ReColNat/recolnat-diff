@@ -1,158 +1,181 @@
 <?php
 
 namespace AppBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Specimen
- */
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\SpecimenRepository")
+* @ORM\Table(name="Specimens")
+*/
 class Specimen
 {
-    /**
-     * @var guid
+    
+    /** 
+     * @ORM\Id
+     * @ORM\Column(type="rawid") 
      */
     private $occurrenceid;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $accessrights;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $associatedmedia;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $associatedreferences;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $associatedtaxa;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $basisofrecord;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=300, nullable=true)
      */
     private $bibliographiccitation;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=30, nullable=false)
      */
     private $catalognumber;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=60, nullable=false)
      */
     private $collectioncode;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $disposition;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=155, nullable=false)
      */
     private $dwcaid;
 
-    /**
-     * @var boolean
+    /** 
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $hascoordinates = '0';
 
-    /**
-     * @var boolean
+    /** 
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $hasmedia = '0';
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=false)
      */
     private $institutioncode;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $lifestage;
 
-    /**
-     * @var \DateTime
+    /** 
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $modified;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="text", nullable=true)
      */
     private $occurrenceremarks;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $ownerinstitutioncode;
 
-    /**
-     * @var string
+   /** 
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $recordnumber;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $rights;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $rightsholder;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $sex;
 
-    /**
-     * @var string
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
 
     /**
-     * @var \AppBundle\Entity\Collection
-     */
-    private $collectionid;
+     * @ORM\OneToOne(targetEntity="Collection", inversedBy="specimen")
+     * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
+     **/
+    private $collection;
 
     /**
-     * @var \AppBundle\Entity\Stratigraphy
-     */
-    private $geologicalcontextid;
+     * @ORM\OneToOne(targetEntity="Stratigraphy")
+     * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
+     **/
+    private $stratigraphy;
 
     /**
-     * @var \AppBundle\Entity\Recolte
-     */
-    private $eventid;
+     * @ORM\OneToOne(targetEntity="Recolte")
+     * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
+     **/
+    private $recolte;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $multimediaid;
+     * @ORM\ManyToMany(targetEntity="Multimedia", inversedBy="specimens")
+     * @ORM\JoinTable(name="MultimediaHasOccurrences",
+     *      joinColumns={@ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="multimediaid", referencedColumnName="multimediaid")}
+     *      )
+     **/
+    private $multimedias;
 
+    /**
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="LAZY")
+    * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
+    */
+    protected $determinations;
+
+    /**
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="LAZY")
+    */
+    protected $bibliographies;
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->multimediaid = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->multimedias = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->determinations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->bibliographies = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -162,7 +185,7 @@ class Specimen
      */
     public function getOccurrenceid()
     {
-        return strtoupper(bin2hex($this->occurrenceid));
+        return $this->occurrenceid;
     }
 
     /**
@@ -720,13 +743,13 @@ class Specimen
     /**
      * Set collectionid
      *
-     * @param \AppBundle\Entity\Collection $collectionid
+     * @param \AppBundle\Entity\Collection $collection
      *
      * @return Specimen
      */
-    public function setCollectionid(\AppBundle\Entity\Collection $collectionid = null)
+    public function setCollection(\AppBundle\Entity\Collection $collection = null)
     {
-        $this->collectionid = $collectionid;
+        $this->collection = $collection;
 
         return $this;
     }
@@ -736,9 +759,9 @@ class Specimen
      *
      * @return \AppBundle\Entity\Collection
      */
-    public function getCollectionid()
+    public function getCollection()
     {
-        return $this->collectionid;
+        return $this->collection;
     }
 
     /**
@@ -750,19 +773,19 @@ class Specimen
      */
     public function setGeologicalcontextid(\AppBundle\Entity\Stratigraphy $geologicalcontextid = null)
     {
-        $this->geologicalcontextid = $geologicalcontextid;
+        $this->geologicalcontext = $geologicalcontextid;
 
         return $this;
     }
 
     /**
-     * Get geologicalcontextid
+     * Get stratigraphy
      *
      * @return \AppBundle\Entity\Stratigraphy
      */
-    public function getGeologicalcontextid()
+    public function getStratigraphy()
     {
-        return $this->geologicalcontextid;
+        return $this->stratigraphy;
     }
 
     /**
@@ -772,7 +795,7 @@ class Specimen
      *
      * @return Specimen
      */
-    public function setEventid(\AppBundle\Entity\Recolte $eventid = null)
+    public function setRecolte(\AppBundle\Entity\Recolte $eventid = null)
     {
         $this->eventid = $eventid;
 
@@ -780,46 +803,68 @@ class Specimen
     }
 
     /**
-     * Get eventid
+     * Get recolte
      *
      * @return \AppBundle\Entity\Recolte
      */
-    public function getEventid()
+    public function getRecolte()
     {
-        return $this->eventid;
+        return $this->recolte;
     }
 
     /**
      * Add multimediaid
      *
-     * @param \AppBundle\Entity\Multimedia $multimediaid
+     * @param \AppBundle\Entity\Multimedia $multimedia
      *
      * @return Specimen
      */
-    public function addMultimediaid(\AppBundle\Entity\Multimedia $multimediaid)
+    public function addMultimediaid(\AppBundle\Entity\Multimedia $multimedia)
     {
-        $this->multimediaid[] = $multimediaid;
+        $this->multimedias[] = $multimedia;
 
         return $this;
     }
 
     /**
-     * Remove multimediaid
+     * Remove multimedia
      *
-     * @param \AppBundle\Entity\Multimedia $multimediaid
+     * @param \AppBundle\Entity\Multimedia $multimedia
      */
-    public function removeMultimediaid(\AppBundle\Entity\Multimedia $multimediaid)
+    public function removeMultimedia(\AppBundle\Entity\Multimedia $multimedia)
     {
-        $this->multimediaid->removeElement($multimediaid);
+        $this->multimedias->removeElement($multimedia);
     }
 
     /**
-     * Get multimediaid
+     * Get multimedias
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getMultimediaid()
+    public function getMultimedias()
     {
-        return $this->multimediaid;
+        return $this->multimedias;
+    }
+    /**
+     * 
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getDeterminations()
+    {
+        return $this->determinations;
+    }
+    
+    /**
+     * 
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getBibliographies()
+    {
+        return $this->bibliographies;
+    }
+    
+    public function getSpecimenId()
+    {
+        return $this->getInstitutioncode().$this->getCollectioncode().$this->getCatalognumber() ;
     }
 }

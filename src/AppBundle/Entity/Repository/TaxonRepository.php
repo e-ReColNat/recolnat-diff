@@ -31,15 +31,25 @@ class TaxonRepository extends RecolnatRepositoryAbstract
      */
     public function findBySpecimenCodes($specimenCodes)
     {
-        $qb = $this->createQueryBuilder('t');
+        /*$qb = $this->createQueryBuilder('t');
         
         $query = $qb
                 ->select('t')
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
-                ->join('AppBundle\Entity\Determination', 'd', Join::WITH, 'd.taxonid = t.taxonid')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = d.occurrenceid');
+                ->join('AppBundle\Entity\Determination', 'd', Join::WITH)
+                ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
+        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;*/
+        $qb = $this->createQueryBuilder('t');
+        
+        $query = $this->getEntityManager()->createQueryBuilder('t')
+           ->select('t')
+            ->from('AppBundle\Entity\Taxon', 't')
+            ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
+            ->innerJoin('t.determination', 'd')
+            ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
     }
 }

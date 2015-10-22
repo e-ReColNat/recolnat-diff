@@ -33,14 +33,18 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
     public function findBySpecimenCodes($specimenCodes)
     {
         $qb = $this->createQueryBuilder('l');
-        
-        $query = $qb
+        $query = $this->getEntityManager()->createQueryBuilder('l')
                 ->select('l')
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
-                ->join('AppBundle\Entity\Recolte', 'r', Join::WITH, 'r.locationid = l.locationid')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.eventid = r.eventid');
-        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+                ->from('AppBundle\Entity\Specimen', 's')
+                ->from('AppBundle\Entity\Recolte', 'r')
+                ->from('AppBundle\Entity\Localisation', 'l')
+                ->where($qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'))
+                ->andWhere('s.recolte = r.eventid')
+                ->andWhere('r.localisation = l.locationid')
+                ;
+
+        $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
     }
 }

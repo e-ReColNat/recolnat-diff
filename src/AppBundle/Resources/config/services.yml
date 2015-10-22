@@ -43,3 +43,8 @@ services:
         arguments:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
+    specimenManager:
+        class: AppBundle\Manager\SpecimenManager
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
