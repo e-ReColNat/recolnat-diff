@@ -2,28 +2,24 @@
 
 {% block body %}
     <h1>Module de diff</h1>
-    
-    {% for specimen in specimens %}
-        {% dump(specimen)%}
-        <div class="col-md-3">
-            {{specimen.getSpecimenId}} : 
+
+   
+    {% for specimenId, classWithDiff in stats.summary %}
+        <div>
+            {% set specimen = attribute(specimens, specimenId) | first %}
             {% set determination = specimen.determinations | first %}
             {% if determination.taxon is defined and determination.taxon is not empty %}
                 {{ determination.taxon}}
             {% else %}
                 Pas de taxon associé
             {% endif %}
+            <a href="#{{specimenId}}">{{specimenId}}</a> : 
+            {% for class, nbDiffs in classWithDiff %}
+                {{class}} => {{nbDiffs}} {% if loop.last == false %} | {% endif %}
+            {% endfor %}
         </div>
     {% endfor %}
-    
-    {% for specimenId, classWithDiff in diffs.summary %}
-        <div><a href="#{{specimenId}}">{{specimenId}}</a> : 
-        {% for class, nbDiffs in classWithDiff %}
-            {{class}} => {{nbDiffs}} {% if loop.last == false %} | {% endif %}
-        {% endfor %}
-        </div>
-    {% endfor %}
-    {% for class, classDiff in diffs.classes %}
+    {% for class, classDiff in stats.classes %}
         <h2>{{ class }}</h2>
         <h3>{{'title.stats' | trans }}</h3>
         <ul>

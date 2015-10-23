@@ -38,6 +38,6 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
+        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'occurrenceid') ;
     }
 }

@@ -35,12 +35,12 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
         return $searchIn;
     }
     
-    protected function orderResultSetBySpecimenId($resultsSet)
+    protected function orderResultSetBySpecimenId($resultsSet, $identifierName)
     {
         $orderResultSet=[] ;
         if (count($resultsSet)>0) {
             foreach ($resultsSet as $resultRow) {
-                $orderResultSet[$resultRow['specimenid']] = $resultRow[0] ;
+                $orderResultSet[$resultRow['specimenid']][$resultRow[0]->{'get'.$identifierName}()] = $resultRow[0] ;
             }
         }
         return $orderResultSet;

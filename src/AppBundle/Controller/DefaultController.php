@@ -15,21 +15,15 @@ class DefaultController extends Controller
     {
         /* @var $diffManager \AppBundle\Manager\DiffManager */
         $diffManager = $this->get('diff.manager');
-        $diffs=$diffManager->getAllDiff('MNHN') ;
+        $diffs=$diffManager->getAllDiff('MHNAIX') ;
 
         $specimenRepository = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen') ;
         $diffStatsManager = $this->get('diff.stats')->init($diffs) ;
-        
-        $specimens=[];
-        /* @var $specimenManager \AppBundle\Manager\SpecimenManager */
-        /*$specimenManager = $this->get('specimenManager')->init('recolnat') ;
-        $specimens = $specimenManager->getSpecimensWithBestDetermination(
-                null, $diffStatsManager->getAllSpecimensId()
-                ) ;
-        var_dump($specimens) ;*/
+        $stats = $diffStatsManager->getStats();
         $specimens = $specimenRepository->findBySpecimenCodes($diffStatsManager->getAllSpecimensId()) ;
         return $this->render('default/index.html.twig', array(
-            'diffs'                     => $diffStatsManager->getStats(),
+            'stats'                     => $stats,
+            'diffs'                         => $diffs,
             'specimens'         => $specimens
         ));
     }

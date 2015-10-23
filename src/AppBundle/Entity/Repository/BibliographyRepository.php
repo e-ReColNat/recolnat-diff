@@ -38,10 +38,10 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
                 ->select('b')
                 ->from('AppBundle\Entity\Bibliography', 'b')
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
+                ->join('b.specimen', 's', Join::WITH);
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
+        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'referenceid') ;
     }
     
 }

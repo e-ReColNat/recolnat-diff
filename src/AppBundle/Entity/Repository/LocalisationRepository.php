@@ -45,6 +45,6 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ;
 
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
+        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'locationid') ;
     }
 }

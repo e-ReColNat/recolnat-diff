@@ -10,16 +10,6 @@ use Doctrine\ORM\Query\Expr\Join ;
  */
 class DeterminationRepository extends RecolnatRepositoryAbstract
 {
-//    public function find($id) {
-//        $query = $this->getEntityManager()->createQueryBuilder()
-//                ->select('d')
-//                ->addSelect('bin2hex(occurrenceid)', 'occurrenceid')
-//                ->from('AppBundle\Entity\Determination', 'd')
-//                ->where('identificationid = :identificationid')
-//                ->setParameter('identificationid', $id)
-//                ->getQuery() ;
-//        return $query->getResult() ;
-//    }
     /**
      * 
      * @param array $ids
@@ -47,10 +37,11 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $query = $qb
                 ->select('d')
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
+                ->join('d.specimen', 's', Join::WITH);
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult()) ;
+        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'identificationid') ;
+        //return $query->getQuery()->getResult() ;
     }
     
     /**

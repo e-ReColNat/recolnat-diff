@@ -13,7 +13,7 @@ abstract class DiffAbstract
     abstract public function init($ids);
     abstract protected function getIdSetter();
     
-    protected function addStat($fieldName, $id, $dataR, $dataI)
+    protected function addStat($fieldName, $specimenId, $id, $dataR, $dataI)
     {
         if (!isset($this->stats['records'])) {
             $this->stats['records'] = array() ;
@@ -34,8 +34,8 @@ abstract class DiffAbstract
         }
          $this->stats['fields'][$fieldName]['compt']++ ; 
          $this->stats['fields'][$fieldName]['ids'][] = $id;
+         $this->stats['fields'][$fieldName]['specimenIds'][] = $specimenId;
 
-         //$this->stats['records'][$id] = $fieldName;
          $this->stats['records'][$id][$fieldName] = [];
          $this->stats['records'][$id][$fieldName]['recolnat'] = $dataR;
          $this->stats['records'][$id][$fieldName]['institution'] = $dataI;
@@ -51,18 +51,19 @@ abstract class DiffAbstract
         $metadata = $this->emR->getMetadataFactory()->getMetadataFor('AppBundle:'.$class) ;
          
         $fieldNames = $metadata->getFieldNames();
-        foreach ($this->recordsRecolnat as $specimenId=>$recordRecolnat) {
-            
+        foreach ($this->recordsRecolnat as $specimenId=>$diffRecordsRecolnat) {
+            $diffRecordsInstitution = $this->recordsInstitution[$specimenId] ;
             /* @var $recordRecolnat \AppBundle\Entity\Specimen */
-            /* @var $recordInstitution \AppBundle\Entity\Specimen */
-            $recordInstitution = $this->recordsInstitution[$specimenId] ;
-            foreach ($fieldNames as $fieldName) {
-                if (!(in_array($fieldName, $this->excludeFieldsName)))  {
-                    $getter = 'get'.$fieldName ;
-                    $dataR = $recordRecolnat->{$getter}() ;
-                    $dataI = $recordInstitution->{$getter}() ;
-                    if ($dataR !== $dataI) {
-                        $this->addStat($fieldName,$specimenId, $dataR, $dataI);
+            foreach ($diffRecordsRecolnat as $idRecord => $recordRecolnat) {
+                $recordInstitution = $diffRecordsInstitution[$idRecord] ;
+                foreach ($fieldNames as $fieldName) {
+                    if (!(in_array($fieldName, $this->excludeFieldsName)))  {
+                        $getter = 'get'.$fieldName ;
+                        $dataR = $recordRecolnat->{$getter}() ;
+                        $dataI = $recordInstitution->{$getter}() ;
+                        if ($dataR !== $dataI) {
+                            $this->addStat($fieldName,$specimenId, $idRecord, $dataR, $dataI);
+                        }
                     }
                 }
             }

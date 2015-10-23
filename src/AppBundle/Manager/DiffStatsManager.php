@@ -49,7 +49,7 @@ class DiffStatsManager
     private function computeStats($class) {
         if (isset($this->stats['classes'][$class]['fields'])) {
             foreach($this->stats['classes'][$class]['fields'] as $fieldName => $row) {
-                foreach ($row['ids'] as $id) {
+                foreach ($row['specimenIds'] as $id) {
                     if (!isset($this->stats['summary'][$id])) {
                         $this->stats['summary'][$id] = [];
                     }

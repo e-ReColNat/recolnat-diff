@@ -24,6 +24,7 @@ class DiffManager
     const DETERMINATION_CLASSNAME =  'AppBundle:Determination';
     protected $class;
     protected $fullClassName;
+    protected $institutionCode;
 
     public function __construct(ObjectManager $em)
     {
@@ -32,6 +33,7 @@ class DiffManager
     
     public function getAllDiff($institutionCode) 
     {
+        $this->institutionCode = $institutionCode ;
         $entitiesName=[
             'specimens'=>'Specimen',     
             'bibliographies'=>'Bibliography',
@@ -42,11 +44,9 @@ class DiffManager
             'taxons'=>'Taxon'
         ];
         foreach ($entitiesName as $indexName=>$entityName) {
-            $results[$indexName] = $this->getDiff($entityName, $institutionCode);
+            $results[$indexName] = $this->getDiff($entityName);
         }
-
         return $results;
-
     }
     
     public function getGenericDiffQuery()
@@ -58,26 +58,25 @@ class DiffManager
         $aliasI = 'i';
 
         $identifier = 'specimenId' ;
-        $strQuery='SELECT ';
+        $strQuery='SELECT '.$identifier.' FROM (';
+        //$strQuery='';
         $arrayFields = $this->formatFieldsName($metadata, $aliasR, $aliasI) ;
         $strFromClauseRecolnat = $this->getFromClause($aliasR, false);
         $strFromClauseDiff = $this->getFromClause($aliasI, true);
-        $strUnionQuery = 'SELECT '.$identifier.' FROM ('.
-                $strQuery.implode(', ',$arrayFields['recolnat']).sprintf($strFromClauseRecolnat, self::RECOLNAT_DB.'.'.$metadata->getTableName()).
-                ' UNION '.
-                $strQuery. implode(', ', $arrayFields['institution']).sprintf($strFromClauseDiff, self::RECOLNAT_DIFF_DB.'.'.$metadata->getTableName()).
-                ') ';
-        $sqlGroupByCount = 'GROUP BY %s HAVING COUNT(*) >1' ;
+        $strUnionQuery = $strQuery.
+                'SELECT '.
+                implode(', ',$arrayFields['recolnat']).
+                sprintf($strFromClauseRecolnat, self::RECOLNAT_DB.'.'.$metadata->getTableName()).
+                ' MINUS '.
+                'SELECT '.
+                implode(', ', $arrayFields['institution']).
+                sprintf($strFromClauseDiff, self::RECOLNAT_DIFF_DB.'.'.$metadata->getTableName())
+                ;
+        //$sqlGroupByCount = ' ) GROUP BY %s HAVING COUNT(*) >1' ;
+        $sqlGroupByCount = ')' ;
         return sprintf($strUnionQuery.$sqlGroupByCount, $identifier, $identifier, $identifier) ;
     }
 
-    private function selectRawToHex($identifier) {
-        if (in_array($this->class, ['Collection', 'Institution', 'Localisation', 'Stratigraphy'])) {
-            return '%s';
-        }
-        return 'RAWTOHEX(%s) as '.$identifier ;
-    }
-    
     private function getSpecimenUniqueIdClause($alias)
     {
         return sprintf(' %s.institutioncode||%s.collectioncode||%s.catalognumber as specimenId ', $alias, $alias, $alias);
@@ -150,16 +149,12 @@ class DiffManager
         
         switch ($this->fullClassName) {
             case 'AppBundle:Specimen' : 
-                //return ' FROM %s '.$alias.' WHERE INSTITUTIONCODE = \'MNHN\'' ;
-                return ' FROM %s '.$alias ;
-                //return ' FROM %s '.$alias.' '.$this->getSqlClauseJoinInstitutions($alias) ;
+                return ' FROM %s '.$alias .' WHERE '.$alias.'.INSTITUTIONCODE = :institutionCode' ;
             case 'AppBundle:Bibliography' :
             case 'AppBundle:Determination' :
                 return ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
                     .$alias. '.OCCURRENCEID AND '
                     . 's.INSTITUTIONCODE = :institutionCode' ;
-                /*return ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
-                    .$alias. '.OCCURRENCEID AND '.$this->getSpecimenUniqueIdClause('s') ;*/
             case 'AppBundle:Localisation' :
                 $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME) ;
                 $recolteTableName = ($diff ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB).'.'.$metadataRecolte->getTableName() ;
@@ -168,10 +163,6 @@ class DiffManager
                     . ' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
                     .$recolteTableName. '.EVENTID AND '
                     . 's.INSTITUTIONCODE = :institutionCode' ;
-                /*return ' FROM %s '.$alias
-                    . ' INNER JOIN '.$recolteTableName.' ON '.$recolteTableName.'.LOCATIONID = '.$alias.'.LOCATIONID'
-                    . ' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
-                    .$recolteTableName. '.EVENTID '.$this->getSqlClauseJoinInstitutions('s') ;*/
             case 'AppBundle:Recolte' :
                 return ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
                     .$alias. '.EVENTID AND '
@@ -190,13 +181,8 @@ class DiffManager
                     . 's.INSTITUTIONCODE = :institutionCode' ;
         }
     }
-    private function getSqlClauseJoinInstitutions($alias)
-    {
-        return 'INNER JOIN Collections c ON '.$alias.'.COLLECTIONID = c.COLLECTIONID 
-                    INNER JOIN Institutions i ON c.INSTITUTIONID = i.INSTITUTIONID AND 
-                    i.INSTITUTIONCODE = :institutionCode' ;
-    }
-    public function getDiff($className, $institutionCode) 
+
+    public function getDiff($className) 
     {
         $this->class = ucfirst(strtolower($className)) ;
         $this->fullClassName = 'AppBundle:'.$this->class;
@@ -204,7 +190,7 @@ class DiffManager
         
         $this->em->getConnection()->setFetchMode(\PDO::FETCH_NUM);
         $results = $this->em->getConnection()
-                ->executeQuery($sqlDiff, array('institutionCode'=>$institutionCode))
+                ->executeQuery($sqlDiff, array('institutionCode'=>$this->institutionCode))
                 ->fetchAll() ;
         
         $ids = array();
