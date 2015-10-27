@@ -38,7 +38,7 @@ class DiffStatsManager
                 $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($class)) ;
                 /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
                 $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD) ;
-                $diffClassManager->init($ids) ;
+                $diffClassManager->init($class, $ids) ;
                 $this->addStats($class, $diffClassManager->getStats());
                 $this->computeStats($class);
             }
@@ -47,7 +47,23 @@ class DiffStatsManager
     }
     
     private function computeStats($class) {
-        if (isset($this->stats['classes'][$class]['fields'])) {
+        if (isset($this->stats['classes'][$class])) {
+             foreach($this->stats['classes'][$class] as $specimenId => $rows) {
+                 if (!isset($this->stats['summary'][$specimenId])) {
+                        $this->stats['summary'][$specimenId] = [];
+                    }
+                     if (!isset($this->stats['summary'][$specimenId][$class])) {
+                        $this->stats['summary'][$specimenId][$class]['records'] = count($rows) ;
+                    }
+                    if (!isset($this->stats['summary'][$specimenId][$class]['fields'])) {
+                        $this->stats['summary'][$specimenId][$class]['fields'] = 0 ;
+                    }
+                    foreach($rows as $recordId => $fields) {
+                        $this->stats['summary'][$specimenId][$class]['fields']+=count($fields)  ;
+                    }
+             }
+        }
+        /*if (isset($this->stats['classes'][$class]['fields'])) {
             foreach($this->stats['classes'][$class]['fields'] as $fieldName => $row) {
                 foreach ($row['specimenIds'] as $id) {
                     if (!isset($this->stats['summary'][$id])) {
@@ -59,7 +75,7 @@ class DiffStatsManager
                     $this->stats['summary'][$id][$class] ++  ;
                 }
             }
-        }
+        }*/
     }
     public function getStats()
     {

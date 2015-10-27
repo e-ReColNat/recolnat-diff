@@ -6,11 +6,14 @@
         <title>{% block title %}Recolnat Diff{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-        <link rel="stylesheet" href="{{ asset('bootstrap/3.3.5/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('bootstrap/3.3.5/css/bootstrap-theme.min.css') }}">
+{#        <link rel="stylesheet" href="{{ asset('bootstrap/3.3.5/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bootstrap/3.3.5/css/bootstrap-theme.min.css') }}">#}
+        <link rel="stylesheet" href="http://explore.recolnat.org/resources/css/app.css">
+        <link rel="stylesheet" href="http://explore.recolnat.org/resources/css/bootstrap/bootstrap.and.theme.css">
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
+            
         {% block body %}{% endblock %}
         </div>
         {% block javascripts %}{% endblock %}

@@ -35,16 +35,16 @@ class DiffManager
     {
         $this->institutionCode = $institutionCode ;
         $entitiesName=[
-            'specimens'=>'Specimen',     
-            'bibliographies'=>'Bibliography',
-            'determinations'=>'Determination',
-            'localisations'=>'Localisation',
-            'recoltes'=>'Recolte',
-            'stratigraphies'=>'Stratigraphy',
-            'taxons'=>'Taxon'
+            'Specimen',     
+            'Bibliography',
+            'Determination',
+            'Localisation',
+            'Recolte',
+            'Stratigraphy',
+            'Taxon'
         ];
-        foreach ($entitiesName as $indexName=>$entityName) {
-            $results[$indexName] = $this->getDiff($entityName);
+        foreach ($entitiesName as $entityName) {
+            $results[$entityName] = $this->getDiff($entityName);
         }
         return $results;
     }

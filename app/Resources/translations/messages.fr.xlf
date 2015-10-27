@@ -2,10 +2,26 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
     <file source-language="fr" target-language="fr" datatype="plaintext" original="messages.xliff">
         <body>
-            <trans-unit id="1">
-                <source>title.stats</source> <target>Statistiques</target> </trans-unit>
+            <trans-unit id="1" approved="yes">
+                <source>title.stats</source> 
+                <target>Statistiques</target>
+            </trans-unit>
             <trans-unit id="2" approved="yes">
-                <source>label.catalognumber</source> <target state="translated">Numéro d'inventaire</target> </trans-unit>
-        </body>
+                <source>header.compare.fieldname</source> 
+                <target state="translated">Champ</target> 
+            </trans-unit>
+            <trans-unit id="3" approved="yes">
+                <source>header.compare.recolnat</source> 
+                <target state="translated">Recolnat</target> 
+            </trans-unit>
+            <trans-unit id="4" approved="yes">
+                <source>header.compare.institution</source> 
+                <target state="translated">Institution</target> 
+            </trans-unit>
+            <trans-unit id="5">
+                <source>label.differences</source>
+                <target>{1}Une différence trouvée|]1,Inf]%search_count% différences trouvées</target>
+            </trans-unit>
+            </body>
     </file>
 </xliff>

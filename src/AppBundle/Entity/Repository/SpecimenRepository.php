@@ -38,6 +38,8 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
+        //$qb->getQuery()->setFetchMode('AppBundle\Specimen', 'determination', \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
+        //$qb->getQuery()->setFetchMode('AppBundle\Specimen', 'recolte', \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'occurrenceid') ;
     }
 }

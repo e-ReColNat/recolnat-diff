@@ -132,19 +132,19 @@ class Specimen
     private $sourcefileid;
 
     /**
-     * @ORM\OneToOne(targetEntity="Collection", inversedBy="specimen")
+     * @ORM\OneToOne(targetEntity="Collection", inversedBy="specimen", fetch="EAGER")
      * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
      **/
     private $collection;
 
     /**
-     * @ORM\OneToOne(targetEntity="Stratigraphy")
+     * @ORM\OneToOne(targetEntity="Stratigraphy", fetch="EAGER")
      * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
      **/
     private $stratigraphy;
 
     /**
-     * @ORM\OneToOne(targetEntity="Recolte")
+     * @ORM\OneToOne(targetEntity="Recolte", fetch="EAGER")
      * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
      **/
     private $recolte;
@@ -159,13 +159,13 @@ class Specimen
     private $multimedias;
 
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="LAZY")
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EAGER")
     * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
     */
     protected $determinations;
 
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="LAZY")
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EAGER")
     */
     protected $bibliographies;
     /**
