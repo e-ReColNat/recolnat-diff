@@ -1,0 +1,10 @@
+.well.odd {
+    background-color: #e2dede ;
+    background-image: linear-gradient(to bottom, #e8e8e8 0px, #e2dede 100%);
+}
+
+.table.diff caption {
+    text-align : center;
+    font-weight: bold;
+    font-size: 1.1em;
+}

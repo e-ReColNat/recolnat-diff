@@ -71,7 +71,7 @@ class Determination
 
     /**
     * @var \AppBundle\Entity\Specimen
-    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="determinations", fetch="LAZY")
+    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="determinations", fetch="EXTRA_LAZY")
     * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
     */
     protected $specimen;

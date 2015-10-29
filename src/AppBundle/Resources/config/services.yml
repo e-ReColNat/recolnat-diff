@@ -48,3 +48,13 @@ services:
         arguments:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
+    app.twig_multimedia_extension:
+        class: AppBundle\Twig\MultimediaExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+    app.twig_specimen_extension:
+        class: AppBundle\Twig\SpecimenExtension
+        public: false
+        tags:
+            - { name: twig.extension }

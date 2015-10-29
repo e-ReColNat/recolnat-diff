@@ -1,145 +1,47 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% dump(stats)%}
     {% if stats is not empty %}
     <div class="row">
-        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 facets">
-        {% for specimenId, classWithDiff in stats.summary %}
-            <div>
-                {% set specimen = attribute(specimens, specimenId) | first %}
-                {% set determination = specimen.determinations | first %}
-                {% if determination.taxon is defined and determination.taxon is not empty %}
-                    {{ determination.taxon}}
-                {% else %}
-                    Pas de taxon associé
-                {% endif %}
-                <a href="#{{specimenId}}">{{specimenId}}</a> : 
-                {% for class, nbDiffs in classWithDiff %}
-                    {{class}} => {{nbDiffs.records}} {{ 'label.records.modifies' | trans }}
-                    {{nbDiffs.fields}} {{ 'label.champs.modifies' | trans }} {% if loop.last == false %} | {% endif %}
-                {% endfor %}
-            </div>
-        {% endfor %}
+        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 facets" >
+            {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats} %}
         </div>
         
-        <div class=" wrapper well col-xs-7 col-sm-7 col-md-8 col-lg-9 col-xs-offset-0">
+        <div class="col-xs-7 col-sm-7 col-md-8 col-lg-9 col-xs-offset-0">
         {% for specimenId, classWithDiff in stats.summary %}
+            <div class="well{{ loop.index is odd ? ' odd' : '' }}" id="{{specimenId}}">
             {% set specimen = attribute(specimens, specimenId) | first %}
-            {% set determination = specimen.determinations | first %}
-            {% set taxon = determination.taxon %}
-            {% set collection = specimen.collection %}
-            {% set recolte = specimen.recolte %}
-            {% set localisation = recolte.localisation %}
-            <div class="ng-scope odd">
-
-                <div class="row no-margin"> <br>
-                    <div class="col-sm-1 col-sm-offset-0">
-                        <div style="padding-left: 80%;" role="toolbar" class="btn-toolbar">
-                            <input type="checkbox" >
-                        </div>
-                    </div>
-                    <div class="col-sm-9 col-sm-offset-0">
-                        <a href="#">
-                            {% if taxon.family is not empty %}
-                            <span><span>{{taxon.family}}</span> / </span>
-                            {% endif %}
-                            {% if taxon.genus is not empty %}
-                            <span><i><span>{{taxon.genus}}</span></i> / </span>
-                            {% endif %}
-                            {% if taxon.scientificname is not empty %}
-                            <span><i><span>{{taxon.scientificname}}</span></i> / </span>
-                            {% endif %}
-                            {% if taxon.scientificnameauthorship is not empty %}
-                            <span><span>{{taxon.scientificnameauthorship}}</span> / </span>
-                            {% endif %}
-                            {% if specimen.catalognumber is not empty %}
-                            <span>{{specimen.catalognumber}}</span>
-                            {% endif %}
-                        </a>
-                        <span class="row no-margin"><br>
-                            <div class="col-sm-6 col-sm-offset-0 ng-binding">
-{#                                <span>{{collection.institution.institutioncode}}</span><br>#}
-                                <span>{{collection.collectioncode}}</span><br>
-                                {#<span>{{taxon.family}}</span><br>
-                                <span>{{taxon.genus}}</span><br>
-                                <span>{{taxon.scientificname}}</span><br>#}
-                            </div>
-                            {#<div class="col-sm-6 col-sm-offset-0 ng-binding">
-                                {{'label.institution.fields.institutioncode' | trans({},'entity') }} <span>{{collection.institution.institutioncode}}</span><br>
-                                {{'label.collection.fields.collectioncode' | trans({},'entity') }} <span>{{collection.collectioncode}}</span><br>
-                                {{'label.taxon.fields.family' | trans({},'entity') }} <span>{{taxon.family}}</span><br>
-                                {{'label.taxon.fields.genus' | trans({},'entity') }} <span>{{taxon.genus}}</span><br>
-                                {{'label.taxon.fields.scientificname' | trans({},'entity') }} <span>{{taxon.scientificname}}</span><br>
-                            </div>#}
-                            <div class="col-sm-6">
-                                {% if localisation is not empty %}
-                                    {% if localisation.country is not empty %}
-                                    {{'label.localisation.fields.country' | trans({},'entity') }} <span>{{localisation.country}}</span><br>
-                                    {% endif %}
-                                    <!-- ngIf: result.country != null -->
-                                    <!-- ngIf: result.county != null -->
-                                    <!-- ngIf: result.locality != null -->
-                                    <!-- ngIf: result.verbatimlocality != null -->
-                                    <!-- ngIf: result.recordedby != null -->
-                                    <!-- ngIf: result.fieldnumber != null -->
-                                    <!-- ngIf: result.ladaterecolte != '' -->
-                                    <!-- ngIf: domaine == paleontologie --><br>
-                                {% endif %}
-
-                            </div>
-                        </span>
-                    </div>
-                    
-                    <div ng-show="result.images.length &gt; 0 " style="position:relative;" class="col-sm-2 col-sm-offset-0 no-padding">
-                        <img ng-click="visionneusePopup(result)" ng-src="http://imager.mnhn.fr/imager2/v25/2012/10/12/17/P04843236.jpg" data-spinner-on-load="" style="max-width:125px" class="round-corner zoomcursor spinner-show" src="http://imager.mnhn.fr/imager2/v25/2012/10/12/17/P04843236.jpg">
-                        <span popovertitle="Crédits" popoverdata="result.images[0].copyright" dir.popover="" style="height: 10px" class="glyphicon glyphicon-copyright-mark copyright-button ng-isolate-scope" data-original-title="" title=""><span ng-transclude=""></span></span>
-                    </div>
-                </div>
-
+            {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
+            {% include 'default/partial/short_diff_specimen.html.twig' with {'specimenId' : specimenId, 'stats' : stats} %}
             </div>
-            
-            
-            
-            
-            
-{#            <h2>{{ class }}</h2>
-            <h3>{{'title.stats' | trans }}</h3>
-            <ul>
-            {% if classDiff|length > 0 %}
-                {% for specimenId, record in classDiff %}
-                    <h4 id="{{specimenId}}">{{ specimenId }}</h4>
-                    <ul>
-                    {% for recordId, fields in record %}
-                        <li>{{recordId}} - {{fields|length}}</li>
-                        <li>{{ 'label.differences' | transchoice(fields|length, {
-                                    '%search_count%': fields|length}) }}</li>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>{{ 'header.compare.fieldname' | trans }}</th>
-                                    <th>{{ 'header.compare.recolnat' | trans }}</th>
-                                    <th>{{ 'header.compare.institution' | trans }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for fieldname, data in fields %}
-                                <tr>
-                                    <td>{{ ('label.'~class|lower~'.fields.'~fieldname)|trans({},'entity') }}</td>
-                                    <td>{{ data.recolnat.timestamp is defined ? data.recolnat|date('m/d/Y') : data.recolnat }}</td>
-                                    <td>{{ data.institution.timestamp is defined ? data.institution|date('m/d/Y') : data.institution }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% endfor %}
-                    </ul>
-                {% endfor %}
-            {% endif %}
-            </ul>#}
         {% endfor %}
         {% endif %}
         </div>
         
         
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('table.diff').find( ":radio" ).change(function() {
+            var tableContext = $(this).parents('table.diff');
+            console.log(tableContext);
+            if ($(this).data('type') == 'diff-entity') {
+                var relationId = $(this).attr('name') ;
+                var choix = $(this).attr('value') ;
+                tableContext.find( ":radio")
+                        .filter("[name^='"+relationId+"']")
+                        .filter('[data-type="diff-field"]')
+                        .filter('[value = "'+choix +'"]')
+                        .map(
+                        function() {
+                            $(this).prop('checked', true);
+                        });
+            }
+        });
+    });
+    </script>
 {% endblock %}

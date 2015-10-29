@@ -63,19 +63,6 @@ class DiffStatsManager
                     }
              }
         }
-        /*if (isset($this->stats['classes'][$class]['fields'])) {
-            foreach($this->stats['classes'][$class]['fields'] as $fieldName => $row) {
-                foreach ($row['specimenIds'] as $id) {
-                    if (!isset($this->stats['summary'][$id])) {
-                        $this->stats['summary'][$id] = [];
-                    }
-                    if (!isset($this->stats['summary'][$id][$class])) {
-                        $this->stats['summary'][$id][$class] = 0 ;
-                    }
-                    $this->stats['summary'][$id][$class] ++  ;
-                }
-            }
-        }*/
     }
     public function getStats()
     {

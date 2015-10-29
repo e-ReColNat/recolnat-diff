@@ -1,0 +1,24 @@
+{% for specimenId, classWithDiff in stats.summary %}
+    <div class="wrapper well well-sm ">
+        <div class="row">
+        <div class="col-xs-12">
+        {% set specimen = attribute(specimens, specimenId) | first %}
+        {% set determination = specimen.determinations | first %}
+        
+        {% if determination.taxon is defined and determination.taxon is not empty %}
+            {% set taxon = determination.taxon %}
+        {% else %}
+            {% set taxon = 'label.notaxon' | trans %}
+        {% endif %}
+        <a href="#{{specimenId}}">{{taxon}}</a>
+        {% for class, nbDiffs in classWithDiff %}
+            <div>
+                {{class}} : 
+                {{ 'label.differences' | transchoice(nbDiffs.records, {'%diff_count%': nbDiffs.records}) }}
+            </div>
+{#            {{nbDiffs.fields}} {{ 'label.champs.modifies' | trans }} {% if loop.last == false %} | {% endif %}#}
+        {% endfor %}
+        </div>
+    </div>
+    </div>
+{% endfor %}

@@ -1,0 +1,46 @@
+{% if attribute(stats.summary, specimenId) is not empty %}
+{#    <div class="wrapper well well-sm">#}
+<table class="diff table table-striped">
+    <caption class="bg-primary">Différences</caption>
+    <thead>
+        <tr>
+            <th class="col-md-2">fieldName</th>
+            <th class="col-md-5">Recolnat</th>
+            <th class="col-md-5">Institution</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set summary = attribute(stats.summary, specimenId) %}
+        
+        {% for class in summary|keys %}
+            <tr>
+                <td colspan="3" class="warning">{{class}}</td>
+            </tr>
+            {% set diffSpecimen = attribute(stats.classes, class) %}
+                {% for specimenId, diffs in diffSpecimen %}
+                    {% for relationId, fields in diffs %}
+                        <tr class="success">
+                            <td>{{relationId}}</td>
+                            <td><input type="radio" data-type='diff-entity' name="{{relationId}}" value="recolnat"></td>
+                            <td><input type="radio" data-type='diff-entity' name="{{relationId}}" value="institution"></td>
+                        </tr>
+                        {% for fieldName, data in fields %}
+                            <tr>
+                                <td>{{ ('label.'~class|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>
+                                <td>
+                                    <input type="radio"  data-type='diff-field' name="{{relationId}}[{{fieldName}}]" value="recolnat">
+                                    &nbsp;{{data.recolnat}}
+                                </td>
+                                <td>
+                                    <input type="radio" data-type='diff-field' name="{{relationId}}[{{fieldName}}]" value="institution">
+                                    &nbsp;{{data.institution}}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+        {% endfor %}
+</tbody>
+</table>
+{% endif %}
+    

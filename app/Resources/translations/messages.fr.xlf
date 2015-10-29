@@ -20,7 +20,11 @@
             </trans-unit>
             <trans-unit id="5">
                 <source>label.differences</source>
-                <target>{1}Une différence trouvée|]1,Inf]%search_count% différences trouvées</target>
+                <target>{1}Une différence|]1,Inf]%diff_count% différences</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>label.credits</source>
+                <target>Crédits</target>
             </trans-unit>
             </body>
     </file>

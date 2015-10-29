@@ -5,8 +5,8 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\LocalisationRepository")
-* @ORM\Table(name="Localisations")
+* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\MultimediaRepository")
+* @ORM\Table(name="Multimedia")
 */
 class Multimedia
 {
@@ -107,7 +107,7 @@ class Multimedia
     private $type;
 
    /**
-     * @ORM\ManyToMany(targetEntity="Specimen", mappedBy="multimedias")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Specimen", mappedBy="multimedias")
      **/
     private $specimens;
 

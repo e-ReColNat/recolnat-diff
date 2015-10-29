@@ -1,0 +1,535 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="fr" target-language="fr" datatype="plaintext" original="messages.xliff">
+        <body>
+            <trans-unit id="1" approved="yes">
+                <source>label.specimen.fields.accessrights</source> 
+                <target state="translated">Droits d'accès</target> 
+            </trans-unit>
+            <trans-unit id="2" approved="yes">
+                <source>label.specimen.fields.associatedmedia</source> 
+                <target state="translated">Media associé</target> 
+            </trans-unit>
+            <trans-unit id="3" approved="yes">
+                <source>label.specimen.fields.associatedreferences</source> 
+                <target state="translated">Référence associée</target> 
+            </trans-unit>
+            <trans-unit id="4" approved="yes">
+                <source>label.specimen.fields.associatedtaxa</source> 
+                <target state="translated">Taxon assoc</target> 
+            </trans-unit>
+            <trans-unit id="5">
+                <source>label.specimen.fields.basisofrecord</source> 
+                <target state="translated"></target> 
+            </trans-unit>
+            <trans-unit id="6" approved="yes">
+                <source>label.specimen.fields.bibliographiccitation</source> 
+                <target state="translated">Citation bibliographique</target> 
+            </trans-unit>
+            <trans-unit id="7" approved="yes">
+                <source>label.specimen.fields.catalognumber</source> 
+                <target state="translated">Numéro d'inventaire</target> 
+            </trans-unit>
+            <trans-unit id="8" approved="yes">
+                <source>label.specimen.fields.collectioncode</source> 
+                <target state="translated">Code de la collection</target> 
+            </trans-unit>
+            <trans-unit id="9" approved="yes">
+                <source>label.specimen.fields.created</source> 
+                <target state="translated">Créé le</target> 
+            </trans-unit>
+            <trans-unit id="10" approved="yes">
+                <source>label.specimen.fields.disposition</source> 
+                <target state="translated">Disposition</target> 
+            </trans-unit>
+            <trans-unit id="11" approved="yes">
+                <source>label.specimen.fields.dwcaid</source> 
+                <target state="translated">Identifiant du fournisseur de données</target> 
+            </trans-unit>
+            <trans-unit id="12" approved="yes">
+                <source>label.specimen.fields.hascoordinates</source> 
+                <target state="translated">Possèdes des coordonnées</target> 
+            </trans-unit>
+            <trans-unit id="13" approved="yes">
+                <source>label.specimen.fields.hasmedia</source> 
+                <target state="translated">Possède des medias</target> 
+            </trans-unit>
+            <trans-unit id="14" approved="yes">
+                <source>label.specimen.fields.institutioncode</source> 
+                <target state="translated">Code de l'institution</target> 
+            </trans-unit>
+            <trans-unit id="15" approved="yes">
+                <source>label.specimen.fields.lifestage</source> 
+                <target state="translated">Stade de développement</target> 
+            </trans-unit>
+            <trans-unit id="16" approved="yes">
+                <source>label.specimen.fields.modified</source> 
+                <target state="translated">Modifié le</target> 
+            </trans-unit>
+            <trans-unit id="17" approved="yes">
+                <source>label.specimen.fields.occurrenceremarks</source> 
+                <target state="translated">Remarque</target> 
+            </trans-unit>
+            <trans-unit id="18" approved="yes">
+                <source>label.specimen.fields.ownerinstitutioncode</source> 
+                <target state="translated">Institution propriétaire</target> 
+            </trans-unit>
+            <trans-unit id="19" approved="yes">
+                <source>label.specimen.fields.recordnumber</source> 
+                <target state="translated">Numéro d'enregistrement</target> 
+            </trans-unit>
+            <trans-unit id="20" approved="yes">
+                <source>label.specimen.fields.rights</source> 
+                <target state="translated">Copyright</target> 
+            </trans-unit>
+            <trans-unit id="21" approved="yes">
+                <source>label.specimen.fields.rightsholder</source> 
+                <target state="translated">Propriétaire du copyright</target> 
+            </trans-unit>
+            <trans-unit id="22" approved="yes">
+                <source>label.specimen.fields.sex</source> 
+                <target state="translated">Sexe</target> 
+            </trans-unit>
+            <trans-unit id="23" approved="yes">
+                <source>label.specimen.fields.sourcefileid</source> 
+                <target state="translated">sourcefileid</target> 
+            </trans-unit>
+            <trans-unit id="24" approved="yes">
+                <source>label.bibliography.fields.bibliographiccitation</source> 
+                <target state="translated">Citation bibliographique</target> 
+            </trans-unit>
+            <trans-unit id="25" approved="yes">
+                <source>label.bibliography.fields.creator</source> 
+                <target state="translated">Rédacteur</target> 
+            </trans-unit>
+            <trans-unit id="26" approved="yes">
+                <source>label.bibliography.fields.datePublication</source> 
+                <target state="translated">Date de publication</target> 
+            </trans-unit>
+            <trans-unit id="27" approved="yes">
+                <source>label.bibliography.fields.description</source> 
+                <target state="translated">Description</target> 
+            </trans-unit>
+            <trans-unit id="28" approved="yes">
+                <source>label.bibliography.fields.identifier</source> 
+                <target state="translated">Identifiant</target> 
+            </trans-unit>
+            <trans-unit id="29" approved="yes">
+                <source>label.bibliography.fields.language</source> 
+                <target state="translated">Langue</target> 
+            </trans-unit>
+            <trans-unit id="30" approved="yes">
+                <source>label.bibliography.fields.rights</source> 
+                <target state="translated">Copy</target> 
+            </trans-unit>
+            <trans-unit id="31" approved="yes">
+                <source>label.bibliography.fields.source</source> 
+                <target state="translated">Source</target> 
+            </trans-unit>
+            <trans-unit id="32" approved="yes">
+                <source>label.bibliography.fields.sourcefileid</source> 
+                <target state="translated">sourc</target> 
+            </trans-unit>
+            <trans-unit id="33" approved="yes">
+                <source>label.bibliography.fields.subject</source> 
+                <target state="translated">Sujet</target> 
+            </trans-unit>
+            <trans-unit id="34" approved="yes">
+                <source>label.bibliography.fields.taxonremarks</source> 
+                <target state="translated">Rema</target> 
+            </trans-unit>
+            <trans-unit id="35" approved="yes">
+                <source>label.bibliography.fields.title</source> 
+                <target state="translated">Titre</target> 
+            </trans-unit>
+            <trans-unit id="36" approved="yes">
+                <source>label.bibliography.fields.type</source> 
+                <target state="translated">Type</target> 
+            </trans-unit>
+            <trans-unit id="37" approved="yes">
+                <source>label.determination.fields.created</source> 
+                <target state="translated">Créé le</target> 
+            </trans-unit>
+            <trans-unit id="38" approved="yes">
+                <source>label.determination.fields.dateidentified</source> 
+                <target state="translated">Date d'identification</target> 
+            </trans-unit>
+            <trans-unit id="39" approved="yes">
+                <source>label.determination.fields.dwcaidentificationid</source> 
+                <target state="translated">dwcaidentificationid</target> 
+            </trans-unit>
+            <trans-unit id="40" approved="yes">
+                <source>label.determination.fields.identificationqualifier</source> 
+                <target state="translated">Qualification d'identification</target> 
+            </trans-unit>
+            <trans-unit id="41" approved="yes">
+                <source>label.determination.fields.identificationreferences</source> 
+                <target state="translated">Référence d'identification</target> 
+            </trans-unit>
+            <trans-unit id="42" approved="yes">
+                <source>label.determination.fields.identificationremarks</source> 
+                <target state="translated">Remarque d'identification</target> 
+            </trans-unit>
+            <trans-unit id="43" approved="yes">
+                <source>label.determination.fields.identificationverifstatus</source> 
+                <target state="translated">Status d'identification</target> 
+            </trans-unit>
+            <trans-unit id="44" approved="yes">
+                <source>label.determination.fields.identifiedby</source> 
+                <target state="translated">Identifié par</target> 
+            </trans-unit>
+            <trans-unit id="45" approved="yes">
+                <source>label.determination.fields.modified</source> 
+                <target state="translated">Modifié le</target> 
+            </trans-unit>
+            <trans-unit id="46" approved="yes">
+                <source>label.determination.fields.sourcefileid</source> 
+                <target state="translated">sourcefileid</target> 
+            </trans-unit>
+            <trans-unit id="47" approved="yes">
+                <source>label.determination.fields.typestatus</source> 
+                <target state="translated">Type de status</target> 
+            </trans-unit>
+            <trans-unit id="48" approved="yes">
+                <source>label.localisation.fields.averagealtituderounded</source> 
+                <target state="translated">Altitude moyenne arrondie</target> 
+            </trans-unit>
+            <trans-unit id="49" approved="yes">
+                <source>label.localisation.fields.continent</source> 
+                <target state="translated">Continent</target> 
+            </trans-unit>
+            <trans-unit id="50" approved="yes">
+                <source>label.localisation.fields.country</source> 
+                <target state="translated">Pays</target> 
+            </trans-unit>
+            <trans-unit id="51" approved="yes">
+                <source>label.localisation.fields.countrycode</source> 
+                <target state="translated">Code du pays</target> 
+            </trans-unit>
+            <trans-unit id="52" approved="yes">
+                <source>label.localisation.fields.county</source> 
+                <target state="translated">Département</target> 
+            </trans-unit>
+            <trans-unit id="53" approved="yes">
+                <source>label.localisation.fields.decimallatitude</source> 
+                <target state="translated">Latitude</target> 
+            </trans-unit>
+            <trans-unit id="54" approved="yes">
+                <source>label.localisation.fields.decimallongitude</source> 
+                <target state="translated">Longitude</target> 
+            </trans-unit>
+            <trans-unit id="55" approved="yes">
+                <source>label.localisation.fields.geodeticdatum</source> 
+                <target state="translated">Système géodésique</target> 
+            </trans-unit>
+            <trans-unit id="56" approved="yes">
+                <source>label.localisation.fields.georeferencesources</source> 
+                <target state="translated">Source de la géoréférence</target> 
+            </trans-unit>
+            <trans-unit id="57" approved="yes">
+                <source>label.localisation.fields.hascoordinates</source> 
+                <target state="translated">Possèdes des coordonnées</target> 
+            </trans-unit>
+            <trans-unit id="58" approved="yes">
+                <source>label.localisation.fields.locality</source> 
+                <target state="translated">Localité</target> 
+            </trans-unit>
+            <trans-unit id="59" approved="yes">
+                <source>label.localisation.fields.locationremarks</source> 
+                <target state="translated">Remarque</target> 
+            </trans-unit>
+            <trans-unit id="60" approved="yes">
+                <source>label.localisation.fields.maximumdepthinmeters</source> 
+                <target state="translated">Profondeur maximum en mètre</target> 
+            </trans-unit>
+            <trans-unit id="61" approved="yes">
+                <source>label.localisation.fields.maximumelevationinmeters</source> 
+                <target state="translated">Elévation maximum en mètre</target> 
+            </trans-unit>
+            <trans-unit id="62" approved="yes">
+                <source>label.localisation.fields.minimumdepthinmeters</source> 
+                <target state="translated">Profondeur minimum en mètre</target> 
+            </trans-unit>
+            <trans-unit id="63" approved="yes">
+                <source>label.localisation.fields.minimumelevationinmeters</source> 
+                <target state="translated">Elévation minimum en mètre</target> 
+            </trans-unit>
+            <trans-unit id="64" approved="yes">
+                <source>label.localisation.fields.municipality</source> 
+                <target state="translated">Municipalité</target> 
+            </trans-unit>
+            <trans-unit id="65" approved="yes">
+                <source>label.localisation.fields.sourcefileid</source> 
+                <target state="translated">sourcefileid</target> 
+            </trans-unit>
+            <trans-unit id="66" approved="yes">
+                <source>label.localisation.fields.stateprovince</source> 
+                <target state="translated">État/Province</target> 
+            </trans-unit>
+            <trans-unit id="67" approved="yes">
+                <source>label.localisation.fields.verbatimcountry</source> 
+                <target state="translated">Description du département</target> 
+            </trans-unit>
+            <trans-unit id="68" approved="yes">
+                <source>label.localisation.fields.verbatimelevation</source> 
+                <target state="translated">Description de l'élévation</target> 
+            </trans-unit>
+            <trans-unit id="69" approved="yes">
+                <source>label.localisation.fields.verbatimlocality</source> 
+                <target state="translated">Description de la localité</target> 
+            </trans-unit>
+            <trans-unit id="70" approved="yes">
+                <source>label.recolte.fields.decade</source> 
+                <target state="translated">Décade</target> 
+            </trans-unit>
+            <trans-unit id="71" approved="yes">
+                <source>label.recolte.fields.eday</source> 
+                <target state="translated">Jour de fin</target> 
+            </trans-unit>
+            <trans-unit id="72" approved="yes">
+                <source>label.recolte.fields.emonth</source> 
+                <target state="translated">Mois de fin</target> 
+            </trans-unit>
+            <trans-unit id="73" approved="yes">
+                <source>label.recolte.fields.eventdate</source> 
+                <target state="translated">Date</target> 
+            </trans-unit>
+            <trans-unit id="74" approved="yes">
+                <source>label.recolte.fields.eventremarks</source> 
+                <target state="translated">Rema</target> 
+            </trans-unit>
+            <trans-unit id="75" approved="yes">
+                <source>label.recolte.fields.eyear</source> 
+                <target state="translated">Année de fin</target> 
+            </trans-unit>
+            <trans-unit id="76" approved="yes">
+                <source>label.recolte.fields.fieldnotes</source> 
+                <target state="translated">Notes de terrain</target> 
+            </trans-unit>
+            <trans-unit id="77" approved="yes">
+                <source>label.recolte.fields.fieldnumber</source> 
+                <target state="translated">Numéro de récolte</target> 
+            </trans-unit>
+            <trans-unit id="78" approved="yes">
+                <source>label.recolte.fields.habitat</source> 
+                <target state="translated">Habitat</target> 
+            </trans-unit>
+            <trans-unit id="79" approved="yes">
+                <source>label.recolte.fields.recordedby</source> 
+                <target state="translated">Nom du récolteur</target> 
+            </trans-unit>
+            <trans-unit id="80" approved="yes">
+                <source>label.recolte.fields.sday</source> 
+                <target state="translated">Jour de début</target> 
+            </trans-unit>
+            <trans-unit id="81" approved="yes">
+                <source>label.recolte.fields.smonth</source> 
+                <target state="translated">Mois de début</target> 
+            </trans-unit>
+            <trans-unit id="82" approved="yes">
+                <source>label.recolte.fields.sourcefileid</source> 
+                <target state="translated">sourcefileid</target> 
+            </trans-unit>
+            <trans-unit id="83" approved="yes">
+                <source>label.recolte.fields.syear</source> 
+                <target state="translated">Année de début</target> 
+            </trans-unit>
+            <trans-unit id="84" approved="yes">
+                <source>label.recolte.fields.verbatimeventdate</source> 
+                <target state="translated">Remarque sur la date</target> 
+            </trans-unit>
+            <trans-unit id="85" approved="yes">
+                <source>label.stratigraphy.fields.bed</source> 
+                <target state="translated">Lit</target> 
+            </trans-unit>
+            <trans-unit id="86" approved="yes">
+                <source>label.stratigraphy.fields.earliestageorloweststage</source> 
+                <target state="translated">Étage</target> 
+            </trans-unit>
+            <trans-unit id="87" approved="yes">
+                <source>label.stratigraphy.fields.earliesteonorlowesteonothem</source> 
+                <target state="translated">Éon</target> 
+            </trans-unit>
+            <trans-unit id="88" approved="yes">
+                <source>label.stratigraphy.fields.earliestepochorlowestseries</source> 
+                <target state="translated">Époque</target> 
+            </trans-unit>
+            <trans-unit id="89" approved="yes">
+                <source>label.stratigraphy.fields.earliesteraorlowesterathem</source> 
+                <target state="translated">Ère</target> 
+            </trans-unit>
+            <trans-unit id="90" approved="yes">
+                <source>label.stratigraphy.fields.earliestperiodorlowestsystem</source> 
+                <target state="translated">Système</target> 
+            </trans-unit>
+            <trans-unit id="91" approved="yes">
+                <source>label.stratigraphy.fields.formation</source> 
+                <target state="translated">Formation</target> 
+            </trans-unit>
+            <trans-unit id="92" approved="yes">
+                <source>label.stratigraphy.fields.group_</source> 
+                <target state="translated">Group</target> 
+            </trans-unit>
+            <trans-unit id="93" approved="yes">
+                <source>label.stratigraphy.fields.highestbiostratigraphiczone</source> 
+                <target state="translated">Zone la plus élevée</target> 
+            </trans-unit>
+            <trans-unit id="94" approved="yes">
+                <source>label.stratigraphy.fields.latestageorhigheststage</source> 
+                <target state="translated">Dernier étage</target> 
+            </trans-unit>
+            <trans-unit id="95" approved="yes">
+                <source>label.stratigraphy.fields.latesteonorhighesteonothem</source> 
+                <target state="translated">Dernier éon</target> 
+            </trans-unit>
+            <trans-unit id="96" approved="yes">
+                <source>label.stratigraphy.fields.latestepochorhighestseries</source> 
+                <target state="translated">Dernière époque</target> 
+            </trans-unit>
+            <trans-unit id="97" approved="yes">
+                <source>label.stratigraphy.fields.latesteraorhighesterathem</source> 
+                <target state="translated">Dernière ère</target> 
+            </trans-unit>
+            <trans-unit id="98" approved="yes">
+                <source>label.stratigraphy.fields.latestperiodorhighestsystem</source> 
+                <target state="translated">Dernier système</target> 
+            </trans-unit>
+            <trans-unit id="99" approved="yes">
+                <source>label.stratigraphy.fields.lowestbiostratigraphiczone</source> 
+                <target state="translated">Zone la moins élevée</target> 
+            </trans-unit>
+            <trans-unit id="100" approved="yes">
+                <source>label.stratigraphy.fields.member</source> 
+                <target state="translated">Membre</target> 
+            </trans-unit>
+            <trans-unit id="101" approved="yes">
+                <source>label.stratigraphy.fields.sourcefileid</source> 
+                <target state="translated">sourcefileid</target> 
+            </trans-unit>
+            <trans-unit id="102" approved="yes">
+                <source>label.taxon.fields.acceptednameusage</source> 
+                <target state="translated">Nom d'usage accepté</target> 
+            </trans-unit>
+            <trans-unit id="103" approved="yes">
+                <source>label.taxon.fields.class</source> 
+                <target state="translated">Classe</target> 
+            </trans-unit>
+            <trans-unit id="104" approved="yes">
+                <source>label.taxon.fields.created</source> 
+                <target state="translated">Créé le</target> 
+            </trans-unit>
+            <trans-unit id="105" approved="yes">
+                <source>label.taxon.fields.dwcataxonid</source> 
+                <target state="translated">dwcataxonid</target> 
+            </trans-unit>
+            <trans-unit id="106" approved="yes">
+                <source>label.taxon.fields.family</source> 
+                <target state="translated">Famille</target> 
+            </trans-unit>
+            <trans-unit id="107" approved="yes">
+                <source>label.taxon.fields.genus</source> 
+                <target state="translated">Genre</target> 
+            </trans-unit>
+            <trans-unit id="108" approved="yes">
+                <source>label.taxon.fields.higherclassification</source> 
+                <target state="translated">Classification la plus haute</target> 
+            </trans-unit>
+            <trans-unit id="109" approved="yes">
+                <source>label.taxon.fields.infraspecificepithet</source> 
+                <target state="translated">Sous espèce</target> 
+            </trans-unit>
+            <trans-unit id="110" approved="yes">
+                <source>label.taxon.fields.kingdom</source> 
+                <target state="translated">Royaume</target> 
+            </trans-unit>
+            <trans-unit id="111" approved="yes">
+                <source>label.taxon.fields.modified</source> 
+                <target state="translated">Modifié le</target> 
+            </trans-unit>
+            <trans-unit id="112" approved="yes">
+                <source>label.taxon.fields.nameaccordingto</source> 
+                <target state="translated">Nom accordé à</target> 
+            </trans-unit>
+            <trans-unit id="113" approved="yes">
+                <source>label.taxon.fields.namepublishedin</source> 
+                <target state="translated">Nom publié le</target> 
+            </trans-unit>
+            <trans-unit id="114" approved="yes">
+                <source>label.taxon.fields.namepublishedinyear</source> 
+                <target state="translated">Nom publié dans</target> 
+            </trans-unit>
+            <trans-unit id="115" approved="yes">
+                <source>label.taxon.fields.nomenclaturalcode</source> 
+                <target state="translated">Code de nomenclature</target> 
+            </trans-unit>
+            <trans-unit id="116" approved="yes">
+                <source>label.taxon.fields.nomenclaturalstatus</source> 
+                <target state="translated">Status de nomenclature</target> 
+            </trans-unit>
+            <trans-unit id="117" approved="yes">
+                <source>label.taxon.fields.order</source> 
+                <target state="translated">Ordre</target> 
+            </trans-unit>
+            <trans-unit id="118" approved="yes">
+                <source>label.taxon.fields.originalnameusage</source> 
+                <target state="translated">Nom d'usage original</target> 
+            </trans-unit>
+            <trans-unit id="119" approved="yes">
+                <source>label.taxon.fields.parentnameusage</source> 
+                <target state="translated">Nom d'usage parent</target> 
+            </trans-unit>
+            <trans-unit id="120" approved="yes">
+                <source>label.taxon.fields.phylum</source> 
+                <target state="translated">Embranchement</target> 
+            </trans-unit>
+            <trans-unit id="121" approved="yes">
+                <source>label.taxon.fields.scientificname</source> 
+                <target state="translated">Nom scientifique</target> 
+            </trans-unit>
+            <trans-unit id="122" approved="yes">
+                <source>label.taxon.fields.scientificnameauthorship</source> 
+                <target state="translated">Auteur du nom scientifique</target> 
+            </trans-unit>
+            <trans-unit id="123" approved="yes">
+                <source>label.taxon.fields.sourcefileid</source> 
+                <target state="translated">sourcefileid</target> 
+            </trans-unit>
+            <trans-unit id="124" approved="yes">
+                <source>label.taxon.fields.specificepithet</source> 
+                <target state="translated">Epithète spécifique</target> 
+            </trans-unit>
+            <trans-unit id="125" approved="yes">
+                <source>label.taxon.fields.subgenus</source> 
+                <target state="translated">Sous genre</target> 
+            </trans-unit>
+            <trans-unit id="126" approved="yes">
+                <source>label.taxon.fields.taxonomicstatus</source> 
+                <target state="translated">Status taxonomique</target> 
+            </trans-unit>
+            <trans-unit id="127" approved="yes">
+                <source>label.taxon.fields.taxonrank</source> 
+                <target state="translated">Rang infraspécifique</target> 
+            </trans-unit>
+            <trans-unit id="128" approved="yes">
+                <source>label.taxon.fields.taxonremarks</source> 
+                <target state="translated">Remarque</target> 
+            </trans-unit>
+            <trans-unit id="129" approved="yes">
+                <source>label.taxon.fields.verbatimtaxonrank</source> 
+                <target state="translated">Remarque sur le rang du taxon</target> 
+            </trans-unit>
+            <trans-unit id="130" approved="yes">
+                <source>label.taxon.fields.vernacularname</source> 
+                <target state="translated">Nom vernaculaire</target> 
+            </trans-unit>
+            <trans-unit id="131" approved="yes">
+                <source>label.collection.fields.collectioncode</source> 
+                <target state="translated">Collection</target> 
+            </trans-unit>
+            <trans-unit id="132" approved="yes">
+                <source>label.institution.fields.institutioncode</source> 
+                <target state="translated">Institution</target> 
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

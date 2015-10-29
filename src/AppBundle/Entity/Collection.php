@@ -37,10 +37,16 @@ class Collection
     private $institution;
 
     /**
-     * @ORM\OneToOne(targetEntity="Specimen", mappedBy="collection")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Specimen", mappedBy="collection")
      **/
-    private $specimen;
-
+    private $specimens;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->specimens = new \Doctrine\Common\Collections\ArrayCollection();
+    }
     /**
      * Get collectionid
      *
@@ -145,5 +151,15 @@ class Collection
     public function getInstitution()
     {
         return $this->institution;
+    }
+    
+    /**
+     * Get specimens
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSpecimens()
+    {
+        return $this->specimens;
     }
 }

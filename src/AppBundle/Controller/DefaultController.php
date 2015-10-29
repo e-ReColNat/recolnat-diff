@@ -21,6 +21,7 @@ class DefaultController extends Controller
         $diffStatsManager = $this->get('diff.stats')->init($diffs) ;
         dump($diffs);
         $stats = $diffStatsManager->getStats();
+        dump($stats);
         $specimens = $specimenRepository->findBySpecimenCodes($diffStatsManager->getAllSpecimensId()) ;
         return $this->render('default/index.html.twig', array(
             'stats'                     => $stats,
@@ -42,7 +43,7 @@ class DefaultController extends Controller
             "Specimen" => [
               0 => "MHNAIXAIXAIX018780"
             ],
-            "Bibliography" => [],
+            /*"Bibliography" => [],
             "Determination" => [
               0 => "MHNAIXAIXAIX028625",
               1 => "MHNAIXAIXAIX028625"
@@ -63,16 +64,50 @@ class DefaultController extends Controller
               2 => "MHNAIXAIXAIX000429",
               3 => "MHNAIXAIXAIX000430",
               4 => "MHNAIXAIXAIX000429"
-            ]
+            ]*/
           ];
         $specimenRepository = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen') ;
         $diffStatsManager = $this->get('diff.stats')->init($diffs) ;
         dump($diffs);
         $specimens=[];
-        $stats=[];
-        //$stats = $diffStatsManager->getStats();
-        //$specimens = $specimenRepository->findBySpecimenCodes($diffStatsManager->getAllSpecimensId()) ;
-        return $this->render('default/index.html.twig', array(
+        $stats = $diffStatsManager->getStats();
+        dump($stats);
+        $specimens = $specimenRepository->findBySpecimenCodes($diffStatsManager->getAllSpecimensId()) ;
+        
+//                 {% set specimen = attribute(specimens, specimenId) | first %}
+//            {% set determination = specimen.determinations | first %}
+//            {% set taxon = determination.taxon %}
+//            {% set collection = specimen.collection %}
+//            {% set recolte = specimen.recolte %}
+//            {% set localisation = recolte.localisation %}
+        //$stopWatch = new \Symfony\Component\Stopwatch\Stopwatch() ;
+        $stopWatch = $this->get('debug.stopwatch');
+        $specimens = current($specimens);
+        foreach ($specimens as $specimen) {
+            /* @var $specimen \AppBundle\Entity\Specimen */
+            $stopWatch->start('recolte') ;
+            $recolte = $specimen->getRecolte();
+            $recolte->getDecade() ;
+            $stopWatch->stop('recolte') ;
+            
+            $stopWatch->start('localisation') ;
+            $localisation = $recolte->getLocalisation() ;
+            $localisation->getContinent() ;
+            $stopWatch->stop('localisation') ;
+            
+            $stopWatch->start('collection') ;
+            $collection = $specimen->getCollection() ;
+            $collection->getCollectionname() ;
+            $stopWatch->stop('collection') ;
+            
+            $stopWatch->start('determination') ;
+            $determinations  = $specimen->getDeterminations() ;
+            foreach ($determinations as $determination) {
+                $determination->getTaxon() ;
+            }
+            $stopWatch->stop('determination') ;
+        }
+        return $this->render('default/test.html.twig', array(
             'stats'                     => $stats,
             'diffs'                         => $diffs,
             'specimens'         => $specimens

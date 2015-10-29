@@ -2,6 +2,8 @@
 
 namespace AppBundle\Manager;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Stopwatch\Stopwatch;
+
 /**
  * Description of DiffInterface
  *
@@ -48,42 +50,15 @@ abstract class DiffAbstract
     {
         $this->class = $class ;
         $this->classFullName = 'AppBundle:'.ucfirst($class) ;
-        
         $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
                 ->findBySpecimenCodes($ids) ;
         $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
                 ->findBySpecimenCodes($ids) ;
-
         $this->compare();
         return $this;
     }
     protected function addStat($fieldName, $specimenId, $id, $dataR, $dataI)
     {
-        /*if (!isset($this->stats['records'])) {
-            $this->stats['records'] = array() ;
-        }
-        if (!isset($this->stats['records'][$id])) {
-            $this->stats['records'][$id] = array() ;
-        }
-        
-        if (!isset($this->stats['fields'])) {
-            $this->stats['fields'] = array() ;
-        }
-        
-        if (!isset($this->stats['fields'][$fieldName])) {
-            $this->stats['fields'][$fieldName] = [] ;
-            $this->stats['fields'][$fieldName]['compt']=0 ; 
-            $this->stats['fields'][$fieldName]['ids'] = [];
-        }
-         $this->stats['fields'][$fieldName]['compt']++ ; 
-         $this->stats['fields'][$fieldName]['ids'][] = $id;
-         $this->stats['fields'][$fieldName]['specimenIds'][] = $specimenId;
-
-         $this->stats['records'][$id][$fieldName] = [];
-         $this->stats['records'][$id][$fieldName]['recolnat'] = $dataR;
-         $this->stats['records'][$id][$fieldName]['institution'] = $dataI;
-         $this->stats['records'][$id][$fieldName]['specimenId'] = $specimenId;
-         */
          if (!isset($this->stats[$specimenId])) {
             $this->stats[$specimenId] = [];
          }

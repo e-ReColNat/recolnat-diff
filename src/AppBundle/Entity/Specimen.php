@@ -132,26 +132,26 @@ class Specimen
     private $sourcefileid;
 
     /**
-     * @ORM\OneToOne(targetEntity="Collection", inversedBy="specimen", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Collection", inversedBy="specimens", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
      **/
     private $collection;
 
     /**
-     * @ORM\OneToOne(targetEntity="Stratigraphy", fetch="EAGER")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
      **/
     private $stratigraphy;
 
     /**
-     * @ORM\OneToOne(targetEntity="Recolte", fetch="EAGER")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
      **/
     private $recolte;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Multimedia", inversedBy="specimens")
-     * @ORM\JoinTable(name="MultimediaHasOccurrences",
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Multimedia", inversedBy="specimens")
+     * @ORM\JoinTable(name="Multimedia_Has_Occurrences",
      *      joinColumns={@ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="multimediaid", referencedColumnName="multimediaid")}
      *      )
@@ -159,13 +159,13 @@ class Specimen
     private $multimedias;
 
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EAGER")
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EXTRA_LAZY")
     * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
     */
     protected $determinations;
 
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EAGER")
+    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EXTRA_LAZY")
     */
     protected $bibliographies;
     /**

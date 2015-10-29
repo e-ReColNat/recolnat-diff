@@ -1,0 +1,81 @@
+{% set multimedias = specimen.multimedias %}
+{% set determination = specimen.determinations | first %}
+{% set taxon = determination.taxon %}
+{% set collection = specimen.collection %}
+{% set recolte = specimen.recolte %}
+{% set localisation = recolte.localisation %}
+
+{#<div class="row no-margin">#}
+<div class="row">
+    <div class="col-sm-1 col-sm-offset-0">
+        <div style="padding-left: 80%;" role="toolbar" class="btn-toolbar">
+            <input type="checkbox" >
+        </div>
+    </div>
+    <div class="col-sm-9 col-sm-offset-0">
+        <a href="#">
+            {% if taxon.family is not empty %}
+                <span><span>{{taxon.family}}</span> / </span>
+            {% endif %}
+            {% if taxon.genus is not empty %}
+                <span><i><span>{{taxon.genus}}</span></i> / </span>
+            {% endif %}
+            {% if taxon.scientificname is not empty %}
+                <span><i><span>{{taxon.scientificname}}</span></i> / </span>
+            {% endif %}
+            {% if taxon.scientificnameauthorship is not empty %}
+                <span><span>{{taxon.scientificnameauthorship}}</span> / </span>
+            {% endif %}
+            {% if specimen.catalognumber is not empty %}
+                <span>{{specimen.catalognumber}}</span>
+            {% endif %}
+        </a>
+        <span class="row no-margin"><br>
+            <div class="col-sm-6 col-sm-offset-0 ng-binding">
+                {{'label.institution.fields.institutioncode' | trans({},'entity') }} <span>{{collection.institution.institutioncode}}</span><br>
+                {{'label.collection.fields.collectioncode' | trans({},'entity') }} <span>{{collection.collectioncode}}</span><br>
+                {% if taxon.family is not empty %}
+                    {{'label.taxon.fields.family' | trans({},'entity') }} <span>{{taxon.family}}</span><br>
+                {% endif %}
+                {% if taxon.genus is not empty %}
+                    {{'label.taxon.fields.genus' | trans({},'entity') }} <span>{{taxon.genus}}</span><br>
+                {% endif %}
+                {% if taxon.scientificname is not empty %}
+                    {{'label.taxon.fields.scientificname' | trans({},'entity') }} <span>{{taxon.scientificname}}</span><br>
+                {% endif %}
+            </div>
+            <div class="col-sm-6">
+                {% if localisation is not empty %}
+                    {% if localisation.country is not empty %}
+                        {{'label.localisation.fields.country' | trans({},'entity') }} <span>{{localisation.country}}</span><br>
+                    {% endif %}
+                    {% if localisation.county is not empty %}
+                        {{'label.localisation.fields.county' | trans({},'entity') }} <span>{{localisation.county}}</span><br>
+                    {% endif %}
+                    {% if localisation.locality is not empty %}
+                        {{'label.localisation.fields.locality' | trans({},'entity') }} <span>{{localisation.locality}}</span><br>
+                    {% endif %}
+                    {% if localisation.verbatimlocality is not empty %}
+                        {{'label.localisation.fields.verbatimlocality' | trans({},'entity') }} <span>{{localisation.verbatimlocality}}</span><br>
+                    {% endif %}
+                    {% if recolte.recordedby is not empty %}
+                        {{'label.recolte.fields.recordedby' | trans({},'entity') }} <span>{{recolte.recordedby}}</span><br>
+                    {% endif %}
+                    {% if recolte.fieldnumber is not empty %}
+                        {{'label.recolte.fields.fieldnumber' | trans({},'entity') }} <span>{{recolte.fieldnumber}}</span><br>
+                    {% endif %}
+                    {% if recolte.eventdate is not empty %}
+                        {{'label.recolte.fields.eventdate' | trans({},'entity') }} <span>{{recolte.eventdate}}</span><br>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </span>
+    </div>
+    {% if multimedias is not empty %}
+        <div style="position:relative;" class="col-sm-2 col-sm-offset-0 no-padding">
+            {% for multimedia in multimedias %}
+                <a href="{{multimedia.identifier}}"><img  src="{{thumb(multimedia.identifier, 25)}}" ></a>
+                {% endfor %}
+        </div>
+    {% endif %}
+</div>
