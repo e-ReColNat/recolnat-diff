@@ -523,4 +523,11 @@ class Stratigraphy
         return $this->sourcefileid;
     }
 
+    public function __toString()
+    {
+        return sprintf('%s %s %s', 
+                $this->getEarliestepochorlowestseries(), 
+                $this->getEarliestperiodorlowestsystem(),
+                $this->getEarliestageorloweststage());
+    }
 }

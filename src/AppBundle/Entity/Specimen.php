@@ -867,4 +867,9 @@ class Specimen
     {
         return $this->getInstitutioncode().$this->getCollectioncode().$this->getCatalognumber() ;
     }
+    
+    public function __toString()
+    {
+        return $this->catalognumber;
+    }
 }

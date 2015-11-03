@@ -3,8 +3,8 @@
     <caption class="bg-primary">Différences</caption>
     <thead>
         <tr>
-            <th style="width: 10px !important;">&nbsp;</th>
-            <th class="col-md-1"></th>
+            <th class="col-md-1">Class</th>
+            <th class="col-md-1">&nbsp;</th>
             <th class="col-md-4">Recolnat</th>
             <th class="col-md-4">Institution</th>
             <th class="col-md-1">R.</th>
@@ -17,26 +17,16 @@
         {% for class in summary|keys %}
                 {% set diffSpecimen = attribute(stats.classes, class) %}
                 {% set diffs = attribute(diffSpecimen, specimenId) %}
-
-                {% set comptFields = 0 %}
+                
                 {% for relationId, fields in diffs %}
-                    {% for fieldName, data in fields %}
-                        {% set comptFields = comptFields+1 %}
-                    {% endfor %}
-                {% endfor %}
-                {% for relationId, fields in diffs %}
-
                     {% set relationRecolnat = relationById(specimenRecolnat, class, relationId) %}
                     {% set relationInstitution = relationById(specimenInstitution, class, relationId) %}
                     {% set relationToString = relationByIdToString(specimenRecolnat, class, relationId) %}
 
-                    {% set rowspan = diffs|length + comptFields  %}
                     <tr class="diff-entity success">
-                        {% if loop.first %}
-                            <td class="warning diff-class" rowspan="{{rowspan}}" style="width: 10px !important;">
-                                <div>{{('label.' ~ class|lower ~ '.abbr') |trans({},'entity')}}</div>
+                            <td class="warning diff-class">
+                                {{('label.' ~ class|lower ~ '.abbr') |trans({},'entity')}}
                               </td>
-                        {% endif %}
                         <td colspan="3">{{ relationToString }}
                         </td>
                         <td class="input"><input type="radio" data-type='diff-entity' name="{{relationId}}" value="recolnat"></td>
@@ -44,7 +34,7 @@
                     </tr>
                     {% for fieldName, data in fields %}
                     <tr class="diff-field">
-                        <td>{{ ('label.'~class|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>
+                        <td colspan="2">{{ ('label.'~class|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>
                         <td>
                             {{ fieldToString(relationRecolnat, fieldName)}}
                         </td>

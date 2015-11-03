@@ -433,4 +433,9 @@ class Bibliography
     {
         return $this->specimen;
     }
+    
+    public function __toString()
+    {
+        return sprintf('%s %s', $this->getSubject(), $this->getCreator());
+    }
 }

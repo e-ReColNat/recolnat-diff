@@ -136,7 +136,7 @@
             </trans-unit>
             <trans-unit id="34" approved="yes">
                 <source>label.bibliography.fields.taxonremarks</source> 
-                <target state="translated">Rema</target> 
+                <target state="translated">Remarque</target> 
             </trans-unit>
             <trans-unit id="35" approved="yes">
                 <source>label.bibliography.fields.title</source> 
@@ -296,7 +296,7 @@
             </trans-unit>
             <trans-unit id="74" approved="yes">
                 <source>label.recolte.fields.eventremarks</source> 
-                <target state="translated">Rema</target> 
+                <target state="translated">Remarque</target> 
             </trans-unit>
             <trans-unit id="75" approved="yes">
                 <source>label.recolte.fields.eyear</source> 
@@ -529,6 +529,34 @@
             <trans-unit id="132" approved="yes">
                 <source>label.institution.fields.institutioncode</source> 
                 <target state="translated">Institution</target> 
+            </trans-unit>
+            <trans-unit id="133" approved="yes">
+                <source>label.bibliography.abbr</source> 
+                <target state="translated">Biblio.</target> 
+            </trans-unit>
+            <trans-unit id="134" approved="yes">
+                <source>label.stratigraphy.abbr</source> 
+                <target state="translated">Strati.</target> 
+            </trans-unit>
+            <trans-unit id="135" approved="yes">
+                <source>label.determination.abbr</source> 
+                <target state="translated">Deter.</target> 
+            </trans-unit>
+            <trans-unit id="136" approved="yes">
+                <source>label.localisation.abbr</source> 
+                <target state="translated">Loca.</target> 
+            </trans-unit>
+            <trans-unit id="137" approved="yes">
+                <source>label.recolte.abbr</source> 
+                <target state="translated">Récolte</target> 
+            </trans-unit>
+            <trans-unit id="138" approved="yes">
+                <source>label.taxon.abbr</source> 
+                <target state="translated">Taxon</target> 
+            </trans-unit>
+            <trans-unit id="139" approved="yes">
+                <source>label.specimen.abbr</source> 
+                <target state="translated">Spec.</target> 
             </trans-unit>
         </body>
     </file>

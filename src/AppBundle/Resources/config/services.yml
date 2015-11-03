@@ -55,6 +55,9 @@ services:
             - { name: twig.extension }
     app.twig_specimen_extension:
         class: AppBundle\Twig\SpecimenExtension
+        arguments:
+            doctrine: "@doctrine"
+            translator: @translator
         public: false
         tags:
             - { name: twig.extension }

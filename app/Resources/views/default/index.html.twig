@@ -1,25 +1,45 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% set summary = pagination.items %}
     {% dump(stats)%}
     {% if stats is not empty %}
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 facets" >
-            {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats} %}
+            {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats, 'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
         </div>
         
-        <div class="col-xs-7 col-sm-7 col-md-8 col-lg-9 col-xs-offset-0">
-        {% for specimenId, classWithDiff in stats.summary %}
+        <div class="col-xs-7 col-sm-7 col-md-8 col-lg-9">
+            <div class="count">
+                {{ pagination.getTotalItemCount }}
+            </div>
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        {% for specimenId, classWithDiff in summary %}
             <div class="well{{ loop.index is odd ? ' odd' : '' }}" id="{{specimenId}}">
-            {% set specimen = attribute(specimens, specimenId) | first %}
-            {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
-            {% include 'default/partial/short_diff_specimen.html.twig' with {'specimenId' : specimenId, 'stats' : stats} %}
+            {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}
+            {% set specimenInstitution = attribute(specimensInstitution, specimenId) | first %}
+            
+            {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
+            
+            {% if loop.index is odd %}
+                <div class="clearfix">
+                {% include 'default/partial/short_diff_specimen.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats} %}
+                </div>
+            {% else %}
+                <div class="clearfix">
+                {% include 'default/partial/short_diff_specimen2.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats} %}
+                </div>
+            {% endif %}
+            
             </div>
         {% endfor %}
         {% endif %}
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+            </div>
         </div>
-        
-        
     </div>
 {% endblock %}
 

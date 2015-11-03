@@ -7,8 +7,11 @@ parameters:
     database_name:     symfony
     database_user:     root
     database_password: ~
-    # You should uncomment this if you want use pdo_sqlite
-    # database_path: "%kernel.root_dir%/data.db3"
+    database_host_diff: localhost
+    database_port_diff: 1521
+    database_name_diff: XE
+    database_user_diff: recolnat_diff
+    database_password_diff: 
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1

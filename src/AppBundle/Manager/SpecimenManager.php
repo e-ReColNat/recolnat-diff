@@ -59,17 +59,6 @@ class SpecimenManager
             return null ;
         }
         $qb = $this->em->createQueryBuilder('s');
-        $qb2 = $this->em->createQueryBuilder('d');
-        
-        /*$qb2->select('d')
-                                ->from('AppBundle\Entity\Determination', 'd')
-                                ->join('AppBundle\Entity\Specimen', 's', Expr\Join::WITH)
-                                ->where($qb2->expr()->in(RecolnatRepositoryAbstract::getExprConcatSpecimenCode($qb2), ':specimenCodes'))
-                                ->setParameter('specimenCodes', $specimenCodes)
-                                ->orderBy('d.identificationverifstatus', 'DESC')
-                                ->addOrderBy('d.dateidentified', 'DESC')
-                                ->setMaxResults(1)
-                            ->getQuery()->getResult();*/
 
         $queryDql = 'SELECT s, d '
                 . 'FROM AppBundle\Entity\Specimen s '
@@ -82,37 +71,15 @@ class SpecimenManager
                     . 'd2.specimen = s2 AND '
                     . RecolnatRepositoryAbstract::getExprConcatSpecimenCode($qb, 's2')
                     .' IN (:specimenCodes) '
-                    //. ' ORDER BY d2.identificationverifstatus DESC '
                     . ') '
                 . 'WHERE '
                 . RecolnatRepositoryAbstract::getExprConcatSpecimenCode($qb)
                 .' IN (:specimenCodes) '
                 ;
         $query = $this->em->createQuery($queryDql) ;
-        /*$query = $qb
-                ->select('s, d')
-                ->from('AppBundle\Entity\Specimen', 's')
-                ->join('AppBundle\Entity\Determination', 'd')
-                ->where(
-                        $qb->expr()->in(
-                                'd',
-                                $qb2->select('d')
-                                ->from('AppBundle\Entity\Determination', 'd')
-                                ->join('AppBundle\Entity\Specimen', 's', Expr\Join::WITH)
-                                ->where($qb2->expr()->in(RecolnatRepositoryAbstract::getExprConcatSpecimenCode($qb2), ':subSpecimenCodes'))
-                                
-                                ->orderBy('d.identificationverifstatus', 'DESC')
-                                ->addOrderBy('d.dateidentified', 'DESC')
-                                ->setMaxResults(1)
-                                ->getDQL()
-                                
-                            ))
-                 
-                 ;*/
+
         if (!is_null($specimenCodes)) {
-                //$query->add('where', $qb->expr()->in(RecolnatRepositoryAbstract::getExprConcatSpecimenCode($qb), ':specimenCodes'));
                 $query->setParameter('specimenCodes', $specimenCodes);
-                //$qb2->setParameter('subSpecimenCodes', $specimenCodes);
         }
         return $query->getResult() ;
     }

@@ -7,12 +7,12 @@
 
 {#<div class="row no-margin">#}
 <div class="row">
-    <div class="col-sm-1 col-sm-offset-0">
+    <div class="col-sm-1">
         <div style="padding-left: 80%;" role="toolbar" class="btn-toolbar">
             <input type="checkbox" >
         </div>
     </div>
-    <div class="col-sm-9 col-sm-offset-0">
+    <div class="col-sm-8">
         <a href="#">
             {% if taxon.family is not empty %}
                 <span><span>{{taxon.family}}</span> / </span>
@@ -30,8 +30,8 @@
                 <span>{{specimen.catalognumber}}</span>
             {% endif %}
         </a>
-        <span class="row no-margin"><br>
-            <div class="col-sm-6 col-sm-offset-0 ng-binding">
+        <span class="row">
+            <div class="col-sm-6">
                 {{'label.institution.fields.institutioncode' | trans({},'entity') }} <span>{{collection.institution.institutioncode}}</span><br>
                 {{'label.collection.fields.collectioncode' | trans({},'entity') }} <span>{{collection.collectioncode}}</span><br>
                 {% if taxon.family is not empty %}
@@ -72,9 +72,9 @@
         </span>
     </div>
     {% if multimedias is not empty %}
-        <div style="position:relative;" class="col-sm-2 col-sm-offset-0 no-padding">
+        <div class="col-sm-3">
             {% for multimedia in multimedias %}
-                <a href="{{multimedia.identifier}}"><img  src="{{thumb(multimedia.identifier, 25)}}" ></a>
+                <a href="{{multimedia.identifier}}"><img  src="{{thumb(multimedia.identifier, 25)}}" class="img-thumbnail"></a>
                 {% endfor %}
         </div>
     {% endif %}

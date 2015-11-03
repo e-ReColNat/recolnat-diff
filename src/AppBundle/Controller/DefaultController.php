@@ -9,24 +9,49 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/", name="diff")
      */
     public function indexAction(Request $request)
     {
-        /* @var $diffManager \AppBundle\Manager\DiffManager */
-        $diffManager = $this->get('diff.manager');
-        $diffs=$diffManager->getAllDiff('MHNAIX') ;
-
-        $specimenRepository = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen') ;
-        $diffStatsManager = $this->get('diff.stats')->init($diffs) ;
-        dump($diffs);
+        $institutionCode = 'MHNAIX' ;
+        
+        /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
+        $session = $this->get('session');
+        
+        if (!is_null($request->query->get('reset', null))) {
+            $session->clear();
+        }
+        $diffs = $session->get('diffs') ;
+        if (is_null($diffs) || !isset($diffs[$institutionCode])) {
+            /* @var $diffManager \AppBundle\Manager\DiffManager */
+            $diffManager = $this->get('diff.manager');
+            $diffs[$institutionCode]=$diffManager->getAllDiff($institutionCode) ;
+            $session->set('diffs', $diffs) ;
+        }
+        else {
+            $diffs = $session->get('diffs') ;
+        }
+        $specimenRepositoryRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen') ;
+        $specimenRepositoryInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff') ;
+        $diffStatsManager = $this->get('diff.stats')->init($diffs[$institutionCode]) ;
         $stats = $diffStatsManager->getStats();
-        dump($stats);
-        $specimens = $specimenRepository->findBySpecimenCodes($diffStatsManager->getAllSpecimensId()) ;
+        $specimensRecolnat = $specimenRepositoryRecolnat->findBySpecimenCodes($diffStatsManager->getAllSpecimensId()) ;
+        $specimensInstitution = $specimenRepositoryInstitution->findBySpecimenCodes($diffStatsManager->getAllSpecimensId()) ;
+        
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $stats['summary'],
+            $request->query->getInt('page', 1)/*page number*/,
+            5/*limit per page*/
+        );
+    
         return $this->render('default/index.html.twig', array(
-            'stats'                     => $stats,
-            'diffs'                         => $diffs,
-            'specimens'         => $specimens
+            'stats'                  => $stats,
+            'diffs'                   => $diffs[$institutionCode],
+            'specimensRecolnat'       => $specimensRecolnat,
+            'specimensInstitution'       => $specimensInstitution,
+            'pagination'        => $pagination,
+                
         ));
     }
     
