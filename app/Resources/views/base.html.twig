@@ -21,6 +21,8 @@
     </body>
     <script src="//code.jquery.com/jquery.min.js"></script>
     <script src="{{ asset('bootstrap/3.3.5/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
         {% block javascripts %}
         
         {% endblock %}

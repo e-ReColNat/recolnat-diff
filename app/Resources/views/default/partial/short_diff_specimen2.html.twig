@@ -29,8 +29,8 @@
                               </td>
                         <td colspan="3">{{ relationToString }}
                         </td>
-                        <td class="input"><input type="radio" data-type='diff-entity' name="{{relationId}}" value="recolnat"></td>
-                        <td class="input"><input type="radio" data-type='diff-entity' name="{{relationId}}" value="institution"></td>
+                        <td class="input"><input type="radio" data-class="{{class}}" data-type='diff-entity' name="{{relationId}}" value="recolnat"></td>
+                        <td class="input"><input type="radio" data-class="{{class}}" data-type='diff-entity' name="{{relationId}}" value="institution"></td>
                     </tr>
                     {% for fieldName, data in fields %}
                     <tr class="diff-field">
@@ -41,8 +41,12 @@
                         <td>
                             {{ fieldToString(relationInstitution, fieldName)}}
                         </td>
-                        <td class="input"><input type="radio"  data-type='diff-field' name="{{relationId}}[{{fieldName}}]" value="recolnat"></td>
-                        <td class="input"><input type="radio" data-type='diff-field' name="{{relationId}}[{{fieldName}}]" value="institution"></td>
+                        <td class="input">
+                                {% include 'default/partial/inputRadioDiff.html.twig' with {'class' : class, 'relationId': relationId, 'fieldName' : fieldName, 'value' : 'recolnat', 'choices' : choices} %}
+                        </td>
+                        <td class="input">
+                            {% include 'default/partial/inputRadioDiff.html.twig' with {'class' : class, 'relationId': relationId, 'fieldName' : fieldName, 'value' : 'institution', 'choices' : choices} %}
+                        </td>
                     </tr>
                     {% endfor %}
                 {% endfor %}

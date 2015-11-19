@@ -25,6 +25,16 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         return $query->getResult() ;
     }
     
+    public function findOneById($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('d')
+                ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
+                ->where('d.identificationid = :id')
+                ->setParameter('id', $id)
+                ->getQuery() ;
+        return $query->getOneOrNullResult();
+    }
     /**
      * 
      * @param array $specimenCodes

@@ -24,6 +24,16 @@ class RecolteRepository extends RecolnatRepositoryAbstract
                 ->getQuery() ;
         return $query->getResult() ;
     }
+    public function findOneById($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('r')
+                ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
+                ->where('r.eventid = :id')
+                ->setParameter('id', $id)
+                ->getQuery() ;
+        return $query->getOneOrNullResult();
+    }
      /**
      * 
      * @param array $specimenCodes

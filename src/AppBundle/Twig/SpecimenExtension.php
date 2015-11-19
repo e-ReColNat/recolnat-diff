@@ -1,24 +1,20 @@
 <?php
-
-namespace AppBundle\Twig;
-use Doctrine\ORM\Mapping\ClassMetadataInfo ;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Translation\Translator ;
-use Symfony\Component\Translation\DataCollectorTranslator ;
-use Symfony\Component\Intl\Locale ;
-use Doctrine\Common\Collections\ArrayCollection ;
-//use Symfony\Component\Intl\DateFormatter\IntlDateFormatter ;
 /**
  * Description of MultimediaExtension
  *
  * @author tpateffoz
  */
+namespace AppBundle\Twig;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Translation\DataCollectorTranslator ;
+use Symfony\Component\Intl\Locale ;
+
 class SpecimenExtension extends \Twig_Extension
 {
     protected $doctrine;
     protected $translator ;
 
-    public function __construct(RegistryInterface $doctrine,DataCollectorTranslator $translator)
+    public function __construct(RegistryInterface $doctrine, DataCollectorTranslator $translator)
     {
         $this->doctrine = $doctrine;
         $this->translator = $translator;

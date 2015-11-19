@@ -13,6 +13,17 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
      * @return array
      */
     abstract public function findBySpecimenCodes($specimenCodes);
+     /**
+     * 
+     * @param array $ids
+     * @return array
+     */
+    abstract public function findById($ids);
+     /**
+     * 
+     * @param array $ids
+     */
+    abstract public function findOneById($id);
     
     public static function getExprConcatSpecimenCode(\Doctrine\ORM\QueryBuilder $qb, $alias='s') 
     {

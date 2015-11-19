@@ -24,6 +24,16 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->getQuery() ;
         return $query->getResult() ;
     }
+    public function findOneById($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('s')
+                ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
+                ->where('s.occurrenceid = :id')
+                ->setParameter('id', $id)
+                ->getQuery() ;
+        return $query->getOneOrNullResult();
+    }
     /**
      * 
      * @param array $specimenCodes
@@ -38,8 +48,22 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
-        //$qb->getQuery()->setFetchMode('AppBundle\Specimen', 'determination', \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
-        //$qb->getQuery()->setFetchMode('AppBundle\Specimen', 'recolte', \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'occurrenceid') ;
+    }
+    /**
+     * 
+     * @param array $specimenCodes
+     * @return array
+     */
+    public function getQueryForSpecimenCodes($specimenCodes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        
+        $query = $qb
+                ->select('s')
+                //->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
+        ->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $qb->setParameter('specimenCodes', $specimenCodes);
+        return $query->getQuery();
     }
 }

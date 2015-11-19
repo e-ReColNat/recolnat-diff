@@ -25,6 +25,16 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
         return $query->getResult() ;
     }
     
+    public function findOneById($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('b')
+                ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
+                ->where('b.referenceid = :id')
+                ->setParameter('id', $id)
+                ->getQuery() ;
+        return $query->getOneOrNullResult();
+    }
     /**
      * 
      * @param array $specimenCodes

@@ -25,6 +25,18 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
                 ->getQuery() ;
         return $query->getResult() ;
     }
+    
+    public function findOneById($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('s')
+                ->from('AppBundle\Entity\Stratigraphy', 's', 's.geologicalcontextid')
+                ->where('s.geologicalcontextid = :id')
+                ->setParameter('id', $id)
+                ->getQuery() ;
+        return $query->getOneOrNullResult();
+    }
+
     /**
      * 
      * @param array $specimenCodes

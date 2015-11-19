@@ -5,27 +5,34 @@
         <div class="col-xs-12">
         {% set specimen = attribute(specimensRecolnat, specimenId) | first %}
         {% set determination = specimen.determinations | first %}
-        {% if ( loop.index % itemNumberPerPage) == 0  %}
-            {% set page = page +1 %}
-        {% endif %}
+        
         
         {% if determination.taxon is defined and determination.taxon is not empty %}
             {% set taxon = determination.taxon %}
         {% else %}
             {% set taxon = 'label.notaxon' | trans %}
         {% endif %}
+        
+        {% set path='' %}
         {% if page != currentPage %}
             {% set path = path('diff', {'page' : page}) %}
-        {% else %}
-            {% set path='' %}
         {% endif %}
-        <a href="{{path}}#{{specimenId}}">{{taxon}} {{page}}</a>
-        {% for class, nbDiffs in classWithDiff %}
-            <div>
-                {{class}} : 
-                {{ 'label.differences' | transchoice(nbDiffs.records, {'%diff_count%': nbDiffs.records}) }}
+        
+        <a href="{{path}}#{{specimenId}}">{{taxon}}</a>
+        
+        {% for className in classWithDiff | keys %}
+            {% set nbDiffs = countDiffs(stats, className, specimenId) %}
+            {% set nbChoices = countChoices(choices, specimenId, className) %}
+            <div class ="{{ nbDiffs == nbChoices ? ' text-success' :  'text-warning'}}" id="facet-{{specimenId}}">
+                {{className}} : 
+                {{ 'label.choix' | transchoice(nbChoices, {'%nbChoices%': nbChoices}) }} / 
+                {{ 'label.differences' | transchoice(nbDiffs, {'%nbDiffs%': nbDiffs}) }}
             </div>
         {% endfor %}
+        
+        {% if ( loop.index % itemNumberPerPage) == 0  %}
+            {% set page = page +1 %}
+        {% endif %}
         </div>
     </div>
     </div>

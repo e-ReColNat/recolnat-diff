@@ -3,21 +3,20 @@
 {% block body %}
     {% set summary = pagination.items %}
     {% dump(stats)%}
+    {% dump(choices)%}
     {% if stats is not empty %}
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 facets" >
-            {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats, 'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
+            {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats, 'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>
         
-        <div class="col-xs-7 col-sm-7 col-md-8 col-lg-9">
-            <div class="count">
-                {{ pagination.getTotalItemCount }}
-            </div>
+        <div class="col-xs-7 col-sm-7 col-md-8 col-lg-9" id="diffs" data-institutioncode="{{institutionCode}}">
+            <a href="{{path('export', {'institutionCode' : institutionCode})}}">Export</a>
             <div class="navigation">
                 {{ knp_pagination_render(pagination) }}
             </div>
         {% for specimenId, classWithDiff in summary %}
-            <div class="well{{ loop.index is odd ? ' odd' : '' }}" id="{{specimenId}}">
+            <div class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}">
             {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}
             {% set specimenInstitution = attribute(specimensInstitution, specimenId) | first %}
             
@@ -25,11 +24,11 @@
             
             {% if loop.index is odd %}
                 <div class="clearfix">
-                {% include 'default/partial/short_diff_specimen.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats} %}
+                {% include 'default/partial/short_diff_specimen.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats, 'choices' : choices} %}
                 </div>
             {% else %}
                 <div class="clearfix">
-                {% include 'default/partial/short_diff_specimen2.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats} %}
+                {% include 'default/partial/short_diff_specimen2.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats, 'choices' : choices} %}
                 </div>
             {% endif %}
             
@@ -45,22 +44,77 @@
 
 {% block javascripts %}
     <script type="text/javascript">
+        
     $(document).ready(function(){
+        
+        function setChoice(choices, element, specimenId) {
+            fieldName=element.data('fieldname');
+            className=element.data('class');
+            choice = element.attr('value') ;
+            relationId = element.data('relationid') ;
+            choice = {
+                'className' : className, 
+                'fieldName' : fieldName,
+                'relationId' : relationId,
+                'choice' : choice,
+                'specimenId' : specimenId
+            };
+            flag = false;
+            if (choices.length > 0) {
+                for (var i = 0; i < choices.length; i++)
+                   {
+                     row = choices[i] ;
+                     if (
+                            row.className == choice.className &&
+                            row.fieldName == choice.fieldName &&
+                            row.relationId == choice.relationId 
+                    ) {
+                        //choices.slice(i) ;
+                        flag = true;
+                        choices[i] = choice;
+                    }
+                    }
+                }
+            if (!flag) {
+                choices.push(choice);
+            }
+           
+       }
+        
+        var choices = new Array();
+        var institutionCode = $('#diffs').data('institutioncode');
+        
         $('table.diff').find( ":radio" ).change(function() {
             var tableContext = $(this).parents('table.diff');
-            console.log(tableContext);
-            if ($(this).data('type') == 'diff-entity') {
-                var relationId = $(this).attr('name') ;
-                var choix = $(this).attr('value') ;
+            var relationId = $(this).attr('name') ;
+            var choice = $(this).attr('value') ;
+            var specimenId = $(this).parents('div.specimen').attr('id');
+            
+            if ($(this).data('type') === 'diff-entity') {
                 tableContext.find( ":radio")
                         .filter("[name^='"+relationId+"']")
                         .filter('[data-type="diff-field"]')
-                        .filter('[value = "'+choix +'"]')
+                        .filter('[value = "'+choice +'"]')
                         .map(
                         function() {
                             $(this).prop('checked', true);
+                            setChoice(choices, $(this), specimenId);
                         });
             }
+            else {
+                setChoice(choices, $(this), specimenId);
+            }
+            console.log(choices);
+            //console.log(JSON.stringify(choices));
+            console.log(JSON.stringify(choices, undefined, 2));
+            $.ajax({
+                url : Routing.generate('setChoice', { institutionCode: institutionCode}),
+                data: {'choices' : choices},
+                method: "POST",
+            })
+            .done(function(data) {
+                console.log(data);
+            });
         });
     });
     </script>

@@ -24,6 +24,16 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->getQuery() ;
         return $query->getResult() ;
     }
+    public function findOneById($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('t')
+                ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
+                ->where('t.taxonid = :id')
+                ->setParameter('id', $id)
+                ->getQuery() ;
+        return $query->getOneOrNullResult();
+    }
     /**
      * 
      * @param array $specimenCodes

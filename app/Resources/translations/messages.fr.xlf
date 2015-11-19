@@ -20,9 +20,13 @@
             </trans-unit>
             <trans-unit id="5">
                 <source>label.differences</source>
-                <target>{1}Une différence|]1,Inf]%diff_count% différences</target>
+                <target>{1}1 différence|]1,Inf]%nbDiffs% différences</target>
             </trans-unit>
             <trans-unit id="6">
+                <source>label.choix</source>
+                <target>{0}0 choix|{1}1 choix|]1,Inf]%nbChoices% choix</target>
+            </trans-unit>
+            <trans-unit id="7">
                 <source>label.credits</source>
                 <target>Crédits</target>
             </trans-unit>

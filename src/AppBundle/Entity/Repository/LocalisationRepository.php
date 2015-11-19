@@ -25,6 +25,16 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ->getQuery() ;
         return $query->getResult() ;
     }
+    public function findOneById($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('l')
+                ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
+                ->where('l.locationid = :id')
+                ->setParameter('id', $id)
+                ->getQuery() ;
+        return $query->getOneOrNullResult();
+    }
     /**
      * 
      * @param array $specimenCodes

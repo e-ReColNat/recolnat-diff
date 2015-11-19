@@ -25,6 +25,15 @@ class DiffManager
     protected $class;
     protected $fullClassName;
     protected $institutionCode;
+    protected $entitiesName=[
+            'Specimen',     
+            'Bibliography',
+            'Determination',
+            'Localisation',
+            'Recolte',
+            'Stratigraphy',
+            'Taxon'
+        ];
 
     public function __construct(ObjectManager $em)
     {
@@ -34,19 +43,25 @@ class DiffManager
     public function getAllDiff($institutionCode) 
     {
         $this->institutionCode = $institutionCode ;
-        $entitiesName=[
-            'Specimen',     
-            'Bibliography',
-            'Determination',
-            'Localisation',
-            'Recolte',
-            'Stratigraphy',
-            'Taxon'
-        ];
-        foreach ($entitiesName as $entityName) {
+        foreach ($this->entitiesName as $entityName) {
             $results[$entityName] = $this->getDiff($entityName);
         }
         return $results;
+    }
+    
+    /**
+     * Renvoie un tableau des codes des specimens ayant une différence
+     * @param array $results
+     * @return array
+     */
+    public static function getSpecimensCode($results) 
+    {
+        foreach ($results as $specimensCode) {
+            foreach ($specimensCode as $specimenCode) {
+                $returnSpecimensCode[] = $specimenCode ;
+            }
+        }
+        return array_unique($returnSpecimensCode);
     }
     
     public function getGenericDiffQuery()

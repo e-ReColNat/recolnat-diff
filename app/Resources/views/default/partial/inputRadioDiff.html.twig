@@ -1,0 +1,10 @@
+{% set checked = "" %}
+{% if choices is defined and choices is not empty %}
+    {% if choices[class][relationId][fieldName] is defined %}
+        {% if choices[class][relationId][fieldName] == value %}
+            {% set checked = "checked" %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+<input type="radio" {{checked}} data-class="{{class}}" data-type='diff-field' data-relationid="{{relationId}}" data-fieldname="{{fieldName}}" name="{{relationId}}[{{fieldName}}]" value="{{value}}">

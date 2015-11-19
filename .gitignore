@@ -43,7 +43,6 @@
 ### Eclipse ###
 .metadata
 .gradle
-bin/
 tmp/
 *.tmp
 *.bak
@@ -68,3 +67,9 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 .nb-gradle/
+
+### RECOLNAT SPECIFIC ###
+data/*
+!data/.gitkeep
+!bin/talend_converter
+!bin/talend_converter/*

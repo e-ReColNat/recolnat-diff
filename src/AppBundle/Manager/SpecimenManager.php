@@ -4,6 +4,8 @@ namespace AppBundle\Manager;
 use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\Repository\RecolnatRepositoryAbstract;
 use Doctrine\ORM\Query\Expr ;
+use Symfony\Component\Translation\DataCollectorTranslator ;
+use Symfony\Component\Intl\Locale ;
 /**
  * Description of SpecimenManager
  *
@@ -20,7 +22,7 @@ class SpecimenManager
      * Holds the Doctrine entity manager for Institution database interaction
      * @var EntityManager 
      */
-    protected $emD;
+    protected $emI;
     
     /**
      * Holds the Doctrine entity manager for Institution database interaction
@@ -28,13 +30,15 @@ class SpecimenManager
      */
     protected $em;
 
+    protected $translator ;
     protected $stats=array();
     protected $excludeFieldsName = [] ;
     
-    public function __construct(EntityManager $emR, EntityManager $emD)
+    public function __construct(EntityManager $emR, EntityManager $emI, DataCollectorTranslator $translator)
     {
         $this->emR = $emR;
-        $this->emD = $emD;
+        $this->emI = $emI;
+        $this->translator = $translator;
     }
     
     public function init($base)
@@ -44,7 +48,7 @@ class SpecimenManager
                 $this->em = $this->emR ;
             }
             else {
-                $this->em = $this->emD ;
+                $this->em = $this->emI ;
             }
         }
         else {
@@ -82,5 +86,32 @@ class SpecimenManager
                 $query->setParameter('specimenCodes', $specimenCodes);
         }
         return $query->getResult() ;
+    }
+    
+    public function getCsv(\AppBundle\Entity\Specimen $specimen, array $fieldsOrder) {
+        $csvRow = [] ;
+        $dateFormater = $this->getDateFormatter() ;
+
+        foreach ($fieldsOrder as $field) {
+            $getter = 'get'.$field ;
+            if (method_exists($specimen, $getter)) {
+                $value = $specimen->{$getter}() ;
+                if ($value instanceof \DateTime) {
+                    $value = $dateFormater->format($value) ;
+                }
+                $csvRow[$field] = $value;
+            }
+            else {
+                throw new \Exception(sprintf('Methode %s n\'existe pas pour l\'entité %s', $specimen, $getter));
+            }
+            
+        }
+        return $csvRow ;
+    }
+    private function getDateFormatter() {
+        return \IntlDateFormatter::create(
+                    Locale::getDefault(), 
+                    \IntlDateFormatter::SHORT, 
+                    \IntlDateFormatter::NONE) ;
     }
 }

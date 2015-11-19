@@ -48,6 +48,21 @@ services:
         arguments:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
+            translator: @translator
+    genericEntityManager:
+        class: AppBundle\Manager\GenericEntityManager
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
+            translator: @translator
+    exportManager:
+        class: AppBundle\Manager\ExportManager
+        arguments:
+            export_path: "%export_path%"
+            sessionManager: @session
+            genericEntityManager: @genericEntityManager
+            
+    # TWIG EXTENSIONS
     app.twig_multimedia_extension:
         class: AppBundle\Twig\MultimediaExtension
         public: false
@@ -58,6 +73,11 @@ services:
         arguments:
             doctrine: "@doctrine"
             translator: @translator
+        public: false
+        tags:
+            - { name: twig.extension }
+    app.twig_export_extension:
+        class: AppBundle\Twig\ExportExtension
         public: false
         tags:
             - { name: twig.extension }

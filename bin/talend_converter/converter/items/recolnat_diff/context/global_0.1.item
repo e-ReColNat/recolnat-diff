@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<talendfile:ContextType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" confirmationNeeded="false" name="Default">
+  <contextParameter comment="" name="global_filepath" prompt="global_filepath?" promptNeeded="false" type="id_String" value="/home/tpateffoz/www/recolnat-diff/data"/>
+  <contextParameter comment="" name="global_filename_json" prompt="global_filename_json?" promptNeeded="false" type="id_String" value="MHNAIX.json"/>
+  <contextParameter comment="" name="global_filename_choices" prompt="global_filename_choices?" promptNeeded="false" type="id_String" value="session_MHNAIX.json"/>
+</talendfile:ContextType>
