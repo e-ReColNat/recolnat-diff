@@ -15,6 +15,7 @@
             <div class="navigation">
                 {{ knp_pagination_render(pagination) }}
             </div>
+            {% include 'default/partial/filter.html.twig' with {'institutionCode' : institutionCode, 'currentPage': pagination.getCurrentPageNumber} %}
         {% for specimenId, classWithDiff in summary %}
             <div class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}">
             {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}

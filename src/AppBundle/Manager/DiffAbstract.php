@@ -36,6 +36,7 @@ abstract class DiffAbstract
     protected $emD;
 
     protected $stats=array();
+    protected $fields=array();
     public $excludeFieldsName = [] ;
     
     abstract protected function getIdSetter();
@@ -59,6 +60,12 @@ abstract class DiffAbstract
     }
     protected function addStat($fieldName, $specimenId, $id, $dataR, $dataI)
     {
+         if (!isset($this->fields)) {
+            $this->fields = [];
+         }
+         if (!isset($this->fields[$fieldName])) {
+            $this->fields[$fieldName] = 0;
+         }
          if (!isset($this->stats[$specimenId])) {
             $this->stats[$specimenId] = [];
          }
@@ -68,11 +75,16 @@ abstract class DiffAbstract
          $this->stats[$specimenId][$id][$fieldName] = [];
          $this->stats[$specimenId][$id][$fieldName]['recolnat'] = $dataR;
          $this->stats[$specimenId][$id][$fieldName]['institution'] = $dataI;
+         $this->fields[$fieldName]++;
     }
     
     public function getStats()
     {
         return $this->stats;
+    }
+    public function getFields()
+    {
+        return $this->fields;
     }
     
     protected function compare() {

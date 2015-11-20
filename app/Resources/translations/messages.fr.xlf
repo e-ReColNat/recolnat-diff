@@ -30,6 +30,22 @@
                 <source>label.credits</source>
                 <target>Crédits</target>
             </trans-unit>
+            <trans-unit id="8">
+                <source>label.choixRecolnat</source>
+                <target>Choisir toutes les modifications issues de la base e-Recolnat</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>label.choixInstitution</source>
+                <target>Choisir toutes les modifications issues de vos données</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>label.selectAllDatas</source>
+                <target>Pour toutes les données</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.selectPageDatas</source>
+                <target>Pour cette page seulement</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>

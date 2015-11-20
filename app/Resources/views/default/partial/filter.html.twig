@@ -1,0 +1,18 @@
+<div class="well">
+    <form>
+        <div class="form-group">
+            <label for="selectRecolnat">{{ 'label.choixRecolnat' | trans }}</label>
+            <input type="checkbox" id="selectRecolnat">
+            <label for="selectInstitution">{{ 'label.choixInstitution' | trans }}</label>
+            <input type="checkbox" id="selectInstitution">
+        </div>
+        <div class="form-group">
+            <label for="selectAllData">{{ 'label.selectAllDatas' | trans }}</label>
+            <input type="checkbox" id="selectAllData">
+            <label for="selectAllData">{{ 'label.selectPageDatas' | trans }}</label>
+            <input type="checkbox" id="selectPageData">
+        </div>
+        <input type="hidden" id="institutionCode" value="{{institutionCode}}">
+        <input type="hidden" id="page" value="{{currentPage}}">
+    </form>
+</div>
