@@ -200,7 +200,7 @@ class DiffManager
     public function getDiff($className) 
     {
         $this->class = ucfirst(strtolower($className)) ;
-        $this->fullClassName = 'AppBundle:'.$this->class;
+        $this->fullClassName = $this->getFullClassName($this->class) ;
         $sqlDiff = $this->getGenericDiffQuery() ;
         
         $this->em->getConnection()->setFetchMode(\PDO::FETCH_NUM);
@@ -215,5 +215,79 @@ class DiffManager
             }
         }
         return $ids;
+    }
+    
+    private function getFullClassName($class) {
+        return 'AppBundle:'.$class;
+    }
+    
+    public function generateDiff($compt) {
+        $randomClassName= $this->getFullClassName($this->entitiesName[array_rand($this->entitiesName, 1)]) ;
+        //$randomClassName= $this->getFullClassName("Localisation") ;
+        $metadata = $this->em->getMetadataFactory()->getMetadataFor($randomClassName) ;
+        $repository = $this->em->getRepository($randomClassName);
+        $identifier = $metadata->getIdentifierFieldNames() [0];
+
+        $entity = $repository->createQueryBuilder('e')
+                ->orderBy('RAND()')
+                ->setMaxResults(1)
+                ->getQuery()->getOneOrNullResult();
+        $fields = $metadata->getFieldNames() ;
+
+        var_dump($randomClassName, $entity->{'get'.$identifier}()) ;
+        //var_dump($fields);
+        // On enleve le champ de l'indentifiant
+        unset($fields[array_search($identifier, $fields)]) ;
+        unset($fields[array_search('dwcaid', $fields)]) ;
+        unset($fields[array_search('hasmedia', $fields)]) ;
+        unset($fields[array_search('modified', $fields)]) ;
+        unset($fields[array_search('catalognumber', $fields)]) ;
+        unset($fields[array_search('institutioncode', $fields)]) ;
+        unset($fields[array_search('sourcefileid', $fields)]) ;
+        
+        shuffle($fields) ;
+        $randomFields = array_slice($fields, 0, $compt) ;
+        //var_dump($randomFields);
+        $fieldMappings = $this->em->getClassMetadata($randomClassName)->fieldMappings ;
+        foreach ($randomFields as $fieldName) {
+            var_dump($fieldMappings[$fieldName]);
+            $setter = 'set'.$fieldName ;
+            if ($fieldName[strlen($fieldName)-1] == '_') {
+                $setter ='set'.substr($fieldName, 0, -1) ;
+            }
+            $entity->{$setter}($this->getFakeData($metadata->getTypeOfField($fieldName), $fieldMappings[$fieldName]['length'])) ;
+            
+        }
+        $this->em->flush($entity) ;
+        
+        
+        return $randomFields ;
+    }
+    
+    private function getFakeData($type, $length = null) 
+    {
+        switch ($type) {
+            case 'string' : 
+            case 'text' : 
+                $arrayString=['lorem', 'lorem ipsum', 'blabla', 'text sample'] ;
+                $returnString = $arrayString[array_rand($arrayString)] ;
+                if (!is_null($length)) {
+                    $returnString = substr($returnString, 0, $length);
+                }
+                return $returnString;
+            case 'integer' : 
+                if ($length === null) {$length = 2;}
+                $arrayInt = range(10,  (10 * $length)) ;
+                return $arrayInt[array_rand($arrayInt)];
+            case 'float' : 
+                if ($length === null) {$length = 2;}
+                $arrayFloat = range(10, (10 * $length), 0.1) ;
+                return $arrayFloat[array_rand($arrayFloat)];
+            case 'datetime' : 
+                $arrayDate=['1976-11-08', '2005-12-25', '1953-01-31', '2006-12-13'] ;
+                return new \DateTime($arrayDate[array_rand($arrayDate)]);
+            case 'boolean' : 
+                return array_rand([true, false]);
+        }
     }
 }

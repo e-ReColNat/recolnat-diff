@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: services_oracle.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -74,7 +75,8 @@ doctrine:
                 password: "%database_password_diff%"
                 charset:  UTF8
         types:
-            rawid: AppBundle\DBAL\Types\RawidType
+            rawid: AppBundle\Doctrine\Types\RawidType
+        
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
@@ -84,10 +86,12 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
-        
         default_entity_manager: default
         entity_managers:
             default:
+                dql:
+                    numeric_functions:
+                        Rand: AppBundle\Doctrine\Functions\Rand
                 naming_strategy: doctrine.orm.naming_strategy.underscore
                 auto_mapping: true
                 connection: default
@@ -96,6 +100,9 @@ doctrine:
             diff:
                 naming_strategy: doctrine.orm.naming_strategy.underscore
                 connection: diff
+                dql:
+                    numeric_functions:
+                        Rand: AppBundle\Doctrine\Functions\Rand
                 mappings:
                     AppBundle: ~
                         #prefix: AppBundle\Entity\Diff

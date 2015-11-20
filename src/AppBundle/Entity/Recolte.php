@@ -17,17 +17,17 @@ class Recolte
     private $eventid;
 
     /** 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, length=4)
      */
     private $decade;
 
     /** 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $eday;
 
     /** 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $emonth;
 
@@ -42,7 +42,7 @@ class Recolte
     private $eventremarks;
 
     /** 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, length=4)
      */
     private $eyear;
 
@@ -67,12 +67,12 @@ class Recolte
     private $recordedby;
 
     /** 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $sday;
 
     /** 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $smonth;
 
@@ -82,7 +82,7 @@ class Recolte
     private $sourcefileid;
 
     /** 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, length=4)
      */
     private $syear;
 

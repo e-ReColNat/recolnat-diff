@@ -232,5 +232,19 @@ class DefaultController extends Controller
                     'translateFields' => $translateFields,
         ));
     }
-
+    /**
+     * @Route("/generateDiff/{institutionCode}/{compt}", name="generateDiff")
+     */
+    public function generateDiff($compt) 
+    {
+        /* @var $diffManager \AppBundle\Manager\DiffManager */
+        $em = $this->get('doctrine')->getManager('diff');
+        $diffManager = new \AppBundle\Manager\DiffManager($em) ;
+        //$diffManager = $this->get('diff.manager');
+        for ($i=1; $i<=$compt;$i++) {
+            $diffManager->generateDiff(rand(1,5)) ;
+        }
+        $response = new Response();
+        return $response;
+    }
 }

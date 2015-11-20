@@ -12,7 +12,7 @@ class Localisation
 {
      /** 
      * @ORM\Id
-     * @ORM\Column(type="integer") 
+     * @ORM\Column(type="integer", length=10) 
      */
     private $locationid;
 

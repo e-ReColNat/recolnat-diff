@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\DBAL\Types;
+namespace AppBundle\Doctrine\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
  

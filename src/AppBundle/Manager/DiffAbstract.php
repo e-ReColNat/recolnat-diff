@@ -81,17 +81,19 @@ abstract class DiffAbstract
          
         $fieldNames = $metadata->getFieldNames();
         foreach ($this->recordsRecolnat as $specimenId=>$diffRecordsRecolnat) {
-            $diffRecordsInstitution = $this->recordsInstitution[$specimenId] ;
-            /* @var $recordRecolnat \AppBundle\Entity\Specimen */
-            foreach ($diffRecordsRecolnat as $idRecord => $recordRecolnat) {
-                $recordInstitution = $diffRecordsInstitution[$idRecord] ;
-                foreach ($fieldNames as $fieldName) {
-                    if (!(in_array($fieldName, $this->excludeFieldsName)))  {
-                        $getter = 'get'.$fieldName ;
-                        $dataR = $recordRecolnat->{$getter}() ;
-                        $dataI = $recordInstitution->{$getter}() ;
-                        if ($dataR !== $dataI) {
-                            $this->addStat($fieldName,$specimenId, $idRecord, $dataR, $dataI);
+            if (isset($this->recordsInstitution[$specimenId])) {
+                $diffRecordsInstitution = $this->recordsInstitution[$specimenId] ;
+                /* @var $recordRecolnat \AppBundle\Entity\Specimen */
+                foreach ($diffRecordsRecolnat as $idRecord => $recordRecolnat) {
+                    $recordInstitution = $diffRecordsInstitution[$idRecord] ;
+                    foreach ($fieldNames as $fieldName) {
+                        if (!(in_array($fieldName, $this->excludeFieldsName)))  {
+                            $getter = 'get'.$fieldName ;
+                            $dataR = $recordRecolnat->{$getter}() ;
+                            $dataI = $recordInstitution->{$getter}() ;
+                            if ($dataR !== $dataI) {
+                                $this->addStat($fieldName,$specimenId, $idRecord, $dataR, $dataI);
+                            }
                         }
                     }
                 }
