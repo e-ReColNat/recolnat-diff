@@ -43,13 +43,36 @@ class TaxonRepository extends RecolnatRepositoryAbstract
     {
         $qb = $this->createQueryBuilder('t');
         
-        $query = $this->getEntityManager()->createQueryBuilder('t')
+        $query = $qb
            ->select('t')
-            ->from('AppBundle\Entity\Taxon', 't')
             ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
             ->innerJoin('t.determination', 'd')
             ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'taxonid') ;
+    }
+    
+    public function findBestTaxon($occurrenceId) {
+        $qb = $this->createQueryBuilder('t');
+        $query = $qb
+                ->select('t')
+                ->innerJoin('t.determination', 'd')
+                ->where('d.specimen = :occurrenceid')
+                ->setParameter('occurrenceid', $occurrenceId)
+                ->setMaxResults(1)
+                ->orderBy('d.identificationverifstatus', 'DESC') ;
+        return $query->getQuery()->getOneOrNullResult();
+    }
+    
+    public function findBestTaxonsBySpecimenCode($specimenCode) {
+        $qb = $this->createQueryBuilder('t');
+        $query = $qb
+                ->select('t')
+                ->innerJoin('t.determination', 'd')
+                ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCode'))
+                ->setMaxResults(1)
+                ->orderBy('d.identificationverifstatus', 'DESC') ;
+        $query->setParameter('specimenCode', $specimenCode);
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

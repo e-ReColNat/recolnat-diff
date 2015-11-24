@@ -20,11 +20,11 @@
             </trans-unit>
             <trans-unit id="5">
                 <source>label.differences</source>
-                <target>{1}1 différence|]1,Inf]%nbDiffs% différences</target>
+                <target>{1}%nbDiffs% différence|]1,Inf]%nbDiffs% différences</target>
             </trans-unit>
             <trans-unit id="6">
                 <source>label.choix</source>
-                <target>{0}0 choix|{1}1 choix|]1,Inf]%nbChoices% choix</target>
+                <target>{0}0 choix|{1}%nbChoices% choix|]1,Inf]%nbChoices% choix</target>
             </trans-unit>
             <trans-unit id="7">
                 <source>label.credits</source>
@@ -45,6 +45,14 @@
             <trans-unit id="11">
                 <source>label.selectPageDatas</source>
                 <target>Pour cette page seulement</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.notaxon</source>
+                <target>Pas de taxon</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.filtrer</source>
+                <target>Filtrer</target>
             </trans-unit>
             </body>
     </file>

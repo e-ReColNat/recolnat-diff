@@ -1,18 +1,19 @@
 <div class="well">
-    <form>
-        <div class="form-group">
-            <label for="selectRecolnat">{{ 'label.choixRecolnat' | trans }}</label>
-            <input type="checkbox" id="selectRecolnat">
-            <label for="selectInstitution">{{ 'label.choixInstitution' | trans }}</label>
-            <input type="checkbox" id="selectInstitution">
+    <form id="form-filters">
+        <div class="form-group filter-level1" >
+            <label for="selectLevel1">{{ 'label.choixRecolnat' | trans }}</label>
+            <input type="radio" name="selectLevel1" value="recolnat">
+            <label for="selectLevel1">{{ 'label.choixInstitution' | trans }}</label>
+            <input type="radio" name="selectLevel1" value="institution">
         </div>
-        <div class="form-group">
-            <label for="selectAllData">{{ 'label.selectAllDatas' | trans }}</label>
-            <input type="checkbox" id="selectAllData">
-            <label for="selectAllData">{{ 'label.selectPageDatas' | trans }}</label>
-            <input type="checkbox" id="selectPageData">
+        <div class="form-group filter-level2">
+            <label for="selectLevel2">{{ 'label.selectAllDatas' | trans }}</label>
+            <input type="radio" name="selectLevel2" value="allDatas">
+            <label for="selectLevel2">{{ 'label.selectPageDatas' | trans }}</label>
+            <input type="radio" name="selectLevel2" value="page">
         </div>
-        <input type="hidden" id="institutionCode" value="{{institutionCode}}">
-        <input type="hidden" id="page" value="{{currentPage}}">
+        <input type="hidden" name="institutionCode" value="{{institutionCode}}">
+        <input type="hidden" name="page" value="{{currentPage}}">
+        <button type="submit" class="btn btn-default">{{ 'label.filtrer' | trans }}</button>
     </form>
 </div>

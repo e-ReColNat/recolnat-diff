@@ -27,6 +27,7 @@ class SpecimenExtension extends \Twig_Extension
             new \Twig_SimpleFunction('relationById', array($this, 'getRelationById')),
             new \Twig_SimpleFunction('relationByIdToString', array($this, 'getRelationByIdToString')),
             new \Twig_SimpleFunction('fieldToString', array($this, 'getFieldToString')),
+            new \Twig_SimpleFunction('getTaxon', array($this, 'getTaxon')),
         );
     }
 
@@ -139,6 +140,20 @@ class SpecimenExtension extends \Twig_Extension
         return $returnString ;
     }
     
+    public function getTaxon(\AppBundle\Entity\Specimen $specimen) {
+        /*return $this->doctrine->getManager()->getRepository('\AppBundle\Entity\Taxon')
+                ->findBestTaxon($specimen->getOccurrenceid());*/
+        $determinations = $specimen->getDeterminations() ;
+        if (count($determinations)>0) {
+            $taxon = $determinations[0]->getTaxon() ;
+            if ($taxon != null) {
+                return $taxon ;
+            }
+            else {
+                return null;
+            }
+        }
+    }
     private function getDateFormatter() {
         return \IntlDateFormatter::create(
                     Locale::getDefault(), 

@@ -50,6 +50,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         $qb->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'occurrenceid') ;
     }
+
     /**
      * 
      * @param array $specimenCodes
@@ -61,7 +62,6 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         
         $query = $qb
                 ->select('s')
-                //->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
         ->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery();

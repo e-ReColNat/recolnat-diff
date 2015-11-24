@@ -6,7 +6,7 @@
     {% dump(choices)%}
     {% if stats is not empty %}
     <div class="row">
-        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 facets" >
+        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3" id="facets">
             {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats, 'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>
         
@@ -70,7 +70,6 @@
                             row.fieldName == choice.fieldName &&
                             row.relationId == choice.relationId 
                     ) {
-                        //choices.slice(i) ;
                         flag = true;
                         choices[i] = choice;
                     }
@@ -79,13 +78,62 @@
             if (!flag) {
                 choices.push(choice);
             }
-           
        }
         
-        var choices = new Array();
+        function updateDisplay(data) {
+            data=JSON.parse(data);
+            resetFacetCompt();
+            var comptchoices=[];
+            $.each(data, function(i) {
+                $("input[type=radio][data-relationid='" + data[i]['relationId'] + "'][data-fieldname='" + data[i]['fieldName'] + "'][value="+data[i]['choice']+"]").prop('checked', true);
+                if (typeof comptchoices[data[i]['specimenId']] === "undefined") {
+                    comptchoices[data[i]['specimenId']]=[];
+                }
+                if (typeof comptchoices[data[i]['specimenId']][data[i]['className']] === "undefined") {
+                    comptchoices[data[i]['specimenId']][data[i]['className']] =1;
+                }
+                else {
+                    comptchoices[data[i]['specimenId']][data[i]['className']]++;
+                }
+                $("#facet-"+data[i]['specimenId']+"-"+data[i]['className']).data('comptchoices', comptchoices[data[i]['specimenId']][data[i]['className']]) ;
+            });
+            $("[id^='facet-']").each(function() {
+                formattedTemplate = formatTemplate($(this).data('classname'), $(this).data('comptchoices'), $(this).data('comptdiffs')) ;
+                $(this).html(formattedTemplate) ;
+                if ($(this).data('comptchoices') === $(this).data('comptdiffs')) {
+                    $(this).removeClass('text-warning').addClass('text-success');
+                }
+            });
+        }
+        
+        function formatTemplate(className, comptChoices, comptDiffs) {
+            if (comptChoices > 1) {
+                spanChoices = $("#template-facet-string > .template-facet-choices-plural").html();
+            }
+            else {
+                spanChoices = $("#template-facet-string > .template-facet-choices-single").html();
+            }
+            if (comptDiffs > 1) {
+                spanDiffs = $("#template-facet-string > .template-facet-diffs-plural").html();
+            }
+            else {
+                spanDiffs = $("#template-facet-string > .template-facet-diffs-single").html();
+            }
+            choicesFormatted = spanChoices.format(comptChoices);
+            diffsFormatted = spanDiffs.format(comptDiffs);
+            var facetTemplate = $("#template-facet").html();
+            facet = facetTemplate.format(className, choicesFormatted, diffsFormatted) ;
+            return facet;
+        }
+        
+        function resetFacetCompt() {
+            $("[id^='facet-']").data('comptchoices',0);
+        }
+        
         var institutionCode = $('#diffs').data('institutioncode');
         
         $('table.diff').find( ":radio" ).change(function() {
+            var choices = new Array();
             var tableContext = $(this).parents('table.diff');
             var relationId = $(this).attr('name') ;
             var choice = $(this).attr('value') ;
@@ -105,17 +153,32 @@
             else {
                 setChoice(choices, $(this), specimenId);
             }
-            console.log(choices);
-            //console.log(JSON.stringify(choices));
-            console.log(JSON.stringify(choices, undefined, 2));
             $.ajax({
                 url : Routing.generate('setChoice', { institutionCode: institutionCode}),
                 data: {'choices' : choices},
-                method: "POST",
+                method: "POST"
             })
             .done(function(data) {
-                console.log(data);
+                //console.log(data);
+                updateDisplay(data);
             });
+        });
+        
+        // Filtres
+        $("#form-filters").submit(function(event) {
+            var data = $(this).serialize();
+            $.ajax({
+                url : Routing.generate('setChoices'),
+                data: data,
+                method: "POST"
+            })
+            .done(function(data) {
+                updateDisplay(data);
+            });
+            event.preventDefault();
+        });
+        $("#form-filters").find(":checkbox").change(function() {
+            console.log($(this).parent());
         });
     });
     </script>

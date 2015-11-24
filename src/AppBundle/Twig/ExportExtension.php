@@ -47,20 +47,6 @@ class ExportExtension extends \Twig_Extension
                 }
             }
         }
-        /*if (is_array($stats['classes'][$className][$specimenId])) {
-            foreach($stats['classes'][$className][$specimenId] as $relationId => $row) {
-                $fieldName = key($row) ;
-                foreach ($choices as $choice) {
-                    if (
-                        $choice['className'] == $className &&
-                        $choice['fieldName'] == $fieldName &&
-                        $choice['relationId'] == $relationId 
-                        ) {
-                        $countChoices++;
-                    }
-                }
-            }
-        }*/
         return $countChoices;
     }
     public function getName()

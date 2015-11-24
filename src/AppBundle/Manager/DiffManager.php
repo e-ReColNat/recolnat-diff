@@ -54,11 +54,14 @@ class DiffManager
      * @param array $results
      * @return array
      */
-    public static function getSpecimensCode($results) 
+    public static function getSpecimensCode($results = []) 
     {
-        foreach ($results as $specimensCode) {
-            foreach ($specimensCode as $specimenCode) {
-                $returnSpecimensCode[] = $specimenCode ;
+        $returnSpecimensCode=[];
+        if (count($results)>0) {
+            foreach ($results as $specimensCode) {
+                foreach ($specimensCode as $specimenCode) {
+                    $returnSpecimensCode[] = $specimenCode ;
+                }
             }
         }
         return array_unique($returnSpecimensCode);
