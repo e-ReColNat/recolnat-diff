@@ -6,7 +6,6 @@
     {% dump(choices)%}
     {% if stats is not empty %}
     <div class="row">
-{#        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3" id="facets">#}
         <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 sidebar" id="facets" >
             {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats, 'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>

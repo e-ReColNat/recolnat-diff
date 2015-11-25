@@ -1,0 +1,26 @@
+{% if collection.type == 'h' or collection.type =='b' %}
+    {% set type='botanique' %}
+{% elseif collection.type == 'z' %}
+    {% set type='zoologie' %}
+{% elseif collection.type == 'p' %}
+    {% set type='paleontologie' %}
+{% elseif collection.type == 'g'%}
+    {% set type='geographie' %}
+{% endif %}
+<a href="http://explore.recolnat.org/#/specimen/{{type}}/{{specimen.occurrenceId}}" target="_blank">
+    {% if taxon.family is not empty %}
+        <span><span>{{taxon.family}}</span> / </span>
+    {% endif %}
+    {% if taxon.genus is not empty %}
+        <span><i><span>{{taxon.genus}}</span></i> / </span>
+    {% endif %}
+    {% if taxon.scientificname is not empty %}
+        <span><i><span>{{taxon.scientificname}}</span></i> / </span>
+    {% endif %}
+    {% if taxon.scientificnameauthorship is not empty %}
+        <span><span>{{taxon.scientificnameauthorship}}</span> / </span>
+    {% endif %}
+    {% if specimen.catalognumber is not empty %}
+        <span>{{specimen.catalognumber}}</span>
+    {% endif %}
+</a>
