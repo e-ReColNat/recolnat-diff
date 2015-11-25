@@ -5,15 +5,14 @@
 {% set recolte = specimen.recolte %}
 {% set localisation = recolte.localisation %}
 
-{#<div class="row no-margin">#}
 <div class="row">
     <div class="col-sm-1">
         <div style="padding-left: 80%;" role="toolbar" class="btn-toolbar">
-            <input type="checkbox" >
+            <input type="checkbox" name="check-specimen[]" value="{{specimenId}}">
         </div>
     </div>
     <div class="col-sm-8">
-        {% include 'default/helpers/linkSpecimenFull.html.twig' with {'specimen' : specimen} %}
+        {% include 'default/helpers/linkSpecimenFull.html.twig' %}
         <span class="row">
             <div class="col-sm-6">
                 {{'label.institution.fields.institutioncode' | trans({},'entity') }} <span>{{collection.institution.institutioncode}}</span><br>

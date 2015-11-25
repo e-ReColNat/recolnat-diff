@@ -52,10 +52,10 @@
                             {{ fieldToString(relationInstitution, fieldName)}}
                         </td>
                         <td class="input">
-                                {% include 'default/partial/inputRadioDiff.html.twig' with {'class' : class, 'relationId': relationId, 'fieldName' : fieldName, 'value' : 'recolnat', 'choices' : choices} %}
+                                {% include 'default/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}
                         </td>
                         <td class="input">
-                            {% include 'default/partial/inputRadioDiff.html.twig' with {'class' : class, 'relationId': relationId, 'fieldName' : fieldName, 'value' : 'institution', 'choices' : choices} %}
+                            {% include 'default/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}
                         </td>
                     </tr>
                     {% endfor %}

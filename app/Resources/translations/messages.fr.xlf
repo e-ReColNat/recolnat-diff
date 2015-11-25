@@ -55,14 +55,18 @@
                 <target>Uniquement pour ces classes</target>
             </trans-unit>
             <trans-unit id="14">
+                <source>label.selectSpecimen</source>
+                <target>Uniquement les specimens séléctionnés</target>
+            </trans-unit>
+            <trans-unit id="15">
                 <source>label.notaxon</source>
                 <target>Pas de taxon</target>
             </trans-unit>
-            <trans-unit id="15">
+            <trans-unit id="16">
                 <source>label.filtrer</source>
                 <target>Filtrer</target>
             </trans-unit>
-            <trans-unit id="16">
+            <trans-unit id="17">
                 <source>label.maxItemPerPage</source>
                 <target>Résultats par page</target>
             </trans-unit>

@@ -7,7 +7,7 @@
     {% if stats is not empty %}
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 sidebar" id="facets" >
-            {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats, 'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
+            {% include 'default/partial/facet_stats.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>
         
         <div class="col-xs-offset-5 col-sm-offset-5 col-md-offset-4 col-lg-offset-3 col-xs-7 col-sm-7 col-md-8 col-lg-9" id="diffs" data-institutioncode="{{institutionCode}}">
@@ -24,7 +24,7 @@
                     </select>
                 </div>
             </div>
-            {% include 'default/partial/filter.html.twig' with {'institutionCode' : institutionCode, 'currentPage': pagination.getCurrentPageNumber} %}
+            {% include 'default/partial/filter.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
         {% for specimenId, classWithDiff in summary %}
             <div class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}">
             {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}
@@ -34,11 +34,11 @@
             
             {% if loop.index is odd %}
                 <div class="clearfix">
-                {% include 'default/partial/short_diff_specimen.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats, 'choices' : choices} %}
+                {% include 'default/partial/short_diff_specimen.html.twig' %}
                 </div>
             {% else %}
                 <div class="clearfix">
-                {% include 'default/partial/short_diff_specimen2.html.twig' with {'specimenRecolnat' : specimenRecolnat, 'specimenInstitution': specimenInstitution, 'specimenId' : specimenId, 'stats' : stats, 'choices' : choices} %}
+                {% include 'default/partial/short_diff_specimen2.html.twig' %}
                 </div>
             {% endif %}
             
@@ -50,14 +50,16 @@
             </div>
         </div>
     </div>
+{% include 'default/partial/smallModal.html.twig' %}
 {% endblock %}
 
 {% block javascripts %}
     <script type="text/javascript">
         
     $(document).ready(function(){
+        var smallModal = $('#smallModal') ;
+        
         var maxItemPerPage = localStorage.getItem('maxItemPerPage');
-        console.log(maxItemPerPage);
         $('#maxItemPerPage').change(function(){
             {% set currentPath = path(app.request.attributes.get('_route')) %}
             var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum'})}}";
@@ -187,6 +189,13 @@
         $("#form-filters").submit(function(event) {
             var data = $(this).serializeArray();
             data.push({name: 'maxItemPerPage', value: maxItemPerPage});
+            var selectedSpecimens = $("[name^='check-specimen']").filter(":checked") ;
+            console.log(selectedSpecimens.serializeArray()) ;
+            if ($("[name='selectLevel2']").filter(":checked").val() === 'selectedSpecimens' && selectedSpecimens.length === 0) {
+                smallModal.find('.modal-title').text('Erreur');
+                smallModal.find('.modal-body').text('Vous devez sélectionner au moins un spécimen');
+                smallModal.modal('show');
+            }
             $.ajax({
                 url : Routing.generate('setChoices'),
                 data: data,
