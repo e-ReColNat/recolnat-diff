@@ -558,6 +558,62 @@
                 <source>label.specimen.abbr</source> 
                 <target state="translated">Spec.</target> 
             </trans-unit>
+            <trans-unit id="140" approved="yes">
+                <source>label.specimen</source> 
+                <target state="translated">Specimen</target> 
+            </trans-unit>
+            <trans-unit id="141" approved="yes">
+                <source>label.specimen.plural</source> 
+                <target state="translated">Specimens</target> 
+            </trans-unit>
+            <trans-unit id="142" approved="yes">
+                <source>label.bibliography</source> 
+                <target state="translated">Bibliographie</target> 
+            </trans-unit>
+            <trans-unit id="143" approved="yes">
+                <source>label.bibliography.plural</source> 
+                <target state="translated">Bibliographies</target> 
+            </trans-unit>
+            <trans-unit id="144" approved="yes">
+                <source>label.determination</source> 
+                <target state="translated">Détermination</target> 
+            </trans-unit>
+            <trans-unit id="145" approved="yes">
+                <source>label.determination.plural</source> 
+                <target state="translated">Déterminations</target> 
+            </trans-unit>
+            <trans-unit id="146" approved="yes">
+                <source>label.localisation</source> 
+                <target state="translated">Localisation</target> 
+            </trans-unit>
+            <trans-unit id="147" approved="yes">
+                <source>label.localisation.plural</source> 
+                <target state="translated">Localisations</target> 
+            </trans-unit>
+            <trans-unit id="148" approved="yes">
+                <source>label.recolte</source> 
+                <target state="translated">Récolte</target> 
+            </trans-unit>
+            <trans-unit id="149" approved="yes">
+                <source>label.recolte.plural</source> 
+                <target state="translated">Récoltes</target> 
+            </trans-unit>
+            <trans-unit id="150" approved="yes">
+                <source>label.stratigraphy</source> 
+                <target state="translated">Stratigraphie</target> 
+            </trans-unit>
+            <trans-unit id="151" approved="yes">
+                <source>label.stratigraphy.plural</source> 
+                <target state="translated">Stratigraphies</target> 
+            </trans-unit>
+            <trans-unit id="152" approved="yes">
+                <source>label.taxon</source> 
+                <target state="translated">Taxon</target> 
+            </trans-unit>
+            <trans-unit id="153" approved="yes">
+                <source>label.taxon.plural</source> 
+                <target state="translated">Taxons</target> 
+            </trans-unit>
         </body>
     </file>
 </xliff>

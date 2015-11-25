@@ -33,3 +33,13 @@ table.diff .diff-field {
 table.diff .input {
     text-align: center;
 }
+#facets {
+    overflow-y: scroll;
+    height : 95vh;
+}
+.sidebar {
+    overflow-x: hidden;
+    padding: 20px;
+    position: fixed;
+    z-index: 1000;
+}

@@ -17,7 +17,18 @@
             
         {% block body %}{% endblock %}
         </div>
-
+{#<div class="modal"><!-- Place at bottom of page --></div>#}
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" >
+                    <div style="height:200px">
+                      <span id="searching_spinner_center" style="position: absolute;display: block;top: 50%;left: 50%;"><img src="{{ asset('AppBundle/images/load.gif') }}" alt="" /></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </body>
     <script src="//code.jquery.com/jquery.min.js"></script>
     <script src="{{ asset('bootstrap/3.3.5/js/bootstrap.min.js') }}"></script>
@@ -27,4 +38,19 @@
         {% block javascripts %}
         
         {% endblock %}
+        <script type="text/javascript">
+            $(document).ready(function(){
+                //var $body = $("body");
+                var modal = $("#exampleModal") ;
+                //modal.modal();
+                $(document).ajaxStart(function () {
+                    //$body.addClass("loading"); 
+                    modal.modal('show');
+                })
+                .ajaxStop(function () {
+                  //$body.removeClass("loading");
+                  modal.modal('hide');
+              });
+          });
+        </script>
 </html>

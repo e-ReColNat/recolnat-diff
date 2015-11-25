@@ -39,20 +39,32 @@
                 <target>Choisir toutes les modifications issues de vos données</target>
             </trans-unit>
             <trans-unit id="10">
-                <source>label.selectAllDatas</source>
-                <target>Pour toutes les données</target>
+                <source>label.selectAllPages</source>
+                <target>Pour toutes les pages</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>label.selectPageDatas</source>
                 <target>Pour cette page seulement</target>
             </trans-unit>
             <trans-unit id="12">
+                <source>label.selectAllClasses</source>
+                <target>Pour toutes les classes</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.selectOnlyClass</source>
+                <target>Uniquement pour ces classes</target>
+            </trans-unit>
+            <trans-unit id="14">
                 <source>label.notaxon</source>
                 <target>Pas de taxon</target>
             </trans-unit>
-            <trans-unit id="13">
+            <trans-unit id="15">
                 <source>label.filtrer</source>
                 <target>Filtrer</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.maxItemPerPage</source>
+                <target>Résultats par page</target>
             </trans-unit>
             </body>
     </file>

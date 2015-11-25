@@ -17,9 +17,7 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        if ($request->get('clear', null) != 'null') {
-            $this->get('session')->clear();
-        }
+        $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
         $institutionCode = 'MHNAIX';
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
@@ -38,7 +36,7 @@ class DefaultController extends Controller
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
-                $stats['summary'], $request->query->getInt('page', 1), self::MAX_SPECIMEN_PAGE
+                $stats['summary'], $request->query->getInt('page', 1), $maxItemPerPage
         );
 
         return $this->render('default/index.html.twig', array(
@@ -50,6 +48,7 @@ class DefaultController extends Controller
                     'pagination' => $pagination,
                     'choicesFacets' => $exportManager->getChoices(),
                     'choices' => $exportManager->getChoicesForDisplay(),
+                    'maxItemPerPage'=>$maxItemPerPage,
         ));
     }
     
@@ -131,15 +130,20 @@ class DefaultController extends Controller
 
         $selectLevel1 = $request->get('selectLevel1', null);
         $selectLevel2 = $request->get('selectLevel2', null);
+        $selectLevel3 = $request->get('selectLevel3', null);
         $page = $request->get('page', null);
+        $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE);
         $institutionCode = $request->get('institutionCode', null);
         $choices = [];
+        if (in_array('allClasses', $selectLevel3)) {
+            $selectLevel3 = null ;
+        }
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
             list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
             if ($selectLevel2 == 'page' && !is_null($page)) {
                 $paginator = $this->get('knp_paginator');
                 $pagination = $paginator->paginate(
-                        $stats['summary'], $page, self::MAX_SPECIMEN_PAGE
+                        $stats['summary'], $page, $maxItemPerPage
                 );
                 $items = $pagination->getItems();
             }
@@ -151,13 +155,19 @@ class DefaultController extends Controller
                     $rowClass = $stats['classes'][$className][$specimenCode] ;
                     foreach ($rowClass as $relationId => $rowFields) {
                         foreach($rowFields as $fieldName=>$dataFields) {
-                            $choices[] = [
-                                "className" => $className,
-                                "fieldName" => $fieldName,
-                                "relationId" => $relationId,
-                                "choice" => $selectLevel1,
-                                "specimenId" => $specimenCode,
-                            ];
+                            $flag = true ;
+                            if (!is_null($selectLevel3) && !in_array(strtolower($className), $selectLevel3)) {
+                                $flag = false ;
+                            }
+                            if ($flag) {
+                                $choices[] = [
+                                    "className" => $className,
+                                    "fieldName" => $fieldName,
+                                    "relationId" => $relationId,
+                                    "choice" => $selectLevel1,
+                                    "specimenId" => $specimenCode,
+                                ];
+                            }
                         }
                     }
                 }
@@ -176,11 +186,7 @@ class DefaultController extends Controller
      */
     public function exportAction(Request $request, $institutionCode)
     {
-        $diffs = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
-        $specimensCode = \AppBundle\Manager\DiffManager::getSpecimensCode($diffs[$institutionCode]);
-        /* @var $diffStatsManager \AppBundle\Manager\DiffStatsManager */
-        $diffStatsManager = $this->get('diff.stats')->init($diffs[$institutionCode]);
-        $stats = $diffStatsManager->getStats();
+        list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
         $responseJson = json_encode(
                 [
                 'specimensCode' => array_values($specimensCode),
@@ -195,54 +201,6 @@ class DefaultController extends Controller
         exec(sprintf('/bin/sh %s --context_param global_filename_json=%s.json',$converterPath,$institutionCode));
         return new Response('done');
     }
-
-    /**
-     * @Route("/export/{format}", name="exportDiff")
-     */
-//    public function exportAction(Request $request, $format)
-//    {
-//        $container = $this->container;
-//
-//        $response = new StreamedResponse();
-//
-//        $callback = function() use($container, $request) {
-//            $em = $this->getDoctrine()->getManager();
-//
-//            $fieldsOrder = $em->getClassMetadata('AppBundle:Specimen')->getFieldNames();
-//            $institutionCode = 'MHNAIX';
-//
-//            $diffs = $this->getDiffs($request, $institutionCode);
-//            $specimensCode = \AppBundle\Manager\DiffManager::getSpecimensCode($diffs[$institutionCode]);
-//            $specimenRepositoryRecolnat = $this->getDoctrine()
-//                    ->getRepository('AppBundle\Entity\Specimen');
-//
-//            $querySpecimensRecolnat = $specimenRepositoryRecolnat
-//                    ->getQueryForSpecimenCodes($specimensCode);
-//
-//            $iterableSpecimens = $querySpecimensRecolnat->iterate();
-//
-//            $handle = fopen('php://output', 'r+');
-//            /* @var $specimenManager \AppBundle\Manager\SpecimenManager */
-//            $specimenManager = $this->get('specimenManager')->init('recolnat');
-//
-//            fputcsv($handle, $fieldsOrder);
-//            while (false !== ($row = $iterableSpecimens->next())) {
-//                fputcsv($handle, $specimenManager->getCsv($row[0], $fieldsOrder));
-//                $em->detach($row[0]);
-//            }
-//            fclose($handle);
-//        };
-//
-//        $response->setCallback($callback);
-//        $response->headers->set('Content-Type', 'application/force-download');
-//        $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
-//
-//        $response->send();
-//
-//        //$response->sendContent();
-//        //return $response;
-//    }
-
 
 
     /**
@@ -299,9 +257,6 @@ class DefaultController extends Controller
             unset($fields[$identifier]);
             $translateFields[$name] = array_flip($fields);
         }
-        /* $response = new Response();
-          $response->headers->set('Content-Type', 'xml'); */
-
         return $this->render('default/translate.xml.twig', array(
                     'translateFields' => $translateFields,
         ));

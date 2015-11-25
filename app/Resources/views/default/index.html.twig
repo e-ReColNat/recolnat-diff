@@ -6,14 +6,24 @@
     {% dump(choices)%}
     {% if stats is not empty %}
     <div class="row">
-        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3" id="facets">
+{#        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3" id="facets">#}
+        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 sidebar" id="facets" >
             {% include 'default/partial/facet_stats.html.twig' with {'stats' : stats, 'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>
         
-        <div class="col-xs-7 col-sm-7 col-md-8 col-lg-9" id="diffs" data-institutioncode="{{institutionCode}}">
+        <div class="col-xs-offset-5 col-sm-offset-5 col-md-offset-4 col-lg-offset-3 col-xs-7 col-sm-7 col-md-8 col-lg-9" id="diffs" data-institutioncode="{{institutionCode}}">
             <a href="{{path('export', {'institutionCode' : institutionCode})}}">Export</a>
             <div class="navigation">
                 {{ knp_pagination_render(pagination) }}
+                <div>
+                    <label for="maxItemPerPage">{{'label.maxItemPerPage' | trans }}</label>
+                    <select name="maxItemPerPage" id="maxItemPerPage">
+                        <option value="5" {{maxItemPerPage == 5 ? 'selected="true"':''}}>5</option>
+                        <option value="10" {{maxItemPerPage == 10 ? 'selected="true"':''}}>10</option>
+                        <option value="20" {{maxItemPerPage == 20 ? 'selected="true"':''}}>20</option>
+                        <option value="50" {{maxItemPerPage == 50 ? 'selected="true"':''}}>50</option>
+                    </select>
+                </div>
             </div>
             {% include 'default/partial/filter.html.twig' with {'institutionCode' : institutionCode, 'currentPage': pagination.getCurrentPageNumber} %}
         {% for specimenId, classWithDiff in summary %}
@@ -47,6 +57,16 @@
     <script type="text/javascript">
         
     $(document).ready(function(){
+        var maxItemPerPage = localStorage.getItem('maxItemPerPage');
+        console.log(maxItemPerPage);
+        $('#maxItemPerPage').change(function(){
+            {% set currentPath = path(app.request.attributes.get('_route')) %}
+            var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum'})}}";
+            var item = $('#maxItemPerPage').find(":selected").text();
+            localStorage.setItem('maxItemPerPage', item);
+            maxItemPerPage = localStorage.getItem('maxItemPerPage');
+            jQuery(location).attr('href', url.replace('_itemNum',item ));
+        });
         
         function setChoice(choices, element, specimenId) {
             fieldName=element.data('fieldname');
@@ -166,7 +186,8 @@
         
         // Filtres
         $("#form-filters").submit(function(event) {
-            var data = $(this).serialize();
+            var data = $(this).serializeArray();
+            data.push({name: 'maxItemPerPage', value: maxItemPerPage});
             $.ajax({
                 url : Routing.generate('setChoices'),
                 data: data,
@@ -177,8 +198,16 @@
             });
             event.preventDefault();
         });
-        $("#form-filters").find(":checkbox").change(function() {
-            console.log($(this).parent());
+        $("#form-filters").find("[name^='selectLevel3']").change(function() {
+            if ($(this).val() === 'allClasses' && $(this).prop('checked')) {
+                //$("#form-filters").find("[name^='selectLevel3']:").prop('checked', true);
+                $("#form-filters").find("[name^='selectLevel3']").not($(this)).prop('checked', true);
+            }
+            else {
+                if ($(this).val() !== 'allClasses' ) {
+                    $("#form-filters").find("[value='allClasses']").prop('checked', false);
+                }
+            }
         });
     });
     </script>
