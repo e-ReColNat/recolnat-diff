@@ -56,23 +56,18 @@
 {% block javascripts %}
     <script type="text/javascript">
         
-        var selectedSpecimens=new Array();
+    $(document).ready(function(){
+        var institutionCode = $('#diffs').data('institutioncode');
+        var smallModal = $('#smallModal') ;
+         var selectedSpecimens=new Array();
         //localStorage.clear();
         if (localStorage.getItem('selectedSpecimens')) {
             selectedSpecimens=JSON.parse(localStorage.getItem('selectedSpecimens'));
         }
-        console.log(selectedSpecimens);
-        
-    $(document).ready(function(){
-        var institutionCode = $('#diffs').data('institutioncode');
+        var maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
         if (localStorage.getItem('maxItemPerPage')) {
             maxItemPerPage = localStorage.getItem('maxItemPerPage');
         }
-        else {
-            maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
-        }
-        
-        var smallModal = $('#smallModal') ;
         
         // Checked selected Specimens
         nbSelectedSpecimens = selectedSpecimens.length ;
@@ -87,7 +82,7 @@
             {% set currentPath = path(app.request.attributes.get('_route')) %}
             var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum'})}}";
             maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
-            localStorage.setItem('maxItemPerPage', item);
+            localStorage.setItem('maxItemPerPage', maxItemPerPage);
             jQuery(location).attr('href', url.replace('_itemNum',maxItemPerPage));
         });
         
