@@ -134,12 +134,39 @@ class DefaultController extends Controller
         $page = $request->get('page', null);
         $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE);
         $institutionCode = $request->get('institutionCode', null);
+        $selectedSpecimens = json_decode($request->get('selectedSpecimens', null));
+        dump($request->get('selectedSpecimens', null));
         $choices = [];
-        if (in_array('allClasses', $selectLevel3)) {
+        $items = [];
+        
+        if (!is_null($selectLevel3) && in_array('allClasses', $selectLevel3)) {
             $selectLevel3 = null ;
         }
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
             list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
+            switch ($selectLevel2) {
+                case 'page' :
+                    $paginator = $this->get('knp_paginator');
+                    $pagination = $paginator->paginate(
+                            $stats['summary'], $page, $maxItemPerPage
+                    );
+                    $items = $pagination->getItems();
+                    break;
+                case 'allDatas' :
+                    $items = $stats['summary'] ;
+                    break;
+                case 'selectedSpecimens' :
+                    dump($selectedSpecimens);
+                    if (!is_null($selectedSpecimens)) {
+                        foreach ($selectedSpecimens as $specimenCode) {
+                            if (isset($stats['summary'][$specimenCode]))  {
+                                $items[$specimenCode] = $stats['summary'][$specimenCode] ;
+                            }
+                        }
+                    }
+                    break;
+            }
+            /*
             if ($selectLevel2 == 'page' && !is_null($page)) {
                 $paginator = $this->get('knp_paginator');
                 $pagination = $paginator->paginate(
@@ -149,29 +176,32 @@ class DefaultController extends Controller
             }
             else {
                 $items = $stats['summary'] ;
-            }
-            foreach ($items as $specimenCode=>$row) {
-                foreach ($row as $className => $data) {
-                    $rowClass = $stats['classes'][$className][$specimenCode] ;
-                    foreach ($rowClass as $relationId => $rowFields) {
-                        foreach($rowFields as $fieldName=>$dataFields) {
-                            $flag = true ;
-                            if (!is_null($selectLevel3) && !in_array(strtolower($className), $selectLevel3)) {
-                                $flag = false ;
-                            }
-                            if ($flag) {
-                                $choices[] = [
-                                    "className" => $className,
-                                    "fieldName" => $fieldName,
-                                    "relationId" => $relationId,
-                                    "choice" => $selectLevel1,
-                                    "specimenId" => $specimenCode,
-                                ];
+            }*/
+            if (count($items) > 0) {
+                foreach ($items as $specimenCode=>$row) {
+                    foreach ($row as $className => $data) {
+                        $rowClass = $stats['classes'][$className][$specimenCode] ;
+                        foreach ($rowClass as $relationId => $rowFields) {
+                            foreach($rowFields as $fieldName=>$dataFields) {
+                                $flag = true ;
+                                if (!is_null($selectLevel3) && !in_array(strtolower($className), $selectLevel3)) {
+                                    $flag = false ;
+                                }
+                                if ($flag) {
+                                    $choices[] = [
+                                        "className" => $className,
+                                        "fieldName" => $fieldName,
+                                        "relationId" => $relationId,
+                                        "choice" => $selectLevel1,
+                                        "specimenId" => $specimenCode,
+                                    ];
+                                }
                             }
                         }
                     }
                 }
             }
+            
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
