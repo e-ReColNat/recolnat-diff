@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
@@ -111,15 +112,23 @@ class DefaultController extends Controller
      */
     public function setChoiceAction(Request $request, $institutionCode)
     {
-
         $choices = $request->get('choices');
-        /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
         $exportManager->setChoices($choices);
         $exportManager->saveChoices();
 
-        return new Response(json_encode($exportManager->getChoices()));
+        $response = new JsonResponse();
+        $response->setData(['choices'=>$exportManager->getChoices()]) ;
+        
+        /*$message = $this->get('translator')->transChoice('modification.effectuee', count($choices),array('%nbModif%'=>count($choices)));
+        $this->get('session')->getFlashBag()->add(
+            'success',
+            $message
+            //count($choices).' modification a été effectuée'
+        );*/
+        $this->setFlashMessageForChoices($choices) ;
+        return $response;
     }
     /**
      * @Route("/setChoices/", name="setChoices", options={"expose"=true})
@@ -130,18 +139,14 @@ class DefaultController extends Controller
 
         $selectLevel1 = $request->get('selectLevel1', null);
         $selectLevel2 = $request->get('selectLevel2', null);
-        $selectLevel3 = $request->get('selectLevel3', null);
+        $selectLevel3 = $request->get('selectLevel3', []);
         $page = $request->get('page', null);
         $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE);
         $institutionCode = $request->get('institutionCode', null);
         $selectedSpecimens = json_decode($request->get('selectedSpecimens', null));
-        dump($request->get('selectedSpecimens', null));
         $choices = [];
         $items = [];
         
-        if (!is_null($selectLevel3) && in_array('allClasses', $selectLevel3)) {
-            $selectLevel3 = null ;
-        }
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
             list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
             switch ($selectLevel2) {
@@ -166,26 +171,15 @@ class DefaultController extends Controller
                     }
                     break;
             }
-            /*
-            if ($selectLevel2 == 'page' && !is_null($page)) {
-                $paginator = $this->get('knp_paginator');
-                $pagination = $paginator->paginate(
-                        $stats['summary'], $page, $maxItemPerPage
-                );
-                $items = $pagination->getItems();
-            }
-            else {
-                $items = $stats['summary'] ;
-            }*/
             if (count($items) > 0) {
                 foreach ($items as $specimenCode=>$row) {
                     foreach ($row as $className => $data) {
                         $rowClass = $stats['classes'][$className][$specimenCode] ;
                         foreach ($rowClass as $relationId => $rowFields) {
                             foreach($rowFields as $fieldName=>$dataFields) {
-                                $flag = true ;
-                                if (!is_null($selectLevel3) && !in_array(strtolower($className), $selectLevel3)) {
-                                    $flag = false ;
+                                $flag = false ;
+                                if ($selectLevel3 =='allClasses' || in_array(strtolower($className), $selectLevel3)) {
+                                    $flag = true ;
                                 }
                                 if ($flag) {
                                     $choices[] = [
@@ -201,16 +195,35 @@ class DefaultController extends Controller
                     }
                 }
             }
-            
         }
+
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
         $exportManager->setChoices($choices);
         $exportManager->saveChoices();
 
-        return new Response(json_encode($exportManager->getChoices()));
+        $response = new JsonResponse();
+        $response->setData(['choices'=>$exportManager->getChoices()]) ;
+        $this->setFlashMessageForChoices($choices) ;
+        return $response;
     }
 
+    private function setFlashMessageForChoices(array $choices) {
+        $translator = $this->get('translator');
+        $message = $translator->transChoice('modification.effectuee', count($choices),array('%nbModif%'=>count($choices)));
+        if (count($choices) == 0) {
+            $this->get('session')->getFlashBag()->add(
+                'warning',
+                $message
+            );
+        }
+        else {
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $message
+            );
+        }
+    }
     /**
      * @Route("/export/{institutionCode}", name="export")
      */

@@ -31,16 +31,10 @@
             {% set specimenInstitution = attribute(specimensInstitution, specimenId) | first %}
             
             {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
-            
-            {% if loop.index is odd %}
-                <div class="clearfix">
-                {% include 'default/partial/short_diff_specimen.html.twig' %}
-                </div>
-            {% else %}
-                <div class="clearfix">
-                {% include 'default/partial/short_diff_specimen2.html.twig' %}
-                </div>
-            {% endif %}
+
+            <div class="clearfix">
+            {% include 'default/partial/short_diff_specimen.html.twig' %}
+            </div>
             
             </div>
         {% endfor %}
@@ -119,21 +113,23 @@
        }
         
         function updateDisplay(data) {
-            data=JSON.parse(data);
+            console.log(data);
+            //data=JSON.parse(data);
             resetFacetCompt();
             var comptchoices=[];
-            $.each(data, function(i) {
-                $("input[type=radio][data-relationid='" + data[i]['relationId'] + "'][data-fieldname='" + data[i]['fieldName'] + "'][value="+data[i]['choice']+"]").prop('checked', true);
-                if (typeof comptchoices[data[i]['specimenId']] === "undefined") {
-                    comptchoices[data[i]['specimenId']]=[];
+            choices = data.choices ;
+            $.each(data.choices, function(i) {
+                $("input[type=radio][data-relationid='" + choices[i]['relationId'] + "'][data-fieldname='" + choices[i]['fieldName'] + "'][value="+choices[i]['choice']+"]").prop('checked', true);
+                if (typeof comptchoices[choices[i]['specimenId']] === "undefined") {
+                    comptchoices[choices[i]['specimenId']]=[];
                 }
-                if (typeof comptchoices[data[i]['specimenId']][data[i]['className']] === "undefined") {
-                    comptchoices[data[i]['specimenId']][data[i]['className']] =1;
+                if (typeof comptchoices[choices[i]['specimenId']][choices[i]['className']] === "undefined") {
+                    comptchoices[choices[i]['specimenId']][choices[i]['className']] =1;
                 }
                 else {
-                    comptchoices[data[i]['specimenId']][data[i]['className']]++;
+                    comptchoices[choices[i]['specimenId']][choices[i]['className']]++;
                 }
-                $("#facet-"+data[i]['specimenId']+"-"+data[i]['className']).data('comptchoices', comptchoices[data[i]['specimenId']][data[i]['className']]) ;
+                $("#facet-"+choices[i]['specimenId']+"-"+choices[i]['className']).data('comptchoices', comptchoices[choices[i]['specimenId']][choices[i]['className']]) ;
             });
             $("[id^='facet-']").each(function() {
                 formattedTemplate = formatTemplate($(this).data('classname'), $(this).data('comptchoices'), $(this).data('comptdiffs')) ;

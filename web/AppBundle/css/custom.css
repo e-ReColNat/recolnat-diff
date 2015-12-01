@@ -13,6 +13,9 @@
 table.diff th {
     text-align : right;
 }
+table.diff .xsmall {
+    width : 10px !important;
+}
 table.diff .diff-class {
     vertical-align: middle;
     font-size: 1.2em;
@@ -21,6 +24,15 @@ table.diff .diff-class {
 table.diff .diff-class div{
     transform: rotate(270deg);
     transform-origin: center center ; 
+}
+table.diff .even{
+    background: repeating-linear-gradient(
+      -66deg,
+      #fcf8e3,
+      #fcf8e3 5px,
+      #eee 5px,
+      #eee 8px
+    );
 }
 table.diff .diff-entity {
     font-weight: bold;

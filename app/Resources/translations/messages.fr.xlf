@@ -70,6 +70,26 @@
                 <source>label.maxItemPerPage</source>
                 <target>Résultats par page</target>
             </trans-unit>
+            <trans-unit id="18">
+                <source>modification.effectuee</source>
+                <target>{0,1}%nbModif% modification effectuée|]1,Inf]%nbModif% modifications effectuées</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.warning</source>
+                <target>Attention</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>label.danger</source>
+                <target>Danger</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>label.success</source>
+                <target>Succés</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>label.info</source>
+                <target>Info</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>

@@ -18,7 +18,7 @@
         {% block body %}{% endblock %}
         </div>
 {#<div class="modal"><!-- Place at bottom of page --></div>#}
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal fade" id="spinnerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body" >
@@ -34,23 +34,72 @@
     <script src="{{ asset('bootstrap/3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ asset('AppBundle/js/string.js') }}"></script>
+    <script src="{{ asset('AppBundle/js/jquery.toaster.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
         {% block javascripts %}
         
         {% endblock %}
         <script type="text/javascript">
             $(document).ready(function(){
-                //var $body = $("body");
-                var modal = $("#exampleModal") ;
-                //modal.modal();
-                $(document).ajaxStart(function () {
-                    //$body.addClass("loading"); 
+                var modal = $("#spinnerModal") ;
+                $.toaster({ settings : {
+                    'timeout' : 5000,
+                    'toaster'         :
+                        {
+                            'css'       :
+                            {
+                                'position' : 'fixed',
+                                'top'      : '10px',
+                                'right'    : '10px',
+                                'width'    : '350px',
+                                'zIndex'   : 50000
+                            }
+                        }
+                } });
+               $(document).ajaxStart(function () {
                     modal.modal('show');
                 })
                 .ajaxStop(function () {
-                  //$body.removeClass("loading");
                   modal.modal('hide');
-              });
+              })
+                .ajaxComplete(function(event, xhr, settings) {
+                try {
+                    var data = $.parseJSON(xhr.responseText);
+
+                    if (data.messages) {
+                        var messages = data.messages;
+
+                        var i;
+
+                        if (messages.warning) {
+                            for (i = 0; i < messages.warning.length; i++) {
+                                $.toaster({ message : messages.warning[i], priority : 'warning', title : '{{ 'label.warning' | trans}}' });
+                            }
+                        }
+
+                        if (messages.error) {
+                            for (i = 0; i < messages.error.length; i++) {
+                                $.toaster({ message : messages.error[i], priority : 'danger', title : '{{ 'label.danger' | trans}}' });
+                            }
+                        }
+
+                        if (messages.success) {
+                            for (i = 0; i < messages.success.length; i++) {
+                                $.toaster({ message : messages.success[i],  priority : 'success', title : '{{ 'label.success' | trans}}' });
+                            }
+                        }
+
+                        if (messages.info) {
+                            for (i = 0; i < messages.info.length; i++) {
+                                $.toaster({ message : messages.info[i], priority : 'info', title : '{{ 'label.info' | trans}}' });
+                            }
+                        }
+                    }
+                } catch (e) {
+                    
+                }
+            });
           });
+
         </script>
 </html>

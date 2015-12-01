@@ -81,3 +81,10 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+            
+    # LISTENERS
+    appBundle.flash_messenger:
+        class: AppBundle\Listener\FlashMessagesListener
+        arguments: ["@session"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response}
