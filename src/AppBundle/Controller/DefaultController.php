@@ -14,9 +14,16 @@ class DefaultController extends Controller
     const MAX_SPECIMEN_PAGE = 5 ;
 
     /**
-     * @Route("/", name="diff")
+     * @Route("/", name="index")
      */
-    public function indexAction(Request $request)
+    public function indexAction() {
+        return $this->render('default/index.html.twig', array()
+        );
+    }
+    /**
+     * @Route("/diffs/", name="diffs")
+     */
+    public function diffsAction(Request $request)
     {
         $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
         $institutionCode = 'MHNAIX';
@@ -40,7 +47,7 @@ class DefaultController extends Controller
                 $stats['summary'], $request->query->getInt('page', 1), $maxItemPerPage
         );
 
-        return $this->render('default/index.html.twig', array(
+        return $this->render('default/viewDiffs.html.twig', array(
                     'institutionCode' => $institutionCode,
                     'stats' => $stats,
                     'diffs' => $diffs[$institutionCode],
@@ -70,38 +77,19 @@ class DefaultController extends Controller
         $diffs = $session->get('diffs');
         $specimensCode = $session->get('specimensCode');
         $stats = $session->get('stats');
-        $filePath = realpath($this->getParameter('export_path')) . '/' . $institutionCode . '.json';
+        
         if (is_null($diffs) || !isset($diffs[$institutionCode])) {
+            /* @var $diffManager \AppBundle\Manager\DiffManager */
+            $diffManager = $this->get('diff.manager');
             
-            $fs = new \Symfony\Component\Filesystem\Filesystem();
-            if ($fs->exists($filePath)) {
-                $fileContent=  json_decode(file_get_contents($filePath),true);
-                $specimensCode = $fileContent['specimensCode'];
-                $diffs = $fileContent['diffs'];
-                $stats = $fileContent['stats'];
-            }
-            else {
-                /* @var $diffManager \AppBundle\Manager\DiffManager */
-                $diffManager = $this->get('diff.manager');
-                $diffs[$institutionCode] = $diffManager->getAllDiff($institutionCode);
-                $specimensCode = \AppBundle\Manager\DiffManager::getSpecimensCode($diffs[$institutionCode]);
-                /* @var $diffStatsManager \AppBundle\Manager\DiffStatsManager */
-                $diffStatsManager = $this->get('diff.stats')->init($diffs[$institutionCode]);
-                $stats = $diffStatsManager->getStats();
-                $responseJson = json_encode(
-                        [
-                        'specimensCode' => array_values($specimensCode),
-                        'stats' => $stats, 
-                        'diffs' => $diffs
-                        ]
-                        , JSON_PRETTY_PRINT);
-                $fs->dumpFile($filePath, $responseJson);
-            }
-
+            $results =$diffManager->init($institutionCode);
+            $diffs = $results['diffs'] ;
+            $specimensCode = $results['specimensCode'] ;
+            $stats = $results['stats'] ;
             $session->set('diffs', $diffs);
             $session->set('specimensCode', $specimensCode);
             $session->set('stats', $stats);
-        } 
+        }
         return [$specimensCode, $diffs, $stats];
     }
     /**
@@ -121,12 +109,6 @@ class DefaultController extends Controller
         $response = new JsonResponse();
         $response->setData(['choices'=>$exportManager->getChoices()]) ;
         
-        /*$message = $this->get('translator')->transChoice('modification.effectuee', count($choices),array('%nbModif%'=>count($choices)));
-        $this->get('session')->getFlashBag()->add(
-            'success',
-            $message
-            //count($choices).' modification a été effectuée'
-        );*/
         $this->setFlashMessageForChoices($choices) ;
         return $response;
     }
@@ -161,7 +143,6 @@ class DefaultController extends Controller
                     $items = $stats['summary'] ;
                     break;
                 case 'selectedSpecimens' :
-                    dump($selectedSpecimens);
                     if (!is_null($selectedSpecimens)) {
                         foreach ($selectedSpecimens as $specimenCode) {
                             if (isset($stats['summary'][$specimenCode]))  {
@@ -229,19 +210,9 @@ class DefaultController extends Controller
      */
     public function exportAction(Request $request, $institutionCode)
     {
-        list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
-        $responseJson = json_encode(
-                [
-                'specimensCode' => array_values($specimensCode),
-                'data' => $stats['classes']
-                ]
-                , JSON_PRETTY_PRINT);
-
-        $filePath = realpath($this->getParameter('export_path')) . '/' . $institutionCode . '.json';
         $converterPath = realpath($this->getParameter('converter_path')) ;
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
-        $fs->dumpFile($filePath, $responseJson);
-        exec(sprintf('/bin/sh %s --context_param global_filename_json=%s.json',$converterPath,$institutionCode));
+        
+        exec(sprintf('/bin/sh %s --context_param global_filename_json=%s.json global_filename_choices=choices_%s.json',$converterPath,$institutionCode,$institutionCode));
         return new Response('done');
     }
 

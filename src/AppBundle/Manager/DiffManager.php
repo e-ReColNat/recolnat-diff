@@ -3,6 +3,7 @@
 namespace AppBundle\Manager ;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\ObjectManager;
+use AppBundle\Manager\DiffStatsManager;
 /**
  * Description of DiffManager
  *
@@ -15,6 +16,14 @@ class DiffManager
      * @var EntityManager 
      */
     protected $em;
+    
+    /**
+     *
+     * @var DiffStatsManager
+     */
+    protected $statsManager ;
+    
+    protected $exportPath;
  
     const LENGTH_TEXT = 4000;
     const RECOLNAT_DB = 'RECOLNAT';
@@ -35,28 +44,64 @@ class DiffManager
             'Taxon'
         ];
 
-    public function __construct(ObjectManager $em)
+    public function __construct(ObjectManager $em, DiffStatsManager $statsManager, $exportPath)
     {
         $this->em = $em;
+        $this->statsManager = $statsManager;
+        $this->exportPath = $exportPath;
     }
     
-    public function getAllDiff($institutionCode) 
-    {
+    public function init($institutionCode) {
         $this->institutionCode = $institutionCode ;
+        $filePath = $this->getFilePath();
+        
+        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        if ($fs->exists($filePath)) {
+            $fileContent=  json_decode(file_get_contents($filePath),true);
+            $specimensCode = $fileContent['specimensCode'];
+            $diffs = $fileContent['diffs'];
+            $stats = $fileContent['stats'];
+        }
+        else {
+            $diffs[$institutionCode] = $this->getAllDiff();
+            $specimensCode = $this->getSpecimensCode($institutionCode);
+            /* @var $diffStatsManager \AppBundle\Manager\DiffStatsManager */
+            $diffStatsManager = $this->statsManager->init($diffs[$institutionCode]);
+            $stats = $diffStatsManager->getStats();
+            $responseJson = json_encode(
+                    [
+                    'specimensCode' => $specimensCode,
+                    'stats' => $stats, 
+                    'diffs' => $diffs
+                    ]
+                    , JSON_PRETTY_PRINT);
+            $fs->dumpFile($filePath, $responseJson);
+        }
+        return array(
+            'specimensCode' => $specimensCode,
+            'stats' => $stats, 
+            'diffs' => $diffs) ;
+    }
+    public function getFilePath() {
+         return realpath($this->exportPath) . '/' . $this->institutionCode . '.json';
+    }
+    private function getAllDiff() 
+    {
         foreach ($this->entitiesName as $entityName) {
             $results[$entityName] = $this->getDiff($entityName);
         }
         return $results;
     }
-    
+
     /**
      * Renvoie un tableau des codes des specimens ayant une différence
      * @param array $results
      * @return array
      */
-    public static function getSpecimensCode($results = []) 
+    public function getSpecimensCode($institutionCode) 
     {
         $returnSpecimensCode=[];
+        $results = $this->getAllDiff($institutionCode) ;
         if (count($results)>0) {
             foreach ($results as $specimensCode) {
                 foreach ($specimensCode as $specimenCode) {
@@ -64,7 +109,7 @@ class DiffManager
                 }
             }
         }
-        return array_unique($returnSpecimensCode);
+        return array_values(array_unique($returnSpecimensCode));
     }
     
     public function getGenericDiffQuery()

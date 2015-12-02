@@ -1,8 +1,17 @@
 services:
+    diff.stats:
+        class: AppBundle\Manager\DiffStatsManager
+        arguments:
+            emR: "@doctrine.orm.entity_manager"
+            emD: "@doctrine.orm.diff_entity_manager"
     diff.manager:
         class: AppBundle\Manager\DiffManager
         arguments:
             em: "@doctrine.orm.entity_manager"
+            statsManager: "@diff.stats"
+            exportPath: "%export_path%"
+            
+            
     diff.specimens:
         class: AppBundle\Manager\DiffSpecimens
         arguments:
@@ -38,17 +47,14 @@ services:
         arguments:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
-    diff.stats:
-        class: AppBundle\Manager\DiffStatsManager
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
+
     specimenManager:
         class: AppBundle\Manager\SpecimenManager
         arguments:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
             translator: "@translator"
+            
     genericEntityManager:
         class: AppBundle\Manager\GenericEntityManager
         arguments:

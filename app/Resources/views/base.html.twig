@@ -100,6 +100,15 @@
                 }
             });
           });
+          $(document).ready(function(){
+            $('#maxItemPerPage').change(function(){
+                    {% set currentPath = path(app.request.attributes.get('_route')) %}
+                    var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum'})}}";
+                    maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
+                    localStorage.setItem('maxItemPerPage', maxItemPerPage);
+                    jQuery(location).attr('href', url.replace('_itemNum',maxItemPerPage));
+                });
+        });
 
         </script>
 </html>

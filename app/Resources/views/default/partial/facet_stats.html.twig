@@ -9,7 +9,7 @@
 
                 {% set path='' %}
                 {% if page != currentPage %}
-                    {% set path = path('diff', {'page' : page}) %}
+                    {% set path = path('diffs', {'page' : page}) %}
                 {% endif %}
 
                 <a href="{{path}}#{{specimenId}}">{{taxon}}</a>
