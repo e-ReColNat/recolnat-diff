@@ -16,9 +16,21 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="index")
      */
-    public function indexAction() {
-        return $this->render('default/index.html.twig', array()
-        );
+    public function indexAction(Request $request) {
+        $institutionCode = 'MHNAIX';
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode);
+
+        list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
+        
+        dump($exportManager->getChoicesForDisplay());
+        
+        return $this->render('default/index.html.twig', array(
+            'institutionCode' => $institutionCode,
+            'stats' => $stats,
+            'diffs' => $diffs[$institutionCode],
+            'choices' => $exportManager->getChoicesForDisplay(),
+        ));
     }
     /**
      * @Route("/diffs/", name="diffs")
@@ -48,15 +60,15 @@ class DefaultController extends Controller
         );
 
         return $this->render('default/viewDiffs.html.twig', array(
-                    'institutionCode' => $institutionCode,
-                    'stats' => $stats,
-                    'diffs' => $diffs[$institutionCode],
-                    'specimensRecolnat' => $specimensRecolnat,
-                    'specimensInstitution' => $specimensInstitution,
-                    'pagination' => $pagination,
-                    'choicesFacets' => $exportManager->getChoices(),
-                    'choices' => $exportManager->getChoicesForDisplay(),
-                    'maxItemPerPage'=>$maxItemPerPage,
+            'institutionCode' => $institutionCode,
+            'stats' => $stats,
+            'diffs' => $diffs[$institutionCode],
+            'specimensRecolnat' => $specimensRecolnat,
+            'specimensInstitution' => $specimensInstitution,
+            'pagination' => $pagination,
+            'choicesFacets' => $exportManager->getChoices(),
+            'choices' => $exportManager->getChoicesForDisplay(),
+            'maxItemPerPage'=>$maxItemPerPage,
         ));
     }
     

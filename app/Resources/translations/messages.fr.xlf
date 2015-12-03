@@ -32,39 +32,39 @@
             </trans-unit>
             <trans-unit id="8">
                 <source>label.choixRecolnat</source>
-                <target>Choisir toutes les modifications issues de la base e-Recolnat</target>
+                <target>de la base e-Recolnat</target>
             </trans-unit>
             <trans-unit id="9">
                 <source>label.choixInstitution</source>
-                <target>Choisir toutes les modifications issues de vos données</target>
+                <target>de vos données</target>
             </trans-unit>
             <trans-unit id="10">
                 <source>label.selectAllPages</source>
-                <target>Pour toutes les pages</target>
+                <target>de toutes les pages</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>label.selectPageDatas</source>
-                <target>Pour cette page seulement</target>
+                <target>de cette page uniquement</target>
             </trans-unit>
             <trans-unit id="12">
                 <source>label.selectAllClasses</source>
-                <target>Pour toutes les classes</target>
+                <target>Tout sélectionner</target>
             </trans-unit>
             <trans-unit id="13">
                 <source>label.selectOnlyClass</source>
-                <target>Uniquement pour ces classes</target>
+                <target>Pour les classes suivantes</target>
             </trans-unit>
             <trans-unit id="14">
                 <source>label.selectSpecimen</source>
-                <target>Uniquement les specimens séléctionnés</target>
+                <target>sélectionnés</target>
             </trans-unit>
             <trans-unit id="15">
                 <source>label.notaxon</source>
                 <target>Pas de taxon</target>
             </trans-unit>
             <trans-unit id="16">
-                <source>label.filtrer</source>
-                <target>Filtrer</target>
+                <source>label.filtre.button</source>
+                <target>Envoyer</target>
             </trans-unit>
             <trans-unit id="17">
                 <source>label.maxItemPerPage</source>
@@ -89,6 +89,34 @@
             <trans-unit id="22">
                 <source>label.info</source>
                 <target>Info</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>nav.accueil</source>
+                <target>Accueil</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>nav.parametres</source>
+                <target>Paramètres</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>nav.profil</source>
+                <target>Profil</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>nav.aide</source>
+                <target>Aide</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>label.differences.abbr</source>
+                <target>{1}%nbDiffs% diff.|]1,Inf]%nbDiffs% diffs.</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>label.legend.filter1</source>
+                <target>Choisir les données</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>label.legend.filter2</source>
+                <target>Pour les spécimens</target>
             </trans-unit>
             </body>
     </file>

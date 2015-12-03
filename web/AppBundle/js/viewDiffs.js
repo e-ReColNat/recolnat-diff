@@ -162,19 +162,6 @@ $(document).ready(function(){
             event.preventDefault();
         });
         
-        // Mise à jour des filtres choisis au niveau 3 (choix des classes) 
-        // Coche toutes les classes si la checkbox allClasses est cochée
-        $("#form-filters").find("[name^='selectLevel3']").change(function() {
-            if ($(this).val() === 'allClasses' && $(this).prop('checked')) {
-                $("#form-filters").find("[name^='selectLevel3']").not($(this)).prop('checked', true);
-            }
-            else {
-                if ($(this).val() !== 'allClasses' ) {
-                    $("#form-filters").find("[value='allClasses']").prop('checked', false);
-                }
-            }
-        });
-        
         // Sélection d'un specimen manuellement
         $(".specimen").find("[name^='check-specimen']").change(function(){
             if ($(this).prop('checked')) {

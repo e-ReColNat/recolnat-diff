@@ -46,11 +46,6 @@
                             <input type="radio" data-class="{{class}}" data-type='diff-entity' name="{{relationId}}" value="institution">
                         </td>
                     </tr>
-                    {#<tr>
-                        <td>&nbsp;</td>
-                        <td class="input"><div class="pull-right"><input type="radio" data-class="{{class}}" data-type='diff-entity' name="{{relationId}}" value="recolnat"></div></td>
-                        <td class="input"><div class="pull-right"><input type="radio" data-class="{{class}}" data-type='diff-entity' name="{{relationId}}" value="institution"></div></td>
-                    </tr>#}
                     {% for fieldName, data in fields %}
                     <tr class="diff-field">
                         <td>{{ ('label.'~class|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>

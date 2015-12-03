@@ -1,33 +1,79 @@
 {% set classesName = {1:'specimen',2:'bibliography',3:'determination',4:'localisation',5:'recolte',6:'stratigraphy',7:'taxon'} %}
 <div class="well">
-    <form id="form-filters">
+    <form id="form-filters" class="form-horizontal">
         <div class="form-group filter-level1" >
-            <label for="radio1-selectLevel1">{{ 'label.choixRecolnat' | trans }}</label>
-            <input type="radio" id="radio1-selectLevel1" name="selectLevel1" value="recolnat">
-            <label for="radio2-selectLevel1">{{ 'label.choixInstitution' | trans }}</label>
-            <input type="radio" id="radio2-selectLevel1" name="selectLevel1" value="institution">
+            <fieldset>
+                <legend>{{ 'label.legend.filter1' | trans }}</legend>
+                <div class="radio col-sm-4">
+                    <label for="radio1-selectLevel1">
+                        <input type="radio" id="radio1-selectLevel1" name="selectLevel1" value="recolnat">
+                        {{ 'label.choixRecolnat' | trans }}
+                    </label>
+                </div>
+                <div class="radio col-sm-4">
+                    <label for="radio2-selectLevel1">
+                        <input type="radio" id="radio2-selectLevel1" name="selectLevel1" value="institution">
+                        {{ 'label.choixInstitution' | trans }}
+                    </label>
+                </div>
+            </fieldset>
         </div>
         <div class="form-group filter-level2">
-            <label for="radio1-selectLevel2">{{ 'label.selectAllPages' | trans }}</label>
-            <input type="radio" id='radio1-selectLevel2' name="selectLevel2" value="allDatas">
-            <label for="radio2-selectLevel2">{{ 'label.selectPageDatas' | trans }}</label>
-            <input type="radio" id="radio2-selectLevel2" name="selectLevel2" value="page">
-            <label for="radio3-selectLevel2">{{ 'label.selectSpecimen' | trans }}</label>
-            <input type="radio" id="radio3-selectLevel2" name="selectLevel2" value="selectedSpecimens">
+            <fieldset>
+                <legend>{{ 'label.legend.filter2' | trans }}</legend>
+                <div class="radio col-sm-4">
+                    <label for="radio1-selectLevel2">
+                        <input type="radio" id='radio1-selectLevel2' name="selectLevel2" value="allDatas">
+                        {{ 'label.selectAllPages' | trans }}
+                    </label>
+                </div>
+                <div class="radio col-sm-4">
+                    <label for="radio2-selectLevel2">
+                    <input type="radio" id="radio2-selectLevel2" name="selectLevel2" value="page">
+                    {{ 'label.selectPageDatas' | trans }}
+                    </label>
+                </div>
+                <div class="radio col-sm-4">
+                    <label for="radio3-selectLevel2">
+                        <input type="radio" id="radio3-selectLevel2" name="selectLevel2" value="selectedSpecimens">
+                        {{ 'label.selectSpecimen' | trans }}
+                    </label>
+                </div>
+            </fieldset>
         </div>
         <div class="form-group filter-level3">
-            <label for="checkbox0-selectLevel3">{{ 'label.selectAllClasses' | trans}}</label>
-            <input type="checkbox" id='checkbox0-selectLevel3' name="selectLevel3[]" value="allClasses">
-            <p><label>{{ 'label.selectOnlyClass' | trans}} : </label><br />
-            {% for className in classesName %}
-            <label for="checkbox{{loop.index}}-selectLevel3">{{ ('label.'~className~'.plural') |trans({},'entity') }}</label>
-            <input type="checkbox" id='checkbox{{loop.index}}-selectLevel3' name="selectLevel3[]" value="{{className}}">
+            <fieldset>
+                <legend>{{ 'label.selectOnlyClass' | trans }}<button type="submit" id="selectAllClasses" class="btn btn-primary col-sm-offset-1 btn-xs">{{ 'label.selectAllClasses' | trans}}</button></legend>
+                {% for className in classesName %}
+                    <div class="checkbox col-sm-3">
+                        <label for="checkbox{{loop.index}}-selectLevel3">
+                            <input type="checkbox" id='checkbox{{loop.index}}-selectLevel3' name="selectLevel3[]" value="{{className}}">
+                            {{ ('label.'~className~'.plural') |trans({},'entity') }}
+                        </label>
+                    </div>
             {% endfor %}
-            </p>
+            <fieldset>
         </div>
             
         <input type="hidden" name="institutionCode" value="{{institutionCode}}">
         <input type="hidden" name="page" value="{{currentPage}}">
-        <button type="submit" class="btn btn-default">{{ 'label.filtrer' | trans }}</button>
+        
+        <div class="form-group">
+            <hr />
+            <div class="col-sm-offset-10 col-sm-2">
+              <button type="submit" class="btn btn-primary btn-sm">{{ 'label.filtre.button' | trans }}</button>
+            </div>
+        </div>
     </form>
 </div>
+            
+<script type="text/javascript">
+    window.onload = function() {
+    $(document).ready(function(){
+        $("#selectAllClasses").click(function(event) {
+            $("#form-filters").find("[name^='selectLevel3']").not($(this)).prop('checked', true);
+            event.preventDefault();
+        })
+    });
+    }
+</script>

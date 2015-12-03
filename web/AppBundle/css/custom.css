@@ -55,3 +55,35 @@ table.diff .input {
     position: fixed;
     z-index: 1000;
 }
+.sidebar ul.choices {
+    font-size : 85%;
+    list-style: outside none none;
+    padding-left : 10px;
+}
+.sidebar-choices> li > a {
+    padding : 5px 5px 3px 5px;
+}
+.sidebar-choices> li:hover {
+    background-color: #eee;
+}
+.sidebar-choices> li {
+    border-bottom: 1px solid #ddd;
+}
+.sidebar-choices> li:last-child {
+    border-bottom: none;
+}
+#form-filters legend {
+    margin-bottom: 0;
+}
+#form-filters .form-group {
+    margin-bottom: 5px;
+}
+#form-filters hr {
+    color: #e5e5e5;
+    background-color: #e5e5e5;
+    height: 1px;
+    /*border: 1px solid #e5e5e5;*/
+}
+.pagination {
+    margin : 0;
+}

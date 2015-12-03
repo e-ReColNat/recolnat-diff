@@ -4,15 +4,16 @@
     {% set summary = pagination.items %}
     {% if stats is not empty %}
     <div class="row">
-        <div class="col-xs-5 col-sm-5 col-md-4 col-lg-3 sidebar" id="facets" >
-            {% include 'default/partial/facet_stats.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
+        <div class="col-sm-3 col-md-2 sidebar" id="facets" >
+            {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>
         
-        <div class="col-xs-offset-5 col-sm-offset-5 col-md-offset-4 col-lg-offset-3 col-xs-7 col-sm-7 col-md-8 col-lg-9" id="diffs" data-institutioncode="{{institutionCode}}">
+        <div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10" id="diffs" data-institutioncode="{{institutionCode}}">
             <a href="{{path('export', {'institutionCode' : institutionCode})}}">Export</a>
-            <div class="navigation">
+            <div class="navigation row">
+                <div class="col-sm-6 col-sm-offset-3">
                 {{ knp_pagination_render(pagination) }}
-                <div>
+                <div class="pull-right">
                     <label for="maxItemPerPage">{{'label.maxItemPerPage' | trans }}</label>
                     <select name="maxItemPerPage" id="maxItemPerPage">
                         <option value="5" {{maxItemPerPage == 5 ? 'selected="true"':''}}>5</option>
@@ -21,6 +22,8 @@
                         <option value="50" {{maxItemPerPage == 50 ? 'selected="true"':''}}>50</option>
                     </select>
                 </div>
+            </div>
+                
             </div>
             {% include 'default/partial/filter.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
         {% for specimenId, classWithDiff in summary %}
@@ -37,8 +40,10 @@
             </div>
         {% endfor %}
         {% endif %}
-            <div class="navigation">
+            <div class="navigation row">
+                <div class="col-sm-6 col-sm-offset-4">
                 {{ knp_pagination_render(pagination) }}
+                </div>
             </div>
         </div>
     </div>
