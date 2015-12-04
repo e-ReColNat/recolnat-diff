@@ -8,14 +8,14 @@
 
                 {% set path='' %}
                 {% if page != currentPage %}
-                    {% set path = path('diffs', {'page' : page}) %}
+                    {% set path = path('diffs', {'page' : page, 'institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) %}
                 {% endif %}
 
                 <a href="{{path}}#{{specimenId}}">{{taxon}}</a>
                 <ul class="choices">
                 {% for className in classWithDiff | keys %}
                     {% set nbDiffs = countDiffs(stats, className, specimenId) %}
-                    {% set nbChoices = countChoices(choices, specimenId, className) %}
+                    {% set nbChoices = 8 %}
                     <li>
                         <div class ="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning'}}" id="facet-{{specimenId}}-{{className}}" data-classname="{{className}}" data-comptchoices="{{nbChoices}}" data-comptdiffs="{{nbDiffs}}">
                             <span class="facet-className">{{('label.'~ (className|lower)) | trans({},'entity')}}</span>&nbsp;:&nbsp;

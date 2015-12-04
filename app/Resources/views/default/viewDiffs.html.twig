@@ -4,11 +4,20 @@
     {% set summary = pagination.items %}
     {% if stats is not empty %}
     <div class="row">
+        
         <div class="col-sm-3 col-md-2 sidebar" id="facets" >
             {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>
         
         <div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10" id="diffs" data-institutioncode="{{institutionCode}}">
+            
+            <ol class="breadcrumb">
+                
+            <li><a href="#">{{'bradcrumb.diffs' | trans }}</a></li>
+            <li><a href="#">{{selectedClassName is defined and selectedClassName is not null ? 'label.'~selectedClassName | trans : ''}}</a></li>
+            <li class="active">{{ pagination.getTotalItemCount }} {{ 'specimens' | trans }}</li>
+        </ol>
+            
             <a href="{{path('export', {'institutionCode' : institutionCode})}}">Export</a>
             <div class="navigation row">
                 <div class="col-sm-6 col-sm-offset-3">
@@ -26,19 +35,21 @@
                 
             </div>
             {% include 'default/partial/filter.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
-        {% for specimenId, classWithDiff in summary %}
-            <div class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}">
-            {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}
-            {% set specimenInstitution = attribute(specimensInstitution, specimenId) | first %}
-            
-            {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
+            {% for specimenId, classWithDiff in summary %}
+{#                <div class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}">#}
+                <section class="well{{ loop.index is odd ? ' odd' : '' }}">
+                    <span class="specimen" id="{{specimenId}}" style="padding-top: 40px; margin-top: -40px;"></span>
+                {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}
+                {% set specimenInstitution = attribute(specimensInstitution, specimenId) | first %}
 
-            <div class="clearfix">
-            {% include 'default/partial/short_diff_specimen.html.twig' %}
-            </div>
-            
-            </div>
-        {% endfor %}
+                {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
+
+                <div class="clearfix">
+                {% include 'default/partial/short_diff_specimen.html.twig' %}
+                </div>
+
+                </section>
+            {% endfor %}
         {% endif %}
             <div class="navigation row">
                 <div class="col-sm-6 col-sm-offset-4">

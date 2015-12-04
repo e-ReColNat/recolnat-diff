@@ -51,7 +51,7 @@ class DiffManager
         $this->exportPath = $exportPath;
     }
     
-    public function init($institutionCode) {
+    public function init($institutionCode, array $classesName = []) {
         $this->institutionCode = $institutionCode ;
         $filePath = $this->getFilePath();
         
@@ -77,11 +77,35 @@ class DiffManager
                     , JSON_PRETTY_PRINT);
             $fs->dumpFile($filePath, $responseJson);
         }
+        $classesName=array_filter($classesName);
+        if (count($classesName) > 0) {
+            $stats = $this->filterResults($stats, $classesName);
+        }
         return array(
             'specimensCode' => $specimensCode,
             'stats' => $stats, 
             'diffs' => $diffs) ;
     }
+    
+    public function filterResults($stats, array $classesName) {
+        $returnStats=['classes' => [], 'summary' => []];
+        foreach ($classesName as $className) {
+            $className = ucfirst(strtolower($className));
+            if (isset($stats['classes'][$className])) {
+                $returnStats['classes'][$className] = $stats['classes'][$className] ;
+            }
+        }
+        foreach ($returnStats['classes'] as $className => $row) {
+            foreach ($row as $specimenCode => $fields) {
+                if (isset($stats['summary'][$specimenCode])) {
+                    $returnStats['summary'][$specimenCode] = $stats['summary'][$specimenCode] ;
+                }
+            }
+        }
+        $stats['summary'] =$returnStats['summary'];
+        return $stats;
+    }
+    
     public function getFilePath() {
          return realpath($this->exportPath) . '/' . $this->institutionCode . '.json';
     }

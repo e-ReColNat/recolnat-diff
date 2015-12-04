@@ -109,8 +109,8 @@ $(document).ready(function(){
             var tableContext = $(this).parents('table.diff');
             var relationId = $(this).attr('name') ;
             var choice = $(this).attr('value') ;
-            var specimenId = $(this).parents('div.specimen').attr('id');
-            
+            var specimenId = $(this).parents('section').find('.specimen').attr('id');
+            console.log(specimenId);
             if ($(this).data('type') === 'diff-entity') {
                 tableContext.find( ":radio")
                         .filter("[name^='"+relationId+"']")

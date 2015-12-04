@@ -23,26 +23,67 @@ class DefaultController extends Controller
 
         list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
         
-        dump($exportManager->getChoicesForDisplay());
+        $choices=$exportManager->getChoicesForDisplay();
+        $sortedStats = $stats['classes'] ;
+        $total = [] ;
+        $totalChoices = [] ;
+     
+        $callbackCount = function($value, $className) use (&$total){
+            if (is_array($value)) {
+                if (!isset($total[$className])) { $total[$className]=0; }
+                foreach ($value as $row) {
+                    foreach ($row as $fields) {
+                        $total[$className] += count($fields) ;
+                    }
+                }
+            }
+        };
+        $callbackCountChoices = function($value, $className) use (&$totalChoices){
+            if (is_array($value)) {
+                if (!isset($total[$className])) { $totalChoices[$className]=0; }
+                foreach ($value as $row) {
+                    foreach ($row as $fields) {
+                        $totalChoices[$className] += count($fields) ;
+                    }
+                }
+            }
+        };
+        array_walk($sortedStats, $callbackCount);
+        array_walk($choices, $callbackCountChoices);
+        uasort($sortedStats, function($a, $b) {
+            return count(array_values($a)) < count(array_values($b)) ? 1 : -1;
+        });
+        
+        foreach ($totalChoices as $row) {
+            if (!isset($totalChoices['sum'])) { $totalChoices['sum']=0;}
+            $totalChoices['sum'] += $row;
+        }
+        
+        foreach ($total as $row) {
+            if (!isset($total['sum'])) { $total['sum']=0;}
+            $total['sum'] += $row;
+        }
+        $stats['classes']=$sortedStats;
         
         return $this->render('default/index.html.twig', array(
             'institutionCode' => $institutionCode,
             'stats' => $stats,
             'diffs' => $diffs[$institutionCode],
-            'choices' => $exportManager->getChoicesForDisplay(),
+            'totalChoices' => $totalChoices,
+            'total'=> $total,
         ));
     }
     /**
-     * @Route("/diffs/", name="diffs")
+     * @Route("{institutionCode}/diffs/{selectedClassName}", name="diffs")
      */
-    public function diffsAction(Request $request)
+    public function diffsAction(Request $request, $institutionCode, $selectedClassName = null)
     {
         $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
-        $institutionCode = 'MHNAIX';
+        
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
 
-        list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
+        list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName);
 
         $specimenRepositoryRecolnat = $this->getDoctrine()
                 ->getRepository('AppBundle\Entity\Specimen');
@@ -69,16 +110,17 @@ class DefaultController extends Controller
             'choicesFacets' => $exportManager->getChoices(),
             'choices' => $exportManager->getChoicesForDisplay(),
             'maxItemPerPage'=>$maxItemPerPage,
+            'selectedClassName' => $selectedClassName,
         ));
     }
     
     /**
      * @param Request $request
      * @param String $institutionCode
-     * @param String $type
+     * @param String $selectedClassName
      * @return type $array
      */
-    private function getSpecimenIdsAndDiffsAndStats(Request $request, $institutionCode)
+    private function getSpecimenIdsAndDiffsAndStats(Request $request, $institutionCode, $selectedClassName=null)
     {
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $this->get('session');
@@ -86,22 +128,13 @@ class DefaultController extends Controller
         if (!is_null($request->query->get('reset', null))) {
             $session->clear();
         }
-        $diffs = $session->get('diffs');
-        $specimensCode = $session->get('specimensCode');
-        $stats = $session->get('stats');
-        
-        if (is_null($diffs) || !isset($diffs[$institutionCode])) {
-            /* @var $diffManager \AppBundle\Manager\DiffManager */
-            $diffManager = $this->get('diff.manager');
-            
-            $results =$diffManager->init($institutionCode);
-            $diffs = $results['diffs'] ;
-            $specimensCode = $results['specimensCode'] ;
-            $stats = $results['stats'] ;
-            $session->set('diffs', $diffs);
-            $session->set('specimensCode', $specimensCode);
-            $session->set('stats', $stats);
-        }
+        /* @var $diffManager \AppBundle\Manager\DiffManager */
+        $diffManager = $this->get('diff.manager');
+        $results =$diffManager->init($institutionCode, [$selectedClassName]);
+        list ($diffs, $specimensCode, $stats) = [$results['diffs'],$results['specimensCode'],$results['stats']] ;
+        $session->set('diffs', $diffs);
+        $session->set('specimensCode', $specimensCode);
+        $session->set('stats', $stats);
         return [$specimensCode, $diffs, $stats];
     }
     /**
