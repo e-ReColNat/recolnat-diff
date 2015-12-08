@@ -78,18 +78,27 @@ class DiffManager
             $fs->dumpFile($filePath, $responseJson);
         }
         $selectedClassesName=array_filter($selectedClassesName);
-        if (count($selectedClassesName) > 0 || count($selectedSpecimensCode)>0 || count($choicesToRemove) > 0) {
+        //if (count($selectedClassesName) > 0 || count($selectedSpecimensCode)>0 || count($choicesToRemove) > 0) {
             $stats = $this->filterResults($stats, $selectedClassesName, $selectedSpecimensCode, $choicesToRemove);
-        }
+        //}
         return array(
             'specimensCode' => $specimensCode,
             'stats' => $stats, 
             'diffs' => $diffs) ;
     }
     
-    public function filterResults($stats, array $classesName=[], array $selectedSpecimensCode=[], array $choicesToRemove=[]) {
-        $returnStats=['classes' => [], 'summary' => []];
+    /**
+     * renvoie les résultats dont au moins une différence fait partie de $classesName
+     * @param array $stats
+     * @param array $classesName
+     * @return array
+     */
+    public function filterByClassesName($stats, array $classesName=[]) {
+        $returnStats=$stats;
+        
         if (count($classesName)>0) {
+            $returnStats['classes']=[] ;
+            $returnStats['summary'] = [];
             foreach ($classesName as $className) {
                 $className = ucfirst(strtolower($className));
                 if (isset($stats['classes'][$className])) {
@@ -100,32 +109,54 @@ class DiffManager
                 foreach ($row as $specimenCode => $fields) {
                     if (isset($stats['summary'][$specimenCode])) {
                         $returnStats['summary'][$specimenCode] = $stats['summary'][$specimenCode] ;
+                        // Rajout dans les classes si un specimen a des mofifications dans des class non sélectionnées
+                        foreach (array_keys($returnStats['summary'][$specimenCode]) as $className) {
+                            if (!isset($returnStats['classes'][$className][$specimenCode])) {
+                                $returnStats['classes'][$className][$specimenCode] = $stats['classes'][$className][$specimenCode] ;
+                            }
+                        }
                     }
                 }
             }
-            $stats['summary'] =$returnStats['summary'];
         }
-        else {
-            $returnStats=$stats;
-        }
-        // Filtre des spécimens à sélectionner
+        
+        return $returnStats ;
+    }
+    
+    /**
+     * renvoie les résultats dont le specimenCode fait partie de $selectedSpecimensCode
+     * @param array $stats
+     * @param array $selectedSpecimensCode
+     * @return array
+     */
+    public function filterBySpecimensCode($stats,array $selectedSpecimensCode=[]) {
+        $returnStats=$stats;
         if (count($selectedSpecimensCode)>0) {
             // Remise du summary à zero
             $returnStats['summary']=[];
-            foreach ($returnStats['classes'] as $className => $row) {
+            $returnStats['classes']=$stats['classes'];
+            foreach ($stats['classes'] as $className => $row) {
                 foreach ($row as $specimenCode => $fields) {
                     if (in_array($specimenCode, $selectedSpecimensCode)) {
                         $returnStats['summary'][$specimenCode] = $stats['summary'][$specimenCode] ;
                     }
                     else {
-                        unset($stats['classes'][$className][$specimenCode]);
+                        unset($returnStats['classes'][$className][$specimenCode]);
                     }
                 }
             }
-            $stats['summary'] =$returnStats['summary'];
         }
-        
-        // Filtre des specimens dont le choix n'est pas fini
+        return $returnStats;
+    }
+    
+    /**
+     * filtre les résultats dont les choix ont été complétement faits
+     * @param type $stats
+     * @param array $choicesToRemove
+     * @return type
+     */
+    public function filterByChoicesDone($stats, array $choicesToRemove=[]) {
+        $returnStats=$stats;
         if (count($choicesToRemove) >0) {
             $tempChoices=[] ;
             foreach ($choicesToRemove as $choice) {
@@ -139,25 +170,38 @@ class DiffManager
             }
             foreach ($tempChoices as $className => $choiceSpecimenId) {
                 foreach ($choiceSpecimenId as $specimenCode => $comptFieldChoice) {
-                    if (is_array($stats['classes'][$className][$specimenCode])) {
+                    if (isset($returnStats['classes'][$className]) && isset($returnStats['classes'][$className][$specimenCode])) {
                         $totalStatFields=0;
-                        foreach ($stats['classes'][$className][$specimenCode] as $statsFields) {
+                        foreach ($returnStats['classes'][$className][$specimenCode] as $statsFields) {
                             $totalStatFields+=count($statsFields) ;
                         }
-                        //var_dump([$specimenCode => ['r' =>$totalStatFields, 'c'=>$comptFieldChoice]]);
                         if ($totalStatFields == $comptFieldChoice) {
-                            unset($stats['classes'][$className][$specimenCode]) ;
-                            unset($stats['summary'][$specimenCode][$className]) ;
-                            if (isset($stats['summary'][$specimenCode]) && count($stats['summary'][$specimenCode]) == 0) {
-                                unset($stats['summary'][$specimenCode]);
+                            unset($returnStats['classes'][$className][$specimenCode]) ;
+                            unset($returnStats['summary'][$specimenCode][$className]) ;
+                            if (isset($returnStats['summary'][$specimenCode]) && count($returnStats['summary'][$specimenCode]) == 0) {
+                                unset($returnStats['summary'][$specimenCode]);
                             }
                         }
                     }
                 }
             }
         }
-        
-        return $stats;
+        return $returnStats ;
+    }
+    
+    /**
+     * filtre les résultats
+     * @param array $stats
+     * @param array $classesName
+     * @param array $selectedSpecimensCode
+     * @param array $choicesToRemove
+     * @return array
+     */
+    public function filterResults($stats, array $classesName=[], array $selectedSpecimensCode=[], array $choicesToRemove=[]) {
+        $returnStats = $this->filterByClassesName($stats, $classesName) ;
+        $returnStats = $this->filterBySpecimensCode($returnStats, $selectedSpecimensCode);
+        $returnStats = $this->filterByChoicesDone($returnStats, $choicesToRemove);
+        return $returnStats;
     }
     
     public function getFilePath() {

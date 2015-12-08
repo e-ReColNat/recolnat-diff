@@ -35,7 +35,7 @@
             </div>
             {% include 'default/partial/filter.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
             {% for specimenId, classWithDiff in summary %}
-                <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" data-specimenid="{{specimenId}}">
+                <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}" data-specimenid="{{specimenId}}">
                     {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}
                     {% set specimenInstitution = attribute(specimensInstitution, specimenId) | first %}
 
@@ -65,12 +65,26 @@
                     {% if selectedClassName is not defined %}
                         {% set selectedClassName = "all" %}
                     {% endif %}
-{#                    {% set currentPath = path(app.request.attributes.get('_route'), {'institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) %}#}
                     var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName})}}";
                     maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
                     localStorage.setItem('maxItemPerPage', maxItemPerPage);
                     jQuery(location).attr('href', url.replace('_itemNum',maxItemPerPage));
                 });
+                
+            function maybeScrollToHash() {
+                // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
+                if (window.location.hash && $(window.location.hash).length) {
+                    var newTop = $(window.location.hash).offset().top +parseInt($(window.location.hash).css('padding-top'),10) - $('.navbar-fixed-top').height() - parseInt($('body').css('padding-top'),10) +parseInt($('.navbar-fixed-top').css('margin-bottom'),10);
+                    $(window).scrollTop(newTop);
+                }
+            }
+
+            $(window).bind('hashchange', function(e) {
+                e.preventDefault();
+                maybeScrollToHash();
+            });
+
+            maybeScrollToHash(); 
         });
     </script>
 {% endblock %}
