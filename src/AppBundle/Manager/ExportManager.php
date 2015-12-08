@@ -132,6 +132,22 @@ class ExportManager
         }
         return $returnChoices;
     }
+    
+    public function getChoicesBySpecimenId() 
+    {
+        $choices = $this->getChoices() ;
+        $returnChoices = array() ;
+        if (count($choices) >0 ) {
+            foreach ($choices as $choice) {
+                if (!isset($returnChoices[$choice['specimenId']])) {
+                    $returnChoices[$choice['specimenId']] = [];
+                }
+                unset($choice[$choice['specimenId']]);
+                $returnChoices[$choice['specimenId']][] =$choice ;
+            }
+        }
+        return $returnChoices;
+    }
     public function saveChoices()
     {
         $fs = new \Symfony\Component\Filesystem\Filesystem() ;

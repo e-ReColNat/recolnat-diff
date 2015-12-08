@@ -1,24 +1,50 @@
 {% extends 'base.html.twig' %}
 
+{% set sumSpecimens = 0 %}
 {% block body %}
     {% if stats is not empty %}
         <table class="table table-bordered">
             <tr>
                 <th>&nbsp;</th>
+                <th>{{'label.header.specimens' | trans}}</th>
                 <th>{{'label.header.differences' | trans}}</th>
                 <th>{{'label.header.choix' | trans}}</th>
+                <th>{{'label.header.reste' | trans}}</th>
             </tr>
-        {% for class, diffs in stats.classes %}
+        {% for class in stats|keys %}
+            {% set sumSpecimens = sumSpecimens + attribute(stats, class) | length %}
             <tr>
-                <td><a href="{{path('diffs', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}} ">{{('label.'~class|lower)|trans({},'entity') }}</a></td>
-                <td>{{attribute(total, class)}}</td>
-                <td>{{ attribute(totalChoices, class) is defined ? attribute(totalChoices, class) : 0}}</td>
+                <td><a href="{{path('diffs', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">{{('label.'~class|lower)|trans({},'entity') }}</a></td>
+                <td>{{attribute(stats, class) | length}}</td>
+                <td><a href="{{path('diffs', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">{{attribute(total, class)}}</a></td>
+                <td>
+                    {% set nbChoices = attribute(totalChoices, class) is defined ? attribute(totalChoices, class) : 0 %}
+                    {% if nbChoices > 0 %}
+                        <a href="{{path('choices', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">
+                    {% endif %}
+                            {{ nbChoices }}
+                    {% if nbChoices > 0 %}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% set nbTodo = attribute(totalChoices, class) is defined ? attribute(total, class) - attribute(totalChoices, class) : attribute(total, class) %}
+                    {% if nbTodo > 0 %}
+                        <a href="{{path('todo', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">
+                    {% endif %}
+                            {{ nbTodo }}
+                    {% if nbTodo > 0 %}
+                        </a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         <tr>
             <td><a href="{{path('diffs', {'institutionCode':institutionCode})}} ">{{ 'label.total' | trans }}</a></td>
-            <td>{{ total.sum }}</td>
-            <td>{{ totalChoices.sum }}</td>
+            <td>{{ sumSpecimens }}</td>
+            <td><a href="{{path('diffs', {'institutionCode':institutionCode})}} ">{{ total.sum }}</a></td>
+            <td><a href="{{path('choices', {'institutionCode':institutionCode})}} ">{{ totalChoices.sum }}</a></td>
+            <td><a href="{{path('todo', {'institutionCode':institutionCode})}} ">{{ total.sum - totalChoices.sum }}</a></td>
         </tr>
         </table>
      {% endif %}

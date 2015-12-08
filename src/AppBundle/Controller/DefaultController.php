@@ -53,30 +53,24 @@ class DefaultController extends Controller
         uasort($sortedStats, function($a, $b) {
             return count(array_values($a)) < count(array_values($b)) ? 1 : -1;
         });
-        
-        foreach ($totalChoices as $row) {
-            if (!isset($totalChoices['sum'])) { $totalChoices['sum']=0;}
-            $totalChoices['sum'] += $row;
-        }
-        
-        foreach ($total as $row) {
-            if (!isset($total['sum'])) { $total['sum']=0;}
-            $total['sum'] += $row;
-        }
-        $stats['classes']=$sortedStats;
+
+        $total['sum'] = array_sum($total);
+        $totalChoices['sum'] = array_sum($totalChoices);
         
         return $this->render('default/index.html.twig', array(
             'institutionCode' => $institutionCode,
-            'stats' => $stats,
+            'stats' => $sortedStats,
             'diffs' => $diffs[$institutionCode],
             'totalChoices' => $totalChoices,
             'total'=> $total,
         ));
     }
     /**
-     * @Route("{institutionCode}/diffs/{selectedClassName}", name="diffs")
+     * @Route("{institutionCode}/diffs/{selectedClassName}/{page}", name="diffs", defaults={"selectedClassName" = "all", "page" = 1}, requirements={
+    *     "page": "\d+"
+    * })
      */
-    public function diffsAction(Request $request, $institutionCode, $selectedClassName = null)
+    public function diffsAction(Request $request, $institutionCode, $selectedClassName = "all", $page = 1)
     {
         $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
         
@@ -97,7 +91,95 @@ class DefaultController extends Controller
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
-                $stats['summary'], $request->query->getInt('page', 1), $maxItemPerPage
+                $stats['summary'], $page, $maxItemPerPage
+        );
+
+        return $this->render('default/viewDiffs.html.twig', array(
+            'institutionCode' => $institutionCode,
+            'stats' => $stats,
+            'diffs' => $diffs[$institutionCode],
+            'specimensRecolnat' => $specimensRecolnat,
+            'specimensInstitution' => $specimensInstitution,
+            'pagination' => $pagination,
+            'choicesFacets' => $exportManager->getChoices(),
+            'choices' => $exportManager->getChoicesForDisplay(),
+            'maxItemPerPage'=>$maxItemPerPage,
+            'selectedClassName' => $selectedClassName,
+        ));
+    }
+    
+    /**
+     * @Route("{institutionCode}/choices/{selectedClassName}/{page}", name="choices", defaults={"selectedClassName" = "all", "page" = 1}, requirements={
+    *     "page": "\d+"
+    * })
+     */
+    public function viewChoicesAction(Request $request, $institutionCode, $selectedClassName = "all", $page = 1)
+    {
+        $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
+        
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode);
+
+        $specimensWithChoices=$exportManager->getChoicesBySpecimenId() ;
+        list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName, array_keys($specimensWithChoices));
+
+        $specimenRepositoryRecolnat = $this->getDoctrine()
+                ->getRepository('AppBundle\Entity\Specimen');
+        $specimenRepositoryInstitution = $this->getDoctrine()
+                ->getRepository('AppBundle\Entity\Specimen', 'diff');
+
+        $specimensRecolnat = $specimenRepositoryRecolnat
+                ->findBySpecimenCodes($specimensCode);
+        $specimensInstitution = $specimenRepositoryInstitution
+                ->findBySpecimenCodes($specimensCode);
+
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+                $stats['summary'], $page, $maxItemPerPage
+        );
+
+        return $this->render('default/viewDiffs.html.twig', array(
+            'institutionCode' => $institutionCode,
+            'stats' => $stats,
+            'diffs' => $diffs[$institutionCode],
+            'specimensRecolnat' => $specimensRecolnat,
+            'specimensInstitution' => $specimensInstitution,
+            'pagination' => $pagination,
+            'choicesFacets' => $exportManager->getChoices(),
+            'choices' => $exportManager->getChoicesForDisplay(),
+            'maxItemPerPage'=>$maxItemPerPage,
+            'selectedClassName' => $selectedClassName,
+        ));
+    }
+    
+    /**
+     * @Route("{institutionCode}/todo/{selectedClassName}/{page}", name="todo", defaults={"selectedClassName" = "all", "page" = 1}, requirements={
+    *     "page": "\d+"
+    * })
+     */
+    public function todoAction(Request $request, $institutionCode, $selectedClassName = "all", $page = 1)
+    {
+        $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
+        
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode);
+
+        $specimensWithChoices=$exportManager->getChoices() ;
+        list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName, [],  $specimensWithChoices);
+
+        $specimenRepositoryRecolnat = $this->getDoctrine()
+                ->getRepository('AppBundle\Entity\Specimen');
+        $specimenRepositoryInstitution = $this->getDoctrine()
+                ->getRepository('AppBundle\Entity\Specimen', 'diff');
+
+        $specimensRecolnat = $specimenRepositoryRecolnat
+                ->findBySpecimenCodes($specimensCode);
+        $specimensInstitution = $specimenRepositoryInstitution
+                ->findBySpecimenCodes($specimensCode);
+
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+                $stats['summary'], $page, $maxItemPerPage
         );
 
         return $this->render('default/viewDiffs.html.twig', array(
@@ -118,19 +200,22 @@ class DefaultController extends Controller
      * @param Request $request
      * @param String $institutionCode
      * @param String $selectedClassName
-     * @return type $array
+     * @param Array $specimensWithChoices
+     * @param Array $choicesToRemove
+     * @return array $array
      */
-    private function getSpecimenIdsAndDiffsAndStats(Request $request, $institutionCode, $selectedClassName=null)
+    private function getSpecimenIdsAndDiffsAndStats(Request $request, $institutionCode, $selectedClassName=null, $specimensWithChoices=[], $choicesToRemove=[])
     {
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $this->get('session');
 
+        if ($selectedClassName == "all") {$selectedClassName = null;}
         if (!is_null($request->query->get('reset', null))) {
             $session->clear();
         }
         /* @var $diffManager \AppBundle\Manager\DiffManager */
         $diffManager = $this->get('diff.manager');
-        $results =$diffManager->init($institutionCode, [$selectedClassName]);
+        $results =$diffManager->init($institutionCode, [$selectedClassName], $specimensWithChoices, $choicesToRemove);
         list ($diffs, $specimensCode, $stats) = [$results['diffs'],$results['specimensCode'],$results['stats']] ;
         $session->set('diffs', $diffs);
         $session->set('specimensCode', $specimensCode);
@@ -171,11 +256,12 @@ class DefaultController extends Controller
         $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE);
         $institutionCode = $request->get('institutionCode', null);
         $selectedSpecimens = json_decode($request->get('selectedSpecimens', null));
+        $selectedClassName = json_decode($request->get('selectedClassName', null));
         $choices = [];
         $items = [];
         
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
-            list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
+            list($specimensCode, $diffs, $stats) = $this->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName);
             switch ($selectLevel2) {
                 case 'page' :
                     $paginator = $this->get('knp_paginator');

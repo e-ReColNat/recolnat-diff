@@ -24,7 +24,7 @@
                 <div class="radio col-sm-3">
                     <label for="radio1-selectLevel2">
                         <input type="radio" id='radio1-selectLevel2' name="selectLevel2" value="allDatas">
-                        {{ 'label.selectAllPages' | trans }}
+                        {{ 'label.selectAllPages' | trans }} ({{ pagination.getTotalItemCount }})
                     </label>
                 </div>
                 <div class="radio col-sm-3">
@@ -56,6 +56,7 @@
         </div>
             
         <input type="hidden" name="institutionCode" value="{{institutionCode}}">
+        <input type="hidden" name="selectedClassName" value="{{selectedClassName}}">
         <input type="hidden" name="page" value="{{currentPage}}">
         
         <div class="form-group">

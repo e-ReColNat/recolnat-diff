@@ -1,6 +1,7 @@
 $(document).ready(function(){
     
         var institutionCode = $('#diffs').data('institutioncode');
+        var selectedClassName = $('#diffs').data('selectedclassname');
         var smallModal = $('#smallModal') ;
          var selectedSpecimens=new Array();
         if (localStorage.getItem('selectedSpecimens')) {
@@ -101,16 +102,13 @@ $(document).ready(function(){
             return facet;
         }
         
-        
-        
         // Sélection bouton radio par specimen
         $('table.diff').find( ":radio" ).change(function() {
             var choices = new Array();
             var tableContext = $(this).parents('table.diff');
             var relationId = $(this).attr('name') ;
             var choice = $(this).attr('value') ;
-            var specimenId = $(this).parents('section').find('.specimen').attr('id');
-            console.log(specimenId);
+            var specimenId = $(this).parents('section').data('specimenid');
             if ($(this).data('type') === 'diff-entity') {
                 tableContext.find( ":radio")
                         .filter("[name^='"+relationId+"']")

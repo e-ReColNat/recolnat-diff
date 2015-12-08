@@ -36,15 +36,15 @@
             </trans-unit>
             <trans-unit id="9">
                 <source>label.choixInstitution</source>
-                <target>de vos données</target>
+                <target>de votre base</target>
             </trans-unit>
             <trans-unit id="10">
                 <source>label.selectAllPages</source>
-                <target>de toutes les pages</target>
+                <target>tous les spécimens</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>label.selectPageDatas</source>
-                <target>de cette page uniquement</target>
+                <target>les spécimens de cette page</target>
             </trans-unit>
             <trans-unit id="12">
                 <source>label.selectAllClasses</source>
@@ -56,7 +56,7 @@
             </trans-unit>
             <trans-unit id="14">
                 <source>label.selectSpecimen</source>
-                <target>sélectionnés</target>
+                <target>les spécimens sélectionnés</target>
             </trans-unit>
             <trans-unit id="15">
                 <source>label.notaxon</source>
@@ -116,7 +116,7 @@
             </trans-unit>
             <trans-unit id="29">
                 <source>label.legend.filter2</source>
-                <target>Pour les spécimens</target>
+                <target>Pour</target>
             </trans-unit>
             </body>
     </file>

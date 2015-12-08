@@ -15,7 +15,7 @@
                 <ul class="choices">
                 {% for className in classWithDiff | keys %}
                     {% set nbDiffs = countDiffs(stats, className, specimenId) %}
-                    {% set nbChoices = 8 %}
+                    {% set nbChoices = countChoices(choices, specimenId, className) %}
                     <li>
                         <div class ="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning'}}" id="facet-{{specimenId}}-{{className}}" data-classname="{{className}}" data-comptchoices="{{nbChoices}}" data-comptdiffs="{{nbDiffs}}">
                             <span class="facet-className">{{('label.'~ (className|lower)) | trans({},'entity')}}</span>&nbsp;:&nbsp;
