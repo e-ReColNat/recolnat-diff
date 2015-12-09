@@ -12,9 +12,9 @@
         <div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10" id="diffs" data-institutioncode="{{institutionCode}}" data-selectedclassname="{{selectedClassName}}">
             
             <ol class="breadcrumb">
-            <li><a href="{{path('index')}}">{{'bradcrumb.diffs' | trans }}</a></li>
-            <li>{{selectedClassName is defined and selectedClassName is not null ? 'label.'~selectedClassName | trans : ''}}</li>
-            <li class="active">{{ pagination.getTotalItemCount }} {{ 'specimens' | trans }}</li>
+            <li><a href="{{path('index')}}">{{'diffs' | transchoice(2)| capitalize }}</a></li>
+            <li>{{selectedClassName is defined and selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : ''}}</li>
+            <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
         </ol>
             
             <a href="{{path('export', {'institutionCode' : institutionCode})}}">Export</a>
@@ -61,15 +61,18 @@
     <script src="{{ asset('AppBundle/js/viewDiffs.js') }}"></script>
     <script type="text/javascript">
     $(document).ready(function(){
+            if(localStorage.getItem('maxItemPerPage')) {
+                $('#maxItemPerPage').val(localStorage.getItem('maxItemPerPage'));
+            }
             $('#maxItemPerPage').change(function(){
-                    {% if selectedClassName is not defined %}
-                        {% set selectedClassName = "all" %}
-                    {% endif %}
-                    var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName})}}";
-                    maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
-                    localStorage.setItem('maxItemPerPage', maxItemPerPage);
-                    jQuery(location).attr('href', url.replace('_itemNum',maxItemPerPage));
-                });
+                {% if selectedClassName is not defined %}
+                    {% set selectedClassName = "all" %}
+                {% endif %}
+                var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName})}}";
+                maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
+                localStorage.setItem('maxItemPerPage', maxItemPerPage);
+                jQuery(location).attr('href', url.replace('_itemNum',maxItemPerPage));
+            });
                 
             function maybeScrollToHash() {
                 // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe

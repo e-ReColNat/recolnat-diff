@@ -6,27 +6,27 @@
         <table class="table table-bordered">
             <tr>
                 <th>&nbsp;</th>
-                <th>{{'label.header.specimens' | trans}}</th>
-                <th>{{'label.header.differences' | trans}}</th>
-                <th>{{'label.header.choix' | trans}}</th>
-                <th>{{'label.header.reste' | trans}}</th>
+                <th>{{'header.nb.specimens' | trans}}</th>
+                <th>{{'header.nb.differences' | trans}}</th>
+                <th>{{'header.nb.reste' | trans}}</th>
+                <th>{{'header.nb.choix' | trans}}</th>
             </tr>
         {% for class in stats|keys %}
             {% set sumSpecimens = sumSpecimens + attribute(stats, class) | length %}
             <tr>
-                <td><a href="{{path('diffs', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">{{('label.'~class|lower)|trans({},'entity') }}</a></td>
-                <td>{{attribute(stats, class) | length}}</td>
-                <td><a href="{{path('diffs', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">{{attribute(total, class)}}</a></td>
+                {% set totalCountClass=attribute(stats, class) | length %}
+                <td>{{('label.'~class|lower) | transchoice(totalCountClass, {}, 'entity')|capitalize}}</td>
+                {% set transClass=('label.'~class|lower) | transchoice(totalCountClass, {}, 'entity') %}
                 <td>
-                    {% set nbChoices = attribute(totalChoices, class) is defined ? attribute(totalChoices, class) : 0 %}
-                    {% if nbChoices > 0 %}
-                        <a href="{{path('choices', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">
+                    {% if totalCountClass > 0 %}
+                    <a href="{{path('diffs', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}" 
+{#                       title="{{'title.link.all' | transchoice(totalCountClass, {'%count%' : totalCountClass, '%className%' : transClass})}}"#}
+                       >
                     {% endif %}
-                            {{ nbChoices }}
-                    {% if nbChoices > 0 %}
-                        </a>
-                    {% endif %}
+                        {{totalCountClass}}
+                    {% if totalCountClass > 0 %}</a>{% endif %}
                 </td>
+                <td><a href="{{path('diffs', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">{{attribute(total, class)}}</a></td>
                 <td>
                     {% set nbTodo = attribute(totalChoices, class) is defined ? attribute(total, class) - attribute(totalChoices, class) : attribute(total, class) %}
                     {% if nbTodo > 0 %}
@@ -37,14 +37,24 @@
                         </a>
                     {% endif %}
                 </td>
+                <td>
+                    {% set nbChoices = attribute(totalChoices, class) is defined ? attribute(totalChoices, class) : 0 %}
+                    {% if nbChoices > 0 %}
+                        <a href="{{path('choices', {'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}" title="">
+                    {% endif %}
+                            {{ nbChoices }}
+                    {% if nbChoices > 0 %}
+                        </a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         <tr>
-            <td><a href="{{path('diffs', {'institutionCode':institutionCode})}} ">{{ 'label.total' | trans }}</a></td>
-            <td>{{ sumSpecimens }}</td>
-            <td><a href="{{path('diffs', {'institutionCode':institutionCode})}} ">{{ total.sum }}</a></td>
-            <td><a href="{{path('choices', {'institutionCode':institutionCode})}} ">{{ totalChoices.sum }}</a></td>
-            <td><a href="{{path('todo', {'institutionCode':institutionCode})}} ">{{ total.sum - totalChoices.sum }}</a></td>
+            <td>{{ 'label.total' | trans }}</td>
+            <td><a href="{{path('diffs', {'institutionCode':institutionCode})}}">{{ sumSpecimens }}</a></td>
+            <td><a href="{{path('diffs', {'institutionCode':institutionCode})}}">{{ total.sum }}</a></td>
+            <td><a href="{{path('todo', {'institutionCode':institutionCode})}}">{{ total.sum - totalChoices.sum }}</a></td>
+            <td><a href="{{path('choices', {'institutionCode':institutionCode})}}">{{ totalChoices.sum }}</a></td>
         </tr>
         </table>
      {% endif %}

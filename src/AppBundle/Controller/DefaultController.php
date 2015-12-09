@@ -65,6 +65,19 @@ class DefaultController extends Controller
             'total'=> $total,
         ));
     }
+    private function getMaxItemPerPage(Request $request) {
+        /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
+        $session = $this->get('session');
+        $requestMaxItem=$request->get('maxItemPerPage', null);
+        if (!is_null($requestMaxItem)) {
+            $session->set('maxItemPerPage', (int) $requestMaxItem);
+        }
+        elseif (!$session->has('maxItemPerPage')) {
+            $session->set('maxItemPerPage', self::MAX_SPECIMEN_PAGE);
+        }
+        return $session->get('maxItemPerPage') ;
+    }
+    
     /**
      * @Route("{institutionCode}/diffs/{selectedClassName}/{page}", name="diffs", defaults={"selectedClassName" = "all", "page" = 1}, requirements={
     *     "page": "\d+"
@@ -72,7 +85,8 @@ class DefaultController extends Controller
      */
     public function diffsAction(Request $request, $institutionCode, $selectedClassName = "all", $page = 1)
     {
-        $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
+        //$maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
+        $maxItemPerPage = $this->getMaxItemPerPage($request);
         
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
@@ -115,7 +129,7 @@ class DefaultController extends Controller
      */
     public function viewChoicesAction(Request $request, $institutionCode, $selectedClassName = "all", $page = 1)
     {
-        $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
+        $maxItemPerPage = $this->getMaxItemPerPage($request);
         
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
@@ -159,7 +173,7 @@ class DefaultController extends Controller
      */
     public function todoAction(Request $request, $institutionCode, $selectedClassName = "all", $page = 1)
     {
-        $maxItemPerPage = $request->get('maxItemPerPage', self::MAX_SPECIMEN_PAGE) ;
+        $maxItemPerPage = $this->getMaxItemPerPage($request);
         
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);

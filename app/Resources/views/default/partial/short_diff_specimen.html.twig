@@ -34,7 +34,7 @@
                     <tr class="diff-entity success">
                         {% if loop.first %}
                             <td class="warning diff-class{{loop.parent.loop.index is even ? " even" :"" }}" rowspan="{{rowspan}}" style="width: 10px !important;">
-                                <div>{{('label.' ~ class|lower ~ '.abbr') |trans({},'entity')}}</div>
+                                <div>{{('label.' ~ class|lower ~ '.abbr') |trans({},'entity')|capitalize}}</div>
                               </td>
                         {% endif %}
                         <td colspan="2">{{ relationToString }}</td>

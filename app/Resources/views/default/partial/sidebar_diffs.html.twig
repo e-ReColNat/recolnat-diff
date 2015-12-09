@@ -18,7 +18,7 @@
                     {% set nbChoices = countChoices(choices, specimenId, className) %}
                     <li>
                         <div class ="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning'}}" id="facet-{{specimenId}}-{{className}}" data-classname="{{className}}" data-comptchoices="{{nbChoices}}" data-comptdiffs="{{nbDiffs}}">
-                            <span class="facet-className">{{('label.'~ (className|lower)) | trans({},'entity')}}</span>&nbsp;:&nbsp;
+                            <span class="facet-className">{{('label.'~ (className|lower)~'.abbr') | trans({},'entity') | capitalize}}</span>&nbsp;:&nbsp;
                             <span class="facet-choix">{{ 'label.choix' | transchoice(nbChoices, {'%nbChoices%': nbChoices}) }}</span>&nbsp;/&nbsp;
                             <span class="facet-diffs">{{ 'label.differences.abbr' | transchoice(nbDiffs, {'%nbDiffs%': nbDiffs}) }}</span>
                         </div>

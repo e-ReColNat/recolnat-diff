@@ -73,7 +73,7 @@ $(document).ready(function(){
                 $("#facet-"+choices[i]['specimenId']+"-"+choices[i]['className']).data('comptchoices', comptchoices[choices[i]['specimenId']][choices[i]['className']]) ;
             });
             $("[id^='facet-']").each(function() {
-                formattedTemplate = formatTemplate($(this).data('classname'), $(this).data('comptchoices'), $(this).data('comptdiffs')) ;
+                formattedTemplate = formatTemplate($(this).find('.facet-className').html(), $(this).data('comptchoices'), $(this).data('comptdiffs')) ;
                 $(this).html(formattedTemplate) ;
                 if ($(this).data('comptchoices') === $(this).data('comptdiffs')) {
                     $(this).removeClass('text-warning').addClass('text-success');

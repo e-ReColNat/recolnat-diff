@@ -78,9 +78,7 @@ class DiffManager
             $fs->dumpFile($filePath, $responseJson);
         }
         $selectedClassesName=array_filter($selectedClassesName);
-        //if (count($selectedClassesName) > 0 || count($selectedSpecimensCode)>0 || count($choicesToRemove) > 0) {
-            $stats = $this->filterResults($stats, $selectedClassesName, $selectedSpecimensCode, $choicesToRemove);
-        //}
+        $stats = $this->filterResults($stats, $selectedClassesName, $selectedSpecimensCode, $choicesToRemove);
         return array(
             'specimensCode' => $specimensCode,
             'stats' => $stats, 
@@ -217,7 +215,7 @@ class DiffManager
 
     /**
      * Renvoie un tableau des codes des specimens ayant une différence
-     * @param array $results
+     * @param string $institutionCode
      * @return array
      */
     public function getSpecimensCode($institutionCode) 

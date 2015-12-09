@@ -48,7 +48,7 @@
                     <div class="checkbox col-sm-3">
                         <label for="checkbox{{loop.index}}-selectLevel3">
                             <input type="checkbox" id='checkbox{{loop.index}}-selectLevel3' name="selectLevel3[]" value="{{className}}">
-                            {{ ('label.'~className~'.plural') |trans({},'entity') }}
+                            {{ ('label.'~className) |transchoice(2,{},'entity') }}
                         </label>
                     </div>
             {% endfor %}

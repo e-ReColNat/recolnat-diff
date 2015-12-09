@@ -118,6 +118,34 @@
                 <source>label.legend.filter2</source>
                 <target>Pour</target>
             </trans-unit>
+            <trans-unit id="30">
+                <source>header.nb.specimens</source>
+                <target>Nombre de spécimens</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>header.nb.differences</source>
+                <target>Différences détectées</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>header.nb.choix</source>
+                <target>Choix effectués</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>header.nb.reste</source>
+                <target>Reste à faire</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>label.total</source>
+                <target>Total</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>title.link.all</source>
+                <target>{1}Voir l'enregistrement| ]1,Inf]Voir les %count% enregistrements des %className%</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>diffs</source>
+                <target>{1}différence| ]1,Inf]différences</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>
