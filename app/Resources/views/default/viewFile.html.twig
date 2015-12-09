@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% set sumSpecimens = 0 %}
+{% block body %}
+    {% if stats is not empty %}
+        <table class="table table-bordered">
+            <tr>
+                <th>&nbsp;</th>
+                <th>{{'header.nb.specimens' | trans}}</th>
+                <th>{{'header.nb.differences' | trans}}</th>
+                <th>{{'header.nb.reste' | trans}}</th>
+                <th>{{'header.nb.choix' | trans}}</th>
+            </tr>
+        {% for class in stats|keys %}
+            {% set sumSpecimens = sumSpecimens + attribute(stats, class) | length %}
+            <tr>
+                {% set totalCountClass=attribute(stats, class) | length %}
+                <td>{{('label.'~class|lower) | transchoice(totalCountClass, {}, 'entity')|capitalize}}</td>
+                {% set transClass=('label.'~class|lower) | transchoice(totalCountClass, {}, 'entity') %}
+                <td>
+                    {% if totalCountClass > 0 %}
+                    <a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}" 
+{#                       title="{{'title.link.all' | transchoice(totalCountClass, {'%count%' : totalCountClass, '%className%' : transClass})}}"#}
+                       >
+                    {% endif %}
+                        {{totalCountClass}}
+                    {% if totalCountClass > 0 %}</a>{% endif %}
+                </td>
+                <td><a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">{{attribute(total, class)}}</a></td>
+                <td>
+                    {% set nbTodo = attribute(totalChoices, class) is defined ? attribute(total, class) - attribute(totalChoices, class) : attribute(total, class) %}
+                    {% if nbTodo > 0 %}
+                        <a href="{{path('todo', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">
+                    {% endif %}
+                            {{ nbTodo }}
+                    {% if nbTodo > 0 %}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% set nbChoices = attribute(totalChoices, class) is defined ? attribute(totalChoices, class) : 0 %}
+                    {% if nbChoices > 0 %}
+                        <a href="{{path('choices', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}" title="">
+                    {% endif %}
+                            {{ nbChoices }}
+                    {% if nbChoices > 0 %}
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td>{{ 'label.total' | trans }}</td>
+            <td><a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ sumSpecimens }}</a></td>
+            <td><a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ total.sum }}</a></td>
+            <td><a href="{{path('todo', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ total.sum - totalChoices.sum }}</a></td>
+            <td><a href="{{path('choices', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ totalChoices.sum }}</a></td>
+        </tr>
+        </table>
+     {% endif %}
+    
+    {#<script type="text/javascript">
+        var data=[];
+    {% if stats is not empty %}
+        {% for class, diffs in stats.classes %}
+            data.push({"label":"{{ ('label.'~class|lower)|trans({},'entity') }}", "value":{{diffs | length}}});
+        {% endfor %}
+     {% endif %}
+         console.log(data);
+    </script>#}
+{#    <div id="easy-as-pie-chart"></div>
+    <style>
+        #easy-as-pie-chart {
+  background-color: #ffffff;
+  border: 1px solid gray;
+  font: 10px sans-serif;
+  height: 300px;
+  text-shadow: none;
+  width: 450px;
+}
+#easy-as-pie-chart .total{
+  font-size: 18px;
+  font-weight: bold;
+}
+#easy-as-pie-chart .units{
+  fill: gray;
+  font-size: 12px;
+}
+#easy-as-pie-chart .label{
+  fill: #CCC;
+  font-size: 12px;
+  font-weight: bold;
+}
+#easy-as-pie-chart .value{
+  font-size: 12px;
+  font-weight: bold;
+}
+    </style>#}
+{% endblock %}
+
+
+{% block javascripts %}
+{#    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{{ asset('AppBundle/js/pieIndex.js') }}"></script>#}
+{#    <script src="{{ asset('AppBundle/js/piechart.js') }}"></script>#}
+{% endblock %}

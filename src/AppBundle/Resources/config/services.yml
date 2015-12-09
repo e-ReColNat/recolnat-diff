@@ -48,12 +48,20 @@ services:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
 
-    specimenManager:
-        class: AppBundle\Manager\SpecimenManager
+#    specimenManager:
+#        class: AppBundle\Manager\SpecimenManager
+#        arguments:
+#            emR: "@doctrine.orm.entity_manager"
+#            emD: "@doctrine.orm.diff_entity_manager"
+#            translator: "@translator"
+    specimenService:
+        class: AppBundle\Services\ServiceSpecimen
         arguments:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
-            translator: "@translator"
+            sessionManager: "@session"
+            diffManager: "@diff.manager"
+            maxItemPerPage: "%knp_paginator.page_range%"
             
     genericEntityManager:
         class: AppBundle\Manager\GenericEntityManager

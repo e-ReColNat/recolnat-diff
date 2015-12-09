@@ -16,6 +16,7 @@ class ExportManager
     private $sessionManager;
     private $institutionCode;
     private $genericEntityManager;
+    private $filename=null;
 
     /**
      * 
@@ -37,29 +38,62 @@ class ExportManager
      * @param String $institutionCode
      * @return \AppBundle\Manager\ExportManager
      */
-    public function init($institutionCode)
+    public function init($institutionCode, $filename)
     {
+        $this->filename = $filename;
         $this->institutionCode = $institutionCode;
-        if (!($this->sessionManager->has('choices'))) {
-            $fs = new \Symfony\Component\Filesystem\Filesystem();
-            $path = $this->getChoicesFileName($institutionCode);
+        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        if (!$fs->exists($this->getChoicesDirPath())) {
+            $fs->mkdir($this->getChoicesDirPath(), 0777);
+        }
+        if (!($this->sessionManager->has('choices')) && ($this->sessionManager->has('file') && $this->sessionManager->get('file') == $filename)) {
+            $path = $this->getChoicesFileName();
 
             if ($fs->exists($path)) {
                 $content = file_get_contents($path);
                 $this->sessionManager->set('choices', json_decode($content, true));
             }
         }
+        else {
+            $this->sessionManager->set('file', $filename);
+            $this->sessionManager->set('choices', []);
+        }
         return $this;
     }
 
+    public function getFiles() {
+        $returnDirs=[];
+        $institutionDir = $this->getChoicesDirPath() ;
+        if ($handle = opendir($institutionDir)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != ".." && is_dir($institutionDir.$entry)) {
+                    $returnDirs[] =$entry ;
+                }
+            }
+            closedir($handle);
+        }
+        return $returnDirs;
+    }
     /**
      * 
      * @param String $institutionCode
      * @return String
      */
-    public function getChoicesFileName($institutionCode)
+    public function getChoicesDirPath()
     {
-        return realpath($this->exportPath) . '/session_' . $institutionCode . '.json';
+        return realpath($this->exportPath) . '/' . $this->institutionCode.'/' ;
+    }
+    /**
+     * 
+     * @param String $institutionCode
+     * @return String
+     */
+    public function getChoicesFileName()
+    {
+        if(!is_null($this->filename)) {
+            return $this->getChoicesDirPath($this->institutionCode) . $this->filename.'/session_' . $this->institutionCode . '.json';
+        }
+        return null ;
     }
 
     /**
@@ -118,7 +152,7 @@ class ExportManager
     public function getChoicesForDisplay() 
     {
         $choices = $this->getChoices() ;
-        $returnChoices = array() ;
+        $returnChoices = [] ;
         if (count($choices) >0 ) {
             foreach ($choices as $choice) {
                 if (!isset($returnChoices[$choice['className']])) {
@@ -151,7 +185,7 @@ class ExportManager
     public function saveChoices()
     {
         $fs = new \Symfony\Component\Filesystem\Filesystem() ;
-        $fs->dumpFile($this->getChoicesFileName($this->institutionCode), json_encode($this->getChoices(), JSON_PRETTY_PRINT)) ;
+        $fs->dumpFile($this->getChoicesFileName(), json_encode($this->getChoices(), JSON_PRETTY_PRINT)) ;
     }
 
 }

@@ -9,15 +9,15 @@
             {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
         </div>
         
-        <div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10" id="diffs" data-institutioncode="{{institutionCode}}" data-selectedclassname="{{selectedClassName}}">
+        <div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10" id="diffs" data-filename="{{filename}}" data-institutioncode="{{institutionCode}}" data-selectedclassname="{{selectedClassName}}">
             
             <ol class="breadcrumb">
-            <li><a href="{{path('index')}}">{{'diffs' | transchoice(2)| capitalize }}</a></li>
+            <li><a href="{{path('viewfile', {'filename' : filename})}}">{{'diffs' | transchoice(2)| capitalize }}</a></li>
             <li>{{selectedClassName is defined and selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : ''}}</li>
             <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
         </ol>
             
-            <a href="{{path('export', {'institutionCode' : institutionCode})}}">Export</a>
+            <a href="{{path('export', {'filename' : filename, 'institutionCode' : institutionCode})}}">Export</a>
             <div class="navigation row">
                 <div class="col-sm-7 col-sm-offset-3">
                 {{ knp_pagination_render(pagination) }}
@@ -68,7 +68,7 @@
                 {% if selectedClassName is not defined %}
                     {% set selectedClassName = "all" %}
                 {% endif %}
-                var url = "{{path(app.request.attributes.get('_route'),{'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName})}}";
+                var url = "{{path(app.request.attributes.get('_route'),{'filename' : filename, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName})}}";
                 maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
                 localStorage.setItem('maxItemPerPage', maxItemPerPage);
                 jQuery(location).attr('href', url.replace('_itemNum',maxItemPerPage));

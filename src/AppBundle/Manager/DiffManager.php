@@ -65,7 +65,6 @@ class DiffManager
         else {
             $diffs[$institutionCode] = $this->getAllDiff();
             $specimensCode = $this->getSpecimensCode($institutionCode);
-            /* @var $diffStatsManager \AppBundle\Manager\DiffStatsManager */
             $diffStatsManager = $this->statsManager->init($diffs[$institutionCode]);
             $stats = $diffStatsManager->getStats();
             $responseJson = json_encode(
@@ -77,8 +76,7 @@ class DiffManager
                     , JSON_PRETTY_PRINT);
             $fs->dumpFile($filePath, $responseJson);
         }
-        $selectedClassesName=array_filter($selectedClassesName);
-        $stats = $this->filterResults($stats, $selectedClassesName, $selectedSpecimensCode, $choicesToRemove);
+        $stats = $this->filterResults($stats, array_filter($selectedClassesName), $selectedSpecimensCode, $choicesToRemove);
         return array(
             'specimensCode' => $specimensCode,
             'stats' => $stats, 
