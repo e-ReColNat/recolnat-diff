@@ -4,6 +4,8 @@ namespace AppBundle\Manager;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Manager\GenericEntityManager;
+use AppBundle\Business\DiffHandler;
+use Symfony\Component\HttpFoundation\Request ;
 /**
  * Description of ExportManager
  *
@@ -17,19 +19,27 @@ class ExportManager
     private $institutionCode;
     private $genericEntityManager;
     private $filename=null;
+    protected $diffManager;
+    protected $maxItemPerPage;
+    
+    /** @var \AppBundle\Business\DiffHandler */
+    private $diffHandler;
 
     /**
      * 
      * @param string $export_path
      * @param Session $sessionManager
      * @param GenericEntityManager $genericEntityManager
+     * @param \AppBundle\Manager\DiffManager
      * @return \AppBundle\Manager\ExportManager
      */
-    public function __construct($export_path, Session $sessionManager, GenericEntityManager $genericEntityManager)
+    public function __construct($export_path, Session $sessionManager, GenericEntityManager $genericEntityManager, DiffManager $diffManager, $maxItemPerPage)
     {
         $this->exportPath = $export_path;
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
+        $this->diffManager = $diffManager;
+        $this->maxItemPerPage = $maxItemPerPage;
         return $this;
     }
 
@@ -44,13 +54,31 @@ class ExportManager
         
         if (!is_null($filename)) {
             $this->filename = $filename;
-
             $fs = new \Symfony\Component\Filesystem\Filesystem();
             if (!$fs->exists($this->getChoicesDirPath())) {
                 $fs->mkdir($this->getChoicesDirPath(), 0777);
             }
+            
+            $this->diffHandler = new DiffHandler($this->getChoicesDirPath(), $this->filename);
+            
             $doReload = false;
-            $path = $this->getChoicesFileName();
+            $path = $this->diffHandler->getChoices()->getFilename();
+            if ($this->diffHandler->getDiffs()->generateDiff) {
+                $results =$this->diffManager->init($institutionCode);
+                $this->sessionManager->set('diffs', $results['diffs']);
+                $this->sessionManager->set('specimensCode', $results['specimensCode']);
+                $this->sessionManager->set('stats', $results['stats']);
+                $this->diffHandler->getDiffs()->saveDiffs($results['diffs'], $results['stats'], $results['specimensCode']);
+                $this->diffHandler->getDiffs()->generateDiff = false;
+            }
+            else {
+                //$start = microtime(true) ;
+                $results =$this->diffHandler->getDiffs()->getData();
+                //var_dump(microtime(true) - $start);
+                $this->sessionManager->set('diffs', $results['diffs']);
+                $this->sessionManager->set('specimensCode', $results['specimensCode']);
+                $this->sessionManager->set('stats', $results['stats']);
+            }
             
             if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $filename)) {
                 $doReload=true;
@@ -59,8 +87,7 @@ class ExportManager
                 $doReload=true;
             }
             if ($doReload && $fs->exists($path)) {
-                $content = file_get_contents($path);
-                $this->sessionManager->set('choices', json_decode($content, true));
+                $this->sessionManager->set('choices', $this->diffHandler->getChoices()->getContent());
             }
             else {
                 $this->sessionManager->set('file', $filename);
@@ -69,13 +96,43 @@ class ExportManager
         return $this;
     }
 
-    public function getFiles() {
+    public function getSpecimenIdsAndDiffsAndStats(Request $request, $selectedClassName=null, $specimensWithChoices=[], $choicesToRemove=[])
+    {
+        $session = $this->sessionManager;
+        $className=[];
+        if (is_string($selectedClassName)) {$className=[$selectedClassName];}
+        if (is_array($selectedClassName)) {$className=$selectedClassName;}
+
+        if (!is_null($request->query->get('reset', null))) {
+            $session->clear();
+        }
+        $stats = $this->sessionManager->get('stats') ;
+        $stats = $this->diffHandler->getDiffs()->filterResults($stats, $className, $specimensWithChoices, $choicesToRemove) ;
+        $session->set('stats', $stats);
+        return [$session->get('specimensCode'), $session->get('diffs'), $stats];
+    }
+    
+    public function getMaxItemPerPage(Request $request) {
+        $session = $this->sessionManager;
+        
+        $requestMaxItem=$request->get('maxItemPerPage', null);
+        if (!is_null($requestMaxItem)) {
+            $session->set('maxItemPerPage', (int) $requestMaxItem);
+        }
+        elseif (!$session->has('maxItemPerPage')) {
+            $session->set('maxItemPerPage', $this->maxItemPerPage);
+        }
+        return $session->get('maxItemPerPage') ;
+    }
+    
+    public function getFiles() 
+    {
         $returnDirs=[];
         $institutionDir = $this->getChoicesDirPath() ;
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != ".." && is_dir($institutionDir.$entry)) {
-                    $returnDirs[] =$entry ;
+                    $returnDirs[] =new \AppBundle\Business\DiffHandler($institutionDir, $entry) ;
                 }
             }
             closedir($handle);
@@ -99,7 +156,7 @@ class ExportManager
     public function getChoicesFileName()
     {
         if(!is_null($this->filename)) {
-            return $this->getChoicesDirPath($this->institutionCode) . $this->filename.'/session_' . $this->institutionCode . '.json';
+            return $this->diffHandler->getChoices()->getPathname();
         }
         return null ;
     }
@@ -145,6 +202,7 @@ class ExportManager
             $sessionChoices[] = $row;
         }
         $this->sessionManager->set('choices', $sessionChoices);
+        $this->diffHandler->getChoices()->save($sessionChoices) ;
     }
 
     /**
@@ -153,10 +211,12 @@ class ExportManager
      */
     public function getChoices()
     {
-        return $this->sessionManager->get('choices');
+        if ($this->sessionManager->has('choices')) {
+            return $this->sessionManager->get('choices');
+        }
+        return [];
     }
 
-    //choices[class][relationId][fieldName] == value
     public function getChoicesForDisplay() 
     {
         $choices = $this->getChoices() ;
@@ -192,8 +252,7 @@ class ExportManager
     }
     public function saveChoices()
     {
-        $fs = new \Symfony\Component\Filesystem\Filesystem() ;
-        $fs->dumpFile($this->getChoicesFileName(), json_encode($this->getChoices(), JSON_PRETTY_PRINT)) ;
+        $this->diffHandler->getChoices()->save($this->getChoices());
     }
 
 }

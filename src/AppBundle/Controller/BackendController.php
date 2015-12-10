@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *
  * @author tpateffoz
  */
-class AjaxDiffsController extends Controller
+class BackendController extends Controller
 {
         /**
      * @Route("/setChoice/{institutionCode}/{filename}", name="setChoice", options={"expose"=true})
@@ -41,13 +41,14 @@ class AjaxDiffsController extends Controller
     public function setChoicesAction(Request $request, $institutionCode, $filename)
     {
         /* @var $specimenService \AppBundle\Services\ServiceSpecimen */
-        $specimenService = $this->get('specimenService') ;
-            
+        //$specimenService = $this->get('specimenService') ;
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
         $selectLevel1 = $request->get('selectLevel1', null);
         $selectLevel2 = $request->get('selectLevel2', null);
         $selectLevel3 = $request->get('selectLevel3', []);
         $page = $request->get('page', null);
-        $maxItemPerPage = $specimenService->getMaxItemPerPage($request) ;
+        $maxItemPerPage = $exportManager->getMaxItemPerPage($request) ;
         $selectedSpecimens = json_decode($request->get('selectedSpecimens', null));
         $selectedClassName = $request->get('selectedClassName', null);
         $type = json_decode($request->get('type', null));
@@ -63,7 +64,7 @@ class AjaxDiffsController extends Controller
             }
         
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
-            list($specimensCode, $diffs, $stats) = $specimenService->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
+            list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
             switch ($selectLevel2) {
                 case 'page' :
                     $paginator = $this->get('knp_paginator');
@@ -109,10 +110,7 @@ class AjaxDiffsController extends Controller
             }
         }
 
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode,$filename);
         $exportManager->setChoices($choices);
-        $exportManager->saveChoices();
 
         $response = new JsonResponse();
         $this->setFlashMessageForChoices($choices) ;

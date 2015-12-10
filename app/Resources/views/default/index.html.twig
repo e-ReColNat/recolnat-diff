@@ -2,7 +2,13 @@
 
 {% set sumSpecimens = 0 %}
 {% block body %}
-    {% for filename in files %}
-        <a href="{{ path('viewfile', {'filename':filename}) }}">{{filename}}</a><br/>
+    <ul>
+    {% for file in files %}
+        <li>
+            <a href="{{ path('viewfile', {'filename':file.getFilename, 'institutionCode':institutionCode }) }}">{{file.getFilename }}</a>&nbsp;
+            {{'creele'|trans}} {{ file.getDiffs.getCTime|date("d/m/Y") }}&nbsp;
+            {{'modifiele'|trans}} {{ file.getChoices.getMTime|date("d/m/Y") }}&nbsp;
+        </li>
     {% endfor %}
+    </ul>
 {% endblock %}

@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DefaultController extends Controller
+class FrontController extends Controller
 {
     /**
      * @Route("/", name="index")
@@ -23,16 +23,15 @@ class DefaultController extends Controller
         ));
     }
     /**
-     * @Route("/file/{filename}", name="viewfile")
+     * @Route("{institutionCode}/file/{filename}", name="viewfile")
      */
-    public function viewFileAction(Request $request, $filename) {
-        $institutionCode = 'MHNAIX';
+    public function viewFileAction(Request $request, $filename, $institutionCode) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
 
         /* @var $specimenService \AppBundle\Services\ServiceSpecimen */
-        $specimenService = $this->get('specimenService') ;
-        list($specimensCode, $diffs, $stats) = $specimenService->getSpecimenIdsAndDiffsAndStats($request, $institutionCode);
+        //$specimenService = $this->get('specimenService') ;
+        list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request);
         
         $choices=$exportManager->getChoicesForDisplay();
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
@@ -75,7 +74,7 @@ class DefaultController extends Controller
             'institutionCode' => $institutionCode,
             'filename' => $filename,
             'stats' => $sortedStats,
-            'diffs' => $diffs[$institutionCode],
+            'diffs' => $diffs,
             'totalChoices' => $totalChoices,
             'total'=> $total,
         ));
@@ -94,15 +93,18 @@ class DefaultController extends Controller
     */
     public function diffsAction(Request $request, $institutionCode, $filename, $selectedClassName = "all", $page = 1)
     {
+        if ($selectedClassName == 'all') {$selectedClassName=[];}
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $this->get('session') ;
+        dump($selectedClassName) ;
         dump($session->all()) ;
         /* @var $specimenService \AppBundle\Services\ServiceSpecimen */
-        $specimenService = $this->get('specimenService') ;
-        $maxItemPerPage = $specimenService->getMaxItemPerPage($request);
+        //$specimenService = $this->get('specimenService') ;
+        
         
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
         
         list($specimensWithChoices,$specimensWithoutChoices)=[[],[]];
         if ($request->get('_route') == 'choices') {
@@ -112,7 +114,7 @@ class DefaultController extends Controller
             $specimensWithoutChoices=$exportManager->getChoices() ;
         }
         
-        list($specimensCode, $diffs, $stats) = $specimenService->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
+        list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
 
         $specimensRecolnat = $this->getDoctrine() ->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
@@ -124,7 +126,7 @@ class DefaultController extends Controller
             'institutionCode' => $institutionCode,
             'filename'=> $filename,
             'stats' => $stats,
-            'diffs' => $diffs[$institutionCode],
+            'diffs' => $diffs,
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,
             'pagination' => $pagination,
