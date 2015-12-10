@@ -38,25 +38,33 @@ class ExportManager
      * @param String $institutionCode
      * @return \AppBundle\Manager\ExportManager
      */
-    public function init($institutionCode, $filename)
+    public function init($institutionCode, $filename = null)
     {
-        $this->filename = $filename;
         $this->institutionCode = $institutionCode;
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
-        if (!$fs->exists($this->getChoicesDirPath())) {
-            $fs->mkdir($this->getChoicesDirPath(), 0777);
-        }
-        if (!($this->sessionManager->has('choices')) && ($this->sessionManager->has('file') && $this->sessionManager->get('file') == $filename)) {
-            $path = $this->getChoicesFileName();
+        
+        if (!is_null($filename)) {
+            $this->filename = $filename;
 
-            if ($fs->exists($path)) {
+            $fs = new \Symfony\Component\Filesystem\Filesystem();
+            if (!$fs->exists($this->getChoicesDirPath())) {
+                $fs->mkdir($this->getChoicesDirPath(), 0777);
+            }
+            $doReload = false;
+            $path = $this->getChoicesFileName();
+            
+            if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $filename)) {
+                $doReload=true;
+            }
+            if (!($this->sessionManager->has('choices') ) || empty($this->sessionManager->get('choices'))) {
+                $doReload=true;
+            }
+            if ($doReload && $fs->exists($path)) {
                 $content = file_get_contents($path);
                 $this->sessionManager->set('choices', json_decode($content, true));
             }
-        }
-        else {
-            $this->sessionManager->set('file', $filename);
-            $this->sessionManager->set('choices', []);
+            else {
+                $this->sessionManager->set('file', $filename);
+            }
         }
         return $this;
     }

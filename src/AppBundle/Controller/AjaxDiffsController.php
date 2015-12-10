@@ -49,7 +49,7 @@ class AjaxDiffsController extends Controller
         $page = $request->get('page', null);
         $maxItemPerPage = $specimenService->getMaxItemPerPage($request) ;
         $selectedSpecimens = json_decode($request->get('selectedSpecimens', null));
-        $selectedClassName = json_decode($request->get('selectedClassName', null));
+        $selectedClassName = $request->get('selectedClassName', null);
         $type = json_decode($request->get('type', null));
         $choices = [];
         $items = [];
@@ -89,11 +89,11 @@ class AjaxDiffsController extends Controller
                         $rowClass = $stats['classes'][$className][$specimenCode] ;
                         foreach ($rowClass as $relationId => $rowFields) {
                             foreach($rowFields as $fieldName=>$dataFields) {
-                                $flag = false ;
-                                if ($selectLevel3 =='allClasses' || in_array(strtolower($className), $selectLevel3)) {
-                                    $flag = true ;
+                                $doUpdate = false ;
+                                if (in_array(strtolower($className), $selectLevel3)) {
+                                    $doUpdate = true ;
                                 }
-                                if ($flag) {
+                                if ($doUpdate) {
                                     $choices[] = [
                                         "className" => $className,
                                         "fieldName" => $fieldName,
@@ -115,8 +115,9 @@ class AjaxDiffsController extends Controller
         $exportManager->saveChoices();
 
         $response = new JsonResponse();
-        $response->setData(['choices'=>$exportManager->getChoices()]) ;
         $this->setFlashMessageForChoices($choices) ;
+        $response->setData(['choices'=>$exportManager->getChoices()]) ;
+        
         return $response;
     }
     
