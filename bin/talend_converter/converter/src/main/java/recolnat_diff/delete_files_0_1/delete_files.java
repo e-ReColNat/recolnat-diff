@@ -40,6 +40,9 @@ import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.util.Comparator;
 
+//the import part of tJava_1
+//import java.util.List;
+
 @SuppressWarnings("unused")
 /**
  * Job: delete_files Purpose: <br>
@@ -92,12 +95,48 @@ public class delete_files implements TalendJob {
 
 			}
 
+			if (diffs != null) {
+
+				this.setProperty("diffs", diffs.toString());
+
+			}
+
+			if (exportpath != null) {
+
+				this.setProperty("exportpath", exportpath.toString());
+
+			}
+
+			if (choices != null) {
+
+				this.setProperty("choices", choices.toString());
+
+			}
+
 		}
 
 		public String global_filepath;
 
 		public String getGlobal_filepath() {
 			return this.global_filepath;
+		}
+
+		public String diffs;
+
+		public String getDiffs() {
+			return this.diffs;
+		}
+
+		public String exportpath;
+
+		public String getExportpath() {
+			return this.exportpath;
+		}
+
+		public String choices;
+
+		public String getChoices() {
+			return this.choices;
 		}
 	}
 
@@ -246,6 +285,27 @@ public class delete_files implements TalendJob {
 		}
 	}
 
+	public void tJava_1_error(Exception exception, String errorComponent,
+			final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+
+		end_Hash.put(errorComponent, System.currentTimeMillis());
+
+		try {
+
+			errorCode = null;
+			tDie_1Process(globalMap);
+			if (!"failure".equals(status)) {
+				status = "end";
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		tJava_1_onSubJobError(exception, errorComponent, globalMap);
+	}
+
 	public void tFileDelete_2_error(Exception exception, String errorComponent,
 			final java.util.Map<String, Object> globalMap)
 			throws TalendException {
@@ -323,6 +383,28 @@ public class delete_files implements TalendJob {
 		tFileDelete_7_onSubJobError(exception, errorComponent, globalMap);
 	}
 
+	public void tDie_1_error(Exception exception, String errorComponent,
+			final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+
+		end_Hash.put(errorComponent, System.currentTimeMillis());
+
+		status = "failure";
+
+		tDie_1_onSubJobError(exception, errorComponent, globalMap);
+	}
+
+	public void tJava_1_onSubJobError(Exception exception,
+			String errorComponent, final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+
+		resumeUtil.addLog("SYSTEM_LOG", "NODE:" + errorComponent, "", Thread
+				.currentThread().getId() + "", "FATAL", "",
+				exception.getMessage(),
+				ResumeUtil.getExceptionStackTrace(exception), "");
+
+	}
+
 	public void tFileDelete_2_onSubJobError(Exception exception,
 			String errorComponent, final java.util.Map<String, Object> globalMap)
 			throws TalendException {
@@ -398,6 +480,130 @@ public class delete_files implements TalendJob {
 				exception.getMessage(),
 				ResumeUtil.getExceptionStackTrace(exception), "");
 
+	}
+
+	public void tDie_1_onSubJobError(Exception exception,
+			String errorComponent, final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+
+		resumeUtil.addLog("SYSTEM_LOG", "NODE:" + errorComponent, "", Thread
+				.currentThread().getId() + "", "FATAL", "",
+				exception.getMessage(),
+				ResumeUtil.getExceptionStackTrace(exception), "");
+
+	}
+
+	public void tJava_1Process(final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+		globalMap.put("tJava_1_SUBPROCESS_STATE", 0);
+
+		final boolean execStat = this.execStat;
+
+		String iterateId = "";
+
+		String currentComponent = "";
+		java.util.Map<String, Object> resourceMap = new java.util.HashMap<String, Object>();
+
+		try {
+
+			String currentMethodName = new java.lang.Exception()
+					.getStackTrace()[0].getMethodName();
+			boolean resumeIt = currentMethodName.equals(resumeEntryMethodName);
+			if (resumeEntryMethodName == null || resumeIt || globalResumeTicket) {// start
+																					// the
+																					// resume
+				globalResumeTicket = true;
+
+				/**
+				 * [tJava_1 begin ] start
+				 */
+
+				ok_Hash.put("tJava_1", false);
+				start_Hash.put("tJava_1", System.currentTimeMillis());
+
+				currentComponent = "tJava_1";
+
+				int tos_count_tJava_1 = 0;
+
+				String path = "/home/tpateffoz/www/recolnat-diff/data/MHNAIX/export_20150912/export";
+
+				// java.io.File f = new java.io.File(context.exportpath);
+				java.io.File f = new java.io.File(path);
+				if (!(f.canWrite())) {
+					throw new java.lang.SecurityException(
+							"Export dir is not writable");
+				}
+
+				/**
+				 * [tJava_1 begin ] stop
+				 */
+
+				/**
+				 * [tJava_1 main ] start
+				 */
+
+				currentComponent = "tJava_1";
+
+				tos_count_tJava_1++;
+
+				/**
+				 * [tJava_1 main ] stop
+				 */
+
+				/**
+				 * [tJava_1 end ] start
+				 */
+
+				currentComponent = "tJava_1";
+
+				ok_Hash.put("tJava_1", true);
+				end_Hash.put("tJava_1", System.currentTimeMillis());
+
+				/**
+				 * [tJava_1 end ] stop
+				 */
+			}// end the resume
+
+			if (resumeEntryMethodName == null || globalResumeTicket) {
+				resumeUtil.addLog("CHECKPOINT",
+						"CONNECTION:SUBJOB_OK:tJava_1:OnSubjobOk", "", Thread
+								.currentThread().getId() + "", "", "", "", "",
+						"");
+			}
+
+			tFileDelete_2Process(globalMap);
+
+		} catch (java.lang.Exception e) {
+
+			TalendException te = new TalendException(e, currentComponent,
+					globalMap);
+
+			throw te;
+		} catch (java.lang.Error error) {
+
+			throw error;
+		} finally {
+
+			try {
+
+				/**
+				 * [tJava_1 finally ] start
+				 */
+
+				currentComponent = "tJava_1";
+
+				/**
+				 * [tJava_1 finally ] stop
+				 */
+			} catch (java.lang.Exception e) {
+				// ignore
+			} catch (java.lang.Error error) {
+				// ignore
+			}
+			resourceMap = null;
+		}
+
+		globalMap.put("tJava_1_SUBPROCESS_STATE", 1);
 	}
 
 	public void tFileDelete_2Process(
@@ -481,7 +687,7 @@ public class delete_files implements TalendJob {
 
 				}
 				java.io.File file_tFileDelete_2 = new java.io.File(
-						context.global_filepath + "/recoltes.csv");
+						context.exportpath + "/recoltes.csv");
 				if (file_tFileDelete_2.exists() && file_tFileDelete_2.isFile()) {
 					if (file_tFileDelete_2.delete()) {
 						globalMap.put("tFileDelete_2_CURRENT_STATUS",
@@ -494,8 +700,8 @@ public class delete_files implements TalendJob {
 					globalMap.put("tFileDelete_2_CURRENT_STATUS",
 							"File does not exist or is invalid.");
 				}
-				globalMap.put("tFileDelete_2_DELETE_PATH",
-						context.global_filepath + "/recoltes.csv");
+				globalMap.put("tFileDelete_2_DELETE_PATH", context.exportpath
+						+ "/recoltes.csv");
 
 				tos_count_tFileDelete_2++;
 
@@ -633,7 +839,7 @@ public class delete_files implements TalendJob {
 
 				}
 				java.io.File file_tFileDelete_1 = new java.io.File(
-						context.global_filepath + "/specimens.csv");
+						context.exportpath + "/specimens.csv");
 				if (file_tFileDelete_1.exists() && file_tFileDelete_1.isFile()) {
 					if (file_tFileDelete_1.delete()) {
 						globalMap.put("tFileDelete_1_CURRENT_STATUS",
@@ -646,8 +852,8 @@ public class delete_files implements TalendJob {
 					globalMap.put("tFileDelete_1_CURRENT_STATUS",
 							"File does not exist or is invalid.");
 				}
-				globalMap.put("tFileDelete_1_DELETE_PATH",
-						context.global_filepath + "/specimens.csv");
+				globalMap.put("tFileDelete_1_DELETE_PATH", context.exportpath
+						+ "/specimens.csv");
 
 				tos_count_tFileDelete_1++;
 
@@ -785,7 +991,7 @@ public class delete_files implements TalendJob {
 
 				}
 				java.io.File file_tFileDelete_3 = new java.io.File(
-						context.global_filepath + "/localisations.csv");
+						context.exportpath + "/localisations.csv");
 				if (file_tFileDelete_3.exists() && file_tFileDelete_3.isFile()) {
 					if (file_tFileDelete_3.delete()) {
 						globalMap.put("tFileDelete_3_CURRENT_STATUS",
@@ -798,8 +1004,8 @@ public class delete_files implements TalendJob {
 					globalMap.put("tFileDelete_3_CURRENT_STATUS",
 							"File does not exist or is invalid.");
 				}
-				globalMap.put("tFileDelete_3_DELETE_PATH",
-						context.global_filepath + "/localisations.csv");
+				globalMap.put("tFileDelete_3_DELETE_PATH", context.exportpath
+						+ "/localisations.csv");
 
 				tos_count_tFileDelete_3++;
 
@@ -937,7 +1143,7 @@ public class delete_files implements TalendJob {
 
 				}
 				java.io.File file_tFileDelete_4 = new java.io.File(
-						context.global_filepath + "/bibliographies.csv");
+						context.exportpath + "/bibliographies.csv");
 				if (file_tFileDelete_4.exists() && file_tFileDelete_4.isFile()) {
 					if (file_tFileDelete_4.delete()) {
 						globalMap.put("tFileDelete_4_CURRENT_STATUS",
@@ -950,8 +1156,8 @@ public class delete_files implements TalendJob {
 					globalMap.put("tFileDelete_4_CURRENT_STATUS",
 							"File does not exist or is invalid.");
 				}
-				globalMap.put("tFileDelete_4_DELETE_PATH",
-						context.global_filepath + "/bibliographies.csv");
+				globalMap.put("tFileDelete_4_DELETE_PATH", context.exportpath
+						+ "/bibliographies.csv");
 
 				tos_count_tFileDelete_4++;
 
@@ -1089,7 +1295,7 @@ public class delete_files implements TalendJob {
 
 				}
 				java.io.File file_tFileDelete_5 = new java.io.File(
-						context.global_filepath + "/determinations.csv");
+						context.exportpath + "/determinations.csv");
 				if (file_tFileDelete_5.exists() && file_tFileDelete_5.isFile()) {
 					if (file_tFileDelete_5.delete()) {
 						globalMap.put("tFileDelete_5_CURRENT_STATUS",
@@ -1102,8 +1308,8 @@ public class delete_files implements TalendJob {
 					globalMap.put("tFileDelete_5_CURRENT_STATUS",
 							"File does not exist or is invalid.");
 				}
-				globalMap.put("tFileDelete_5_DELETE_PATH",
-						context.global_filepath + "/determinations.csv");
+				globalMap.put("tFileDelete_5_DELETE_PATH", context.exportpath
+						+ "/determinations.csv");
 
 				tos_count_tFileDelete_5++;
 
@@ -1241,7 +1447,7 @@ public class delete_files implements TalendJob {
 
 				}
 				java.io.File file_tFileDelete_6 = new java.io.File(
-						context.global_filepath + "/taxons.csv");
+						context.exportpath + "/taxons.csv");
 				if (file_tFileDelete_6.exists() && file_tFileDelete_6.isFile()) {
 					if (file_tFileDelete_6.delete()) {
 						globalMap.put("tFileDelete_6_CURRENT_STATUS",
@@ -1254,8 +1460,8 @@ public class delete_files implements TalendJob {
 					globalMap.put("tFileDelete_6_CURRENT_STATUS",
 							"File does not exist or is invalid.");
 				}
-				globalMap.put("tFileDelete_6_DELETE_PATH",
-						context.global_filepath + "/taxons.csv");
+				globalMap.put("tFileDelete_6_DELETE_PATH", context.exportpath
+						+ "/taxons.csv");
 
 				tos_count_tFileDelete_6++;
 
@@ -1393,7 +1599,7 @@ public class delete_files implements TalendJob {
 
 				}
 				java.io.File file_tFileDelete_7 = new java.io.File(
-						context.global_filepath + "/stratigraphies.csv");
+						context.exportpath + "/stratigraphies.csv");
 				if (file_tFileDelete_7.exists() && file_tFileDelete_7.isFile()) {
 					if (file_tFileDelete_7.delete()) {
 						globalMap.put("tFileDelete_7_CURRENT_STATUS",
@@ -1406,8 +1612,8 @@ public class delete_files implements TalendJob {
 					globalMap.put("tFileDelete_7_CURRENT_STATUS",
 							"File does not exist or is invalid.");
 				}
-				globalMap.put("tFileDelete_7_DELETE_PATH",
-						context.global_filepath + "/stratigraphies.csv");
+				globalMap.put("tFileDelete_7_DELETE_PATH", context.exportpath
+						+ "/stratigraphies.csv");
 
 				tos_count_tFileDelete_7++;
 
@@ -1460,6 +1666,117 @@ public class delete_files implements TalendJob {
 		}
 
 		globalMap.put("tFileDelete_7_SUBPROCESS_STATE", 1);
+	}
+
+	public void tDie_1Process(final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+		globalMap.put("tDie_1_SUBPROCESS_STATE", 0);
+
+		final boolean execStat = this.execStat;
+
+		String iterateId = "";
+
+		String currentComponent = "";
+		java.util.Map<String, Object> resourceMap = new java.util.HashMap<String, Object>();
+
+		try {
+
+			String currentMethodName = new java.lang.Exception()
+					.getStackTrace()[0].getMethodName();
+			boolean resumeIt = currentMethodName.equals(resumeEntryMethodName);
+			if (resumeEntryMethodName == null || resumeIt || globalResumeTicket) {// start
+																					// the
+																					// resume
+				globalResumeTicket = true;
+
+				/**
+				 * [tDie_1 begin ] start
+				 */
+
+				ok_Hash.put("tDie_1", false);
+				start_Hash.put("tDie_1", System.currentTimeMillis());
+
+				currentComponent = "tDie_1";
+
+				int tos_count_tDie_1 = 0;
+
+				/**
+				 * [tDie_1 begin ] stop
+				 */
+
+				/**
+				 * [tDie_1 main ] start
+				 */
+
+				currentComponent = "tDie_1";
+
+				globalMap.put("tDie_1_DIE_PRIORITY", 5);
+				System.err.println("Export dir is not writable");
+
+				globalMap.put("tDie_1_DIE_MESSAGE",
+						"Export dir is not writable");
+				globalMap.put("tDie_1_DIE_MESSAGES",
+						"Export dir is not writable");
+				currentComponent = "tDie_1";
+				status = "failure";
+				errorCode = new Integer(4);
+				globalMap.put("tDie_1_DIE_CODE", errorCode);
+
+				if (true) {
+					throw new TDieException();
+				}
+
+				tos_count_tDie_1++;
+
+				/**
+				 * [tDie_1 main ] stop
+				 */
+
+				/**
+				 * [tDie_1 end ] start
+				 */
+
+				currentComponent = "tDie_1";
+
+				ok_Hash.put("tDie_1", true);
+				end_Hash.put("tDie_1", System.currentTimeMillis());
+
+				/**
+				 * [tDie_1 end ] stop
+				 */
+			}// end the resume
+
+		} catch (java.lang.Exception e) {
+
+			TalendException te = new TalendException(e, currentComponent,
+					globalMap);
+
+			throw te;
+		} catch (java.lang.Error error) {
+
+			throw error;
+		} finally {
+
+			try {
+
+				/**
+				 * [tDie_1 finally ] start
+				 */
+
+				currentComponent = "tDie_1";
+
+				/**
+				 * [tDie_1 finally ] stop
+				 */
+			} catch (java.lang.Exception e) {
+				// ignore
+			} catch (java.lang.Error error) {
+				// ignore
+			}
+			resourceMap = null;
+		}
+
+		globalMap.put("tDie_1_SUBPROCESS_STATE", 1);
 	}
 
 	public String resuming_logs_dir_path = null;
@@ -1585,6 +1902,9 @@ public class delete_files implements TalendJob {
 			}
 			context.global_filepath = (String) context
 					.getProperty("global_filepath");
+			context.diffs = (String) context.getProperty("diffs");
+			context.exportpath = (String) context.getProperty("exportpath");
+			context.choices = (String) context.getProperty("choices");
 		} catch (java.io.IOException ie) {
 			System.err.println("Could not load context " + contextStr);
 			ie.printStackTrace();
@@ -1595,6 +1915,16 @@ public class delete_files implements TalendJob {
 			if (parentContextMap.containsKey("global_filepath")) {
 				context.global_filepath = (String) parentContextMap
 						.get("global_filepath");
+			}
+			if (parentContextMap.containsKey("diffs")) {
+				context.diffs = (String) parentContextMap.get("diffs");
+			}
+			if (parentContextMap.containsKey("exportpath")) {
+				context.exportpath = (String) parentContextMap
+						.get("exportpath");
+			}
+			if (parentContextMap.containsKey("choices")) {
+				context.choices = (String) parentContextMap.get("choices");
 			}
 		}
 
@@ -1628,14 +1958,14 @@ public class delete_files implements TalendJob {
 
 		try {
 			errorCode = null;
-			tFileDelete_2Process(globalMap);
+			tJava_1Process(globalMap);
 			if (!"failure".equals(status)) {
 				status = "end";
 			}
-		} catch (TalendException e_tFileDelete_2) {
-			globalMap.put("tFileDelete_2_SUBPROCESS_STATE", -1);
+		} catch (TalendException e_tJava_1) {
+			globalMap.put("tJava_1_SUBPROCESS_STATE", -1);
 
-			e_tFileDelete_2.printStackTrace();
+			e_tJava_1.printStackTrace();
 
 		}
 
@@ -1774,6 +2104,6 @@ public class delete_files implements TalendJob {
 	ResumeUtil resumeUtil = null;
 }
 /************************************************************************************************
- * 46631 characters generated by Talend Open Studio for Data Integration on the
- * 19 novembre 2015 13:24:41 CET
+ * 53880 characters generated by Talend Open Studio for Data Integration on the
+ * 11 décembre 2015 16:59:38 CET
  ************************************************************************************************/

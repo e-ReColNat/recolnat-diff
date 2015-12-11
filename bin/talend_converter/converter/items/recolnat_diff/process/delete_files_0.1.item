@@ -2,6 +2,9 @@
 <talendfile:ProcessType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" defaultContext="Default">
   <context confirmationNeeded="false" name="Default">
     <contextParameter name="global_filepath" prompt="global_filepath?" promptNeeded="false" type="id_String" value="&quot;/home/tpateffoz/www/recolnat-diff/data&quot;"/>
+    <contextParameter comment="" name="diffs" prompt="diffs?" promptNeeded="false" repositoryContextId="_r_5SoIa5EeWUfpc6GqI6jg" type="id_String" value="diffs.json"/>
+    <contextParameter comment="" name="exportpath" prompt="exportpath?" promptNeeded="false" repositoryContextId="_r_5SoIa5EeWUfpc6GqI6jg" type="id_String" value="/home/tpateffoz/www/recolnat-diff/data"/>
+    <contextParameter comment="" name="choices" prompt="choices?" promptNeeded="false" repositoryContextId="_r_5SoIa5EeWUfpc6GqI6jg" type="id_String" value="choices.json"/>
   </context>
   <parameters>
     <elementParameter field="TEXT" name="SCREEN_OFFSET_X" value="0" show="false"/>
@@ -109,7 +112,7 @@
   <node componentName="tFileDelete" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="128" posY="128">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_2" show="false"/>
     <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
-    <elementParameter field="FILE" name="FILENAME" value="context.global_filepath+&quot;/recoltes.csv&quot;"/>
+    <elementParameter field="FILE" name="FILENAME" value="context.exportpath+&quot;/recoltes.csv&quot;"/>
     <elementParameter field="DIRECTORY" name="DIRECTORY" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder&quot;" show="false"/>
     <elementParameter field="TEXT" name="PATH" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder or delete_file&quot;" show="false"/>
     <elementParameter field="CHECK" name="FAILON" value="false"/>
@@ -123,7 +126,7 @@
   <node componentName="tFileDelete" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="384" posY="128">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_3" show="false"/>
     <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
-    <elementParameter field="FILE" name="FILENAME" value="context.global_filepath+&quot;/localisations.csv&quot;"/>
+    <elementParameter field="FILE" name="FILENAME" value="context.exportpath+&quot;/localisations.csv&quot;"/>
     <elementParameter field="DIRECTORY" name="DIRECTORY" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder&quot;" show="false"/>
     <elementParameter field="TEXT" name="PATH" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder or delete_file&quot;" show="false"/>
     <elementParameter field="CHECK" name="FAILON" value="false"/>
@@ -137,7 +140,7 @@
   <node componentName="tFileDelete" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="480" posY="224">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_4" show="false"/>
     <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
-    <elementParameter field="FILE" name="FILENAME" value="context.global_filepath+&quot;/bibliographies.csv&quot;"/>
+    <elementParameter field="FILE" name="FILENAME" value="context.exportpath+&quot;/bibliographies.csv&quot;"/>
     <elementParameter field="DIRECTORY" name="DIRECTORY" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder&quot;" show="false"/>
     <elementParameter field="TEXT" name="PATH" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder or delete_file&quot;" show="false"/>
     <elementParameter field="CHECK" name="FAILON" value="false"/>
@@ -151,7 +154,7 @@
   <node componentName="tFileDelete" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="224">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_1" show="false"/>
     <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
-    <elementParameter field="FILE" name="FILENAME" value="context.global_filepath+&quot;/specimens.csv&quot;"/>
+    <elementParameter field="FILE" name="FILENAME" value="context.exportpath+&quot;/specimens.csv&quot;"/>
     <elementParameter field="DIRECTORY" name="DIRECTORY" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder&quot;" show="false"/>
     <elementParameter field="TEXT" name="PATH" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder or delete_file&quot;" show="false"/>
     <elementParameter field="CHECK" name="FAILON" value="false"/>
@@ -165,7 +168,7 @@
   <node componentName="tFileDelete" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="576" posY="128">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_5" show="false"/>
     <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
-    <elementParameter field="FILE" name="FILENAME" value="context.global_filepath+&quot;/determinations.csv&quot;"/>
+    <elementParameter field="FILE" name="FILENAME" value="context.exportpath+&quot;/determinations.csv&quot;"/>
     <elementParameter field="DIRECTORY" name="DIRECTORY" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder&quot;" show="false"/>
     <elementParameter field="TEXT" name="PATH" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder or delete_file&quot;" show="false"/>
     <elementParameter field="CHECK" name="FAILON" value="false"/>
@@ -179,7 +182,7 @@
   <node componentName="tFileDelete" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="704" posY="224">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_6" show="false"/>
     <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
-    <elementParameter field="FILE" name="FILENAME" value="context.global_filepath+&quot;/taxons.csv&quot;"/>
+    <elementParameter field="FILE" name="FILENAME" value="context.exportpath+&quot;/taxons.csv&quot;"/>
     <elementParameter field="DIRECTORY" name="DIRECTORY" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder&quot;" show="false"/>
     <elementParameter field="TEXT" name="PATH" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder or delete_file&quot;" show="false"/>
     <elementParameter field="CHECK" name="FAILON" value="false"/>
@@ -193,7 +196,7 @@
   <node componentName="tFileDelete" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="768" posY="128">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_7" show="false"/>
     <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
-    <elementParameter field="FILE" name="FILENAME" value="context.global_filepath+&quot;/stratigraphies.csv&quot;"/>
+    <elementParameter field="FILE" name="FILENAME" value="context.exportpath+&quot;/stratigraphies.csv&quot;"/>
     <elementParameter field="DIRECTORY" name="DIRECTORY" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder&quot;" show="false"/>
     <elementParameter field="TEXT" name="PATH" value="&quot;/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/workspace/delete_folder or delete_file&quot;" show="false"/>
     <elementParameter field="CHECK" name="FAILON" value="false"/>
@@ -203,6 +206,25 @@
     <elementParameter field="TEXT" name="LABEL" value="delete_strati_csv"/>
     <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
     <metadata connector="FLOW" name="tFileDelete_7"/>
+  </node>
+  <node componentName="tJava" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="64" posY="352">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tJava_1" show="false"/>
+    <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
+    <elementParameter field="MEMO_JAVA" name="CODE" value="String path = &quot;/home/tpateffoz/www/recolnat-diff/data/MHNAIX/export_20150912/export&quot; ;&#xA;&#xA;//java.io.File f = new java.io.File(context.exportpath);&#xA;java.io.File f = new java.io.File(path);&#xA;if(!(f.canWrite())) {&#xA;    throw new java.lang.SecurityException(&quot;Export dir is not writable&quot;);&#xA;}&#xA;"/>
+    <elementParameter field="MEMO_IMPORT" name="IMPORT" value="//import java.util.List;"/>
+    <elementParameter field="TEXT" name="LABEL" value="check_permissions"/>
+    <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
+    <metadata connector="FLOW" name="tJava_1"/>
+  </node>
+  <node componentName="tDie" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="224" posY="352">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tDie_1" show="false"/>
+    <elementParameter field="DIRECTORY" name="JAVA_LIBRARY_PATH" value="/home/tpateffoz/TOS_DI-20151029_1337-V6.1.0/configuration/lib/java" show="false"/>
+    <elementParameter field="TEXT" name="MESSAGE" value="&quot;Export dir is not writable&quot;"/>
+    <elementParameter field="TEXT" name="CODE" value="4"/>
+    <elementParameter field="CLOSED_LIST" name="PRIORITY" value="5"/>
+    <elementParameter field="CHECK" name="EXIT_JVM" value="false"/>
+    <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
+    <metadata connector="FLOW" name="tDie_1"/>
   </node>
   <connection connectorName="COMPONENT_OK" label="OnComponentOk" lineStyle="3" metaname="tFileDelete_2" offsetLabelX="0" offsetLabelY="0" source="tFileDelete_2" target="tFileDelete_1">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnComponentOk1" show="false"/>
@@ -221,6 +243,12 @@
   </connection>
   <connection connectorName="COMPONENT_OK" label="OnComponentOk" lineStyle="3" metaname="tFileDelete_6" offsetLabelX="0" offsetLabelY="0" source="tFileDelete_6" target="tFileDelete_7">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnComponentOk7" show="false"/>
+  </connection>
+  <connection connectorName="SUBJOB_OK" label="OnSubjobOk" lineStyle="1" metaname="tJava_1" offsetLabelX="0" offsetLabelY="0" source="tJava_1" target="tFileDelete_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk1" show="false"/>
+  </connection>
+  <connection connectorName="COMPONENT_ERROR" label="OnComponentError" lineStyle="5" metaname="tJava_1" offsetLabelX="0" offsetLabelY="0" source="tJava_1" target="tDie_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnComponentError1" show="false"/>
   </connection>
   <subjob>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_2" show="false"/>
@@ -254,6 +282,16 @@
   </subjob>
   <subjob>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileDelete_7" show="false"/>
+    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="92;131;150" show="false"/>
+    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="207;226;236"/>
+  </subjob>
+  <subjob>
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tJava_1" show="false"/>
+    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="92;131;150" show="false"/>
+    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="207;226;236"/>
+  </subjob>
+  <subjob>
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tDie_1" show="false"/>
     <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="92;131;150" show="false"/>
     <elementParameter field="COLOR" name="SUBJOB_COLOR" value="207;226;236"/>
   </subjob>

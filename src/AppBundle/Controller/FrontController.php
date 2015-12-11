@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FrontController extends Controller
 {
     /**
-     * @Route("/", name="index")
+     * @Route("/files", name="index")
      */
     public function indexAction(Request $request) {
         $institutionCode = 'MHNAIX';
@@ -23,20 +23,15 @@ class FrontController extends Controller
         ));
     }
     /**
-     * @Route("{institutionCode}/file/{filename}", name="viewfile")
+     * @Route("{institutionCode}/{filename}/view", name="viewfile")
      */
     public function viewFileAction(Request $request, $filename, $institutionCode) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
 
-        /* @var $specimenService \AppBundle\Services\ServiceSpecimen */
-        //$specimenService = $this->get('specimenService') ;
         list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request);
         
         $choices=$exportManager->getChoicesForDisplay();
-        /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
-        $session = $this->get('session') ;
-        dump($session->all()) ;
         $sortedStats = $stats['classes'] ;
         $total = [] ;
         $totalChoices = [] ;
@@ -71,6 +66,7 @@ class FrontController extends Controller
         $totalChoices['sum'] = array_sum($totalChoices);
         
         return $this->render('default/viewFile.html.twig', array(
+            'diffHandler'=>$exportManager->getDiffHandler(),
             'institutionCode' => $institutionCode,
             'filename' => $filename,
             'stats' => $sortedStats,
@@ -81,27 +77,18 @@ class FrontController extends Controller
     }
     
     /**
-    * @Route("{institutionCode}/{filename}/diffs/{selectedClassName}/{page}", name="diffs", defaults={"selectedClassName" = "all", "page" = 1}, requirements={
-    *     "page": "\d+"
-    * })
-    * @Route("{institutionCode}/{filename}/choices/{selectedClassName}/{page}", name="choices", defaults={"selectedClassName" = "all", "page" = 1}, requirements={
-    *     "page": "\d+"
-    * })
-    * @Route("{institutionCode}/{filename}/todo/{selectedClassName}/{page}", name="todo", defaults={"selectedClassName" = "all", "page" = 1}, requirements={
-    *     "page": "\d+"
-    * })
+    * @Route("{institutionCode}/{filename}/diffs/{selectedClassName}/{page}", name="diffs", 
+     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
+    * @Route("{institutionCode}/{filename}/choices/{selectedClassName}/{page}", name="choices", 
+     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
+    * @Route("{institutionCode}/{filename}/todo/{selectedClassName}/{page}", name="todo", 
+     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
     */
     public function diffsAction(Request $request, $institutionCode, $filename, $selectedClassName = "all", $page = 1)
     {
         if ($selectedClassName == 'all') {$selectedClassName=[];}
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $this->get('session') ;
-        dump($selectedClassName) ;
-        dump($session->all()) ;
-        /* @var $specimenService \AppBundle\Services\ServiceSpecimen */
-        //$specimenService = $this->get('specimenService') ;
-        
-        
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -137,44 +124,7 @@ class FrontController extends Controller
             'type'=>$request->get('_route'),
         ));
     }
-    /**
-     * @param Request $request
-     * @param String $institutionCode
-     * @param String $selectedClassName
-     * @param Array $specimensWithChoices
-     * @param Array $choicesToRemove
-     * @return array $array
-     */
-//    private function getSpecimenIdsAndDiffsAndStats(Request $request, $institutionCode, $selectedClassName=null, $specimensWithChoices=[], $choicesToRemove=[])
-//    {
-//        /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
-//        $session = $this->get('session');
-//
-//        if ($selectedClassName == "all") {$selectedClassName = null;}
-//        if (!is_null($request->query->get('reset', null))) {
-//            $session->clear();
-//        }
-//        /* @var $diffManager \AppBundle\Manager\DiffManager */
-//        $diffManager = $this->get('diff.manager');
-//        $results =$diffManager->init($institutionCode, [$selectedClassName], $specimensWithChoices, $choicesToRemove);
-//        list ($diffs, $specimensCode, $stats) = [$results['diffs'],$results['specimensCode'],$results['stats']] ;
-//        $session->set('diffs', $diffs);
-//        $session->set('specimensCode', $specimensCode);
-//        $session->set('stats', $stats);
-//        return [$specimensCode, $diffs, $stats];
-//    }
 
-
-    /**
-     * @Route("/export/{institutionCode}", name="export")
-     */
-    public function exportAction(Request $request, $institutionCode)
-    {
-        $converterPath = realpath($this->getParameter('converter_path')) ;
-        
-        exec(sprintf('/bin/sh %s --context_param global_filename_json=%s.json global_filename_choices=choices_%s.json',$converterPath,$institutionCode,$institutionCode));
-        return new Response('done');
-    }
 
     /**
      * @Route("/generateDiff/{institutionCode}/{compt}", name="generateDiff")

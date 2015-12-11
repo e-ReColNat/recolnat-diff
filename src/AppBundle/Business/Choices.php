@@ -12,6 +12,7 @@ class Choices extends \SplFileObject
     public function __construct($dirPath)
     {
         parent::__construct($dirPath.'/choices.json', 'c+');
+        chmod($this->getPathname(), 0755);
     }
     
     public function getContent() {

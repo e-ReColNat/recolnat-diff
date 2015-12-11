@@ -158,17 +158,21 @@ public class converter implements TalendJob {
 
 			}
 
-			if (global_filename_json != null) {
+			if (diffs != null) {
 
-				this.setProperty("global_filename_json",
-						global_filename_json.toString());
+				this.setProperty("diffs", diffs.toString());
 
 			}
 
-			if (global_filename_choices != null) {
+			if (choices != null) {
 
-				this.setProperty("global_filename_choices",
-						global_filename_choices.toString());
+				this.setProperty("choices", choices.toString());
+
+			}
+
+			if (exportpath != null) {
+
+				this.setProperty("exportpath", exportpath.toString());
 
 			}
 
@@ -222,16 +226,22 @@ public class converter implements TalendJob {
 			return this.recolnat_Sid;
 		}
 
-		public String global_filename_json;
+		public String diffs;
 
-		public String getGlobal_filename_json() {
-			return this.global_filename_json;
+		public String getDiffs() {
+			return this.diffs;
 		}
 
-		public String global_filename_choices;
+		public String choices;
 
-		public String getGlobal_filename_choices() {
-			return this.global_filename_choices;
+		public String getChoices() {
+			return this.choices;
+		}
+
+		public String exportpath;
+
+		public String getExportpath() {
+			return this.exportpath;
 		}
 	}
 
@@ -270,6 +280,8 @@ public class converter implements TalendJob {
 		}
 		globalMap.put(KEY_DB_DATASOURCES, talendDataSources);
 	}
+
+	LogCatcherUtils tLogCatcher_1 = new LogCatcherUtils();
 
 	private final java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
 	private final java.io.PrintStream errorMessagePS = new java.io.PrintStream(
@@ -372,7 +384,14 @@ public class converter implements TalendJob {
 					}
 
 					if (!(e instanceof TDieException)) {
+						tLogCatcher_1.addMessage("Java Exception",
+								currentComponent, 6, e.getClass().getName()
+										+ ":" + e.getMessage(), 1);
+						tLogCatcher_1Process(globalMap);
 					}
+				} catch (TalendException e) {
+					// do nothing
+
 				} catch (Exception e) {
 					this.e.printStackTrace();
 				}
@@ -820,6 +839,28 @@ public class converter implements TalendJob {
 		tFileInputJSON_3_onSubJobError(exception, errorComponent, globalMap);
 	}
 
+	public void tLogCatcher_1_error(Exception exception, String errorComponent,
+			final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+
+		end_Hash.put(errorComponent, System.currentTimeMillis());
+
+		status = "failure";
+
+		tLogCatcher_1_onSubJobError(exception, errorComponent, globalMap);
+	}
+
+	public void tDie_1_error(Exception exception, String errorComponent,
+			final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+
+		end_Hash.put(errorComponent, System.currentTimeMillis());
+
+		status = "failure";
+
+		tLogCatcher_1_onSubJobError(exception, errorComponent, globalMap);
+	}
+
 	public void tAdvancedHash_deter_choices_error(Exception exception,
 			String errorComponent, final java.util.Map<String, Object> globalMap)
 			throws TalendException {
@@ -1119,6 +1160,17 @@ public class converter implements TalendJob {
 	}
 
 	public void tFileInputJSON_3_onSubJobError(Exception exception,
+			String errorComponent, final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+
+		resumeUtil.addLog("SYSTEM_LOG", "NODE:" + errorComponent, "", Thread
+				.currentThread().getId() + "", "FATAL", "",
+				exception.getMessage(),
+				ResumeUtil.getExceptionStackTrace(exception), "");
+
+	}
+
+	public void tLogCatcher_1_onSubJobError(Exception exception,
 			String errorComponent, final java.util.Map<String, Object> globalMap)
 			throws TalendException {
 
@@ -4976,18 +5028,14 @@ public class converter implements TalendJob {
 						fr_tFileInputJSON_1 = new java.io.BufferedReader(
 								new java.io.InputStreamReader(
 										new java.io.FileInputStream(
-												context.global_filepath
-														+ "/"
-														+ context.global_filename_json),
-										"UTF-8"));
+												context.diffs), "UTF-8"));
 
 						jsonText_tFileInputJSON_1 = org.json.simple.JSONValue
 								.parse(fr_tFileInputJSON_1);
 						if (jsonText_tFileInputJSON_1 == null) {
 							throw new RuntimeException(
 									"fail to parse the json file : "
-											+ context.global_filepath + "/"
-											+ context.global_filename_json);
+											+ context.diffs);
 						}
 					} catch (java.lang.Exception e_tFileInputJSON_1) {
 
@@ -6457,7 +6505,7 @@ public class converter implements TalendJob {
 
 						String fileName_tFileOutputDelimited_1 = "";
 						fileName_tFileOutputDelimited_1 = (new java.io.File(
-								context.global_filepath + "/specimens.csv"))
+								context.exportpath + "/specimens.csv"))
 								.getAbsolutePath().replace("\\", "/");
 						String fullName_tFileOutputDelimited_1 = null;
 						String extension_tFileOutputDelimited_1 = null;
@@ -11118,7 +11166,7 @@ public class converter implements TalendJob {
 
 				String fileName_tFileOutputDelimited_2 = "";
 				fileName_tFileOutputDelimited_2 = (new java.io.File(
-						context.global_filepath + "/determinations.csv"))
+						context.exportpath + "/determinations.csv"))
 						.getAbsolutePath().replace("\\", "/");
 				String fullName_tFileOutputDelimited_2 = null;
 				String extension_tFileOutputDelimited_2 = null;
@@ -15015,7 +15063,7 @@ public class converter implements TalendJob {
 
 				String fileName_tFileOutputDelimited_4 = "";
 				fileName_tFileOutputDelimited_4 = (new java.io.File(
-						context.global_filepath + "/bibliographies.csv"))
+						context.exportpath + "/bibliographies.csv"))
 						.getAbsolutePath().replace("\\", "/");
 				String fullName_tFileOutputDelimited_4 = null;
 				String extension_tFileOutputDelimited_4 = null;
@@ -19746,7 +19794,7 @@ public class converter implements TalendJob {
 
 				String fileName_tFileOutputDelimited_5 = "";
 				fileName_tFileOutputDelimited_5 = (new java.io.File(
-						context.global_filepath + "/stratigraphies.csv"))
+						context.exportpath + "/stratigraphies.csv"))
 						.getAbsolutePath().replace("\\", "/");
 				String fullName_tFileOutputDelimited_5 = null;
 				String extension_tFileOutputDelimited_5 = null;
@@ -24611,7 +24659,7 @@ public class converter implements TalendJob {
 
 				String fileName_tFileOutputDelimited_6 = "";
 				fileName_tFileOutputDelimited_6 = (new java.io.File(
-						context.global_filepath + "/recoltes.csv"))
+						context.exportpath + "/recoltes.csv"))
 						.getAbsolutePath().replace("\\", "/");
 				String fullName_tFileOutputDelimited_6 = null;
 				String extension_tFileOutputDelimited_6 = null;
@@ -30360,7 +30408,7 @@ public class converter implements TalendJob {
 
 				String fileName_tFileOutputDelimited_7 = "";
 				fileName_tFileOutputDelimited_7 = (new java.io.File(
-						context.global_filepath + "/localisations.csv"))
+						context.exportpath + "/localisations.csv"))
 						.getAbsolutePath().replace("\\", "/");
 				String fullName_tFileOutputDelimited_7 = null;
 				String extension_tFileOutputDelimited_7 = null;
@@ -36839,8 +36887,8 @@ public class converter implements TalendJob {
 
 				String fileName_tFileOutputDelimited_3 = "";
 				fileName_tFileOutputDelimited_3 = (new java.io.File(
-						context.global_filepath + "/taxons.csv"))
-						.getAbsolutePath().replace("\\", "/");
+						context.exportpath + "/taxons.csv")).getAbsolutePath()
+						.replace("\\", "/");
 				String fullName_tFileOutputDelimited_3 = null;
 				String extension_tFileOutputDelimited_3 = null;
 				String directory_tFileOutputDelimited_3 = null;
@@ -40388,8 +40436,7 @@ public class converter implements TalendJob {
 				try {
 
 					is_tFileInputJSON_3 = new java.io.FileInputStream(
-							context.global_filepath + "/"
-									+ context.global_filename_choices);
+							context.choices);
 
 					com.jayway.jsonpath.ReadContext document_tFileInputJSON_3 = parseContext_tFileInputJSON_3
 							.parse(is_tFileInputJSON_3, "UTF-8");
@@ -41034,6 +41081,507 @@ public class converter implements TalendJob {
 		globalMap.put("tFileInputJSON_3_SUBPROCESS_STATE", 1);
 	}
 
+	public static class row6Struct implements
+			routines.system.IPersistableRow<row6Struct> {
+		final static byte[] commonByteArrayLock_RECOLNAT_DIFF_converter = new byte[0];
+		static byte[] commonByteArray_RECOLNAT_DIFF_converter = new byte[0];
+
+		public java.util.Date moment;
+
+		public java.util.Date getMoment() {
+			return this.moment;
+		}
+
+		public String pid;
+
+		public String getPid() {
+			return this.pid;
+		}
+
+		public String root_pid;
+
+		public String getRoot_pid() {
+			return this.root_pid;
+		}
+
+		public String father_pid;
+
+		public String getFather_pid() {
+			return this.father_pid;
+		}
+
+		public String project;
+
+		public String getProject() {
+			return this.project;
+		}
+
+		public String job;
+
+		public String getJob() {
+			return this.job;
+		}
+
+		public String context;
+
+		public String getContext() {
+			return this.context;
+		}
+
+		public Integer priority;
+
+		public Integer getPriority() {
+			return this.priority;
+		}
+
+		public String type;
+
+		public String getType() {
+			return this.type;
+		}
+
+		public String origin;
+
+		public String getOrigin() {
+			return this.origin;
+		}
+
+		public String message;
+
+		public String getMessage() {
+			return this.message;
+		}
+
+		public Integer code;
+
+		public Integer getCode() {
+			return this.code;
+		}
+
+		private java.util.Date readDate(ObjectInputStream dis)
+				throws IOException {
+			java.util.Date dateReturn = null;
+			int length = 0;
+			length = dis.readByte();
+			if (length == -1) {
+				dateReturn = null;
+			} else {
+				dateReturn = new Date(dis.readLong());
+			}
+			return dateReturn;
+		}
+
+		private void writeDate(java.util.Date date1, ObjectOutputStream dos)
+				throws IOException {
+			if (date1 == null) {
+				dos.writeByte(-1);
+			} else {
+				dos.writeByte(0);
+				dos.writeLong(date1.getTime());
+			}
+		}
+
+		private String readString(ObjectInputStream dis) throws IOException {
+			String strReturn = null;
+			int length = 0;
+			length = dis.readInt();
+			if (length == -1) {
+				strReturn = null;
+			} else {
+				if (length > commonByteArray_RECOLNAT_DIFF_converter.length) {
+					if (length < 1024
+							&& commonByteArray_RECOLNAT_DIFF_converter.length == 0) {
+						commonByteArray_RECOLNAT_DIFF_converter = new byte[1024];
+					} else {
+						commonByteArray_RECOLNAT_DIFF_converter = new byte[2 * length];
+					}
+				}
+				dis.readFully(commonByteArray_RECOLNAT_DIFF_converter, 0,
+						length);
+				strReturn = new String(commonByteArray_RECOLNAT_DIFF_converter,
+						0, length, utf8Charset);
+			}
+			return strReturn;
+		}
+
+		private void writeString(String str, ObjectOutputStream dos)
+				throws IOException {
+			if (str == null) {
+				dos.writeInt(-1);
+			} else {
+				byte[] byteArray = str.getBytes(utf8Charset);
+				dos.writeInt(byteArray.length);
+				dos.write(byteArray);
+			}
+		}
+
+		private Integer readInteger(ObjectInputStream dis) throws IOException {
+			Integer intReturn;
+			int length = 0;
+			length = dis.readByte();
+			if (length == -1) {
+				intReturn = null;
+			} else {
+				intReturn = dis.readInt();
+			}
+			return intReturn;
+		}
+
+		private void writeInteger(Integer intNum, ObjectOutputStream dos)
+				throws IOException {
+			if (intNum == null) {
+				dos.writeByte(-1);
+			} else {
+				dos.writeByte(0);
+				dos.writeInt(intNum);
+			}
+		}
+
+		public void readData(ObjectInputStream dis) {
+
+			synchronized (commonByteArrayLock_RECOLNAT_DIFF_converter) {
+
+				try {
+
+					int length = 0;
+
+					this.moment = readDate(dis);
+
+					this.pid = readString(dis);
+
+					this.root_pid = readString(dis);
+
+					this.father_pid = readString(dis);
+
+					this.project = readString(dis);
+
+					this.job = readString(dis);
+
+					this.context = readString(dis);
+
+					this.priority = readInteger(dis);
+
+					this.type = readString(dis);
+
+					this.origin = readString(dis);
+
+					this.message = readString(dis);
+
+					this.code = readInteger(dis);
+
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+
+				}
+
+			}
+
+		}
+
+		public void writeData(ObjectOutputStream dos) {
+			try {
+
+				// java.util.Date
+
+				writeDate(this.moment, dos);
+
+				// String
+
+				writeString(this.pid, dos);
+
+				// String
+
+				writeString(this.root_pid, dos);
+
+				// String
+
+				writeString(this.father_pid, dos);
+
+				// String
+
+				writeString(this.project, dos);
+
+				// String
+
+				writeString(this.job, dos);
+
+				// String
+
+				writeString(this.context, dos);
+
+				// Integer
+
+				writeInteger(this.priority, dos);
+
+				// String
+
+				writeString(this.type, dos);
+
+				// String
+
+				writeString(this.origin, dos);
+
+				// String
+
+				writeString(this.message, dos);
+
+				// Integer
+
+				writeInteger(this.code, dos);
+
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+		}
+
+		public String toString() {
+
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.toString());
+			sb.append("[");
+			sb.append("moment=" + String.valueOf(moment));
+			sb.append(",pid=" + pid);
+			sb.append(",root_pid=" + root_pid);
+			sb.append(",father_pid=" + father_pid);
+			sb.append(",project=" + project);
+			sb.append(",job=" + job);
+			sb.append(",context=" + context);
+			sb.append(",priority=" + String.valueOf(priority));
+			sb.append(",type=" + type);
+			sb.append(",origin=" + origin);
+			sb.append(",message=" + message);
+			sb.append(",code=" + String.valueOf(code));
+			sb.append("]");
+
+			return sb.toString();
+		}
+
+		/**
+		 * Compare keys
+		 */
+		public int compareTo(row6Struct other) {
+
+			int returnValue = -1;
+
+			return returnValue;
+		}
+
+		private int checkNullsAndCompare(Object object1, Object object2) {
+			int returnValue = 0;
+			if (object1 instanceof Comparable && object2 instanceof Comparable) {
+				returnValue = ((Comparable) object1).compareTo(object2);
+			} else if (object1 != null && object2 != null) {
+				returnValue = compareStrings(object1.toString(),
+						object2.toString());
+			} else if (object1 == null && object2 != null) {
+				returnValue = 1;
+			} else if (object1 != null && object2 == null) {
+				returnValue = -1;
+			} else {
+				returnValue = 0;
+			}
+
+			return returnValue;
+		}
+
+		private int compareStrings(String string1, String string2) {
+			return string1.compareTo(string2);
+		}
+
+	}
+
+	public void tLogCatcher_1Process(
+			final java.util.Map<String, Object> globalMap)
+			throws TalendException {
+		globalMap.put("tLogCatcher_1_SUBPROCESS_STATE", 0);
+
+		final boolean execStat = this.execStat;
+
+		String iterateId = "";
+
+		String currentComponent = "";
+		java.util.Map<String, Object> resourceMap = new java.util.HashMap<String, Object>();
+
+		try {
+
+			String currentMethodName = new java.lang.Exception()
+					.getStackTrace()[0].getMethodName();
+			boolean resumeIt = currentMethodName.equals(resumeEntryMethodName);
+			if (resumeEntryMethodName == null || resumeIt || globalResumeTicket) {// start
+																					// the
+																					// resume
+				globalResumeTicket = true;
+
+				row6Struct row6 = new row6Struct();
+
+				/**
+				 * [tDie_1 begin ] start
+				 */
+
+				ok_Hash.put("tDie_1", false);
+				start_Hash.put("tDie_1", System.currentTimeMillis());
+
+				currentComponent = "tDie_1";
+
+				int tos_count_tDie_1 = 0;
+
+				/**
+				 * [tDie_1 begin ] stop
+				 */
+
+				/**
+				 * [tLogCatcher_1 begin ] start
+				 */
+
+				ok_Hash.put("tLogCatcher_1", false);
+				start_Hash.put("tLogCatcher_1", System.currentTimeMillis());
+
+				currentComponent = "tLogCatcher_1";
+
+				int tos_count_tLogCatcher_1 = 0;
+
+				for (LogCatcherUtils.LogCatcherMessage lcm : tLogCatcher_1
+						.getMessages()) {
+					row6.type = lcm.getType();
+					row6.origin = (lcm.getOrigin() == null
+							|| lcm.getOrigin().length() < 1 ? null : lcm
+							.getOrigin());
+					row6.priority = lcm.getPriority();
+					row6.message = lcm.getMessage();
+					row6.code = lcm.getCode();
+
+					row6.moment = java.util.Calendar.getInstance().getTime();
+
+					row6.pid = pid;
+					row6.root_pid = rootPid;
+					row6.father_pid = fatherPid;
+
+					row6.project = projectName;
+					row6.job = jobName;
+					row6.context = contextStr;
+
+					/**
+					 * [tLogCatcher_1 begin ] stop
+					 */
+
+					/**
+					 * [tLogCatcher_1 main ] start
+					 */
+
+					currentComponent = "tLogCatcher_1";
+
+					tos_count_tLogCatcher_1++;
+
+					/**
+					 * [tLogCatcher_1 main ] stop
+					 */
+
+					/**
+					 * [tDie_1 main ] start
+					 */
+
+					currentComponent = "tDie_1";
+
+					tLogCatcher_1.addMessage("tDie", "tDie_1", 5,
+							"an error has occured", 4);
+					tLogCatcher_1Process(globalMap);
+
+					globalMap.put("tDie_1_DIE_PRIORITY", 5);
+					System.err.println("an error has occured");
+
+					globalMap.put("tDie_1_DIE_MESSAGE", "an error has occured");
+					globalMap
+							.put("tDie_1_DIE_MESSAGES", "an error has occured");
+					currentComponent = "tDie_1";
+					status = "failure";
+					errorCode = new Integer(4);
+					globalMap.put("tDie_1_DIE_CODE", errorCode);
+
+					if (true) {
+						throw new TDieException();
+					}
+
+					tos_count_tDie_1++;
+
+					/**
+					 * [tDie_1 main ] stop
+					 */
+
+					/**
+					 * [tLogCatcher_1 end ] start
+					 */
+
+					currentComponent = "tLogCatcher_1";
+
+				}
+
+				ok_Hash.put("tLogCatcher_1", true);
+				end_Hash.put("tLogCatcher_1", System.currentTimeMillis());
+
+				/**
+				 * [tLogCatcher_1 end ] stop
+				 */
+
+				/**
+				 * [tDie_1 end ] start
+				 */
+
+				currentComponent = "tDie_1";
+
+				ok_Hash.put("tDie_1", true);
+				end_Hash.put("tDie_1", System.currentTimeMillis());
+
+				/**
+				 * [tDie_1 end ] stop
+				 */
+
+			}// end the resume
+
+		} catch (java.lang.Exception e) {
+
+			TalendException te = new TalendException(e, currentComponent,
+					globalMap);
+
+			throw te;
+		} catch (java.lang.Error error) {
+
+			throw error;
+		} finally {
+
+			try {
+
+				/**
+				 * [tLogCatcher_1 finally ] start
+				 */
+
+				currentComponent = "tLogCatcher_1";
+
+				/**
+				 * [tLogCatcher_1 finally ] stop
+				 */
+
+				/**
+				 * [tDie_1 finally ] start
+				 */
+
+				currentComponent = "tDie_1";
+
+				/**
+				 * [tDie_1 finally ] stop
+				 */
+
+			} catch (java.lang.Exception e) {
+				// ignore
+			} catch (java.lang.Error error) {
+				// ignore
+			}
+			resourceMap = null;
+		}
+
+		globalMap.put("tLogCatcher_1_SUBPROCESS_STATE", 1);
+	}
+
 	public String resuming_logs_dir_path = null;
 	public String resuming_checkpoint_path = null;
 	public String parent_part_launcher = null;
@@ -41196,10 +41744,9 @@ public class converter implements TalendJob {
 			context.recolnat_Server = (String) context
 					.getProperty("recolnat_Server");
 			context.recolnat_Sid = (String) context.getProperty("recolnat_Sid");
-			context.global_filename_json = (String) context
-					.getProperty("global_filename_json");
-			context.global_filename_choices = (String) context
-					.getProperty("global_filename_choices");
+			context.diffs = (String) context.getProperty("diffs");
+			context.choices = (String) context.getProperty("choices");
+			context.exportpath = (String) context.getProperty("exportpath");
 		} catch (java.io.IOException ie) {
 			System.err.println("Could not load context " + contextStr);
 			ie.printStackTrace();
@@ -41239,13 +41786,15 @@ public class converter implements TalendJob {
 				context.recolnat_Sid = (String) parentContextMap
 						.get("recolnat_Sid");
 			}
-			if (parentContextMap.containsKey("global_filename_json")) {
-				context.global_filename_json = (String) parentContextMap
-						.get("global_filename_json");
+			if (parentContextMap.containsKey("diffs")) {
+				context.diffs = (String) parentContextMap.get("diffs");
 			}
-			if (parentContextMap.containsKey("global_filename_choices")) {
-				context.global_filename_choices = (String) parentContextMap
-						.get("global_filename_choices");
+			if (parentContextMap.containsKey("choices")) {
+				context.choices = (String) parentContextMap.get("choices");
+			}
+			if (parentContextMap.containsKey("exportpath")) {
+				context.exportpath = (String) parentContextMap
+						.get("exportpath");
 			}
 		}
 
@@ -41426,6 +41975,6 @@ public class converter implements TalendJob {
 	ResumeUtil resumeUtil = null;
 }
 /************************************************************************************************
- * 1170367 characters generated by Talend Open Studio for Data Integration on
- * the 19 novembre 2015 13:24:41 CET
+ * 1181968 characters generated by Talend Open Studio for Data Integration on
+ * the 11 décembre 2015 16:59:39 CET
  ************************************************************************************************/

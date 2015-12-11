@@ -13,7 +13,50 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class BackendController extends Controller
 {
-        /**
+    
+    /**
+     * @Route("/{institutionCode}/{filename}/export", name="export")
+     */
+    public function exportAction(Request $request, $institutionCode, $filename)
+    {
+        set_time_limit(0);
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        
+        $converterPath = realpath($this->getParameter('converter_path')) ;
+        $diffsPathName = $exportManager->getDiffHandler()->getDiffs()->getPathname();
+        $choicesPathName = $exportManager->getDiffHandler()->getChoices()->getPathname();
+        $exportPathName = $exportManager->getExportDirPath();
+        
+        $runConverter = sprintf('/bin/sh %s --context_param exportpath="%s"  --context_param diffs="%s"  --context_param choices="%s"',
+                $converterPath,$exportPathName,$diffsPathName,$choicesPathName);
+        $output=0;
+        
+        system($runConverter, $output);
+        
+        //$translator = $this->get('translator');
+        //$message = $translator->transChoice('modification.effectuee', count($choices),array('%nbModif%'=>count($choices)));
+        $this->get('session')->getFlashBag()->add(
+                'info',
+                $runConverter
+            );
+        if ($output == 4) {
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                'L\'export n\'a pas pu être fait'
+            );
+        }
+        else {
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                'L\'export s\'est bien déroulé'
+            );
+        }
+        
+        return new JsonResponse(['output' =>$output]);
+    }
+    
+    /**
      * @Route("/setChoice/{institutionCode}/{filename}", name="setChoice", options={"expose"=true})
      * @param Request $request
      * @param string $institutionCode

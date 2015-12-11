@@ -14,11 +14,11 @@ class Diffs extends \SplFileObject
     {
         $this->generateDiff=false;
         $path = $dirPath.'/diffs.json';
-        //var_dump(is_file($path));
         if (!is_file($path)) {
             $this->generateDiff=true;
         }
         parent::__construct($path, 'c+');
+        chmod($this->getPathname(), 0755);
     }
     
     public function saveDiffs(array $diffs, array $stats, array $specimensCode) {
@@ -33,6 +33,7 @@ class Diffs extends \SplFileObject
                     ]
                     , JSON_PRETTY_PRINT);
             $fs->dumpFile($this->getPathname(), $responseJson);
+            chmod($this->getPathname(), 0755);
         }
     }
     

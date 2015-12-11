@@ -80,7 +80,7 @@
             </trans-unit>
             <trans-unit id="20">
                 <source>label.danger</source>
-                <target>Danger</target>
+                <target>Erreur</target>
             </trans-unit>
             <trans-unit id="21">
                 <source>label.success</source>

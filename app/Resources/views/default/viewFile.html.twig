@@ -58,49 +58,24 @@
         </tr>
         </table>
      {% endif %}
-    
-    {#<script type="text/javascript">
-        var data=[];
-    {% if stats is not empty %}
-        {% for class, diffs in stats.classes %}
-            data.push({"label":"{{ ('label.'~class|lower)|trans({},'entity') }}", "value":{{diffs | length}}});
-        {% endfor %}
-     {% endif %}
-         console.log(data);
-    </script>#}
-{#    <div id="easy-as-pie-chart"></div>
-    <style>
-        #easy-as-pie-chart {
-  background-color: #ffffff;
-  border: 1px solid gray;
-  font: 10px sans-serif;
-  height: 300px;
-  text-shadow: none;
-  width: 450px;
-}
-#easy-as-pie-chart .total{
-  font-size: 18px;
-  font-weight: bold;
-}
-#easy-as-pie-chart .units{
-  fill: gray;
-  font-size: 12px;
-}
-#easy-as-pie-chart .label{
-  fill: #CCC;
-  font-size: 12px;
-  font-weight: bold;
-}
-#easy-as-pie-chart .value{
-  font-size: 12px;
-  font-weight: bold;
-}
-    </style>#}
+    <a href="{{path('export', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink">Export</a>
 {% endblock %}
 
 
 {% block javascripts %}
-{#    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="{{ asset('AppBundle/js/pieIndex.js') }}"></script>#}
-{#    <script src="{{ asset('AppBundle/js/piechart.js') }}"></script>#}
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(".exportLink").on('click', function(event) {
+            var url = $(this).attr('href');
+            $.ajax({
+                url : url,
+                method: "POST"
+            })
+            .done(function(data) {
+                console.log(data);
+            });
+            event.preventDefault();
+        })
+    });
+    </script>
 {% endblock %}

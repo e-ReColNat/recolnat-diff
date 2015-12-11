@@ -28,14 +28,30 @@ class DiffHandler
         $this->setChoicesFile();
         $this->setDiffsFile();
     }
-    
+    /**
+     * Renvoie le timestamp de date de création ou presque ...
+     * @return int
+     */
+    public function getCTime() {
+        return $this->getDiffs()->getMTime();
+    }
+    /**
+     * Renvoie le timestamp de date de modification
+     * @return int
+     */
+    public function getMTime() {
+        return $this->getChoices()->getMTime();
+    }
     public function getFilename()
     {
         return $this->filename;
     }
 
+    public function getDirPath() {
+        return realpath($this->dirPath);
+    }
     public function getPath() {
-        return $this->dirPath.'/'.$this->filename;
+        return realpath($this->dirPath.'/'.$this->filename);
     }
     
     /**

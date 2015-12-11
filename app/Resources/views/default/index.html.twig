@@ -6,8 +6,8 @@
     {% for file in files %}
         <li>
             <a href="{{ path('viewfile', {'filename':file.getFilename, 'institutionCode':institutionCode }) }}">{{file.getFilename }}</a>&nbsp;
-            {{'creele'|trans}} {{ file.getDiffs.getCTime|date("d/m/Y") }}&nbsp;
-            {{'modifiele'|trans}} {{ file.getChoices.getMTime|date("d/m/Y") }}&nbsp;
+            {{'creele'|trans}} {{ file.getCTime|date("d/m/Y H:i:s") }}&nbsp;
+            {{'modifiele'|trans}} {{ file.getMTime|date("d/m/Y H:i:s") }}&nbsp;
         </li>
     {% endfor %}
     </ul>

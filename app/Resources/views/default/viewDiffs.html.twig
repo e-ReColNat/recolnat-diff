@@ -12,12 +12,11 @@
         <div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10" id="diffs" data-filename="{{filename}}" data-institutioncode="{{institutionCode}}" data-selectedclassname="{{selectedClassName}}">
             
             <ol class="breadcrumb">
-            <li><a href="{{path('viewfile', {'filename' : filename, 'institutionCode':institutionCode})}}">{{'diffs' | transchoice(2)| capitalize }}</a></li>
-            <li>{{selectedClassName is defined and selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : ''}}</li>
-            <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
-        </ol>
+                <li><a href="{{path('viewfile', {'filename' : filename, 'institutionCode':institutionCode})}}">{{'diffs' | transchoice(2)| capitalize }}</a></li>
+                <li>{{selectedClassName is defined and selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : ''}}</li>
+                <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
+            </ol>
             
-            <a href="{{path('export', {'filename' : filename, 'institutionCode' : institutionCode})}}">Export</a>
             <div class="navigation row">
                 <div class="col-sm-7 col-sm-offset-3">
                 {{ knp_pagination_render(pagination) }}

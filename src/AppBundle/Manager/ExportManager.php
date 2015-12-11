@@ -55,11 +55,15 @@ class ExportManager
         if (!is_null($filename)) {
             $this->filename = $filename;
             $fs = new \Symfony\Component\Filesystem\Filesystem();
-            if (!$fs->exists($this->getChoicesDirPath())) {
-                $fs->mkdir($this->getChoicesDirPath(), 0777);
+            if (!$fs->exists($this->getDataDirPath())) {
+                $fs->mkdir($this->getDataDirPath(), 0755);
             }
+            if (!$fs->exists($this->getExportDirPath())) {
+                $fs->mkdir($this->getExportDirPath(), 0755);
+            }
+            chmod($this->getExportDirPath(), 0777);
             
-            $this->diffHandler = new DiffHandler($this->getChoicesDirPath(), $this->filename);
+            $this->diffHandler = new DiffHandler($this->getDataDirPath(), $this->filename);
             
             $doReload = false;
             $path = $this->diffHandler->getChoices()->getFilename();
@@ -72,9 +76,7 @@ class ExportManager
                 $this->diffHandler->getDiffs()->generateDiff = false;
             }
             else {
-                //$start = microtime(true) ;
                 $results =$this->diffHandler->getDiffs()->getData();
-                //var_dump(microtime(true) - $start);
                 $this->sessionManager->set('diffs', $results['diffs']);
                 $this->sessionManager->set('specimensCode', $results['specimensCode']);
                 $this->sessionManager->set('stats', $results['stats']);
@@ -96,6 +98,12 @@ class ExportManager
         return $this;
     }
 
+    public function getDiffHandler() {
+        if ($this->diffHandler instanceof DiffHandler) {
+            return $this->diffHandler ;
+        }
+        return null;
+    }
     public function getSpecimenIdsAndDiffsAndStats(Request $request, $selectedClassName=null, $specimensWithChoices=[], $choicesToRemove=[])
     {
         $session = $this->sessionManager;
@@ -128,7 +136,7 @@ class ExportManager
     public function getFiles() 
     {
         $returnDirs=[];
-        $institutionDir = $this->getChoicesDirPath() ;
+        $institutionDir = $this->getDataDirPath() ;
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != ".." && is_dir($institutionDir.$entry)) {
@@ -144,9 +152,18 @@ class ExportManager
      * @param String $institutionCode
      * @return String
      */
-    public function getChoicesDirPath()
+    public function getDataDirPath()
     {
         return realpath($this->exportPath) . '/' . $this->institutionCode.'/' ;
+    }
+    /**
+     * 
+     * @param String $institutionCode
+     * @return String
+     */
+    public function getExportDirPath()
+    {
+        return $this->getDataDirPath() . $this->filename.'/export/' ;
     }
     /**
      * 
