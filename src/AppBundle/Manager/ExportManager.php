@@ -273,10 +273,10 @@ class ExportManager
         $this->diffHandler->getChoices()->save($this->getChoices());
     }
 
-    public function getDatasWithChoices($datas, $className) {
+    public function getDatasWithChoices($datas, $className) 
+    {
         $genericEntityManager = $this->genericEntityManager ;
         $arrayDatas=[] ;
-        $comptChoices=0;
         $comptEntity=0;
         $debug='';
         $boolDebug = false;
@@ -289,24 +289,14 @@ class ExportManager
             else {
                 $comptEntity++;
                 $debug.= sprintf('%s %s a  pu être créée<br />', $className, $relationId) ;
-                foreach ($rows as $fields) {
-                    $tempDatas =$genericEntityManager->serialize($entity) ;
-                    foreach ($tempDatas as $fieldName=>$value) {
-                        $data = $this->getChoice($className, $relationId, $fieldName);
-                        if ($data != null) {
-                            $tempDatas[$fieldName] = $data;
-                            $comptChoices++;
-                            $debug.=sprintf('%s %s %s %d <br />', $className, $relationId,$fieldName,  $comptChoices);
-                        }
-                        else if ($value instanceof \DateTime) {
-                            $tempDatas[$fieldName] = $value->format('d-m-Y') ;
-                        }
+                $tempDatas =$genericEntityManager->serialize($entity) ;
+                $this->replaceDatasWithChoices($tempDatas, $relationId, $className);
+                foreach ($tempDatas as $fieldName=>$value) {
+                    if ($value instanceof \DateTime) {
+                        $tempDatas[$fieldName] = $value->format('d-m-Y') ;
                     }
-                    $debug.=sprintf('%s %s <br />', $className, $relationId);
-
                 }
                 $arrayDatas[]=$tempDatas;
-                unset($entity);
             }
         }
          if ($comptEntity != count($datas)) {
@@ -317,6 +307,15 @@ class ExportManager
         return $arrayDatas;
     }
     
+    private function replaceDatasWithChoices(&$datas, $relationId, $className) 
+    {
+        $choices = $this->getChoicesForEntity($className, $relationId) ;
+        if (count($choices)>0) {
+            foreach ($choices as $choice) {
+                $datas[$choice['fieldName']] = $choice['data'];
+            }
+        }
+    }
     public function getDwc() {
         $stats = $this->sessionManager->get('stats');
         $arrayDatasWithChoices=[];
@@ -341,7 +340,6 @@ class ExportManager
         else {
             throw new \Exception(sprintf('Echec lors de l\'ouverture de l\'archive %s', $res));
         }
-        //return $dwcExporter->generateXmlMeta() ;
         return $this->getExportDirPath().'dwc.zip' ;
     }
             
@@ -362,7 +360,7 @@ class ExportManager
                     fputcsv($fp, array_keys($rows), "\t");
                     $writeHeaders=false;
                 }
-                fputcsv($fp, array_values($rows));
+                fputcsv($fp, array_values($rows), "\t");
             }
             fclose($fp);
         }
@@ -375,5 +373,14 @@ class ExportManager
             }
         }
         return $returnChoice ;
+    }
+    public function getChoicesForEntity($className, $relationId) {
+        $returnChoices = null;
+        foreach ($this->getChoices() as $row) {
+            if ($row['className'] == $className && $row['relationId'] == $relationId) {
+                $returnChoices[] = $row ;
+            }
+        }
+        return $returnChoices ;
     }
 }
