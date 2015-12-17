@@ -20,6 +20,7 @@ class Choices extends \SplFileObject
         if (is_null($content) || !is_array($content)) {
             $content=[];
         }
+        return $content;
     }
     public function save($choices) {
         $fs = new \Symfony\Component\Filesystem\Filesystem() ;

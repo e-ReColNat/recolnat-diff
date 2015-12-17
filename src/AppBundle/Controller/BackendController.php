@@ -5,6 +5,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of AjaxDiffsController
@@ -13,11 +14,50 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class BackendController extends Controller
 {
-    
-    /**
+      /**
      * @Route("/{institutionCode}/{filename}/export", name="export")
      */
     public function exportAction(Request $request, $institutionCode, $filename)
+    {
+        $repo=$this->getDoctrine()->getRepository('\AppBundle\Entity\Stratigraphy');
+        $stratigraphy = $repo->find(956432) ;
+        
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        //$exportManager->getCsv();
+        $dwc = $exportManager->getDwc();
+        return new JsonResponse(['file' =>  urlencode($dwc)]);
+        /*$response = new \Symfony\Component\HttpFoundation\Response ;
+        $response->headers->set('Content-Type', 'text/xml');
+        
+        $dom = new \DOMDocument("1.0");
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        $dom->loadXML($dwc);
+        $response->setContent($dom->saveXML());
+        //echo $dom->saveXML();
+        return $response;*/
+    }
+    
+     /**
+     * @Route("/download/{path}", name="download", options={"expose"=true})
+     */
+    public function downloadAction($path="")
+    {
+        $response = new Response();
+        if ($path != '') {
+            $path=  urldecode($path);
+            $response->setContent(file_get_contents($path));
+            $response->headers->set('Content-Type', 'application/zip');
+            $response->headers->set('Content-Disposition', 'attachment; filename="' . basename($path). '"');
+        }
+
+        return $response;
+    }
+    /**
+     * @Route("/{institutionCode}/{filename}/export", name="exportold")
+     */
+    public function exportOldAction(Request $request, $institutionCode, $filename)
     {
         set_time_limit(0);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
@@ -83,8 +123,6 @@ class BackendController extends Controller
      */
     public function setChoicesAction(Request $request, $institutionCode, $filename)
     {
-        /* @var $specimenService \AppBundle\Services\ServiceSpecimen */
-        //$specimenService = $this->get('specimenService') ;
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
         $selectLevel1 = $request->get('selectLevel1', null);
@@ -105,9 +143,13 @@ class BackendController extends Controller
             if ($type == 'todo') {
                 $specimensWithoutChoices=$exportManager->getChoices() ;
             }
+            
+        if (is_string($selectedClassName)) {
+            $selectedClassName = [$selectedClassName];
+        }
         
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
-            list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $institutionCode, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
+            list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
             switch ($selectLevel2) {
                 case 'page' :
                     $paginator = $this->get('knp_paginator');

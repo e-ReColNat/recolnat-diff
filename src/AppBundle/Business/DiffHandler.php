@@ -83,7 +83,4 @@ class DiffHandler
         $this->diffsFile = new Diffs($this->getPath());
         return $this;
     }
-
-
-
 }

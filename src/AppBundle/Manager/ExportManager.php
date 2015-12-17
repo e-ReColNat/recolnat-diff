@@ -17,6 +17,7 @@ class ExportManager
     private $exportPath;
     private $sessionManager;
     private $institutionCode;
+    /** @var $genericEntityManager GenericEntityManager */
     private $genericEntityManager;
     private $filename=null;
     protected $diffManager;
@@ -66,7 +67,7 @@ class ExportManager
             $this->diffHandler = new DiffHandler($this->getDataDirPath(), $this->filename);
             
             $doReload = false;
-            $path = $this->diffHandler->getChoices()->getFilename();
+            $path = $this->diffHandler->getChoices()->getPathname();
             if ($this->diffHandler->getDiffs()->generateDiff) {
                 $results =$this->diffManager->init($institutionCode);
                 $this->sessionManager->set('diffs', $results['diffs']);
@@ -272,4 +273,107 @@ class ExportManager
         $this->diffHandler->getChoices()->save($this->getChoices());
     }
 
+    public function getDatasWithChoices($datas, $className) {
+        $genericEntityManager = $this->genericEntityManager ;
+        $arrayDatas=[] ;
+        $comptChoices=0;
+        $comptEntity=0;
+        $debug='';
+        $boolDebug = false;
+        foreach ($datas as $specimenCode => $rows) {
+            $relationId = key($rows) ;
+            $entity = $genericEntityManager->getEntity('recolnat', $className, $relationId);
+            if (is_null($entity)) {
+                $debug.=sprintf('%s %s n\' a pas pu être créée<br />', $className, $relationId);
+            }
+            else {
+                $comptEntity++;
+                $debug.= sprintf('%s %s a  pu être créée<br />', $className, $relationId) ;
+                foreach ($rows as $fields) {
+                    $tempDatas =$genericEntityManager->serialize($entity) ;
+                    foreach ($tempDatas as $fieldName=>$value) {
+                        $data = $this->getChoice($className, $relationId, $fieldName);
+                        if ($data != null) {
+                            $tempDatas[$fieldName] = $data;
+                            $comptChoices++;
+                            $debug.=sprintf('%s %s %s %d <br />', $className, $relationId,$fieldName,  $comptChoices);
+                        }
+                        else if ($value instanceof \DateTime) {
+                            $tempDatas[$fieldName] = $value->format('d-m-Y') ;
+                        }
+                    }
+                    $debug.=sprintf('%s %s <br />', $className, $relationId);
+
+                }
+                $arrayDatas[]=$tempDatas;
+                unset($entity);
+            }
+        }
+         if ($comptEntity != count($datas)) {
+            $debug.=sprintf('%s : le compte n\'y est pas : %s attendu %s obtenu<br />', 
+                    $className, count($datas), $comptEntity);
+        }
+        if ($boolDebug) {echo $debug;}
+        return $arrayDatas;
+    }
+    
+    public function getDwc() {
+        $stats = $this->sessionManager->get('stats');
+        $arrayDatasWithChoices=[];
+        foreach ($stats['classes'] as $className => $datas) {
+            $arrayDatasWithChoices[$className]=$this->getDatasWithChoices($datas, $className);
+        }
+        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter($arrayDatasWithChoices) ;
+        $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
+        $fileName = $this->getExportDirPath().'/meta.xml' ;
+        $fileExport->touch($fileName) ;
+        $fileExport->chmod($fileName, 0777);
+        file_put_contents($fileName, $dwcExporter->generateXmlMeta()) ;
+        $this->getCsv();
+        $zip = new \ZipArchive;
+        $res = $zip->open($this->getExportDirPath().'dwc.zip', \ZipArchive::CREATE);
+        if ($res === TRUE) {
+            $options = array('add_path' => ' ','remove_all_path' => TRUE);
+            $zip->addGlob($this->getExportDirPath().'/*.{csv,xml}', GLOB_BRACE, $options);
+            $zip->close();
+            $fileExport->chmod($this->getExportDirPath().'dwc.zip', 0777);
+        }
+        else {
+            throw new \Exception(sprintf('Echec lors de l\'ouverture de l\'archive %s', $res));
+        }
+        //return $dwcExporter->generateXmlMeta() ;
+        return $this->getExportDirPath().'dwc.zip' ;
+    }
+            
+    public function getCsv() {
+        $stats = $this->sessionManager->get('stats');
+        foreach ($stats['classes'] as $className => $datas) {
+            $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
+            $fileName = $this->getExportDirPath().'/'.$className.'.csv' ;
+            $fileExport->touch($fileName) ;
+            $fileExport->chmod($fileName, 0777);
+            $arrayDatasWithChoices=$this->getDatasWithChoices($datas, $className);
+
+            $fp = fopen($fileName, 'w');
+
+            $writeHeaders=true;
+            foreach ($arrayDatasWithChoices as $rows) {
+                if ($writeHeaders) {
+                    fputcsv($fp, array_keys($rows), "\t");
+                    $writeHeaders=false;
+                }
+                fputcsv($fp, array_values($rows));
+            }
+            fclose($fp);
+        }
+    }
+    public function getChoice($className, $relationId, $fieldName) {
+        $returnChoice = null;
+        foreach ($this->getChoices() as $row) {
+            if ($row['className'] == $className && $row['relationId'] == $relationId && $row['fieldName'] == $fieldName) {
+                $returnChoice = $row['data'] ;
+            }
+        }
+        return $returnChoice ;
+    }
 }

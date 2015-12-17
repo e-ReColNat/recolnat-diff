@@ -9,9 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 class FrontController extends Controller
 {
     /**
+     * @Route("/", name="default")
+     */
+    public function defaultAction() 
+    {
+        return $this->redirectToRoute('index') ;
+    }
+    /**
      * @Route("/files", name="index")
      */
-    public function indexAction(Request $request) {
+    public function indexAction(Request $request) 
+    {
         $institutionCode = 'MHNAIX';
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
@@ -25,7 +33,11 @@ class FrontController extends Controller
     /**
      * @Route("{institutionCode}/{filename}/view", name="viewfile")
      */
-    public function viewFileAction(Request $request, $filename, $institutionCode) {
+    public function viewFileAction(Request $request, $filename, $institutionCode) 
+    {
+        if (!is_null($request->query->get('reset', null))) {
+            $this->get('session')->clear();
+        }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
 

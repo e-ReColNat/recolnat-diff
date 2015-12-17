@@ -33,9 +33,19 @@ class GenericEntityManager
         $this->translator = $translator;
     }
     
+    public function getEntity($base, $className, $id) {
+        $em = $this->emI ;
+        if (strtolower($base) == 'recolnat') {
+            $em = $this->emR ;
+        }
+        $fullClassName = '\AppBundle\Entity\\'.$className ;
+        $entity = $em->getRepository($fullClassName)->find($id) ;
+        return $entity;
+    }
+    
     public function getData($base, $className, $fieldName, $id)
     {
-        $fullClassName = '\AppBundle\Entity\\'.$className ;
+        $fullClassName = $this->getFullClassName($className);
         $getter = 'get'.$fieldName;
         if (method_exists($fullClassName, $getter)) {
             $em = $this->emI ;
@@ -55,11 +65,82 @@ class GenericEntityManager
             throw new Exception('\AppBundle\Entity\\'.$className, 'get'.$fieldName.' doesn\'t exists.') ;
         }
     }
+    private function getFullClassName($className) {
+        return '\AppBundle\Entity\\'.$className ;
+    }
+    public function setData(&$entity, $className, $fieldName, $data) {
+        $setter = 'set'.$fieldName;
+        if (method_exists($this->getFullClassName($className), $setter)) {
+             if ($data instanceof \DateTime) {
+                $dateFormater = $this->getDateFormatter() ;
+                $data = $dateFormater->format($data) ;
+            }
+            $entity->{$setter}($data) ;
+        }
+        return $entity;
+    }
     private function getDateFormatter() 
     {
         return \IntlDateFormatter::create(
                     Locale::getDefault(), 
                     \IntlDateFormatter::SHORT, 
                     \IntlDateFormatter::NONE) ;
+    }
+    
+    public function serialize($entity)
+    {
+        $className = get_class($entity);
+
+        $uow = $this->emR->getUnitOfWork();
+        $entityPersister = $uow->getEntityPersister($className);
+        $classMetadata = $entityPersister->getClassMetadata();
+
+        $result = array();
+        foreach ($uow->getOriginalEntityData($entity) as $field => $value) {
+            if ($className == 'Stratigraphy') {
+                echo sprintf('DEBUG : %s %s<br/>', $field, $value);
+            }
+            if (isset($classMetadata->associationMappings[$field])) {
+                $assoc = $classMetadata->associationMappings[$field];
+
+                // Only owning side of x-1 associations can have a FK column.
+                if ( ! $assoc['isOwningSide'] || ! ($assoc['type'] & \Doctrine\ORM\Mapping\ClassMetadata::TO_ONE)) {
+                    continue;
+                }
+
+                if ($value !== null) {
+                    $newValId = $uow->getEntityIdentifier($value);
+                }
+
+                $targetClass = $this->emR->getClassMetadata($assoc['targetEntity']);
+                $owningTable = $entityPersister->getOwningTable($field);
+
+                foreach ($assoc['joinColumns'] as $joinColumn) {
+                    $sourceColumn = $joinColumn['name'];
+                    $targetColumn = $joinColumn['referencedColumnName'];
+
+                    if ($value === null) {
+                        $result[$sourceColumn] = null;
+                    } else if ($targetClass->containsForeignIdentifier) {
+                        $result[$sourceColumn] = $newValId[$targetClass->getFieldForColumn($targetColumn)];
+                    } else {
+                        $result[$sourceColumn] = $newValId[$targetClass->fieldNames[$targetColumn]];
+                    }
+                }
+            } elseif (isset($classMetadata->columnNames[$field])) {
+                $columnName = $classMetadata->columnNames[$field];
+                $result[$columnName] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    public function deserialize(Array $data)
+    {
+        list($class, $result) = $data;
+
+        $uow = $this->em->getUnitOfWork();
+        return $uow->createEntity($class, $result);
     }
 }

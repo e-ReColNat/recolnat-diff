@@ -58,14 +58,16 @@
         </tr>
         </table>
      {% endif %}
-    <a href="{{path('export', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink">Export</a>
+    <a href="{{path('export', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLinkCsv">Export dwc</a>
+{#    <a href="{{path('exportold', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink">Export</a>#}
 {% endblock %}
 
 
 {% block javascripts %}
     <script type="text/javascript">
     $(document).ready(function(){
-        $(".exportLink").on('click', function(event) {
+        $(".exportLinkCsv").on('click', function(event) {
+            var link =$(this) ;
             var url = $(this).attr('href');
             $.ajax({
                 url : url,
@@ -73,6 +75,12 @@
             })
             .done(function(data) {
                 console.log(data);
+            })
+            .success(function(data) {
+                var path =Routing.generate('download', { path: data.file });
+                console.log(data);
+                downloadLink=$("<a>").prop('href', path).html('Download dwc');
+                link.after(downloadLink);
             });
             event.preventDefault();
         })

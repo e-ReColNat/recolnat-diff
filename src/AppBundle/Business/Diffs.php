@@ -170,4 +170,5 @@ class Diffs extends \SplFileObject
         $returnStats = $this->filterByChoicesDone($returnStats, $choicesToRemove);
         return $returnStats;
     }
+    
 }

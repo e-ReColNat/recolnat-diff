@@ -1,3 +1,0 @@
-%~d0
-cd %~dp0
-java -Xms256M -Xmx1024M -cp .;../lib/routines.jar;../lib/commons-collections-3.2.jar;../lib/log4j-1.2.15.jar;../lib/log4j-1.2.16.jar;../lib/ojdbc6.jar;../lib/slf4j-api-1.7.5.jar;../lib/slf4j-log4j12-1.7.5.jar;../lib/talendcsv.jar;../lib/asm-1.0.2.jar;../lib/jsonpath.jar;../lib/trove.jar;../lib/json-path-1.2.0.jar;../lib/talend-oracle-timestamptz.jar;../lib/json-smart-2.1.0.jar;../lib/advancedPersistentLookupLib-1.0.jar;../lib/dom4j-1.6.1.jar;../lib/jboss-serialization.jar;../lib/json_simple-1.1.jar;converter_0_1.jar;delete_files_0_1.jar; recolnat_diff.converter_0_1.converter --context=Default %* 

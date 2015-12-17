@@ -36,6 +36,22 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
     }
     /**
      * 
+     * @param string $specimenCode
+     * @return \AppBundle\Entity\Specimen
+     */
+    public function findOneBySpecimenCodes($specimenCode)
+    {
+        $qb = $this->createQueryBuilder('s');
+        
+        $query = $qb
+                ->select('s');
+                
+        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCode'));
+        $qb->setParameter('specimenCode', $specimenCode);
+        return $query->getQuery()->getOneOrNullResult();
+    }
+    /**
+     * 
      * @param array $specimenCodes
      * @return array
      */

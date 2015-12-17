@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<talendfile:ContextType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" confirmationNeeded="false" name="Default">
-  <contextParameter comment="" name="global_filepath" prompt="global_filepath?" promptNeeded="false" type="id_String" value="/home/tpateffoz/www/recolnat-diff/data"/>
-  <contextParameter comment="" name="diffs" prompt="diffs?" promptNeeded="false" type="id_String" value="diffs.json"/>
-  <contextParameter comment="" name="choices" prompt="choices?" promptNeeded="false" type="id_String" value="choices.json"/>
-  <contextParameter comment="" name="exportpath" prompt="exportpath?" promptNeeded="false" type="id_String" value="/home/tpateffoz/www/recolnat-diff/data"/>
-</talendfile:ContextType>
