@@ -77,7 +77,7 @@ class Determination
     protected $specimen;
 
     /**
-     * @ORM\OneToOne(targetEntity="Taxon", inversedBy="determination")
+     * @ORM\OneToOne(targetEntity="Taxon", inversedBy="determination", fetch="EAGER")
      * @ORM\JoinColumn(name="taxonid", referencedColumnName="taxonid")
      **/
     private $taxon;

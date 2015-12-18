@@ -38,6 +38,22 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
     /**
      * 
      * @param array $specimenCodes
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function findBySpecimenCodeUnordered($specimenCodes)
+    {
+        $qb = $this->createQueryBuilder('d');
+        
+        $query = $qb
+                ->select('d')
+                ->join('d.specimen', 's', Join::WITH);
+        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->setParameter('specimenCodes', $specimenCodes);
+        return $query->getQuery()->getResult();
+    }
+    /**
+     * 
+     * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)
@@ -51,7 +67,6 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'identificationid') ;
-        //return $query->getQuery()->getResult() ;
     }
     
     /**

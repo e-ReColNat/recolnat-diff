@@ -38,6 +38,23 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
     /**
      * 
      * @param array $specimenCodes
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function findBySpecimenCodeUnordered($specimenCodes)
+    {
+        $qb = $this->createQueryBuilder('b');
+        
+        $query = $this->getEntityManager()->createQueryBuilder()
+                ->select('b')
+                ->from('AppBundle\Entity\Bibliography', 'b')
+                ->join('b.specimen', 's', Join::WITH);
+        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->setParameter('specimenCodes', $specimenCodes);
+        return $query->getQuery()->getOneOrNullResult();
+    }
+    /**
+     * 
+     * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)

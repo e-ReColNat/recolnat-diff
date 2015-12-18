@@ -98,7 +98,7 @@ class FrontController extends Controller
     */
     public function diffsAction(Request $request, $institutionCode, $filename, $selectedClassName = "all", $page = 1)
     {
-        if ($selectedClassName == 'all') {$selectedClassName=[];}
+        //if ($selectedClassName == 'all') {$selectedClassName=[];}
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $this->get('session') ;
         /* @var $exportManager \AppBundle\Manager\ExportManager */

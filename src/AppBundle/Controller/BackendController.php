@@ -137,17 +137,12 @@ class BackendController extends Controller
         $items = [];
         
         list($specimensWithChoices,$specimensWithoutChoices)=[[],[]];
-            if ($type == 'choices') {
-                $specimensWithChoices=array_keys($exportManager->getChoicesBySpecimenId()) ;
-            }
-            if ($type == 'todo') {
-                $specimensWithoutChoices=$exportManager->getChoices() ;
-            }
-            
-        if (is_string($selectedClassName)) {
-            $selectedClassName = [$selectedClassName];
+        if ($type == 'choices') {
+            $specimensWithChoices=array_keys($exportManager->getChoicesBySpecimenId()) ;
         }
-        
+        if ($type == 'todo') {
+            $specimensWithoutChoices=$exportManager->getChoices() ;
+        }
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
             list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
             switch ($selectLevel2) {

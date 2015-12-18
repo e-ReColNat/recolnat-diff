@@ -38,6 +38,26 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
     /**
      * 
      * @param array $specimenCodes
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function findBySpecimenCodeUnordered($specimenCodes)
+    {
+        $qb = $this->createQueryBuilder('l');
+        $query = $this->getEntityManager()->createQueryBuilder('l')
+                ->select('l')
+                ->from('AppBundle\Entity\Specimen', 's')
+                ->from('AppBundle\Entity\Recolte', 'r')
+                ->from('AppBundle\Entity\Localisation', 'l')
+                ->where($qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'))
+                ->andWhere('s.recolte = r.eventid')
+                ->andWhere('r.localisation = l.locationid');
+
+        $query->setParameter('specimenCodes', $specimenCodes);
+        return $query->getQuery()->getResult();
+    }
+    /**
+     * 
+     * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)

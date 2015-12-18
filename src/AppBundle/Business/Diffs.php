@@ -62,7 +62,6 @@ class Diffs extends \SplFileObject
      */
     public function filterByClassesName($stats, array $classesName=[]) {
         $returnStats=$stats;
-        
         if (count($classesName)>0) {
             $returnStats['classes']=[] ;
             $returnStats['summary'] = [];
@@ -86,7 +85,6 @@ class Diffs extends \SplFileObject
                 }
             }
         }
-        
         return $returnStats ;
     }
     

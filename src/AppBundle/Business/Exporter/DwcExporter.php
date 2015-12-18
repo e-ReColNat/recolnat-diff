@@ -22,7 +22,12 @@ class DwcExporter extends AbstractExporter
         $root->setAttribute('xmlns', 'http://rs.tdwg.org/dwc/text/') ;
         $dwc->appendChild($root) ;
         foreach ($this->datas as $className => $row) {
-            $this->generateXmlHeader($dwc, $root, $className, array_keys($row[0]));
+            //if(isset($row[0])) {
+                $this->generateXmlHeader($dwc, $root, $className, array_keys($row[0]));
+            //}
+            /*else {
+                var_dump($row, $className) ;
+            }*/
         }
         return $dwc->saveXML($root);
     }
@@ -269,10 +274,10 @@ class DwcExporter extends AbstractExporter
                     $term = '';
                     break;
                 case 'eday':
-                    $term = 'http://rs.tdwg.org/dwc/terms/day';
+                    $term = '';
                     break;
                 case 'emonth':
-                    $term = 'http://rs.tdwg.org/dwc/terms/month';
+                    $term = '';
                     break;
                 case 'eventdate':
                     $term = 'http://rs.tdwg.org/dwc/terms/eventDate';
@@ -281,7 +286,7 @@ class DwcExporter extends AbstractExporter
                     $term = 'http://rs.tdwg.org/dwc/terms/eventRemarks';
                     break;
                 case 'eyear':
-                    $term = 'http://rs.tdwg.org/dwc/terms/year';
+                    $term = '';
                     break;
                 case 'fieldnotes':
                     $term = 'http://rs.tdwg.org/dwc/terms/fieldNotes';

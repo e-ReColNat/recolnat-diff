@@ -92,7 +92,7 @@ class Recolte
     private $verbatimeventdate;
 
     /**
-    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localisation", inversedBy="recoltes", fetch="LAZY")
+    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localisation", inversedBy="recoltes", fetch="EAGER")
     * @ORM\JoinColumn(name="locationid", referencedColumnName="locationid")
     */
     private $localisation;

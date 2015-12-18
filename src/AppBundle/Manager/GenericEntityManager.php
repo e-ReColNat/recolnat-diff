@@ -43,6 +43,72 @@ class GenericEntityManager
         return $entity;
     }
     
+    public function getIdentifierName($entity) {
+        $meta = $this->emR->getClassMetadata(get_class($entity));
+        $identifier = $meta->getSingleIdentifierFieldName();
+        return $identifier ;
+    }
+    
+    public function getIdentifierValue($entity) {
+        $meta = $this->emR->getClassMetadata(get_class($entity));
+        $identifier = $meta->getSingleIdentifierFieldName();
+        $getter='get'.$identifier;
+        return $entity->{$getter}() ;
+    }
+    
+    public function getEntitiesBySpecimenCodes($base, $className, $specimenCodes) {
+        $em = $this->emI ;
+        if (strtolower($base) == 'recolnat') {
+            $em = $this->emR ;
+        }
+        $fullClassName = '\AppBundle\Entity\\'.$className ;
+        $entities = $em->getRepository($fullClassName)->findBySpecimenCodeUnordered($specimenCodes) ;
+        return $entities;
+    }
+    
+    /**
+     * 
+     * @param \AppBundle\Entity\Specimen $specimen
+     * @return array
+     */
+    public function getEntitiesLinkedToSpecimen(\AppBundle\Entity\Specimen $specimen) {
+        $collection = [];
+        $entitiesName=[
+            'Bibliography',
+            'Determination',
+            'Recolte',
+            'Stratigraphy',
+        ];
+        foreach ($entitiesName as $className) {
+            switch ($className) {
+                case 'Bibliography' : 
+                    $results = $specimen->getBibliographies() ;
+                    foreach ($results as $result) {
+                        $collection[] = $result ;
+                    }
+                    break;
+                case 'Determination' : 
+                    $results = $specimen->getDeterminations() ;
+                    foreach ($results as $result) {
+                        $collection[] = $result ;
+                        //var_dump($this->serialize($result));
+                        $collection[] = $result->getTaxon();
+                        //var_dump($this->serialize($result->getTaxon()));
+                    }
+                    break;
+                case 'Recolte' : 
+                    $collection[] = $specimen->getRecolte() ;
+                    $collection[] = $specimen->getRecolte()->getLocalisation();
+                    break;
+                case 'Stratigraphy' : 
+                    $collection[] = $specimen->getStratigraphy() ;
+                    break;
+            }
+        }
+        
+        return $collection;
+    }
+    
     public function getData($base, $className, $fieldName, $id)
     {
         $fullClassName = $this->getFullClassName($className);

@@ -36,19 +36,19 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
     }
     /**
      * 
-     * @param string $specimenCode
-     * @return \AppBundle\Entity\Specimen
+     * @param array $specimenCodes
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function findOneBySpecimenCodes($specimenCode)
+    public function findBySpecimenCodeUnordered($specimenCodes)
     {
         $qb = $this->createQueryBuilder('s');
         
         $query = $qb
                 ->select('s');
                 
-        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCode'));
-        $qb->setParameter('specimenCode', $specimenCode);
-        return $query->getQuery()->getOneOrNullResult();
+        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $qb->setParameter('specimenCodes', $specimenCodes);
+        return $query->getQuery()->getResult();
     }
     /**
      * 

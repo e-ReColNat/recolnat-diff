@@ -37,6 +37,23 @@ class TaxonRepository extends RecolnatRepositoryAbstract
     /**
      * 
      * @param array $specimenCodes
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function findBySpecimenCodeUnordered($specimenCodes)
+    {
+        $qb = $this->createQueryBuilder('t');
+        
+        $query = $qb
+           ->select('t')
+            ->innerJoin('t.determination', 'd')
+            ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, 
+                    $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->setParameter('specimenCodes', $specimenCodes);
+        return $query->getQuery()->getResult();
+    }
+    /**
+     * 
+     * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)

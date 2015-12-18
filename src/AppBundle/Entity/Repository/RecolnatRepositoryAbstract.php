@@ -1,5 +1,6 @@
 <?php
 namespace AppBundle\Entity\Repository;
+use Doctrine\ORM\Query\Expr;
 /**
  * Description of RecolnatRepository
  *
@@ -13,6 +14,7 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
      * @return array
      */
     abstract public function findBySpecimenCodes($specimenCodes);
+    abstract public function findBySpecimenCodeUnordered($specimenCodes);
      /**
      * 
      * @param array $ids
@@ -32,7 +34,11 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
             sprintf('%s.collectioncode', $alias),
             sprintf('%s.catalognumber', $alias),
         );
-        foreach ($concatFields as $field) {
+        return new Expr\Func('CONCAT', $concatFields);
+       /* foreach ($concatFields as $field) {
+            $qb->expr()->concat($concatFields[0], $concatFields[1], $concatFields[2]) ;
+        }*/
+        /*foreach ($concatFields as $field) {
             if (!isset($searchIn)) {
                 $searchIn = $qb->expr()->concat($qb->expr()->literal(''), $field);
                 continue;
@@ -42,8 +48,8 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
                 $searchIn,
                 $qb->expr()->concat($qb->expr()->literal(''), $field)
             );
-        }
-        return $searchIn;
+        }*/
+        //return $searchIn;
     }
     
     protected function orderResultSetBySpecimenId($resultsSet, $identifierName)
