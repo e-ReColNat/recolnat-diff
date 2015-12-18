@@ -78,6 +78,7 @@ class GenericEntityManager
             'Determination',
             'Recolte',
             'Stratigraphy',
+            'Multimedia'
         ];
         foreach ($entitiesName as $className) {
             switch ($className) {
@@ -91,9 +92,7 @@ class GenericEntityManager
                     $results = $specimen->getDeterminations() ;
                     foreach ($results as $result) {
                         $collection[] = $result ;
-                        //var_dump($this->serialize($result));
                         $collection[] = $result->getTaxon();
-                        //var_dump($this->serialize($result->getTaxon()));
                     }
                     break;
                 case 'Recolte' : 
@@ -102,6 +101,12 @@ class GenericEntityManager
                     break;
                 case 'Stratigraphy' : 
                     $collection[] = $specimen->getStratigraphy() ;
+                    break;
+                case 'Multimedia' : 
+                    $results = $specimen->getMultimedias() ;
+                    foreach ($results as $result) {
+                        $collection[] = $result ;
+                    }
                     break;
             }
         }

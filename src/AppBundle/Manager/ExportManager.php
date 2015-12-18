@@ -306,7 +306,8 @@ class ExportManager
             'Localisation',
             'Recolte',
             'Stratigraphy',
-            'Taxon'
+            'Taxon',
+            'Multimedia'
         ];
         $stats = $this->sessionManager->get('stats');
         $specimenCodes=$this->sessionManager->get('specimensCode');
@@ -330,8 +331,9 @@ class ExportManager
             }
         }
         
-        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter($arrayNewDatasWithChoices) ;
-        $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
+        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter($arrayNewDatasWithChoices, $this->getExportDirPath()) ;
+        return $dwcExporter->generate();
+        /*$fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
         $fileName = $this->getExportDirPath().'/meta.xml' ;
         $fileExport->touch($fileName) ;
         $fileExport->chmod($fileName, 0777);
@@ -348,13 +350,16 @@ class ExportManager
         else {
             throw new \Exception(sprintf('Echec lors de l\'ouverture de l\'archive %s', $res));
         }
-        return $this->getExportDirPath().'dwc.zip' ;
+        return $this->getExportDirPath().'dwc.zip' ;*/
     }
     
     private function createCsvFiles($arrayDatas) {
+        $csvExporter = new \AppBundle\Business\Exporter\CsvExporter($arrayDatas, $this->getExportDirPath()) ;
+        $csvExporter->generateFiles();
+        /*
         foreach ($arrayDatas as $className => $datas) {
             $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
-            $fileName = $this->getExportDirPath().'/'.$className.'.csv' ;
+            $fileName = $this->getExportDirPath().'/'.strtolower($className).'.csv' ;
             $fileExport->touch($fileName) ;
             $fileExport->chmod($fileName, 0777);
 
@@ -376,7 +381,7 @@ class ExportManager
                 fputcsv($fp, array_values($rows), "\t");
             }
             fclose($fp);
-        }
+        }*/
     }        
     /*public function getCsv() {
         $stats = $this->sessionManager->get('stats');

@@ -10,11 +10,14 @@ namespace AppBundle\Business\Exporter;
 abstract class AbstractExporter
 {
     public $datas = [];
-    public function __construct($datas) {
+    public $exportPath;
+    public function __construct($datas, $exportPath) {
         $this->datas = $datas;
+        $this->exportPath = $exportPath;
     }
-    public function getFile() {
-        
+    public function getExportDirPath() {
+        return realpath($this->exportPath);
     }
+    abstract public function generate();
     
 }
