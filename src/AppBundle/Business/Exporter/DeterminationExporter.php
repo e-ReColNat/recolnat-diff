@@ -14,6 +14,9 @@ class DeterminationExporter extends AbstractEntityExporter
     {
         $term = '';
         switch ($fieldName) {
+            case 'occurrenceid':
+                $term = 'http://rs.gbif.org/terms/1.0/gbifID';
+                break;
             case 'identificationid':
                 $term = 'http://rs.tdwg.org/dwc/terms/identificationID';
                 break;
@@ -44,9 +47,6 @@ class DeterminationExporter extends AbstractEntityExporter
             case 'typestatus':
                 $term = 'http://rs.tdwg.org/dwc/terms/typeStatus';
                 break;
-            case 'occurrenceid':
-                $term = 'http://rs.tdwg.org/dwc/terms/occurrenceID';
-                break;
             case 'taxonid':
                 $term = 'http://rs.tdwg.org/dwc/terms/taxonID';
                 break;
@@ -63,5 +63,9 @@ class DeterminationExporter extends AbstractEntityExporter
     {
         return 'identificationid';
     }
-
+    
+    public function getCoreIdFieldName()
+    {
+        return 'occurrenceid';
+    }
 }

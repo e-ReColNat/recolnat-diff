@@ -14,6 +14,9 @@ class StratigraphyExporter extends AbstractEntityExporter
     {
         $term = '';
         switch ($fieldName) {
+            case 'occurrenceid':
+                $term = 'http://rs.gbif.org/terms/1.0/gbifID';
+                break;
             case 'geologicalcontextid':
                 $term = 'http://rs.tdwg.org/dwc/terms/geologicalContextID';
                 break;
@@ -78,5 +81,9 @@ class StratigraphyExporter extends AbstractEntityExporter
     {
         return 'geologicalcontextid';
     }
-
+    
+    public function getCoreIdFieldName()
+    {
+        return 'occurrenceid';
+    }
 }

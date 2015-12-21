@@ -14,6 +14,12 @@ class TaxonExporter extends AbstractEntityExporter
     {
         $term = '';
         switch ($fieldName) {
+            case 'occurrenceid':
+                $term = 'http://rs.gbif.org/terms/1.0/gbifID';
+                break;            
+            case 'identificationid':
+                $term = 'http://rs.tdwg.org/dwc/terms/identificationID';
+                break;
             case 'taxonid':
                 $term = 'http://rs.tdwg.org/dwc/terms/taxonID';
                 break;
@@ -23,9 +29,9 @@ class TaxonExporter extends AbstractEntityExporter
             case 'class_':
                 $term = 'http://rs.tdwg.org/dwc/terms/class';
                 break;
-            case 'created':
+            /*case 'created':
                 $term = 'http://purl.org/dc/terms/created';
-                break;
+                break;*/
             case 'family':
                 $term = 'http://rs.tdwg.org/dwc/terms/family';
                 break;
@@ -109,5 +115,10 @@ class TaxonExporter extends AbstractEntityExporter
     public function getIdFieldName()
     {
         return 'taxonid';
+    }
+    
+    public function getCoreIdFieldName()
+    {
+        return 'identificationid';
     }
 }

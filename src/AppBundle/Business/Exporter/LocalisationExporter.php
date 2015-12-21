@@ -14,6 +14,9 @@ class LocalisationExporter extends AbstractEntityExporter
     {
         $term = '';
         switch ($fieldName) {
+            case 'occurrenceid':
+                $term = 'http://rs.gbif.org/terms/1.0/gbifID';
+                break;
             case 'locationid':
                 $term = 'http://rs.tdwg.org/dwc/terms/locationID';
                 break;
@@ -87,5 +90,8 @@ class LocalisationExporter extends AbstractEntityExporter
     {
         return 'locationid';
     }
-
+    public function getCoreIdFieldName()
+    {
+        return null;
+    }
 }

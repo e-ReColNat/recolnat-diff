@@ -14,6 +14,9 @@ class MultimediaExporter extends AbstractEntityExporter
     {
         $term = '';
         switch ($fieldName) {
+            case 'occurrenceid':
+                $term = 'http://rs.gbif.org/terms/1.0/gbifID';
+                break;
             case 'multimediaid':
                 $term = 'http://purl.org/dc/terms/identifier';
                 break;
@@ -71,12 +74,16 @@ class MultimediaExporter extends AbstractEntityExporter
 
     public function getNameSpace()
     {
-        return 'http://purl.org/dc/terms/';
+        return 'http://rs.tdwg.org/dwc/terms/Multimedia';
     }
 
     public function getIdFieldName()
     {
         return 'multimediaid';
     }
-
+    
+    public function getCoreIdFieldName()
+    {
+        return 'occurrenceid';
+    }
 }

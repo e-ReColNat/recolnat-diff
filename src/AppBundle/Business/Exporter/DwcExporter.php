@@ -48,8 +48,21 @@ class DwcExporter extends AbstractExporter
         //var_dump($this->csvFiles);
         
         $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
-        $zip = new \ZipArchive;
         $zipFilePath = $this->getExportDirPath().'/dwc.zip' ;
+        $arrayFilesName=[];
+        $arrayFilesName[] = $this->getMetaFilepath().' ';
+        foreach ($this->csvFiles as $csvFile) {
+            $arrayFilesName[]=$csvFile->getPathName().' ';
+        }
+        
+        $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName)) ;
+        exec($zipCommand) ;
+        $fileExport->chmod($zipFilePath, 0777);
+       /*foreach (glob("*.csv") as $filename) {
+            $filelist = $archive->add($filename, PCLZIP_OPT_REMOVE_PATH, $this->getExportDirPath());
+        }*/
+        /*$zip = new \ZipArchive;
+        
         $res = $zip->open($zipFilePath, \ZipArchive::CREATE|\ZipArchive::OVERWRITE|\ZipArchive::CHECKCONS);
         if ($res === TRUE) {
             $options = array('add_path' => ' ','remove_all_path' => TRUE);
@@ -59,8 +72,12 @@ class DwcExporter extends AbstractExporter
         }
         else {
             throw new \Exception(sprintf('Echec lors de l\'ouverture de l\'archive %s', $res));
-        }
+        }*/
+        
         return $zipFilePath ;
+    }
+    private function getMetaFilepath() {
+        return realpath($this->getExportDirPath().'/meta.xml') ;
     }
     /**
      * 
@@ -100,8 +117,10 @@ class DwcExporter extends AbstractExporter
         $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\'.ucfirst($extension).'Exporter';
         /* @var $entityExporter \AppBundle\Business\Exporter\AbstractEntityExporter */
         $entityExporter = new $entityExporterConstructor();
+        $flagCore=false;
         if ($extension == $this->getCoreName()) {
             $coreNode = $this->dwc->createElement('core');
+            $flagCore = true;
         }
         else {
             $coreNode = $this->dwc->createElement('extension');
@@ -111,8 +130,8 @@ class DwcExporter extends AbstractExporter
         $this->setNodeFile($coreNode, $extension.'.csv');
         $compt = 0;
         foreach ($keys as $key => $fieldName) {
-            if ($fieldName == $entityExporter->getIdFieldName()) {
-                $this->setIndexNode($coreNode, $key);
+            if ($fieldName == $entityExporter->getCoreIdFieldName()) {
+                $this->setIndexNode($coreNode, $key, $flagCore);
             }
             $term = $entityExporter->getXmlTerm($fieldName);
             $this->setFieldNode($coreNode, $compt, $term);
@@ -123,9 +142,14 @@ class DwcExporter extends AbstractExporter
         return 'Specimen';
     }
     
-    private function setIndexNode(\DOMElement &$coreNode, $key)
+    private function setIndexNode(\DOMElement &$coreNode, $key, $flagCore)
     {
-        $node = $this->dwc->createElement('id');
+        if ($flagCore) {
+            $node = $this->dwc->createElement('id');
+        }
+        else {
+            $node = $this->dwc->createElement('coreid');
+        }
         $node->setAttribute('index', $key);
         $coreNode->appendChild($node);
     }

@@ -138,7 +138,7 @@ class Specimen
     private $collection;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY", mappedBy="specimen")
      * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
      **/
     private $stratigraphy;

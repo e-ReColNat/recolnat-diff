@@ -18,4 +18,5 @@ abstract class AbstractEntityExporter
     abstract protected function getExportProperties($fieldName);
     abstract public function getNameSpace() ;
     abstract public function getIdFieldName() ;
+    abstract public function getCoreIdFieldName() ;
 }

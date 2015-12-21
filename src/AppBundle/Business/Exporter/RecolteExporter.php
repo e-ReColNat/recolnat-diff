@@ -14,6 +14,12 @@ class RecolteExporter extends AbstractEntityExporter
     {
         $term = '';
         switch ($fieldName) {
+            case 'occurrenceid':
+                $term = 'http://rs.gbif.org/terms/1.0/gbifID';
+                break;
+            case 'locationid':
+                $term = 'http://rs.tdwg.org/dwc/terms/locationID';
+                break;
             case 'eventid':
                 $term = 'http://rs.tdwg.org/dwc/terms/eventID';
                 break;
@@ -32,9 +38,9 @@ class RecolteExporter extends AbstractEntityExporter
             case 'habitat':
                 $term = 'http://rs.tdwg.org/dwc/terms/habitat';
                 break;
-            case 'recordedby':
+            /*case 'recordedby':
                 $term = 'http://rs.tdwg.org/dwc/terms/recordedBy';
-                break;
+                break;*/
             case 'verbatimeventdate':
                 $term = 'http://rs.tdwg.org/dwc/terms/verbatimEventDate';
                 break;
@@ -54,5 +60,9 @@ class RecolteExporter extends AbstractEntityExporter
     {
         return 'eventid';
     }
-
+    
+    public function getCoreIdFieldName()
+    {
+        return 'occurrenceid';
+    }
 }

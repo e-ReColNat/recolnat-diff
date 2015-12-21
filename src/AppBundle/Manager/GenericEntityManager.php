@@ -38,8 +38,7 @@ class GenericEntityManager
         if (strtolower($base) == 'recolnat') {
             $em = $this->emR ;
         }
-        $fullClassName = '\AppBundle\Entity\\'.$className ;
-        $entity = $em->getRepository($fullClassName)->find($id) ;
+        $entity = $em->getRepository($this->getFullClassName($className))->find($id) ;
         return $entity;
     }
     
@@ -61,11 +60,14 @@ class GenericEntityManager
         if (strtolower($base) == 'recolnat') {
             $em = $this->emR ;
         }
-        $fullClassName = '\AppBundle\Entity\\'.$className ;
-        $entities = $em->getRepository($fullClassName)->findBySpecimenCodeUnordered($specimenCodes) ;
+        $entities = $em->getRepository($this->getFullClassName($className))->findBySpecimenCodeUnordered($specimenCodes) ;
         return $entities;
     }
     
+    public function formatClassName($classname) {
+        return ucfirst(strtolower($classname)) ;
+    }
+
     /**
      * 
      * @param \AppBundle\Entity\Specimen $specimen
@@ -137,7 +139,7 @@ class GenericEntityManager
         }
     }
     private function getFullClassName($className) {
-        return '\AppBundle\Entity\\'.$className ;
+        return '\AppBundle\Entity\\'.$this->formatClassName($className) ;
     }
     public function setData(&$entity, $className, $fieldName, $data) {
         $setter = 'set'.$fieldName;

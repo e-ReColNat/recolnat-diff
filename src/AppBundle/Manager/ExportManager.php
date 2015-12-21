@@ -272,13 +272,23 @@ class ExportManager
     {
         $this->diffHandler->getChoices()->save($this->getChoices());
     }
-    public function getDatasWithChoices($entity, $className) 
+    public function getDatasWithChoices($entity, $className, $occurrenceId) 
     {
         $genericEntityManager = $this->genericEntityManager ;
         $arrayDatas=[] ;
         $relationId=$genericEntityManager->getIdentifierValue($entity);
         $tempDatas =$genericEntityManager->serialize($entity) ;
         $this->replaceDatasWithChoices($tempDatas, $relationId, $className);
+        //if (!in_array($className, ['Specimen', 'Taxon', 'Recolte'])) {
+        if (!in_array($className, ['Specimen'])) {
+            $tempDatas = ['occurrenceid'=>$occurrenceId] + $tempDatas;
+        }
+        /*if ($className=='Taxon') {
+            $tempDatas = ['identificationid'=>$entity->getDetermination()->getIdentificationid()] + $tempDatas;
+        }
+        if ($className=='Recolte') {
+            $tempDatas = ['locationId'=>$entity->getLocalisation()->getLocationid()] + $tempDatas;
+        }*/
         foreach ($tempDatas as $fieldName=>$value) {
             if ($value instanceof \DateTime) {
                 $tempDatas[$fieldName] = $value->format('d-m-Y') ;
@@ -317,14 +327,15 @@ class ExportManager
         $specimens = $genericEntityManager->getEntitiesBySpecimenCodes('recolnat', 'Specimen', $specimenCodes);
         if (count($specimens)>0) {
             foreach ($specimens as $specimen) {
-                $arrayNewDatasWithChoices['Specimen'][] = $this->getDatasWithChoices($specimen, 'Specimen') ;
+                $arrayNewDatasWithChoices['Specimen'][] = $this->getDatasWithChoices($specimen, 'Specimen',$specimen->getOccurrenceId()) ;
                 $entities = $genericEntityManager->getEntitiesLinkedToSpecimen($specimen);
                 if (count($entities)>0) {
                     foreach ($entities as $entity) {
                         $explodedClassName = explode('\\',get_class($entity)) ;
                         $className= end($explodedClassName) ;
                         if (in_array($className, $entitiesName)) {
-                            $arrayNewDatasWithChoices[$className][] = $this->getDatasWithChoices($entity, $className) ;
+                            $arrayNewDatasWithChoices[$className][] = 
+                                    $this->getDatasWithChoices($entity, $className, $specimen->getOccurrenceId()) ;
                         }
                     }
                 }
@@ -333,55 +344,13 @@ class ExportManager
         
         $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter($arrayNewDatasWithChoices, $this->getExportDirPath()) ;
         return $dwcExporter->generate();
-        /*$fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
-        $fileName = $this->getExportDirPath().'/meta.xml' ;
-        $fileExport->touch($fileName) ;
-        $fileExport->chmod($fileName, 0777);
-        file_put_contents($fileName, $dwcExporter->generateXmlMeta()) ;
-        $this->createCsvFiles($arrayNewDatasWithChoices);
-        $zip = new \ZipArchive;
-        $res = $zip->open($this->getExportDirPath().'dwc.zip', \ZipArchive::CREATE);
-        if ($res === TRUE) {
-            $options = array('add_path' => ' ','remove_all_path' => TRUE);
-            $zip->addGlob($this->getExportDirPath().'/*.{csv,xml}', GLOB_BRACE, $options);
-            $zip->close();
-            $fileExport->chmod($this->getExportDirPath().'dwc.zip', 0777);
-        }
-        else {
-            throw new \Exception(sprintf('Echec lors de l\'ouverture de l\'archive %s', $res));
-        }
-        return $this->getExportDirPath().'dwc.zip' ;*/
+
     }
     
     private function createCsvFiles($arrayDatas) {
         $csvExporter = new \AppBundle\Business\Exporter\CsvExporter($arrayDatas, $this->getExportDirPath()) ;
         $csvExporter->generateFiles();
-        /*
-        foreach ($arrayDatas as $className => $datas) {
-            $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
-            $fileName = $this->getExportDirPath().'/'.strtolower($className).'.csv' ;
-            $fileExport->touch($fileName) ;
-            $fileExport->chmod($fileName, 0777);
 
-            $fp = fopen($fileName, 'w');
-
-            $writeHeaders=true;
-            foreach ($datas as $rows) {
-                if ($writeHeaders) {
-                    $fieldsName = array_keys($rows) ;
-                    // Pour enlever les underscores en fin du nom du champ si besoin
-                    foreach($fieldsName as $key => $value) {
-                        if (substr($value, -1) == '_') {
-                            $fieldsName[$key] = substr($value, 0, -1);
-                        }
-                    }
-                    fputcsv($fp, $fieldsName, "\t");
-                    $writeHeaders=false;
-                }
-                fputcsv($fp, array_values($rows), "\t");
-            }
-            fclose($fp);
-        }*/
     }        
     /*public function getCsv() {
         $stats = $this->sessionManager->get('stats');

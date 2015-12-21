@@ -83,12 +83,16 @@ class SpecimenExporter extends AbstractEntityExporter
 
     public function getNameSpace()
     {
-        return 'http://rs.gbif.org/terms/1.0/Occurrence';
+        return 'http://rs.tdwg.org/dwc/terms/Occurrence';
     }
 
     public function getIdFieldName()
     {
         return 'occurrenceid';
     }
-
+    
+    public function getCoreIdFieldName()
+    {
+        return 'occurrenceid';
+    }
 }

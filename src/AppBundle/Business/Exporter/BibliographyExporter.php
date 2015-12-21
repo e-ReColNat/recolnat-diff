@@ -14,6 +14,9 @@ class BibliographyExporter extends AbstractEntityExporter
     {
         $term = '';
         switch ($fieldName) {
+            case 'occurrenceid':
+                $term = 'http://rs.gbif.org/terms/1.0/gbifID';
+                break;
             case 'referenceid':
                 $term = 'http://purl.org/dc/terms/identifier';
                 break;
@@ -68,6 +71,10 @@ class BibliographyExporter extends AbstractEntityExporter
     public function getIdFieldName()
     {
         return 'referenceid';
+    }
+    public function getCoreIdFieldName()
+    {
+        return 'occurrenceid';
     }
 
 }

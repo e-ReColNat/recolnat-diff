@@ -90,7 +90,6 @@ class Determination
      */
     public function getIdentificationid()
     {
-        //return strtoupper(bin2hex($this->identificationid));
         return $this->identificationid;
     }
 

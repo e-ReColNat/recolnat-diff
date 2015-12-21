@@ -101,6 +101,7 @@ class Stratigraphy
      */
     private $sourcefileid;
     
+ 
 
     /**
      * Get geologicalcontextid
@@ -523,7 +524,7 @@ class Stratigraphy
         return $this->sourcefileid;
     }
 
-    public function __toString()
+        public function __toString()
     {
         return sprintf('%s %s %s', 
                 $this->getEarliestepochorlowestseries(), 
