@@ -131,10 +131,12 @@ class DwcExporter extends AbstractExporter
         $compt = 0;
         foreach ($keys as $key => $fieldName) {
             if ($fieldName == $entityExporter->getCoreIdFieldName()) {
-                $this->setIndexNode($coreNode, $key, $flagCore);
+                $this->setIndexNode($coreNode, $key, $flagCore, $compt);
             }
-            $term = $entityExporter->getXmlTerm($fieldName);
-            $this->setFieldNode($coreNode, $compt, $term);
+            else {
+                $term = $entityExporter->getXmlTerm($fieldName);
+                $this->setFieldNode($coreNode, $compt, $term);
+            }
         }
     }
 
@@ -142,7 +144,7 @@ class DwcExporter extends AbstractExporter
         return 'Specimen';
     }
     
-    private function setIndexNode(\DOMElement &$coreNode, $key, $flagCore)
+    private function setIndexNode(\DOMElement &$coreNode, $key, $flagCore, &$compt)
     {
         if ($flagCore) {
             $node = $this->dwc->createElement('id');
@@ -152,6 +154,7 @@ class DwcExporter extends AbstractExporter
         }
         $node->setAttribute('index', $key);
         $coreNode->appendChild($node);
+        $compt++;
     }
     private function setFieldNode(\DOMElement &$coreNode, &$compt, $term = '')
     {
