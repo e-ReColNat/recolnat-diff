@@ -10,7 +10,7 @@ namespace AppBundle\Business\Exporter;
 class StratigraphyExporter extends AbstractEntityExporter
 {
 
-    protected function getExportProperties($fieldName)
+    static protected function getExportProperties($fieldName)
     {
         $term = '';
         switch ($fieldName) {

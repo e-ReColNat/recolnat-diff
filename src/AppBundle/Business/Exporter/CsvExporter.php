@@ -75,14 +75,6 @@ class CsvExporter
                 foreach ($datas as $key => $row) {
                     foreach ($acceptedFieldsName as $fieldName) {
                         isset($row[$fieldName]) ? $filteredDatas[$key][$fieldName] = $row[$fieldName] : $filteredDatas[$key][$fieldName] = null;
-                            
-                        /*try {
-                            $filteredDatas[$key][$fieldName] = $row[$fieldName];
-                        }
-                        catch(\Exception $e) {
-                            var_dump($row);
-                            echo sprintf('%s non trouvé dans %s<br />', $fieldName, $className);
-                        }*/
                     }
                 }
             }

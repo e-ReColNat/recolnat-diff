@@ -10,7 +10,7 @@ namespace AppBundle\Business\Exporter;
 class LocalisationExporter extends AbstractEntityExporter
 {
 
-    protected function getExportProperties($fieldName)
+    static protected function getExportProperties($fieldName)
     {
         $term = '';
         switch ($fieldName) {

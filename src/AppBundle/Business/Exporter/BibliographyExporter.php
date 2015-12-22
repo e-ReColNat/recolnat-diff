@@ -10,7 +10,7 @@ namespace AppBundle\Business\Exporter;
 class BibliographyExporter extends AbstractEntityExporter
 {
 
-    protected function getExportProperties($fieldName)
+    static protected function getExportProperties($fieldName)
     {
         $term = '';
         switch ($fieldName) {
@@ -65,7 +65,7 @@ class BibliographyExporter extends AbstractEntityExporter
 
     public function getNameSpace()
     {
-        return 'http://rs.gbif.org/terms/1.0';
+        return 'http://rs.gbif.org/terms/1.0/Reference';
     }
 
     public function getIdFieldName()

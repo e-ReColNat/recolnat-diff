@@ -296,6 +296,14 @@ class ExportManager
             $serializeLocalisation = $genericEntityManager->serialize($localisation) ;
             $tempDatas = array_merge($tempDatas, $serializeLocalisation) ;
         }
+        if ($className == 'Specimen') {
+            $stratigraphy = $entity->getStratigraphy();
+            if (is_null($stratigraphy)) {
+                $stratigraphy = new \AppBundle\Entity\Stratigraphy();
+            }
+            $serializeStratigraphy = $genericEntityManager->serialize($stratigraphy) ;
+            $tempDatas = array_merge($tempDatas, $serializeStratigraphy) ;
+        }
         $this->replaceDatasWithChoices($tempDatas, $relationId, $className);
         if (!in_array($className, ['Specimen'])) {
             $tempDatas = ['occurrenceid'=>$occurrenceId] + $tempDatas;

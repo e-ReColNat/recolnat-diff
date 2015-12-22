@@ -103,16 +103,13 @@ class GenericEntityManager
                     $results = $specimen->getDeterminations();
                     foreach ($results as $result) {
                         $collection[] = $result;
-                        //$collection[] = $result + $result->getTaxon();
-                        //$collection[] = $result->getTaxon();
                     }
                     break;
                 case 'Recolte' :
                     $collection[] = $specimen->getRecolte();
-                    //$collection[] = $specimen->getRecolte()->getLocalisation();
                     break;
                 case 'Stratigraphy' :
-                    $collection[] = $specimen->getStratigraphy();
+                    //$collection[] = $specimen->getStratigraphy();
                     break;
                 case 'Multimedia' :
                     $results = $specimen->getMultimedias();

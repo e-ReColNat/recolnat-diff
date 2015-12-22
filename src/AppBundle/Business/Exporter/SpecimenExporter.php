@@ -10,7 +10,7 @@ namespace AppBundle\Business\Exporter;
 class SpecimenExporter extends AbstractEntityExporter
 {
 
-    protected function getExportProperties($fieldName)
+    static protected function getExportProperties($fieldName)
     {
         $term = '';
         switch ($fieldName) {
@@ -77,6 +77,9 @@ class SpecimenExporter extends AbstractEntityExporter
             case 'eventid':
                 $term = 'http://rs.tdwg.org/dwc/terms/eventID';
                 break;
+        }
+        if ($term == '') {
+            $term = StratigraphyExporter::getExportProperties($fieldName);
         }
         return $term;
     }
