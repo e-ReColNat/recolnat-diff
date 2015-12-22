@@ -277,18 +277,29 @@ class ExportManager
         $genericEntityManager = $this->genericEntityManager ;
         $arrayDatas=[] ;
         $relationId=$genericEntityManager->getIdentifierValue($entity);
+        
         $tempDatas =$genericEntityManager->serialize($entity) ;
+        $serializeTaxon = null;
+        if ($className == 'Determination') {
+            $taxon = $entity->getTaxon();
+            if (is_null($taxon)) {
+                $taxon = new \AppBundle\Entity\Taxon();
+            }
+            $serializeTaxon = $genericEntityManager->serialize($taxon) ;
+            $tempDatas = array_merge($tempDatas, $serializeTaxon) ;
+        }
+        if ($className == 'Recolte') {
+            $localisation = $entity->getLocalisation();
+            if (is_null($localisation)) {
+                $localisation = new \AppBundle\Entity\Localisation();
+            }
+            $serializeLocalisation = $genericEntityManager->serialize($localisation) ;
+            $tempDatas = array_merge($tempDatas, $serializeLocalisation) ;
+        }
         $this->replaceDatasWithChoices($tempDatas, $relationId, $className);
-        //if (!in_array($className, ['Specimen', 'Taxon', 'Recolte'])) {
         if (!in_array($className, ['Specimen'])) {
             $tempDatas = ['occurrenceid'=>$occurrenceId] + $tempDatas;
         }
-        /*if ($className=='Taxon') {
-            $tempDatas = ['identificationid'=>$entity->getDetermination()->getIdentificationid()] + $tempDatas;
-        }
-        if ($className=='Recolte') {
-            $tempDatas = ['locationId'=>$entity->getLocalisation()->getLocationid()] + $tempDatas;
-        }*/
         foreach ($tempDatas as $fieldName=>$value) {
             if ($value instanceof \DateTime) {
                 $tempDatas[$fieldName] = $value->format('d-m-Y') ;

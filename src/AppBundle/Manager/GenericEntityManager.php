@@ -1,11 +1,13 @@
 <?php
 
 namespace AppBundle\Manager;
+
 use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\Repository\RecolnatRepositoryAbstract;
-use Doctrine\ORM\Query\Expr ;
-use Symfony\Component\Translation\DataCollectorTranslator ;
-use Symfony\Component\Intl\Locale ;
+use Doctrine\ORM\Query\Expr;
+use Symfony\Component\Translation\DataCollectorTranslator;
+use Symfony\Component\Intl\Locale;
+
 /**
  * Description of EntityManager
  *
@@ -13,59 +15,65 @@ use Symfony\Component\Intl\Locale ;
  */
 class GenericEntityManager
 {
+
     /**
      * @var EntityManager 
      */
     protected $emR;
+
     /**
      * @var EntityManager 
      */
     protected $emI;
+    protected $translator;
+    protected $stats = array();
+    protected $excludeFieldsName = [];
 
-    protected $translator ;
-    protected $stats=array();
-    protected $excludeFieldsName = [] ;
-    
     public function __construct(EntityManager $emR, EntityManager $emI, DataCollectorTranslator $translator)
     {
         $this->emR = $emR;
         $this->emI = $emI;
         $this->translator = $translator;
     }
-    
-    public function getEntity($base, $className, $id) {
-        $em = $this->emI ;
+
+    public function getEntity($base, $className, $id)
+    {
+        $em = $this->emI;
         if (strtolower($base) == 'recolnat') {
-            $em = $this->emR ;
+            $em = $this->emR;
         }
-        $entity = $em->getRepository($this->getFullClassName($className))->find($id) ;
+        $entity = $em->getRepository($this->getFullClassName($className))->find($id);
         return $entity;
     }
-    
-    public function getIdentifierName($entity) {
+
+    public function getIdentifierName($entity)
+    {
         $meta = $this->emR->getClassMetadata(get_class($entity));
         $identifier = $meta->getSingleIdentifierFieldName();
-        return $identifier ;
+        return $identifier;
     }
-    
-    public function getIdentifierValue($entity) {
+
+    public function getIdentifierValue($entity)
+    {
         $meta = $this->emR->getClassMetadata(get_class($entity));
         $identifier = $meta->getSingleIdentifierFieldName();
-        $getter='get'.$identifier;
-        return $entity->{$getter}() ;
+        $getter = 'get' . $identifier;
+        return $entity->{$getter}();
     }
-    
-    public function getEntitiesBySpecimenCodes($base, $className, $specimenCodes) {
-        $em = $this->emI ;
+
+    public function getEntitiesBySpecimenCodes($base, $className, $specimenCodes)
+    {
+        $em = $this->emI;
         if (strtolower($base) == 'recolnat') {
-            $em = $this->emR ;
+            $em = $this->emR;
         }
-        $entities = $em->getRepository($this->getFullClassName($className))->findBySpecimenCodeUnordered($specimenCodes) ;
+        $entities = $em->getRepository($this->getFullClassName($className))->findBySpecimenCodeUnordered($specimenCodes);
         return $entities;
     }
-    
-    public function formatClassName($classname) {
-        return ucfirst(strtolower($classname)) ;
+
+    public function formatClassName($classname)
+    {
+        return ucfirst(strtolower($classname));
     }
 
     /**
@@ -73,9 +81,10 @@ class GenericEntityManager
      * @param \AppBundle\Entity\Specimen $specimen
      * @return array
      */
-    public function getEntitiesLinkedToSpecimen(\AppBundle\Entity\Specimen $specimen) {
+    public function getEntitiesLinkedToSpecimen(\AppBundle\Entity\Specimen $specimen)
+    {
         $collection = [];
-        $entitiesName=[
+        $entitiesName = [
             'Bibliography',
             'Determination',
             'Recolte',
@@ -84,82 +93,85 @@ class GenericEntityManager
         ];
         foreach ($entitiesName as $className) {
             switch ($className) {
-                case 'Bibliography' : 
-                    $results = $specimen->getBibliographies() ;
+                case 'Bibliography' :
+                    $results = $specimen->getBibliographies();
                     foreach ($results as $result) {
-                        $collection[] = $result ;
+                        $collection[] = $result;
                     }
                     break;
-                case 'Determination' : 
-                    $results = $specimen->getDeterminations() ;
+                case 'Determination' :
+                    $results = $specimen->getDeterminations();
                     foreach ($results as $result) {
-                        $collection[] = $result ;
-                        $collection[] = $result->getTaxon();
+                        $collection[] = $result;
+                        //$collection[] = $result + $result->getTaxon();
+                        //$collection[] = $result->getTaxon();
                     }
                     break;
-                case 'Recolte' : 
-                    $collection[] = $specimen->getRecolte() ;
-                    $collection[] = $specimen->getRecolte()->getLocalisation();
+                case 'Recolte' :
+                    $collection[] = $specimen->getRecolte();
+                    //$collection[] = $specimen->getRecolte()->getLocalisation();
                     break;
-                case 'Stratigraphy' : 
-                    $collection[] = $specimen->getStratigraphy() ;
+                case 'Stratigraphy' :
+                    $collection[] = $specimen->getStratigraphy();
                     break;
-                case 'Multimedia' : 
-                    $results = $specimen->getMultimedias() ;
+                case 'Multimedia' :
+                    $results = $specimen->getMultimedias();
                     foreach ($results as $result) {
-                        $collection[] = $result ;
+                        $collection[] = $result;
                     }
                     break;
             }
         }
-        
+
         return $collection;
     }
-    
+
     public function getData($base, $className, $fieldName, $id)
     {
         $fullClassName = $this->getFullClassName($className);
-        $getter = 'get'.$fieldName;
+        $getter = 'get' . $fieldName;
         if (method_exists($fullClassName, $getter)) {
-            $em = $this->emI ;
+            $em = $this->emI;
             if (strtolower($base) == 'recolnat') {
-                $em = $this->emR ;
+                $em = $this->emR;
             }
-            $entity = $em->getRepository($fullClassName)->find($id) ;
-            
-            $data = $entity->{$getter}() ;
+            $entity = $em->getRepository($fullClassName)->find($id);
+
+            $data = $entity->{$getter}();
             if ($data instanceof \DateTime) {
-                $dateFormater = $this->getDateFormatter() ;
-                $data = $dateFormater->format($data) ;
+                $dateFormater = $this->getDateFormatter();
+                $data = $dateFormater->format($data);
             }
             return $data;
-        }
-        else {
-            throw new Exception('\AppBundle\Entity\\'.$className, 'get'.$fieldName.' doesn\'t exists.') ;
+        } else {
+            throw new Exception('\AppBundle\Entity\\' . $className, 'get' . $fieldName . ' doesn\'t exists.');
         }
     }
-    private function getFullClassName($className) {
-        return '\AppBundle\Entity\\'.$this->formatClassName($className) ;
+
+    private function getFullClassName($className)
+    {
+        return '\AppBundle\Entity\\' . $this->formatClassName($className);
     }
-    public function setData(&$entity, $className, $fieldName, $data) {
-        $setter = 'set'.$fieldName;
+
+    public function setData(&$entity, $className, $fieldName, $data)
+    {
+        $setter = 'set' . $fieldName;
         if (method_exists($this->getFullClassName($className), $setter)) {
-             if ($data instanceof \DateTime) {
-                $dateFormater = $this->getDateFormatter() ;
-                $data = $dateFormater->format($data) ;
+            if ($data instanceof \DateTime) {
+                $dateFormater = $this->getDateFormatter();
+                $data = $dateFormater->format($data);
             }
-            $entity->{$setter}($data) ;
+            $entity->{$setter}($data);
         }
         return $entity;
     }
-    private function getDateFormatter() 
+
+    private function getDateFormatter()
     {
         return \IntlDateFormatter::create(
-                    Locale::getDefault(), 
-                    \IntlDateFormatter::SHORT, 
-                    \IntlDateFormatter::NONE) ;
+                        Locale::getDefault(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
     }
-    
+
     public function serialize($entity)
     {
         $className = get_class($entity);
@@ -170,14 +182,11 @@ class GenericEntityManager
 
         $result = array();
         foreach ($uow->getOriginalEntityData($entity) as $field => $value) {
-            if ($className == 'Stratigraphy') {
-                echo sprintf('DEBUG : %s %s<br/>', $field, $value);
-            }
             if (isset($classMetadata->associationMappings[$field])) {
                 $assoc = $classMetadata->associationMappings[$field];
 
                 // Only owning side of x-1 associations can have a FK column.
-                if ( ! $assoc['isOwningSide'] || ! ($assoc['type'] & \Doctrine\ORM\Mapping\ClassMetadata::TO_ONE)) {
+                if (!$assoc['isOwningSide'] || !($assoc['type'] & \Doctrine\ORM\Mapping\ClassMetadata::TO_ONE)) {
                     continue;
                 }
 
@@ -205,7 +214,6 @@ class GenericEntityManager
                 $result[$columnName] = $value;
             }
         }
-
         return $result;
     }
 
@@ -216,4 +224,5 @@ class GenericEntityManager
         $uow = $this->em->getUnitOfWork();
         return $uow->createEntity($class, $result);
     }
+
 }

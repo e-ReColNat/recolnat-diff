@@ -35,7 +35,7 @@ class CsvExporter
             $fp = fopen($fileName, 'w');
 
             $writeHeaders = true;
-            $datasPerClass = $this->filterDatas($datasPerClass, $entityExporter);
+            $datasPerClass = $this->filterDatas($datasPerClass, $entityExporter, $className);
             foreach ($datasPerClass as $rows) {
                 if ($writeHeaders) {
                     $fieldsName = array_keys($rows);
@@ -60,7 +60,7 @@ class CsvExporter
         return $this->files;
     }
 
-    private function filterDatas($datas, $entityExporter)
+    private function filterDatas($datas, $entityExporter, $className)
     {
         $filteredDatas = [];
         if (count($datas) > 0) {
@@ -74,7 +74,15 @@ class CsvExporter
             if (count($acceptedFieldsName) > 0) {
                 foreach ($datas as $key => $row) {
                     foreach ($acceptedFieldsName as $fieldName) {
-                        $filteredDatas[$key][$fieldName] = $row[$fieldName];
+                        isset($row[$fieldName]) ? $filteredDatas[$key][$fieldName] = $row[$fieldName] : $filteredDatas[$key][$fieldName] = null;
+                            
+                        /*try {
+                            $filteredDatas[$key][$fieldName] = $row[$fieldName];
+                        }
+                        catch(\Exception $e) {
+                            var_dump($row);
+                            echo sprintf('%s non trouvé dans %s<br />', $fieldName, $className);
+                        }*/
                     }
                 }
             }
