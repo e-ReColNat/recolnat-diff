@@ -275,10 +275,9 @@ class ExportManager
     public function getDatasWithChoices($entity, $className, $occurrenceId) 
     {
         $genericEntityManager = $this->genericEntityManager ;
-        $arrayDatas=[] ;
         $relationId=$genericEntityManager->getIdentifierValue($entity);
         
-        $tempDatas =$genericEntityManager->serialize($entity) ;
+        $datas =$genericEntityManager->serialize($entity) ;
         $serializeTaxon = null;
         if ($className == 'Determination') {
             $taxon = $entity->getTaxon();
@@ -286,7 +285,7 @@ class ExportManager
                 $taxon = new \AppBundle\Entity\Taxon();
             }
             $serializeTaxon = $genericEntityManager->serialize($taxon) ;
-            $tempDatas = array_merge($tempDatas, $serializeTaxon) ;
+            $datas = array_merge($datas, $serializeTaxon) ;
         }
         if ($className == 'Recolte') {
             $localisation = $entity->getLocalisation();
@@ -294,7 +293,7 @@ class ExportManager
                 $localisation = new \AppBundle\Entity\Localisation();
             }
             $serializeLocalisation = $genericEntityManager->serialize($localisation) ;
-            $tempDatas = array_merge($tempDatas, $serializeLocalisation) ;
+            $datas = array_merge($datas, $serializeLocalisation) ;
         }
         if ($className == 'Specimen') {
             $stratigraphy = $entity->getStratigraphy();
@@ -302,33 +301,30 @@ class ExportManager
                 $stratigraphy = new \AppBundle\Entity\Stratigraphy();
             }
             $serializeStratigraphy = $genericEntityManager->serialize($stratigraphy) ;
-            $tempDatas = array_merge($tempDatas, $serializeStratigraphy) ;
+            $datas = array_merge($datas, $serializeStratigraphy) ;
         }
-        $this->replaceDatasWithChoices($tempDatas, $relationId, $className);
+        $this->replaceDatasWithChoices($datas, $relationId, $className);
         if (!in_array($className, ['Specimen'])) {
-            $tempDatas = ['occurrenceid'=>$occurrenceId] + $tempDatas;
+            $datas = ['occurrenceid'=>$occurrenceId] + $datas;
         }
-        foreach ($tempDatas as $fieldName=>$value) {
+        foreach ($datas as $fieldName=>$value) {
             if ($value instanceof \DateTime) {
-                $tempDatas[$fieldName] = $value->format('d-m-Y') ;
+                $datas[$fieldName] = $value->format('d-m-Y') ;
             }
-        $arrayDatas=$tempDatas;
         }
-        return $arrayDatas;
+        return $datas;
     }
     
-    private function replaceDatasWithChoices(&$datas, $relationId, $className) 
+    private function getArrayDatasWithChoices($datas) 
     {
-        $choices = $this->getChoicesForEntity($className, $relationId) ;
-        if (count($choices)>0) {
-            foreach ($choices as $choice) {
-                $datas[$choice['fieldName']] = $choice['data'];
-            }
-        }
-    }
-    
-    public function getDwc() {
-        $entitiesName=[
+        $datasWithChoices=$datas;
+        $entitiesNameWithArray=[
+            'Determination',
+            'Taxon',
+            'Multimedia',
+            'Bibliography',
+        ];
+        /*$entitiesName=[
             'Specimen',     
             'Bibliography',
             'Determination',
@@ -337,62 +333,76 @@ class ExportManager
             'Stratigraphy',
             'Taxon',
             'Multimedia'
-        ];
-        $stats = $this->sessionManager->get('stats');
-        $specimenCodes=$this->sessionManager->get('specimensCode');
-        $arrayNewDatasWithChoices=[];
-        $genericEntityManager = $this->genericEntityManager ;
-        
-        $specimens = $genericEntityManager->getEntitiesBySpecimenCodes('recolnat', 'Specimen', $specimenCodes);
-        if (count($specimens)>0) {
-            foreach ($specimens as $specimen) {
-                $arrayNewDatasWithChoices['Specimen'][] = $this->getDatasWithChoices($specimen, 'Specimen',$specimen->getOccurrenceId()) ;
-                $entities = $genericEntityManager->getEntitiesLinkedToSpecimen($specimen);
-                if (count($entities)>0) {
-                    foreach ($entities as $entity) {
-                        $explodedClassName = explode('\\',get_class($entity)) ;
-                        $className= end($explodedClassName) ;
-                        if (in_array($className, $entitiesName)) {
-                            $arrayNewDatasWithChoices[$className][] = 
-                                    $this->getDatasWithChoices($entity, $className, $specimen->getOccurrenceId()) ;
+        ];*/
+        //var_dump($datas);
+        //die();
+        foreach ($datas as $key=>$data) {
+            foreach ($data as $className => $row) {
+                $key2=null;
+                if (in_array($className, $entitiesNameWithArray)) {
+                    foreach ($row as $key2=>$record) {
+                        foreach ($record as $fieldName=>$value) {
+                            $datasWithChoices[$key][$className][$key2][$fieldName] = $this->convertField($value) ;
                         }
+                        $this->setChoiceForEntity($datasWithChoices, $key, $className, $record, $key2) ;
                     }
                 }
+                else {
+                    foreach ($row as $fieldName=>$value) {
+                        $datasWithChoices[$key][$className][$fieldName] = $this->convertField($value) ;
+                    }
+                    $this->setChoiceForEntity($datasWithChoices, $key, $className, $row) ;
+                }
             }
         }
-        
-        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter($arrayNewDatasWithChoices, $this->getExportDirPath()) ;
-        return $dwcExporter->generate();
-
+        return $datasWithChoices;
     }
     
-    private function createCsvFiles($arrayDatas) {
-        $csvExporter = new \AppBundle\Business\Exporter\CsvExporter($arrayDatas, $this->getExportDirPath()) ;
-        $csvExporter->generateFiles();
-
-    }        
-    /*public function getCsv() {
-        $stats = $this->sessionManager->get('stats');
-        foreach ($stats['classes'] as $className => $datas) {
-            $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
-            $fileName = $this->getExportDirPath().'/'.$className.'.csv' ;
-            $fileExport->touch($fileName) ;
-            $fileExport->chmod($fileName, 0777);
-            $arrayDatasWithChoices=$this->getDatasWithChoices($datas, $className);
-
-            $fp = fopen($fileName, 'w');
-
-            $writeHeaders=true;
-            foreach ($arrayDatasWithChoices as $rows) {
-                if ($writeHeaders) {
-                    fputcsv($fp, array_keys($rows), "\t");
-                    $writeHeaders=false;
-                }
-                fputcsv($fp, array_values($rows), "\t");
-            }
-            fclose($fp);
+    private function convertField($value) {
+        if ($value instanceof \DateTime) {
+            return $value->format('d-m-Y') ;
         }
-    }*/
+        return $value;
+    }
+    
+    private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2=null)
+    {
+        $choices = $this->getChoicesForEntity($className, $arrayEntity) ;
+        if (count($choices)>0) {
+            foreach ($choices as $choice) {
+                if(!is_null($key2)) {
+                    $datasWithChoices[$key][$className][$key2][$choice['fieldName']] = $choice['data'];
+                }
+                else {
+                    $datasWithChoices[$key][$className][$choice['fieldName']] = $choice['data'];
+                }
+            }
+        }
+    }
+    public function getDwc() {
+        $specimenCodes=$this->sessionManager->get('specimensCode');
+        $genericEntityManager = $this->genericEntityManager ;
+        
+        $datas = $genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
+        $datasWithChoices=$this->getArrayDatasWithChoices($datas) ;
+        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter(
+                $datasWithChoices,
+                $this->getExportDirPath(), 
+                $this->genericEntityManager) ;
+        
+        //$formatDatas = $dwcExporter->formatDatas();
+        //var_dump(current($formatDatas));
+        return $dwcExporter->generate() ;
+    }
+
+
+    /**
+     * 
+     * @param string $className
+     * @param string $relationId
+     * @param string $fieldName
+     * @return array
+     */
     public function getChoice($className, $relationId, $fieldName) {
         $returnChoice = null;
         foreach ($this->getChoices() as $row) {
@@ -402,11 +412,30 @@ class ExportManager
         }
         return $returnChoice ;
     }
-    public function getChoicesForEntity($className, $relationId) {
+    
+    /**
+     * 
+     * @param string $className
+     * @param array $arrayEntity
+     * @return array
+     */
+    public function getChoicesForEntity($className, $arrayEntity) {
         $returnChoices = null;
-        foreach ($this->getChoices() as $row) {
-            if ($row['className'] == $className && $row['relationId'] == $relationId) {
-                $returnChoices[] = $row ;
+        $relationId = null;
+        if (array_key_exists($this->genericEntityManager->getIdentifierName($className), $arrayEntity)) {
+            $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
+        }
+        else {
+            echo $className.' '.$this->genericEntityManager->getIdentifierName($className)."<br/>";
+            var_dump($arrayEntity) ;
+            die();
+        }
+
+        if (!is_null($relationId)) {
+            foreach ($this->getChoices() as $row) {
+                if ($row['className'] == $className && $row['relationId'] == $relationId) {
+                    $returnChoices[] = $row ;
+                }
             }
         }
         return $returnChoices ;

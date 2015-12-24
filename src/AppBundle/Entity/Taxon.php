@@ -885,4 +885,37 @@ class Taxon
     {
         return trim(sprintf('%s %s', $this->scientificname, $this->scientificnameauthorship)); 
     }
+    
+    public function toArray() {
+        return [
+            'taxonid' => $this->getTaxonid(),
+            'acceptednameusage' => $this->getAcceptednameusage(),
+            'class' => $this->getClass(),
+            'created' => $this->getCreated(),
+            'family' => $this->getFamily(),
+            'genus' => $this->getGenus(),
+            'higherclassification' => $this->getHigherclassification(),
+            'infraspecificepithet' => $this->getInfraspecificepithet(),
+            'kingdom' => $this->getKingdom(),
+            'modified' => $this->getModified(),
+            'nameaccordingto' => $this->getNameaccordingto(),
+            'namepublishedin' => $this->getNamepublishedin(),
+            'namepublishedinyear' => $this->getNamepublishedinyear(),
+            'nomenclaturalcode' => $this->getNomenclaturalcode(),
+            'nomenclaturalstatus' => $this->getNomenclaturalstatus(),
+            'order' => $this->getOrder(),
+            'originalnameusage' => $this->getOriginalnameusage(),
+            'parentnameusage' => $this->getParentnameusage(),
+            'phylum' => $this->getPhylum(),
+            'scientificname' => $this->getScientificname(),
+            'scientificnameauthorship' => $this->getScientificnameauthorship(),
+            'specificepithet' => $this->getSpecificepithet(),
+            'subgenus' => $this->getSubgenus(),
+            'taxonomicstatus' => $this->getTaxonomicstatus(),
+            'taxonrank' => $this->getTaxonrank(),
+            'taxonremarks' => $this->getTaxonremarks(),
+            'verbatimtaxonrank' => $this->getVerbatimtaxonrank(),
+            'vernacularname' => $this->getVernacularname(),
+        ];
+    }
 }

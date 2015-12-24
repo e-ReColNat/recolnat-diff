@@ -438,4 +438,24 @@ class Bibliography
     {
         return sprintf('%s %s', $this->getSubject(), $this->getCreator());
     }
+    
+    public function toArray() {
+        $specimen = $this->getSpecimen();
+        return [
+            'occurrenceid' => !is_null($specimen) ? $specimen->getOccurrenceid() : null,
+            'referenceid' => $this->getReferenceid(),
+            'bibliographiccitation' => $this->getBibliographiccitation(),
+            'creator' => $this->getCreator(),
+            'date_publication' => $this->getDatePublication(),
+            'description' => $this->getDescription(),
+            'identifier' => $this->getIdentifier(),
+            'language' => $this->getLanguage(),
+            'rights' => $this->getRights(),
+            'source' => $this->getSource(),
+            'subject' => $this->getSubject(),
+            'taxonremarks' => $this->getTaxonremarks(),
+            'title' => $this->getTitle(),
+            'type' => $this->getType()
+        ];
+    }
 }

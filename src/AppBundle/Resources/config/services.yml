@@ -62,6 +62,9 @@ services:
             genericEntityManager: "@genericEntityManager"
             diffManager: "@diff.manager"
             maxItemPerPage: "%knp_paginator.page_range%"
+#    exporterFactory:
+#        arguments:
+#            genericEntityManager: "@genericEntityManager"
             
     # TWIG EXTENSIONS
     app.twig_multimedia_extension:

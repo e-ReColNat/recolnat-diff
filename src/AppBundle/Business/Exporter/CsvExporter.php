@@ -7,74 +7,114 @@ namespace AppBundle\Business\Exporter;
  *
  * @author tpateffoz
  */
-class CsvExporter
+class CsvExporter extends AbstractExporter
 {
 
-    public $datas;
-    private $exportPath;
     /* @var $files \ArrayObject */
     private $files;
-
-    public function __construct($datas, $exportPath)
+    
+    public function formatDatas()
     {
-        $this->datas = $datas;
-        $this->exportPath = $exportPath;
+        
     }
 
-    public function generateFiles()
+    public function generate()
     {
-        foreach ($this->datas as $className => $datasPerClass) {
-            $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\'.ucfirst($className).'Exporter';
-            /* @var $entityExporter \AppBundle\Business\Exporter\AbstractEntityExporter */
-            $entityExporter = new $entityExporterConstructor();
-            $fileExport = new \Symfony\Component\Filesystem\Filesystem();
-            $fileName = $this->exportPath . '/' . strtolower($className) . '.csv';
-            $fileExport->touch($fileName);
-            $fileExport->chmod($fileName, 0777);
-
-            $fp = fopen($fileName, 'w');
-
-            $writeHeaders = true;
-            $datasPerClass = $this->filterDatas($datasPerClass, $entityExporter, $className);
-            foreach ($datasPerClass as $rows) {
+        $filesHandler=[];
+        foreach ($this->datas as $key => $record) {
+            foreach ($record as $className => $datasPerClass) {
+                $entityExporter = $this->getEntityExporter($className);
+                $writeHeaders = false;
+                if (!isset($filesHandler[$className])) {
+                    $this->createFiles($className);
+                    $filesHandler[$className] = fopen($this->files[$className]->getPathname(), 'w');
+                    $writeHeaders = true;
+                }
+                
+                
                 if ($writeHeaders) {
-                    $fieldsName = array_keys($rows);
-                    // Pour enlever les underscores en fin du nom du champ si besoin
-                    foreach ($fieldsName as $key => $value) {
-                        if (substr($value, -1) == '_') {
-                            $fieldsName[$key] = substr($value, 0, -1);
-                        }
-                    }
-                    fputcsv($fp, $fieldsName, "\t");
+                    $fieldsName =$entityExporter->getKeysEntity();
+                    fputcsv($filesHandler[$className], $fieldsName, "\t");
                     $writeHeaders = false;
                 }
-                fputcsv($fp, array_values($rows), "\t");
+                $filteredDatas = $this->filterDatas($datasPerClass, $entityExporter);
+                fputcsv($filesHandler[$className], $filteredDatas, "\t");
             }
-            fclose($fp);
-            $this->files[$className]=new \SplFileObject($fileName) ;
+        }
+        foreach ($filesHandler as $className => $fileHandler) {
+            fclose($fileHandler);
         }
     }
 
+    public function generateForDwc() 
+    {
+        $filesHandler=[];
+        $entitiesNameWithArray=[
+            'Determination',
+            'Taxon',
+            'Multimedia',
+            'Bibliography',
+        ];
+        foreach ($this->datas as $key => $record) {
+            foreach ($record as $className => $datasPerClass) {
+                $entityExporter = $this->getEntityExporter($className);
+                $writeHeaders = false;
+                if (!isset($filesHandler[$className])) {
+                    $this->createFiles($className);
+                    $filesHandler[$className] = fopen($this->files[$className]->getPathname(), 'w');
+                    $writeHeaders = true;
+                }
+                
+                
+                if ($writeHeaders) {
+                    $fieldsName =$entityExporter->getKeysEntity();
+                    fputcsv($filesHandler[$className], $fieldsName, "\t");
+                    $writeHeaders = false;
+                }
+                if (in_array($className, $entitiesNameWithArray)) {
+                    foreach ($datasPerClass as $arrayRecord) {
+                        $filteredDatas = $this->filterDatas($arrayRecord, $entityExporter);
+                        fputcsv($filesHandler[$className], $filteredDatas, "\t");
+                    }
+                }
+                else {
+                    $filteredDatas = $this->filterDatas($datasPerClass, $entityExporter);
+                    fputcsv($filesHandler[$className], $filteredDatas, "\t");
+                }
+            }
+        }
+        foreach ($filesHandler as $className => $fileHandler) {
+            fclose($fileHandler);
+        }
+    }
+    
+    private function createFiles($className) {
+        $fileExport = new \Symfony\Component\Filesystem\Filesystem();
+        $fileName = $this->exportPath . '/' . strtolower($className) . '.csv';
+        $fileExport->touch($fileName);
+        $fileExport->chmod($fileName, 0777);
+        $this->files[$className]=new \SplFileObject($fileName) ;
+    }
     public function getFiles()
     {
         return $this->files;
     }
 
-    private function filterDatas($datas, $entityExporter, $className)
+    public function filterDatas($datas, $entityExporter)
     {
         $filteredDatas = [];
         if (count($datas) > 0) {
             $acceptedFieldsName = [];
-            $fieldsName = array_keys($datas[0]);
+            $fieldsName =$entityExporter->getKeysEntity();
             foreach ($fieldsName as $fieldName) {
                 if ($entityExporter->exportToCsv($fieldName)) {
                     $acceptedFieldsName[] = $fieldName;
                 }
             }
             if (count($acceptedFieldsName) > 0) {
-                foreach ($datas as $key => $row) {
-                    foreach ($acceptedFieldsName as $fieldName) {
-                        isset($row[$fieldName]) ? $filteredDatas[$key][$fieldName] = $row[$fieldName] : $filteredDatas[$key][$fieldName] = null;
+                foreach ($datas as $fieldName => $value) {
+                    if (in_array($fieldName, $acceptedFieldsName)) {
+                        $filteredDatas[$fieldName] = $datas[$fieldName] ;
                     }
                 }
             }

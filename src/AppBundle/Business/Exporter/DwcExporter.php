@@ -14,11 +14,52 @@ class DwcExporter extends AbstractExporter
     /* @var $dwc \DOMDocument */
     protected $dwc;
     protected $csvFiles;
+    public $entitiesName=[
+            'Specimen',     
+            'Bibliography',
+            'Determination',
+            'Recolte',
+            'Multimedia'
+        ];
+    protected $formattedDatas=[];
 
+    public function formatDatas()
+    {
+        $formatDatas=[];
+        foreach ($this->datas as $key=>$data) {
+            $formatDatas[$key]=[];
+            $occurrenceid=$data['Specimen']['occurrenceid'];
+            $formatDatas[$key]['Specimen']=array_merge($data['Specimen'], $data['Stratigraphy']) ;
+            
+            if (count($data['Determination'])>0) {
+                foreach ($data['Determination'] as $key2=>$determination) {
+                    $formatDatas[$key]['Determination'][$key2]=array_merge($determination, $data['Taxon'][$determination['identificationid']]) ;
+                }
+            }
+            
+            if (count($data['Bibliography'])>0) {
+                foreach ($data['Bibliography'] as $key2=>$bibliography) {
+                    $formatDatas[$key]['Bibliography'][$key2]= ['occurrenceid'=>$occurrenceid] + $bibliography ;
+                }
+            }
+            
+            if (count($data['Multimedia'])>0) {
+                foreach ($data['Multimedia'] as $key2=>$multimedia) {
+                    $formatDatas[$key]['Multimedia'][$key2]= ['occurrenceid'=>$occurrenceid] + $multimedia ;
+                }
+            }
+            $formatDatas[$key]['Recolte']=array_merge($data['Recolte'], $data['Localisation']) ;
+            $formatDatas[$key]['Recolte']['occurrenceid']= $occurrenceid;
 
-    public function generate() {
-        $csvExporter = new CsvExporter($this->datas, $this->getExportDirPath()) ;
-        $csvExporter->generateFiles() ;
+        }
+        return $formatDatas;
+    }
+     
+    public function generate() 
+    {
+        $this->formattedDatas = $this->formatDatas() ;
+        $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath()) ;
+        $csvExporter->generateForDwc() ;
         $this->csvFiles = $csvExporter->getFiles();
         
         $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
@@ -30,23 +71,22 @@ class DwcExporter extends AbstractExporter
         return $this->createZipFile();
     }
     
-    public function generateXmlMeta()
+    private function generateXmlMeta()
     {
+        $classNames=['Specimen', 'Determination', 'Recolte', 'Multimedia', 'Bibliography'] ;
         $this->dwc = new \DOMDocument('1.0', 'UTF-8');
         $this->dwc->preserveWhiteSpace = false;
         $this->dwc->formatOutput = true;
         $root = $this->dwc->createElement('archive');
         $root->setAttribute('xmlns', 'http://rs.tdwg.org/dwc/text/');
         $this->dwc->appendChild($root);
-        foreach ($this->datas as $className => $row) {
-            $this->setXmlGenericEntity($root, $className, array_keys($row[0]));
+        foreach ($classNames as $className) {
+            $this->setXmlGenericEntity($root, $className);
         }
         return $this->dwc->saveXML($root);
     }
 
     private function createZipFile() {
-        //var_dump($this->csvFiles);
-        
         $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
         $zipFilePath = $this->getExportDirPath().'/dwc.zip' ;
         $arrayFilesName=[];
@@ -113,10 +153,8 @@ class DwcExporter extends AbstractExporter
      * @param type $extension
      * @param type $keys
      */
-    private function setXmlGenericEntity(\DOMElement &$root, $extension, $keys) {
-        $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\'.ucfirst($extension).'Exporter';
-        /* @var $entityExporter \AppBundle\Business\Exporter\AbstractEntityExporter */
-        $entityExporter = new $entityExporterConstructor();
+    private function setXmlGenericEntity(\DOMElement &$root, $extension) {
+        $entityExporter = $this->getEntityExporter($extension);
         $flagCore=false;
         if ($extension == $this->getCoreName()) {
             $coreNode = $this->dwc->createElement('core');
@@ -129,6 +167,27 @@ class DwcExporter extends AbstractExporter
         $root->appendChild($coreNode);
         $this->setNodeFile($coreNode, $extension.'.csv');
         $compt = 0;
+        $keys = $entityExporter->getKeysEntity();
+        
+        if ($extension == 'Specimen') {
+            $stratigraphyExporter = new Entity\StratigraphyExporter();
+            $stratigraphyKeys = $stratigraphyExporter->getKeysEntity() ;
+            $stratigraphyKeys = $this->array_delete($stratigraphyKeys, 'occurrenceid') ;
+            $stratigraphyKeys = $this->array_delete($stratigraphyKeys, 'geologicalcontextid') ;
+            $keys = array_merge($keys, $stratigraphyKeys) ;
+        }
+        if ($extension == 'Recolte') {
+            $localisationExporter = new Entity\LocalisationExporter();
+            $localisationKeys = $localisationExporter->getKeysEntity();
+            $localisationKeys = $this->array_delete($localisationKeys, 'locationid') ;
+            $keys = array_merge($keys, $localisationKeys) ;
+        }
+        if ($extension == 'Determination') {
+            $taxonExporter = new Entity\TaxonExporter();
+            $taxonKeys = $taxonExporter->getKeysEntity() ;
+            $taxonKeys = $this->array_delete($taxonKeys, 'taxonid') ;
+            $keys = array_merge($keys, $taxonKeys) ;
+        }
         foreach ($keys as $key => $fieldName) {
             if ($fieldName == $entityExporter->getCoreIdFieldName()) {
                 $this->setIndexNode($coreNode, $key, $flagCore, $compt);
@@ -140,6 +199,9 @@ class DwcExporter extends AbstractExporter
         }
     }
 
+    private function array_delete($array, $element) {
+        return array_diff($array, [$element]);
+    }
     private function getCoreName() {
         return 'Specimen';
     }

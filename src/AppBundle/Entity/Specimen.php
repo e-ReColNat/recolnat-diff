@@ -138,13 +138,13 @@ class Specimen
     private $collection;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY", mappedBy="specimen")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY", inversedBy="specimen")
      * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
      **/
     private $stratigraphy;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", fetch="EXTRA_LAZY")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", inversedBy="specimen", fetch="EAGER")
      * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
      **/
     private $recolte;
@@ -871,5 +871,33 @@ class Specimen
     public function __toString()
     {
         return $this->catalognumber;
+    }
+    
+    public function toArray() 
+    {
+        return [
+            'occurrenceid' => $this->getOccurrenceid(),
+            'accessrights' => $this->getAccessrights(),
+            'associatedmedia' => $this->getAssociatedmedia(),
+            'associatedreferences' => $this->getAssociatedreferences(),
+            'associatedtaxa' => $this->getAssociatedtaxa(),
+            'basisofrecord' => $this->getBasisofrecord(),
+            'bibliographiccitation' => $this->getBibliographiccitation(),
+            'catalognumber' => $this->getCatalognumber(),
+            'collectioncode' => $this->getCollectioncode(),
+            'created' => $this->getCreated(),
+            'disposition' => $this->getDisposition(),
+            'institutioncode' => $this->getInstitutioncode(),
+            'lifestage' => $this->getLifestage(),
+            'modified' => $this->getModified(),
+            'occurrenceremarks' => $this->getOccurrenceremarks(),
+            'ownerinstitutioncode' => $this->getOwnerinstitutioncode(),
+            'recordnumber' => $this->getRecordnumber(),
+            'rights' => $this->getRights(),
+            'rightsholder' => $this->getRightsholder(),
+            'sex' => $this->getSex(),
+            'geologicalcontextid' => !is_null($this->getStratigraphy()) ? $this->getStratigraphy()->getGeologicalcontextid() : null, 
+            'eventid' => !is_null($this->getRecolte()) ? $this->getRecolte()->getEventid() : null, 
+        ];
     }
 }

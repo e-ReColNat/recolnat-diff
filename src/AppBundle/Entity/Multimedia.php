@@ -594,4 +594,33 @@ class Multimedia
     {
         return $this->occurrenceid;
     }
+    
+    public function __toString() {
+        return $this->getIdentifier() ;
+    }
+    
+    public function toArray()
+    {
+        return [
+            'occurrenceid'=> null,
+            'multimediaid' => $this->getMultimediaid(),
+            'audience' => $this->getAudience(),
+            'contributor' => $this->getContributor(),
+            'created' => $this->getCreated(),
+            'creator' => $this->getCreator(),
+            'description' => $this->getDescription(),
+            'discriminator' => $this->getDiscriminator(),
+            'format' => $this->getFormat(),
+            'identifier' => $this->getIdentifier(),
+            'license' => $this->getLicense(),
+            'modified' => $this->getModified(),
+            'publisher' => $this->getPublisher(),
+            'references' => $this->getReferences(),
+            'rights' => $this->getRights(),
+            'rightsholder' => $this->getRightsholder(),
+            'source' => $this->getSource(),
+            'title' => $this->getTitle(),
+            'type' => $this->getType(),
+        ];
+    }
 }

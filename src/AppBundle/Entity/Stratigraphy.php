@@ -101,7 +101,10 @@ class Stratigraphy
      */
     private $sourcefileid;
     
- 
+     /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="stratigraphy")
+     **/
+    private $specimen;
 
     /**
      * Get geologicalcontextid
@@ -524,11 +527,34 @@ class Stratigraphy
         return $this->sourcefileid;
     }
 
-        public function __toString()
+    public function __toString()
     {
         return sprintf('%s %s %s', 
                 $this->getEarliestepochorlowestseries(), 
                 $this->getEarliestperiodorlowestsystem(),
                 $this->getEarliestageorloweststage());
+    }
+    
+    public function toArray()
+    {
+        return [
+            'geologicalcontextid' => $this->getGeologicalcontextid(),
+            'bed' => $this->getBed(),
+            'earliestageorloweststage' => $this->getEarliestageorloweststage(),
+            'earliesteonorlowesteonothem' => $this->getEarliesteonorlowesteonothem(),
+            'earliestepochorlowestseries' => $this->getEarliestepochorlowestseries(),
+            'earliesteraorlowesterathem' => $this->getEarliesteraorlowesterathem(),
+            'earliestperiodorlowestsystem' => $this->getEarliestperiodorlowestsystem(),
+            'formation' => $this->getFormation(),
+            'group' => $this->getGroup(),
+            'highestbiostratigraphiczone' => $this->getHighestbiostratigraphiczone(),
+            'latestageorhigheststage' => $this->getLatestageorhigheststage(),
+            'latesteonorhighesteonothem' => $this->getLatesteonorhighesteonothem(),
+            'latestepochorhighestseries' => $this->getLatestepochorhighestseries(),
+            'latesteraorhighesterathem' => $this->getLatesteraorhighesterathem(),
+            'latestperiodorhighestsystem' => $this->getLatestperiodorhighestsystem(),
+            'lowestbiostratigraphiczone' => $this->getLowestbiostratigraphiczone(),
+            'member' => $this->getMember(),
+        ];
     }
 }
