@@ -124,68 +124,46 @@ class GenericEntityManager
     public function getEntitiesLinkedToSpecimen(\AppBundle\Entity\Specimen $specimen)
     {
         $collection =[];
-        //$statigraphy = new \AppBundle\Entity\Stratigraphy();
-        //$this->printProperties($statigraphy) ;
-        //var_dump($statigraphy->toArray());
-        //$collection['Specimen'] = $this->serialize($specimen);
-        //var_dump($specimen->serialize($collection));
-        //die();
-        //var_dump((array)($specimen));
-        //die();
-        //$normalizers = new \Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer();
-        //$norm = $normalizers->normalize($specimen);
-        /*var_dump($specimen);
-        $bibliographies = new \AppBundle\Entity\Bibliography();
-        var_dump($this->serialize($bibliographies));
-        die();*/
-        
+
         $collection['Specimen'] = $specimen->toArray();
         
         $bibliographies = $specimen->getBibliographies();
-        if (count($bibliographies) == 0) {
-            $bibliographies[] = new \AppBundle\Entity\Bibliography();
-        }
-        foreach ($bibliographies as $result) {
-            $collection['Bibliography'][] = $result->toArray();
+        if (count($bibliographies) > 0) {
+            foreach ($bibliographies as $result) {
+                $collection['Bibliography'][] = $result->toArray();
+            }
         }
         
         $determinations = $specimen->getDeterminations();
-        if (count($determinations) == 0) {
-            $determinations[] = new \AppBundle\Entity\Determination;
-        }
-        foreach ($determinations as $result) {
-            $collection['Determination'][] = $result->toArray();
-            $taxon = $result->getTaxon();
-            if (is_null($taxon)) {
-                $taxon = new \AppBundle\Entity\Taxon;
+        if (count($determinations) > 0) {
+            foreach ($determinations as $result) {
+                $collection['Determination'][] = $result->toArray();
+                $taxon = $result->getTaxon();
+                if (is_null($taxon)) {
+                    $taxon = new \AppBundle\Entity\Taxon;
+                }
+                $collection['Taxon'][$result->getIdentificationid()]= $taxon->toArray();
             }
-            $collection['Taxon'][$result->getIdentificationid()]= $taxon->toArray();
         }
         
         $recolte = $specimen->getRecolte();
-        if (count($recolte) == 0) {
-            $recolte = new \AppBundle\Entity\Recolte;
-            $localisation = new \AppBundle\Entity\Localisation;
-        }
-        else {
+        if (count($recolte) > 0) {
             $localisation = $specimen->getRecolte()->getLocalisation();
+            $collection['Recolte'] = $recolte->toArray();
+            $collection['Localisation'] = $localisation->toArray();
         }
-        $collection['Recolte'] = $recolte->toArray();
-        $collection['Localisation'] = $localisation->toArray();
         
         $multimedias = $specimen->getMultimedias();
-        if (count($multimedias) == 0) {
-            $multimedias[] = new \AppBundle\Entity\Multimedia;
-        }
-        foreach ($multimedias as $result) {
-            $collection['Multimedia'][] = $result->toArray();
+        if (count($multimedias) > 0) {
+            foreach ($multimedias as $result) {
+                $collection['Multimedia'][] = $result->toArray();
+            }
         }
         
         $statigraphy = $specimen->getStratigraphy();
-        if (count($statigraphy) == 0) {
-            $statigraphy = new \AppBundle\Entity\Stratigraphy();
+        if (count($statigraphy) > 0) {
+            $collection['Stratigraphy'] = $statigraphy->toArray();
         }
-        $collection['Stratigraphy'] = $statigraphy->toArray();
 
         return $collection;
     }

@@ -385,6 +385,8 @@ class ExportManager
         
         $datas = $genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
         $datasWithChoices=$this->getArrayDatasWithChoices($datas) ;
+        //var_dump($datasWithChoices);
+        //die();
         $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter(
                 $datasWithChoices,
                 $this->getExportDirPath(), 

@@ -50,6 +50,11 @@ abstract class AbstractExporter
     public function getExportDirPath() {
         return realpath($this->exportPath);
     }
+    
+    public function array_delete($array, $element) {
+        return array_diff($array, [$element]);
+    }
+    
     abstract public function generate();
     abstract public function formatDatas();
     

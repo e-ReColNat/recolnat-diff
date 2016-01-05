@@ -19,8 +19,10 @@ class BackendController extends Controller
      */
     public function exportAction(Request $request, $institutionCode, $filename)
     {
-        $repo=$this->getDoctrine()->getRepository('\AppBundle\Entity\Stratigraphy');
-        $stratigraphy = $repo->find(956432) ;
+        /*$repo=$this->getDoctrine()->getRepository('\AppBundle\Entity\Bibliography');
+        $biblio = $repo->findAll() ;
+        \Doctrine\Common\Util\Debug::dump($biblio);
+        die();*/
         
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
