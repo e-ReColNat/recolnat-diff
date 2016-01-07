@@ -58,30 +58,36 @@
         </tr>
         </table>
      {% endif %}
-    <a href="{{path('export', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLinkCsv">Export dwc</a>
-{#    <a href="{{path('exportold', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink">Export</a>#}
+    <a href="{{path('exportDwc', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
+        {{'downloadDwc'|trans}}
+    </a>
+    <a href="{{path('exportCsv', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
+        {{'downloadCsv'|trans}}
+    </a>
 {% endblock %}
 
 
 {% block javascripts %}
     <script type="text/javascript">
     $(document).ready(function(){
-        $(".exportLinkCsv").on('click', function(event) {
+        var modal = $("#spinnerModal") ;
+        $(".exportLink").on('click', function(event) {
             var link =$(this) ;
             var url = $(this).attr('href');
             $.ajax({
                 url : url,
-                method: "POST"
+                method: "POST",
+                beforeSend : function(){
+                    modal.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
+                }
             })
             .done(function(data) {
                 console.log(data);
             })
             .success(function(data) {
-                var path =Routing.generate('download', { path: data.file });
-                console.log(data);
-                downloadLink=$("<a>").prop('href', path).html('Download dwc');
-                link.after(downloadLink);
-            });
+                path =Routing.generate('download', { path: data.file });
+                window.location=path;
+             });
             event.preventDefault();
         })
     });

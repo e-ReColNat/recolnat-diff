@@ -146,6 +146,14 @@
                 <source>diffs</source>
                 <target>{1}différence| ]1,Inf]différences</target>
             </trans-unit>
+            <trans-unit id="37">
+                <source>downloadDwc</source>
+                <target>Télécharger au format Darwin Core</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>downloadCsv</source>
+                <target>Télécharger au format csv</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>

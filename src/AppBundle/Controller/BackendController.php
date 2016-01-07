@@ -15,30 +15,24 @@ use Symfony\Component\HttpFoundation\Response;
 class BackendController extends Controller
 {
       /**
-     * @Route("/{institutionCode}/{filename}/export", name="export")
+     * @Route("/{institutionCode}/{filename}/export/dwc", name="exportDwc")
      */
-    public function exportAction(Request $request, $institutionCode, $filename)
+    public function exportDwcAction($institutionCode, $filename)
     {
-        /*$repo=$this->getDoctrine()->getRepository('\AppBundle\Entity\Bibliography');
-        $biblio = $repo->findAll() ;
-        \Doctrine\Common\Util\Debug::dump($biblio);
-        die();*/
-        
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
-        //$exportManager->getCsv();
         $dwc = $exportManager->getDwc();
         return new JsonResponse(['file' =>  urlencode($dwc)]);
-        /*$response = new \Symfony\Component\HttpFoundation\Response ;
-        $response->headers->set('Content-Type', 'text/xml');
-        
-        $dom = new \DOMDocument("1.0");
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-        $dom->loadXML($dwc);
-        $response->setContent($dom->saveXML());
-        //echo $dom->saveXML();
-        return $response;*/
+    }
+      /**
+     * @Route("/{institutionCode}/{filename}/export/csv", name="exportCsv")
+     */
+    public function exportCsvAction($institutionCode, $filename)
+    {
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $csv = $exportManager->getCsv();
+        return new JsonResponse(['file' =>  urlencode($csv)]);
     }
     
      /**
@@ -55,47 +49,6 @@ class BackendController extends Controller
         }
 
         return $response;
-    }
-    /**
-     * @Route("/{institutionCode}/{filename}/export", name="exportold")
-     */
-    public function exportOldAction(Request $request, $institutionCode, $filename)
-    {
-        set_time_limit(0);
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
-        
-        $converterPath = realpath($this->getParameter('converter_path')) ;
-        $diffsPathName = $exportManager->getDiffHandler()->getDiffs()->getPathname();
-        $choicesPathName = $exportManager->getDiffHandler()->getChoices()->getPathname();
-        $exportPathName = $exportManager->getExportDirPath();
-        
-        $runConverter = sprintf('/bin/sh %s --context_param exportpath="%s"  --context_param diffs="%s"  --context_param choices="%s"',
-                $converterPath,$exportPathName,$diffsPathName,$choicesPathName);
-        $output=0;
-        
-        system($runConverter, $output);
-        
-        //$translator = $this->get('translator');
-        //$message = $translator->transChoice('modification.effectuee', count($choices),array('%nbModif%'=>count($choices)));
-        $this->get('session')->getFlashBag()->add(
-                'info',
-                $runConverter
-            );
-        if ($output == 4) {
-            $this->get('session')->getFlashBag()->add(
-                'error',
-                'L\'export n\'a pas pu être fait'
-            );
-        }
-        else {
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                'L\'export s\'est bien déroulé'
-            );
-        }
-        
-        return new JsonResponse(['output' =>$output]);
     }
     
     /**

@@ -55,7 +55,7 @@ abstract class AbstractExporter
         return array_diff($array, [$element]);
     }
     
-    abstract public function generate();
+    abstract public function generate(array $prefs, array $options=[]);
     abstract public function formatDatas();
     
 }

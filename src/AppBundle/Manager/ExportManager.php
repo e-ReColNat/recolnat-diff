@@ -5,7 +5,8 @@ namespace AppBundle\Manager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Manager\GenericEntityManager;
 use AppBundle\Business\DiffHandler;
-use Symfony\Component\HttpFoundation\Request ;
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Description of ExportManager
  *
@@ -17,15 +18,17 @@ class ExportManager
     private $exportPath;
     private $sessionManager;
     private $institutionCode;
+
     /** @var $genericEntityManager GenericEntityManager */
     private $genericEntityManager;
-    private $filename=null;
+    private $filename = null;
     protected $diffManager;
     protected $maxItemPerPage;
-    
+
     /** @var \AppBundle\Business\DiffHandler */
     private $diffHandler;
 
+    private $prefs ;
     /**
      * 
      * @param string $export_path
@@ -52,7 +55,7 @@ class ExportManager
     public function init($institutionCode, $filename = null)
     {
         $this->institutionCode = $institutionCode;
-        
+
         if (!is_null($filename)) {
             $this->filename = $filename;
             $fs = new \Symfony\Component\Filesystem\Filesystem();
@@ -63,91 +66,135 @@ class ExportManager
                 $fs->mkdir($this->getExportDirPath(), 0755);
             }
             chmod($this->getExportDirPath(), 0777);
-            
+
             $this->diffHandler = new DiffHandler($this->getDataDirPath(), $this->filename);
-            
+
             $doReload = false;
             $path = $this->diffHandler->getChoices()->getPathname();
             if ($this->diffHandler->getDiffs()->generateDiff) {
-                $results =$this->diffManager->init($institutionCode);
+                $results = $this->diffManager->init($institutionCode);
                 $this->sessionManager->set('diffs', $results['diffs']);
                 $this->sessionManager->set('specimensCode', $results['specimensCode']);
                 $this->sessionManager->set('stats', $results['stats']);
                 $this->diffHandler->getDiffs()->saveDiffs($results['diffs'], $results['stats'], $results['specimensCode']);
                 $this->diffHandler->getDiffs()->generateDiff = false;
-            }
-            else {
-                $results =$this->diffHandler->getDiffs()->getData();
+            } else {
+                $results = $this->diffHandler->getDiffs()->getData();
                 $this->sessionManager->set('diffs', $results['diffs']);
                 $this->sessionManager->set('specimensCode', $results['specimensCode']);
                 $this->sessionManager->set('stats', $results['stats']);
             }
-            
+
             if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $filename)) {
-                $doReload=true;
+                $doReload = true;
             }
             if (!($this->sessionManager->has('choices') ) || empty($this->sessionManager->get('choices'))) {
-                $doReload=true;
+                $doReload = true;
             }
             if ($doReload && $fs->exists($path)) {
                 $this->sessionManager->set('choices', $this->diffHandler->getChoices()->getContent());
-            }
-            else {
+            } else {
                 $this->sessionManager->set('file', $filename);
             }
         }
         return $this;
     }
 
-    public function getDiffHandler() {
+    public function getPrefs()
+    {
+        if (empty($this->prefs)) {
+            $fs = new \Symfony\Component\Filesystem\Filesystem();
+            $prefsFile = $this->getDataDirPath().'prefs.json' ;
+            if (!$fs->exists($prefsFile)) {
+                $this->createPrefsFile($prefsFile) ;
+            }
+            $handle = fopen($prefsFile, "r") ;
+            $this->prefs = json_decode(fread($handle, filesize($prefsFile)), true);
+        }
+        return $this->prefs;
+    }
+    
+    private function createPrefsFile($prefsFile)
+    {
+        $handle = fopen($prefsFile, "w") ;
+        fwrite($handle, json_encode($this->setPrefs(), JSON_PRETTY_PRINT));
+        fclose($handle) ;
+        chmod($prefsFile, 0755) ;
+    }
+    
+    private function setPrefs()
+    {
+        return [
+            "dwc" => [
+	    "csvDelimiter" => ";",
+	    "csvEnclosure" => "",
+	    "csvLineBreak" => "\n"
+	    ],
+            "csv" => [
+	    "csvDelimiter" => ";",
+	    "csvEnclosure" => "",
+	    "csvLineBreak" => "\n"
+	    ],
+            "preferedExport"  => "dwc"
+        ];
+    }
+    
+    public function getDiffHandler()
+    {
         if ($this->diffHandler instanceof DiffHandler) {
-            return $this->diffHandler ;
+            return $this->diffHandler;
         }
         return null;
     }
-    public function getSpecimenIdsAndDiffsAndStats(Request $request, $selectedClassName=null, $specimensWithChoices=[], $choicesToRemove=[])
+
+    public function getSpecimenIdsAndDiffsAndStats(Request $request, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
     {
         $session = $this->sessionManager;
-        $className=[];
-        if (is_string($selectedClassName) && $selectedClassName!='all') {$className=[$selectedClassName];}
-        if (is_array($selectedClassName)) {$className=$selectedClassName;}
+        $className = [];
+        if (is_string($selectedClassName) && $selectedClassName != 'all') {
+            $className = [$selectedClassName];
+        }
+        if (is_array($selectedClassName)) {
+            $className = $selectedClassName;
+        }
 
         if (!is_null($request->query->get('reset', null))) {
             $session->clear();
         }
-        $stats = $this->sessionManager->get('stats') ;
-        $stats = $this->diffHandler->getDiffs()->filterResults($stats, $className, $specimensWithChoices, $choicesToRemove) ;
+        $stats = $this->sessionManager->get('stats');
+        $stats = $this->diffHandler->getDiffs()->filterResults($stats, $className, $specimensWithChoices, $choicesToRemove);
         $session->set('stats', $stats);
         return [$session->get('specimensCode'), $session->get('diffs'), $stats];
     }
-    
-    public function getMaxItemPerPage(Request $request) {
+
+    public function getMaxItemPerPage(Request $request)
+    {
         $session = $this->sessionManager;
-        
-        $requestMaxItem=$request->get('maxItemPerPage', null);
+
+        $requestMaxItem = $request->get('maxItemPerPage', null);
         if (!is_null($requestMaxItem)) {
             $session->set('maxItemPerPage', (int) $requestMaxItem);
-        }
-        elseif (!$session->has('maxItemPerPage')) {
+        } elseif (!$session->has('maxItemPerPage')) {
             $session->set('maxItemPerPage', $this->maxItemPerPage);
         }
-        return $session->get('maxItemPerPage') ;
+        return $session->get('maxItemPerPage');
     }
-    
-    public function getFiles() 
+
+    public function getFiles()
     {
-        $returnDirs=[];
-        $institutionDir = $this->getDataDirPath() ;
+        $returnDirs = [];
+        $institutionDir = $this->getDataDirPath();
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && is_dir($institutionDir.$entry)) {
-                    $returnDirs[] =new \AppBundle\Business\DiffHandler($institutionDir, $entry) ;
+                if ($entry != "." && $entry != ".." && is_dir($institutionDir . $entry)) {
+                    $returnDirs[] = new \AppBundle\Business\DiffHandler($institutionDir, $entry);
                 }
             }
             closedir($handle);
         }
         return $returnDirs;
     }
+
     /**
      * 
      * @param String $institutionCode
@@ -155,8 +202,9 @@ class ExportManager
      */
     public function getDataDirPath()
     {
-        return realpath($this->exportPath) . '/' . $this->institutionCode.'/' ;
+        return realpath($this->exportPath) . '/' . $this->institutionCode . '/';
     }
+
     /**
      * 
      * @param String $institutionCode
@@ -164,8 +212,9 @@ class ExportManager
      */
     public function getExportDirPath()
     {
-        return $this->getDataDirPath() . $this->filename.'/export/' ;
+        return $this->getDataDirPath() . $this->filename . '/export/';
     }
+
     /**
      * 
      * @param String $institutionCode
@@ -173,10 +222,10 @@ class ExportManager
      */
     public function getChoicesFileName()
     {
-        if(!is_null($this->filename)) {
+        if (!is_null($this->filename)) {
             return $this->diffHandler->getChoices()->getPathname();
         }
-        return null ;
+        return null;
     }
 
     /**
@@ -197,30 +246,30 @@ class ExportManager
      */
     public function setChoice($row)
     {
-        $sessionChoices=[];
+        $sessionChoices = [];
         if ($this->sessionManager->has('choices')) {
             $sessionChoices = $this->sessionManager->get('choices');
         }
         $flag = false;
         $row['data'] = $this->genericEntityManager->getData($row['choice'], $row['className'], $row['fieldName'], $row['relationId']);
-        if (count($sessionChoices)>0) {
-            foreach ($sessionChoices as $key=>$choice) {
+        if (count($sessionChoices) > 0) {
+            foreach ($sessionChoices as $key => $choice) {
                 if (
                         $choice['className'] == $row['className'] &&
                         $choice['fieldName'] == $row['fieldName'] &&
-                        $choice['relationId'] == $row['relationId'] 
-                        ) {
-                    $sessionChoices[$key] = $row ;
+                        $choice['relationId'] == $row['relationId']
+                ) {
+                    $sessionChoices[$key] = $row;
                     $flag = true;
                 }
             }
         }
-        
+
         if (!$flag) {
             $sessionChoices[] = $row;
         }
         $this->sessionManager->set('choices', $sessionChoices);
-        $this->diffHandler->getChoices()->save($sessionChoices) ;
+        $this->diffHandler->getChoices()->save($sessionChoices);
     }
 
     /**
@@ -235,11 +284,11 @@ class ExportManager
         return [];
     }
 
-    public function getChoicesForDisplay() 
+    public function getChoicesForDisplay()
     {
-        $choices = $this->getChoices() ;
-        $returnChoices = [] ;
-        if (count($choices) >0 ) {
+        $choices = $this->getChoices();
+        $returnChoices = [];
+        if (count($choices) > 0) {
             foreach ($choices as $choice) {
                 if (!isset($returnChoices[$choice['className']])) {
                     $returnChoices[$choice['className']] = [];
@@ -252,151 +301,147 @@ class ExportManager
         }
         return $returnChoices;
     }
-    
-    public function getChoicesBySpecimenId() 
+
+    public function getChoicesBySpecimenId()
     {
-        $choices = $this->getChoices() ;
-        $returnChoices = array() ;
-        if (count($choices) >0 ) {
+        $choices = $this->getChoices();
+        $returnChoices = array();
+        if (count($choices) > 0) {
             foreach ($choices as $choice) {
                 if (!isset($returnChoices[$choice['specimenId']])) {
                     $returnChoices[$choice['specimenId']] = [];
                 }
                 unset($choice[$choice['specimenId']]);
-                $returnChoices[$choice['specimenId']][] =$choice ;
+                $returnChoices[$choice['specimenId']][] = $choice;
             }
         }
         return $returnChoices;
     }
+
     public function saveChoices()
     {
         $this->diffHandler->getChoices()->save($this->getChoices());
     }
-    public function getDatasWithChoices($entity, $className, $occurrenceId) 
+
+    public function getDatasWithChoices($entity, $className, $occurrenceId)
     {
-        $genericEntityManager = $this->genericEntityManager ;
-        $relationId=$genericEntityManager->getIdentifierValue($entity);
-        
-        $datas =$genericEntityManager->serialize($entity) ;
+        $genericEntityManager = $this->genericEntityManager;
+        $relationId = $genericEntityManager->getIdentifierValue($entity);
+
+        $datas = $genericEntityManager->serialize($entity);
         $serializeTaxon = null;
         if ($className == 'Determination') {
             $taxon = $entity->getTaxon();
             if (is_null($taxon)) {
                 $taxon = new \AppBundle\Entity\Taxon();
             }
-            $serializeTaxon = $genericEntityManager->serialize($taxon) ;
-            $datas = array_merge($datas, $serializeTaxon) ;
+            $serializeTaxon = $genericEntityManager->serialize($taxon);
+            $datas = array_merge($datas, $serializeTaxon);
         }
         if ($className == 'Recolte') {
             $localisation = $entity->getLocalisation();
             if (is_null($localisation)) {
                 $localisation = new \AppBundle\Entity\Localisation();
             }
-            $serializeLocalisation = $genericEntityManager->serialize($localisation) ;
-            $datas = array_merge($datas, $serializeLocalisation) ;
+            $serializeLocalisation = $genericEntityManager->serialize($localisation);
+            $datas = array_merge($datas, $serializeLocalisation);
         }
         if ($className == 'Specimen') {
             $stratigraphy = $entity->getStratigraphy();
             if (is_null($stratigraphy)) {
                 $stratigraphy = new \AppBundle\Entity\Stratigraphy();
             }
-            $serializeStratigraphy = $genericEntityManager->serialize($stratigraphy) ;
-            $datas = array_merge($datas, $serializeStratigraphy) ;
+            $serializeStratigraphy = $genericEntityManager->serialize($stratigraphy);
+            $datas = array_merge($datas, $serializeStratigraphy);
         }
         $this->replaceDatasWithChoices($datas, $relationId, $className);
         if (!in_array($className, ['Specimen'])) {
-            $datas = ['occurrenceid'=>$occurrenceId] + $datas;
+            $datas = ['occurrenceid' => $occurrenceId] + $datas;
         }
-        foreach ($datas as $fieldName=>$value) {
+        foreach ($datas as $fieldName => $value) {
             if ($value instanceof \DateTime) {
-                $datas[$fieldName] = $value->format('d-m-Y') ;
+                $datas[$fieldName] = $value->format('d-m-Y');
             }
         }
         return $datas;
     }
-    
-    private function getArrayDatasWithChoices($datas) 
+
+    private function getArrayDatasWithChoices($datas)
     {
-        $datasWithChoices=$datas;
-        $entitiesNameWithArray=[
+        $datasWithChoices = $datas;
+        $entitiesNameWithArray = [
             'Determination',
             'Taxon',
             'Multimedia',
             'Bibliography',
         ];
-        /*$entitiesName=[
-            'Specimen',     
-            'Bibliography',
-            'Determination',
-            'Localisation',
-            'Recolte',
-            'Stratigraphy',
-            'Taxon',
-            'Multimedia'
-        ];*/
-        //var_dump($datas);
-        //die();
-        foreach ($datas as $key=>$data) {
+        foreach ($datas as $key => $data) {
             foreach ($data as $className => $row) {
-                $key2=null;
+                $key2 = null;
                 if (in_array($className, $entitiesNameWithArray)) {
-                    foreach ($row as $key2=>$record) {
-                        foreach ($record as $fieldName=>$value) {
-                            $datasWithChoices[$key][$className][$key2][$fieldName] = $this->convertField($value) ;
+                    foreach ($row as $key2 => $record) {
+                        foreach ($record as $fieldName => $value) {
+                            $datasWithChoices[$key][$className][$key2][$fieldName] = $this->convertField($value);
                         }
-                        $this->setChoiceForEntity($datasWithChoices, $key, $className, $record, $key2) ;
+                        $this->setChoiceForEntity($datasWithChoices, $key, $className, $record, $key2);
                     }
-                }
-                else {
-                    foreach ($row as $fieldName=>$value) {
-                        $datasWithChoices[$key][$className][$fieldName] = $this->convertField($value) ;
+                } else {
+                    foreach ($row as $fieldName => $value) {
+                        $datasWithChoices[$key][$className][$fieldName] = $this->convertField($value);
                     }
-                    $this->setChoiceForEntity($datasWithChoices, $key, $className, $row) ;
+                    $this->setChoiceForEntity($datasWithChoices, $key, $className, $row);
                 }
             }
         }
         return $datasWithChoices;
     }
-    
-    private function convertField($value) {
+
+    private function convertField($value)
+    {
         if ($value instanceof \DateTime) {
-            return $value->format('d-m-Y') ;
+            return $value->format('d-m-Y');
         }
         return $value;
     }
-    
-    private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2=null)
+
+    private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2 = null)
     {
-        $choices = $this->getChoicesForEntity($className, $arrayEntity) ;
-        if (count($choices)>0) {
+        $choices = $this->getChoicesForEntity($className, $arrayEntity);
+        if (count($choices) > 0) {
             foreach ($choices as $choice) {
-                if(!is_null($key2)) {
+                if (!is_null($key2)) {
                     $datasWithChoices[$key][$className][$key2][$choice['fieldName']] = $choice['data'];
-                }
-                else {
+                } else {
                     $datasWithChoices[$key][$className][$choice['fieldName']] = $choice['data'];
                 }
             }
         }
     }
-    public function getDwc() {
-        $specimenCodes=$this->sessionManager->get('specimensCode');
-        $genericEntityManager = $this->genericEntityManager ;
-        
-        $datas = $genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
-        $datasWithChoices=$this->getArrayDatasWithChoices($datas) ;
-        //var_dump($datasWithChoices);
-        //die();
-        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter(
-                $datasWithChoices,
-                $this->getExportDirPath(), 
-                $this->genericEntityManager) ;
-        
-        //$formatDatas = $dwcExporter->formatDatas();
-        //var_dump(current($formatDatas));
-        return $dwcExporter->generate() ;
-    }
 
+    public function getCsv() 
+    {
+        $specimenCodes = $this->sessionManager->get('specimensCode');
+        $genericEntityManager = $this->genericEntityManager;
+        $datas = $genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
+        $datasWithChoices = $this->getArrayDatasWithChoices($datas);
+        $csvExporter = new \AppBundle\Business\Exporter\CsvExporter(
+                $datasWithChoices, $this->getExportDirPath(), $this->genericEntityManager);
+
+        return $csvExporter->generate($this->getPrefs());
+    }
+    
+    public function getDwc()
+    {
+        $specimenCodes = $this->sessionManager->get('specimensCode');
+        $genericEntityManager = $this->genericEntityManager;
+
+        $datas = $genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
+        $datasWithChoices = $this->getArrayDatasWithChoices($datas);
+        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter(
+                $datasWithChoices, $this->getExportDirPath(), $this->genericEntityManager);
+
+        return $dwcExporter->generate($this->getPrefs());
+    }
 
     /**
      * 
@@ -405,41 +450,43 @@ class ExportManager
      * @param string $fieldName
      * @return array
      */
-    public function getChoice($className, $relationId, $fieldName) {
+    public function getChoice($className, $relationId, $fieldName)
+    {
         $returnChoice = null;
         foreach ($this->getChoices() as $row) {
             if ($row['className'] == $className && $row['relationId'] == $relationId && $row['fieldName'] == $fieldName) {
-                $returnChoice = $row['data'] ;
+                $returnChoice = $row['data'];
             }
         }
-        return $returnChoice ;
+        return $returnChoice;
     }
-    
+
     /**
      * 
      * @param string $className
      * @param array $arrayEntity
      * @return array
      */
-    public function getChoicesForEntity($className, $arrayEntity) {
+    public function getChoicesForEntity($className, $arrayEntity)
+    {
         $returnChoices = null;
         $relationId = null;
         if (array_key_exists($this->genericEntityManager->getIdentifierName($className), $arrayEntity)) {
             $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
-        }
-        else {
-            echo $className.' '.$this->genericEntityManager->getIdentifierName($className)."<br/>";
-            var_dump($arrayEntity) ;
+        } else {
+            echo $className . ' ' . $this->genericEntityManager->getIdentifierName($className) . "<br/>";
+            var_dump($arrayEntity);
             die();
         }
 
         if (!is_null($relationId)) {
             foreach ($this->getChoices() as $row) {
                 if ($row['className'] == $className && $row['relationId'] == $relationId) {
-                    $returnChoices[] = $row ;
+                    $returnChoices[] = $row;
                 }
             }
         }
-        return $returnChoices ;
+        return $returnChoices;
     }
+
 }

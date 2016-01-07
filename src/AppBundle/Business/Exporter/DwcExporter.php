@@ -68,12 +68,15 @@ class DwcExporter extends AbstractExporter
         return $formatDatas;
     }
      
-    public function generate() 
+    public function generate(array $prefs, array $options=[]) 
     {
+        $this->setCsvDelimiter($prefs['dwc']['csvDelimiter']);
+        $this->setCsvEnclosure($prefs['dwc']['csvEnclosure']);
+        $this->setCsvLineBreak($prefs['dwc']['csvLineBreak']);
         $this->formattedDatas = $this->formatDatas() ;
         $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath()) ;
-        $csvExporter->generateForDwc($this->getCsvDelimiter(), $this->getCsvEnclosure(), $this->getCsvLineBreak()) ;
-        $this->csvFiles = $csvExporter->getFiles();
+        $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]) ;
+        //$this->csvFiles = $csvExporter->getFiles();
         
         $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
         $fileName = $this->getExportDirPath().'/meta.xml' ;
@@ -264,6 +267,4 @@ class DwcExporter extends AbstractExporter
     {
         $this->csvIgnoreHeaderLines = $csvIgnoreHeaderLines;
     }
-
-
 }
