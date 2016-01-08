@@ -256,7 +256,6 @@ class DiffManager
     
     public function generateDiff($compt) {
         $randomClassName= $this->getFullClassName($this->entitiesName[array_rand($this->entitiesName, 1)]) ;
-        //$randomClassName= $this->getFullClassName("Localisation") ;
         $metadata = $this->em->getMetadataFactory()->getMetadataFor($randomClassName) ;
         $repository = $this->em->getRepository($randomClassName);
         $identifier = $metadata->getIdentifierFieldNames() [0];
@@ -267,8 +266,6 @@ class DiffManager
                 ->getQuery()->getOneOrNullResult();
         $fields = $metadata->getFieldNames() ;
 
-        var_dump($randomClassName, $entity->{'get'.$identifier}()) ;
-        //var_dump($fields);
         // On enleve le champ de l'indentifiant
         unset($fields[array_search($identifier, $fields)]) ;
         unset($fields[array_search('dwcaid', $fields)]) ;
@@ -280,10 +277,8 @@ class DiffManager
         
         shuffle($fields) ;
         $randomFields = array_slice($fields, 0, $compt) ;
-        //var_dump($randomFields);
         $fieldMappings = $this->em->getClassMetadata($randomClassName)->fieldMappings ;
         foreach ($randomFields as $fieldName) {
-            var_dump($fieldMappings[$fieldName]);
             $setter = 'set'.$fieldName ;
             if ($fieldName[strlen($fieldName)-1] == '_') {
                 $setter ='set'.substr($fieldName, 0, -1) ;

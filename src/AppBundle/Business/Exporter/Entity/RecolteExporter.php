@@ -9,15 +9,10 @@ namespace AppBundle\Business\Exporter\Entity;
  */
 class RecolteExporter extends AbstractEntityExporter
 {
-    public function getExportProperty($fieldName) {
-        if (array_key_exists($fieldName, $this->arrayExportTerm)) {
-            return $this->arrayExportTerm[$fieldName] ;
-        }
-        else {
-            $localisationExporter = new LocalisationExporter() ;
-            return $localisationExporter->getXmlTerm($fieldName);
-        }
-        return null ;
+    public function getExportProperties()
+    {
+        $localisationExporter = new LocalisationExporter() ;
+        return array_merge($this->arrayExportTerm, $localisationExporter->getExportProperties());
     }
 
     public function setExportTerm() 

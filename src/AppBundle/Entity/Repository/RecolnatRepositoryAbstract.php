@@ -35,21 +35,6 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
             sprintf('%s.catalognumber', $alias),
         );
         return new Expr\Func('CONCAT', $concatFields);
-       /* foreach ($concatFields as $field) {
-            $qb->expr()->concat($concatFields[0], $concatFields[1], $concatFields[2]) ;
-        }*/
-        /*foreach ($concatFields as $field) {
-            if (!isset($searchIn)) {
-                $searchIn = $qb->expr()->concat($qb->expr()->literal(''), $field);
-                continue;
-            }
-
-            $searchIn = $qb->expr()->concat(
-                $searchIn,
-                $qb->expr()->concat($qb->expr()->literal(''), $field)
-            );
-        }*/
-        //return $searchIn;
     }
     
     protected function orderResultSetBySpecimenId($resultsSet, $identifierName)

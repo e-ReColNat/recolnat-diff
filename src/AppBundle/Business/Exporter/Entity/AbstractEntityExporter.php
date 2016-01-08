@@ -40,7 +40,8 @@ abstract class AbstractEntityExporter
 
     public function getKeysEntity()
     {
-        return array_keys($this->entity->toArray());
+        //return array_keys($this->entity->toArray());
+        return array_keys($this->getExportProperties());
     }
 
     public function exportToCsv($fieldName)
@@ -55,10 +56,14 @@ abstract class AbstractEntityExporter
 
     public function getExportProperty($fieldName)
     {
-        if (array_key_exists($fieldName, $this->arrayExportTerm)) {
-            return $this->arrayExportTerm[$fieldName];
+        if (array_key_exists($fieldName, $this->getExportProperties())) {
+            return $this->getExportProperties()[$fieldName];
         }
         return null;
+    }
+    public function getExportProperties()
+    {
+        return $this->arrayExportTerm;
     }
 
 

@@ -15,6 +15,7 @@ class FrontController extends Controller
     {
         return $this->redirectToRoute('index') ;
     }
+    
     /**
      * @Route("/files", name="index")
      */
@@ -24,12 +25,12 @@ class FrontController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode);
         $files = $exportManager->getFiles() ;
-        var_dump($files) ;
         return $this->render('default/index.html.twig', array(
             'institutionCode' => $institutionCode,
             'files' => $files,
         ));
     }
+    
     /**
      * @Route("{institutionCode}/{filename}/view", name="viewfile")
      */

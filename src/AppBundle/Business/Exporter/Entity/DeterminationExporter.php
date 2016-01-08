@@ -9,8 +9,13 @@ namespace AppBundle\Business\Exporter\Entity;
  */
 class DeterminationExporter extends AbstractEntityExporter
 {
-
-    public function getExportProperty($fieldName) {
+    public function getExportProperties()
+    {
+        $taxonExporter = new TaxonExporter() ;
+        return array_merge($this->arrayExportTerm, $taxonExporter->getExportProperties());
+    }
+    
+    /*public function getExportProperty($fieldName) {
         if (array_key_exists($fieldName, $this->arrayExportTerm)) {
             return $this->arrayExportTerm[$fieldName] ;
         }
@@ -19,7 +24,7 @@ class DeterminationExporter extends AbstractEntityExporter
             return $taxonExporter->getXmlTerm($fieldName);
         }
         return null ;
-    }
+    }*/
     public function setExportTerm() 
     {
         $this->arrayExportTerm = [

@@ -55,6 +55,14 @@ abstract class AbstractExporter
         return array_diff($array, [$element]);
     }
     
+    public static function convertField($value)
+    {
+        if ($value instanceof \DateTime) {
+            return $value->format('d-m-Y');
+        }
+        return $value;
+    }
+    
     abstract public function generate(array $prefs, array $options=[]);
     abstract public function formatDatas();
     

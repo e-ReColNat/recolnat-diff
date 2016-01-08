@@ -16,6 +16,8 @@ class CsvExporter extends AbstractExporter
     protected $csvEnclosure = "\"";
     protected $csvLineBreak = "\t";
 
+    private $fieldsName=[] ;
+    private $acceptedFieldsName = [];
     public function formatDatas()
     {
         
@@ -34,6 +36,7 @@ class CsvExporter extends AbstractExporter
             $this->setCsvLineBreak($prefs['csv']['csvLineBreak']);
         }
         $filesHandler = [];
+        $entityExporters = [] ;
         $entitiesNameWithArray = [
             'Determination',
             'Multimedia',
@@ -42,7 +45,9 @@ class CsvExporter extends AbstractExporter
         foreach ($this->datas as $key => $record) {
             foreach ($record as $className => $datasPerClass) {
                 /* @var $entityExporter AppBundle\Business\Exporter\Entity\AbstractEntityExporter */
-                $entityExporter = $this->getEntityExporter($className);
+                if (!isset($entityExporters[$className])) {
+                    $entityExporters[$className] = $this->getEntityExporter($className);
+                }
                 $writeHeaders = false;
 
                 // Creation des fichiers
@@ -54,24 +59,25 @@ class CsvExporter extends AbstractExporter
 
                 // Ecrit les entêtes en première ligne de csv
                 if ($writeHeaders) {
-                    if (in_array($className, $entitiesNameWithArray)) {
-                        $fieldsName[$className] = array_keys(current($datasPerClass));
+                    $this->fieldsName[$className] = $entityExporters[$className]->getKeysEntity();
+                    /*if (in_array($className, $entitiesNameWithArray)) {
+                        $this->fieldsName[$className] = array_keys(current($datasPerClass));
                     } else {
-                        $fieldsName[$className] = array_keys($datasPerClass);
-                    }
-                    $this->writeToFile($filesHandler[$className], $fieldsName[$className]);
+                        $this->fieldsName[$className] = array_keys($datasPerClass);
+                    }*/
+                    $this->writeToFile($filesHandler[$className], $this->fieldsName[$className]);
                     $writeHeaders = false;
                 }
 
                 if (in_array($className, $entitiesNameWithArray)) {
                     // Traitement des extensions qui peuvent avoir plusieurs enregistrements pour un specimen
                     foreach ($datasPerClass as $arrayRecord) {
-                        $filteredDatas = $this->filterDatas($arrayRecord, $entityExporter, $fieldsName[$className]);
+                        $filteredDatas = $this->filterDatas($arrayRecord, $entityExporters[$className], $className);
                         $this->writeToFile($filesHandler[$className], $filteredDatas);
                     }
                 } else {
                     // traitement des extensions n'ayant qu'un enregistrement par specimen
-                    $filteredDatas = $this->filterDatas($datasPerClass, $entityExporter, $fieldsName[$className]);
+                    $filteredDatas = $this->filterDatas($datasPerClass, $entityExporters[$className], $className);
                     $this->writeToFile($filesHandler[$className], $filteredDatas);
                 }
             }
@@ -100,60 +106,7 @@ class CsvExporter extends AbstractExporter
         
         return $zipFilePath ;
     }
-    
-    public function generateForDwc($delimiter, $enclosure, $lineBreak)
-    {
-        $this->setCsvDelimiter($delimiter);
-        $this->setCsvEnclosure($enclosure);
-        $this->setCsvLineBreak($lineBreak);
-        
-        $filesHandler = [];
-        $entitiesNameWithArray = [
-            'Determination',
-            'Multimedia',
-            'Bibliography',
-        ];
-        foreach ($this->datas as $key => $record) {
-            foreach ($record as $className => $datasPerClass) {
-                /* @var $entityExporter AppBundle\Business\Exporter\Entity\AbstractEntityExporter */
-                $entityExporter = $this->getEntityExporter($className);
-                $writeHeaders = false;
 
-                // Creation des fichiers
-                if (!isset($filesHandler[$className])) {
-                    $this->createFile($className);
-                    $filesHandler[$className] = fopen($this->files[$className]->getPathname(), 'w');
-                    $writeHeaders = true;
-                }
-
-                // Ecrit les entêtes en première ligne de csv
-                if ($writeHeaders) {
-                    if (in_array($className, $entitiesNameWithArray)) {
-                        $fieldsName[$className] = array_keys(current($datasPerClass));
-                    } else {
-                        $fieldsName[$className] = array_keys($datasPerClass);
-                    }
-                    $this->writeToFile($filesHandler[$className], $fieldsName[$className]);
-                    $writeHeaders = false;
-                }
-
-                if (in_array($className, $entitiesNameWithArray)) {
-                    // Traitement des extensions qui peuvent avoir plusieurs enregistrements pour un specimen
-                    foreach ($datasPerClass as $arrayRecord) {
-                        $filteredDatas = $this->filterDatas($arrayRecord, $entityExporter, $fieldsName[$className]);
-                        $this->writeToFile($filesHandler[$className], $filteredDatas);
-                    }
-                } else {
-                    // traitement des extensions n'ayant qu'un enregistrement par specimen
-                    $filteredDatas = $this->filterDatas($datasPerClass, $entityExporter, $fieldsName[$className]);
-                    $this->writeToFile($filesHandler[$className], $filteredDatas);
-                }
-            }
-        }
-        foreach ($filesHandler as $className => $fileHandler) {
-            fclose($fileHandler);
-        }
-    }
 
     /**
      * Ecrit une ligne dans le fichier et ajoute un retour à la ligne
@@ -191,34 +144,34 @@ class CsvExporter extends AbstractExporter
      *  renvoie les données filtrées en fonction des champs acceptés
      * @param array $datas
      * @param Entity\AbstractEntityExporter $entityExporter
-     * @param array $fieldsName
+     * @param string $className
      * @return array
      */
-    public function filterDatas($datas, $entityExporter, $fieldsName = [])
+    public function filterDatas($datas, $entityExporter, $className)
     {
         $filteredDatas = [];
         if (count($datas) > 0) {
-            $acceptedFieldsName = [];
-            if (empty($fieldsName)) {
-                $fieldsName = $entityExporter->getKeysEntity();
-            }
-            foreach ($fieldsName as $fieldName) {
-                if ($entityExporter->exportToCsv($fieldName)) {
-                    $acceptedFieldsName[] = $fieldName;
+            if (!isset($this->acceptedFieldsName[$className])) {
+                foreach ($this->fieldsName[$className] as $fieldName) {
+                    if ($entityExporter->exportToCsv($fieldName)) {
+                        $this->acceptedFieldsName[$className][] = $fieldName;
+                    }
                 }
             }
 
-            if (count($acceptedFieldsName) > 0) {
-                foreach ($datas as $fieldName => $value) {
-                    if (in_array($fieldName, $acceptedFieldsName)) {
-                        $filteredDatas[$fieldName] = $datas[$fieldName];
+            if (count($this->acceptedFieldsName[$className]) > 0) {
+                foreach ($this->acceptedFieldsName[$className] as $acceptedFieldName) {
+                    if (isset($datas[$acceptedFieldName])) {
+                        $filteredDatas[$acceptedFieldName] = $datas[$acceptedFieldName] ;
+                    }
+                    else {
+                        $filteredDatas[$acceptedFieldName] = null;
                     }
                 }
             }
         }
         return $filteredDatas;
     }
-
     /**
      * http://stackoverflow.com/questions/3933668/convert-array-into-csv
      * Formats a line (passed as a fields  array) as CSV and returns the CSV as a string.
@@ -239,7 +192,7 @@ class CsvExporter extends AbstractExporter
             // Enclose fields containing $delimiter, $enclosure or whitespace
             //if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
             if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc})/", $field)) {
-                $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
+                $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $this->convertField($field)) . $enclosure;
             } else {
                 $output[] = $field;
             }
@@ -250,17 +203,17 @@ class CsvExporter extends AbstractExporter
 
     public function getCsvDelimiter()
     {
-        return $this->csvDelimiter;
+        return stripcslashes($this->csvDelimiter);
     }
 
     public function getCsvEnclosure()
     {
-        return $this->csvEnclosure;
+        return stripcslashes($this->csvEnclosure);
     }
 
     public function getCsvLineBreak()
     {
-        return $this->csvLineBreak;
+        return stripcslashes($this->csvLineBreak);
     }
 
     public function getCsvIgnoreHeaderLines()

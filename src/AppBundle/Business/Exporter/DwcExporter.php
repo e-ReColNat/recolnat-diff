@@ -32,6 +32,8 @@ class DwcExporter extends AbstractExporter
         $formatDatas=[];
         $emptyStratigraphy = new \AppBundle\Entity\Stratigraphy() ;
         $arrayEmptyStratigraphy = $emptyStratigraphy->toArray();
+        $emptyLocalisation = new \AppBundle\Entity\Localisation() ;
+        $arrayEmptyLocalisation = $emptyLocalisation->toArray();
         foreach ($this->datas as $key=>$data) {
             $formatDatas[$key]=[];
             $occurrenceid=$data['Specimen']['occurrenceid'];
@@ -42,7 +44,14 @@ class DwcExporter extends AbstractExporter
             
             if (isset($data['Determination']) && count($data['Determination'])>0) {
                 foreach ($data['Determination'] as $key2=>$determination) {
-                    $formatDatas[$key]['Determination'][$key2]=array_merge($determination, $data['Taxon'][$determination['identificationid']]) ;
+                    $taxon = $determination['Taxon'] ;
+                    unset($determination['Taxon']);
+                    if (is_array($taxon)) {
+                        $formatDatas[$key]['Determination'][$key2]= array_merge($determination, $taxon) ;
+                    }
+                    else {
+                        $formatDatas[$key]['Determination'][$key2]= $determination ;
+                    }
                 }
             }
             
@@ -57,13 +66,13 @@ class DwcExporter extends AbstractExporter
                     $formatDatas[$key]['Multimedia'][$key2]= ['occurrenceid'=>$occurrenceid] + $multimedia ;
                 }
             }
+            
             if (isset($data['Recolte']) && count($data['Recolte'])>0) {
                 if (isset($data['Localisation']) && count($data['Localisation'])>0) {
                     $formatDatas[$key]['Recolte']=array_merge($data['Recolte'], $data['Localisation']) ;
                 }
                 $formatDatas[$key]['Recolte']['occurrenceid']= $occurrenceid;
             }
-
         }
         return $formatDatas;
     }
@@ -76,7 +85,6 @@ class DwcExporter extends AbstractExporter
         $this->formattedDatas = $this->formatDatas() ;
         $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath()) ;
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]) ;
-        //$this->csvFiles = $csvExporter->getFiles();
         
         $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
         $fileName = $this->getExportDirPath().'/meta.xml' ;
@@ -171,23 +179,26 @@ class DwcExporter extends AbstractExporter
         $keys = $entityExporter->getKeysEntity();
         
         if ($extension == 'Specimen') {
-            $stratigraphyExporter = new Entity\StratigraphyExporter();
+            //$keys = $this->array_delete($keys, 'geologicalcontextid') ;
+            /*$stratigraphyExporter = new Entity\StratigraphyExporter();
             $stratigraphyKeys = $stratigraphyExporter->getKeysEntity() ;
             $stratigraphyKeys = $this->array_delete($stratigraphyKeys, 'occurrenceid') ;
             $stratigraphyKeys = $this->array_delete($stratigraphyKeys, 'geologicalcontextid') ;
-            $keys = array_merge($keys, $stratigraphyKeys) ;
+            $keys = array_merge($keys, $stratigraphyKeys) ;*/
         }
         if ($extension == 'Recolte') {
-            $localisationExporter = new Entity\LocalisationExporter();
+            $keys = $this->array_delete($keys, 'locationid') ;
+            /*$localisationExporter = new Entity\LocalisationExporter();
             $localisationKeys = $localisationExporter->getKeysEntity();
             $localisationKeys = $this->array_delete($localisationKeys, 'locationid') ;
-            $keys = array_merge($keys, $localisationKeys) ;
+            $keys = array_merge($keys, $localisationKeys) ;*/
         }
         if ($extension == 'Determination') {
-            $taxonExporter = new Entity\TaxonExporter();
+            $keys= $this->array_delete($keys, 'taxonid') ;
+            /*$taxonExporter = new Entity\TaxonExporter();
             $taxonKeys = $taxonExporter->getKeysEntity() ;
             $taxonKeys = $this->array_delete($taxonKeys, 'taxonid') ;
-            $keys = array_merge($keys, $taxonKeys) ;
+            $keys = array_merge($keys, $taxonKeys) ;*/
         }
         $keys = $this->array_delete($keys, 'sourcefileid') ;
         foreach ($keys as $key => $fieldName) {

@@ -24,7 +24,6 @@ class MultimediaExtension extends \Twig_Extension
 
     public function getThumb($url, $width) {
         $parseUrl = parse_url($url) ;
-        //var_dump($parseUrl);
         switch ($parseUrl['host']) {
             case "dsiphoto.mnhn.fr" :
                 return "http://imager.mnhn.fr/imager/v".$width . $parseUrl['path'] ;

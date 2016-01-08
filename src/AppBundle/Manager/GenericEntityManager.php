@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+
 /**
  * Description of EntityManager
  *
@@ -31,7 +32,6 @@ class GenericEntityManager
     protected $translator;
     protected $stats = array();
     protected $excludeFieldsName = [];
-
 
     public function __construct(EntityManager $emR, EntityManager $emI, DataCollectorTranslator $translator)
     {
@@ -54,10 +54,10 @@ class GenericEntityManager
     {
         if (!is_object($entity)) {
             try {
-                $fullClassName= $this->getFullClassName($entity) ;
-                $entity = new $fullClassName ;
+                $fullClassName = $this->getFullClassName($entity);
+                $entity = new $fullClassName;
             } catch (\Exception $ex) {
-                throw new \Exception(sprintf('class %s n\'existe pas', $this->getFullClassName($entity) ));
+                throw new \Exception(sprintf('class %s n\'existe pas', $this->getFullClassName($entity)));
             }
         }
         $meta = $this->emR->getClassMetadata(get_class($entity));
@@ -69,10 +69,10 @@ class GenericEntityManager
     {
         if (!is_object($entity)) {
             try {
-                $fullClassName= $this->getFullClassName($entity) ;
-                $entity = new $fullClassName ;
+                $fullClassName = $this->getFullClassName($entity);
+                $entity = new $fullClassName;
             } catch (\Exception $ex) {
-                throw new \Exception(sprintf('class %s n\'existe pas', $this->getFullClassName($entity) ));
+                throw new \Exception(sprintf('class %s n\'existe pas', $this->getFullClassName($entity)));
             }
         }
         $meta = $this->emR->getClassMetadata(get_class($entity));
@@ -87,7 +87,7 @@ class GenericEntityManager
         if (strtolower($base) == 'recolnat') {
             $em = $this->emR;
         }
-        $entities = $em->getRepository($this->getFullClassName($className))->findBySpecimenCodeUnordered($specimenCodes);
+        $entities = $em->getRepository($this->getFullClassName($className))->findAllBySpecimenCodeUnordered($specimenCodes);
         return $entities;
     }
 
@@ -98,75 +98,44 @@ class GenericEntityManager
 
     public function getEntitiesLinkedToSpecimens($base, $specimenCodes)
     {
-        $specimens = $this->getEntitiesBySpecimenCodes($base, 'Specimen', $specimenCodes);
-         if (count($specimens)>0) {
-            foreach ($specimens as $key=>$specimen) {
-            $specimens[$key] = $this->getEntitiesLinkedToSpecimen($specimen);
-            }
-         }
-         return $specimens;
+        return $this->getEntitiesBySpecimenCodes($base, 'Specimen', $specimenCodes);
     }
-    
-    public function printProperties($entity) {
-        $uow = $this->emR->getUnitOfWork();
-        $className = get_class($entity);
-        $entityPersister = $uow->getEntityPersister($className);
-        $classMetadata = $entityPersister->getClassMetadata();
-        foreach ($classMetadata->columnNames as $columnName) {
-            echo sprintf('\'%s\' => $this->get%s(),<br >', $columnName, ucfirst($columnName)) ;
-        }
-    }
+
+
     /**
-     * 
-     * @param \AppBundle\Entity\Specimen $specimen
+     * Reformat le tableau généré par doctrine 
+     * @param array $specimen
      * @return array
      */
-    public function getEntitiesLinkedToSpecimen(\AppBundle\Entity\Specimen $specimen)
-    {
-        $collection =[];
-
-        $collection['Specimen'] = $specimen->toArray();
+    public function formatArraySpecimen(array $specimen) {
+        $formattedSpecimen = [] ;
+        $formattedSpecimen['Bibliography'] = $specimen['bibliographies'] ;
+        unset($specimen['bibliographies']);
         
-        $bibliographies = $specimen->getBibliographies();
-        if (count($bibliographies) > 0) {
-            foreach ($bibliographies as $result) {
-                $collection['Bibliography'][] = $result->toArray();
-            }
+        $formattedSpecimen['Determination'] = $specimen['determinations'] ;
+        foreach($formattedSpecimen['Determination'] as $key => $determination) {
+            $formattedSpecimen['Determination'][$key]['Taxon'] = $formattedSpecimen['Determination'][$key]['taxon'] ;
+            unset($formattedSpecimen['Determination'][$key]['taxon']);
         }
+        unset($specimen['determinations']);
         
-        $determinations = $specimen->getDeterminations();
-        if (count($determinations) > 0) {
-            foreach ($determinations as $result) {
-                $collection['Determination'][] = $result->toArray();
-                $taxon = $result->getTaxon();
-                if (is_null($taxon)) {
-                    $taxon = new \AppBundle\Entity\Taxon;
-                }
-                $collection['Taxon'][$result->getIdentificationid()]= $taxon->toArray();
-            }
-        }
+        $formattedSpecimen['Multimedia'] = $specimen['multimedias'] ;
+        unset($specimen['multimedias']);
         
-        $recolte = $specimen->getRecolte();
-        if (count($recolte) > 0) {
-            $localisation = $specimen->getRecolte()->getLocalisation();
-            $collection['Recolte'] = $recolte->toArray();
-            $collection['Localisation'] = $localisation->toArray();
-        }
+        $formattedSpecimen['Stratigraphy'] = $specimen['stratigraphy'] ;
+        unset($specimen['stratigraphy']);
         
-        $multimedias = $specimen->getMultimedias();
-        if (count($multimedias) > 0) {
-            foreach ($multimedias as $result) {
-                $collection['Multimedia'][] = $result->toArray();
-            }
-        }
+        $formattedSpecimen['Recolte'] = $specimen['recolte'] ;
+        unset($specimen['recolte']);
+        $formattedSpecimen['Localisation'] = $formattedSpecimen['Recolte']['localisation'] ;
+        unset($formattedSpecimen['Recolte']['localisation']);
+        unset($specimen['Recolte']['localisation']);
         
-        $statigraphy = $specimen->getStratigraphy();
-        if (count($statigraphy) > 0) {
-            $collection['Stratigraphy'] = $statigraphy->toArray();
-        }
-
-        return $collection;
+        $formattedSpecimen['Specimen'] = $specimen ;
+        
+        return $formattedSpecimen ;
     }
+
     public function getData($base, $className, $fieldName, $id)
     {
         $fullClassName = $this->getFullClassName($className);
@@ -212,58 +181,59 @@ class GenericEntityManager
         return \IntlDateFormatter::create(
                         Locale::getDefault(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
     }
-/*
-    public function serialize($entity)
-    {
-        $className = get_class($entity);
 
-        $uow = $this->emR->getUnitOfWork();
-        $entityPersister = $uow->getEntityPersister($className);
-        $classMetadata = $entityPersister->getClassMetadata();
+    /*
+      public function serialize($entity)
+      {
+      $className = get_class($entity);
 
-        $result = array();
-        foreach ($uow->getOriginalEntityData($entity) as $field => $value) {
-            if (isset($classMetadata->associationMappings[$field])) {
-                $assoc = $classMetadata->associationMappings[$field];
+      $uow = $this->emR->getUnitOfWork();
+      $entityPersister = $uow->getEntityPersister($className);
+      $classMetadata = $entityPersister->getClassMetadata();
 
-                // Only owning side of x-1 associations can have a FK column.
-                if (!$assoc['isOwningSide'] || !($assoc['type'] & \Doctrine\ORM\Mapping\ClassMetadata::TO_ONE)) {
-                    continue;
-                }
+      $result = array();
+      foreach ($uow->getOriginalEntityData($entity) as $field => $value) {
+      if (isset($classMetadata->associationMappings[$field])) {
+      $assoc = $classMetadata->associationMappings[$field];
 
-                if ($value !== null) {
-                    $newValId = $uow->getEntityIdentifier($value);
-                }
+      // Only owning side of x-1 associations can have a FK column.
+      if (!$assoc['isOwningSide'] || !($assoc['type'] & \Doctrine\ORM\Mapping\ClassMetadata::TO_ONE)) {
+      continue;
+      }
 
-                $targetClass = $this->emR->getClassMetadata($assoc['targetEntity']);
-                $owningTable = $entityPersister->getOwningTable($field);
+      if ($value !== null) {
+      $newValId = $uow->getEntityIdentifier($value);
+      }
 
-                foreach ($assoc['joinColumns'] as $joinColumn) {
-                    $sourceColumn = $joinColumn['name'];
-                    $targetColumn = $joinColumn['referencedColumnName'];
+      $targetClass = $this->emR->getClassMetadata($assoc['targetEntity']);
+      $owningTable = $entityPersister->getOwningTable($field);
 
-                    if ($value === null) {
-                        $result[$sourceColumn] = null;
-                    } else if ($targetClass->containsForeignIdentifier) {
-                        $result[$sourceColumn] = $newValId[$targetClass->getFieldForColumn($targetColumn)];
-                    } else {
-                        $result[$sourceColumn] = $newValId[$targetClass->fieldNames[$targetColumn]];
-                    }
-                }
-            } elseif (isset($classMetadata->columnNames[$field])) {
-                $columnName = $classMetadata->columnNames[$field];
-                $result[$columnName] = $value;
-            }
-        }
-        return $result;
-    }
+      foreach ($assoc['joinColumns'] as $joinColumn) {
+      $sourceColumn = $joinColumn['name'];
+      $targetColumn = $joinColumn['referencedColumnName'];
 
-    public function deserialize(Array $data)
-    {
-        list($class, $result) = $data;
+      if ($value === null) {
+      $result[$sourceColumn] = null;
+      } else if ($targetClass->containsForeignIdentifier) {
+      $result[$sourceColumn] = $newValId[$targetClass->getFieldForColumn($targetColumn)];
+      } else {
+      $result[$sourceColumn] = $newValId[$targetClass->fieldNames[$targetColumn]];
+      }
+      }
+      } elseif (isset($classMetadata->columnNames[$field])) {
+      $columnName = $classMetadata->columnNames[$field];
+      $result[$columnName] = $value;
+      }
+      }
+      return $result;
+      }
 
-        $uow = $this->em->getUnitOfWork();
-        return $uow->createEntity($class, $result);
-    }
-*/
+      public function deserialize(Array $data)
+      {
+      list($class, $result) = $data;
+
+      $uow = $this->em->getUnitOfWork();
+      return $uow->createEntity($class, $result);
+      }
+     */
 }

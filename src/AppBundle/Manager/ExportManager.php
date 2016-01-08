@@ -113,7 +113,7 @@ class ExportManager
         }
         return $this->prefs;
     }
-    
+
     private function createPrefsFile($prefsFile)
     {
         $handle = fopen($prefsFile, "w") ;
@@ -128,12 +128,12 @@ class ExportManager
             "dwc" => [
 	    "csvDelimiter" => ";",
 	    "csvEnclosure" => "",
-	    "csvLineBreak" => "\n"
+	    "csvLineBreak" => "\\n"
 	    ],
             "csv" => [
 	    "csvDelimiter" => ";",
 	    "csvEnclosure" => "",
-	    "csvLineBreak" => "\n"
+	    "csvLineBreak" => "\\n"
 	    ],
             "preferedExport"  => "dwc"
         ];
@@ -323,7 +323,7 @@ class ExportManager
         $this->diffHandler->getChoices()->save($this->getChoices());
     }
 
-    public function getDatasWithChoices($entity, $className, $occurrenceId)
+    /*public function getDatasWithChoices($entity, $className, $occurrenceId)
     {
         $genericEntityManager = $this->genericEntityManager;
         $relationId = $genericEntityManager->getIdentifierValue($entity);
@@ -364,19 +364,22 @@ class ExportManager
             }
         }
         return $datas;
-    }
+    }*/
 
     private function getArrayDatasWithChoices($datas)
     {
-        $datasWithChoices = $datas;
+        $genericEntityManager = $this->genericEntityManager;
+        $datasWithChoices = [];
         $entitiesNameWithArray = [
             'Determination',
             'Taxon',
             'Multimedia',
             'Bibliography',
         ];
-        foreach ($datas as $key => $data) {
-            foreach ($data as $className => $row) {
+        foreach ($datas as $key => $specimen) {
+            $arraySpecimenWithEntities = $genericEntityManager->formatArraySpecimen($specimen) ;
+            $datasWithChoices[$key] = $arraySpecimenWithEntities;
+            foreach ($arraySpecimenWithEntities as $className => $row) {
                 $key2 = null;
                 if (in_array($className, $entitiesNameWithArray)) {
                     foreach ($row as $key2 => $record) {
@@ -386,17 +389,19 @@ class ExportManager
                         $this->setChoiceForEntity($datasWithChoices, $key, $className, $record, $key2);
                     }
                 } else {
-                    foreach ($row as $fieldName => $value) {
-                        $datasWithChoices[$key][$className][$fieldName] = $this->convertField($value);
+                    if (!empty($row)) {
+                        foreach ($row as $fieldName => $value) {
+                            $datasWithChoices[$key][$className][$fieldName] = $this->convertField($value);
+                        }
+                        $this->setChoiceForEntity($datasWithChoices, $key, $className, $row);
                     }
-                    $this->setChoiceForEntity($datasWithChoices, $key, $className, $row);
                 }
             }
         }
         return $datasWithChoices;
     }
 
-    private function convertField($value)
+    public static function convertField($value)
     {
         if ($value instanceof \DateTime) {
             return $value->format('d-m-Y');
@@ -475,7 +480,6 @@ class ExportManager
             $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
         } else {
             echo $className . ' ' . $this->genericEntityManager->getIdentifierName($className) . "<br/>";
-            var_dump($arrayEntity);
             die();
         }
 

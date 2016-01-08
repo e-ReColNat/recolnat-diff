@@ -78,6 +78,7 @@
                 url : url,
                 method: "POST",
                 beforeSend : function(){
+                    modal.find('.modal-body h4').remove();
                     modal.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
                 }
             })

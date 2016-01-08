@@ -50,6 +50,32 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         $qb->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
+    
+    /**
+     * 
+     * @param array $specimenCodes
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function findAllBySpecimenCodeUnordered($specimenCodes)
+    {
+        $qb = $this->createQueryBuilder('s');
+        
+        $query = $qb
+                ->select('s, b, d, t, m, st, r, l')
+                ->leftJoin('s.bibliographies', 'b')
+                ->leftJoin('s.determinations', 'd')
+                ->leftJoin('d.taxon', 't')
+                ->leftJoin('s.multimedias', 'm')
+                ->leftJoin('s.stratigraphy', 'st')
+                ->leftJoin('s.recolte', 'r')
+                ->leftJoin('r.localisation', 'l')
+                ;
+                
+        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $qb->setParameter('specimenCodes', $specimenCodes);
+        //return $query->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        return $query->getQuery()->getArrayResult();
+    }
     /**
      * 
      * @param array $specimenCodes

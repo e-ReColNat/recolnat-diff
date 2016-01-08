@@ -10,16 +10,12 @@ namespace AppBundle\Business\Exporter\Entity;
 class SpecimenExporter extends AbstractEntityExporter
 {
 
-    public function getExportProperty($fieldName) {
-        if (array_key_exists($fieldName, $this->arrayExportTerm)) {
-            return $this->arrayExportTerm[$fieldName] ;
-        }
-        else {
-            $stratigraphyExporter = new StratigraphyExporter() ;
-            return $stratigraphyExporter->getXmlTerm($fieldName);
-        }
-        return null ;
+     public function getExportProperties()
+    {
+        $stratigraphyExporter = new StratigraphyExporter() ;
+        return array_merge($this->arrayExportTerm, $stratigraphyExporter->getExportProperties());
     }
+    
     public function setExportTerm() 
     {
         $this->arrayExportTerm = [
@@ -38,11 +34,11 @@ class SpecimenExporter extends AbstractEntityExporter
             'modified' => 'http://purl.org/dc/terms/modified',
             'occurrenceremarks' => 'http://rs.tdwg.org/dwc/terms/occurrenceRemarks',
             'ownerinstitutioncode' => 'http://rs.tdwg.org/dwc/terms/ownerInstitutionCode',
-            'recordnumber' => 'http://rs.tdwg.org/dwc/terms/institutionCode',
+            'recordnumber' => 'http://rs.tdwg.org/dwc/terms/recordNumber',
             'rights' => 'http://purl.org/dc/terms/rights',
             'rightsholder' => 'http://purl.org/dc/terms/rightsHolder',
             'sex' => 'http://rs.tdwg.org/dwc/terms/sex',
-            'geologicalcontextid' => 'http://rs.tdwg.org/dwc/terms/geologicalContextID',
+            //'geologicalcontextid' => 'http://rs.tdwg.org/dwc/terms/geologicalContextID',
             'eventid' => 'http://rs.tdwg.org/dwc/terms/eventID',
         ];
     }
