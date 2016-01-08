@@ -1,7 +1,7 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\Expr\From;
 /**
  * SpecimenRepository
  *
@@ -87,9 +87,11 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         
         $query = $qb
                 ->select('s')
+                //->add('from', new From('\AppBundle\Entity\Specimen', 's', 's.occurrenceid'), false)
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
+        //return $query->getQuery()->getResult() ;
         return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'occurrenceid') ;
     }
 
