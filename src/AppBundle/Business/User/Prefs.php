@@ -98,4 +98,17 @@ class Prefs
             $this->setCsvLineBreak($prefs['csvLineBreak']) ;
         }
     }
+    public function toArray() {
+         return [
+            "dwcDelimiter" => $this->getDwcDelimiter(),
+            "dwcEnclosure" => $this->getDwcEnclosure(),
+            "dwcLineBreak" => $this->getDwcLineBreak(),
+            "csvDelimiter" => $this->getCsvDelimiter(),
+            "csvEnclosure" => $this->getCsvEnclosure(),
+            "csvLineBreak" => $this->getDwcLineBreak(),
+        ];
+    }
+    public function toJson() {
+     return  json_encode($this->toArray(), JSON_PRETTY_PRINT);
+    }
 }

@@ -46,40 +46,43 @@ class User
 
     public function getPrefs()
     {
-        if (empty($this->prefs)) {
-            $fs = new \Symfony\Component\Filesystem\Filesystem();
-            $prefsFile = $this->getDataDirPath() . 'prefs.json';
-            if (!$fs->exists($prefsFile)) {
-                $this->createPrefsFile($prefsFile);
-            }
-            $handle = fopen($prefsFile, "r");
-            $this->prefs = new Prefs();
-            $this->prefs->load(json_decode(fread($handle, filesize($prefsFile)), true));
+        $this->prefs = new Prefs();
+        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        
+        if (!$fs->exists($this->getPrefsFileName())) {
+            $this->createPrefsFile();
         }
+        
+        $handle = fopen($this->getPrefsFileName(), "r");
+        $this->prefs->load(json_decode(fread($handle, filesize($this->getPrefsFileName())), true));
         return $this->prefs;
     }
 
-    private function createPrefsFile($prefsFile)
+    private function createPrefsFile()
     {
-        $handle = fopen($prefsFile, "w");
-        fwrite($handle, json_encode($this->setPrefs(), JSON_PRETTY_PRINT));
+        $handle = fopen($this->getPrefsFileName(), "w");
+        fwrite($handle, $this->prefs->toJson());
         fclose($handle);
-        chmod($prefsFile, 0755);
+        chmod($this->getPrefsFileName(), 0755);
     }
 
-    private function setPrefs()
+    public function savePrefs()
     {
-        return [
-            "dwcDelimiter" => ";",
-            "dwcEnclosure" => "",
-            "dwcLineBreak" => "\\n",
-            "csvDelimiter" => ";",
-            "csvEnclosure" => "",
-            "csvLineBreak" => "\\n",
-            "preferedExport" => "dwc"
-        ];
+        
     }
 
+    public function getPrefsFileName() {
+        return $this->getDataDirPath() . 'prefs.json';
+    }
+    public function getPrefsFile() {
+        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        
+        if (!$fs->exists($this->getPrefsFileName())) {
+            $this->createPrefsFile($this->getPrefsFileName());
+        }
+        return $prefsFile ;
+        
+    }
     /**
      * 
      * @param String $institutionCode
