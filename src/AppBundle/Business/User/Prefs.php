@@ -77,5 +77,25 @@ class Prefs
         $this->csvLineBreak = $csvLineBreak;
     }
 
-
+    public function load(array $prefs) {
+        if (isset($prefs['dwcDelimiter'])) {
+            $this->setDwcDelimiter($prefs['dwcDelimiter']) ;
+        }
+        if (isset($prefs['dwcEnclosure'])) {
+            $this->setDwcEnclosure($prefs['dwcEnclosure']) ;
+        }
+        if (isset($prefs['dwcLineBreak'])) {
+            $this->setDwcLineBreak($prefs['dwcLineBreak']) ;
+        }
+        
+        if (isset($prefs['csvDelimiter'])) {
+            $this->setCsvDelimiter($prefs['csvDelimiter']) ;
+        }
+        if (isset($prefs['csvEnclosure'])) {
+            $this->setCsvEnclosure($prefs['csvEnclosure']) ;
+        }
+        if (isset($prefs['csvLineBreak'])) {
+            $this->setCsvLineBreak($prefs['csvLineBreak']) ;
+        }
+    }
 }

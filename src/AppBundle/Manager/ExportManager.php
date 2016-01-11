@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Manager\GenericEntityManager;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Business\User\User ;
 
 /**
  * Description of ExportManager
@@ -24,6 +25,8 @@ class ExportManager
     private $filename = null;
     protected $diffManager;
     protected $maxItemPerPage;
+    /* @var $user AppBundle\Business\User\User */
+    protected $user ;
 
     /** @var \AppBundle\Business\DiffHandler */
     private $diffHandler;
@@ -55,19 +58,19 @@ class ExportManager
     public function init($institutionCode, $filename = null)
     {
         $this->institutionCode = $institutionCode;
+        $this->user = new User($this->exportPath, $this->maxItemPerPage) ;
+        $this->user->init($institutionCode);
 
         if (!is_null($filename)) {
             $this->filename = $filename;
             $fs = new \Symfony\Component\Filesystem\Filesystem();
-            if (!$fs->exists($this->getDataDirPath())) {
-                $fs->mkdir($this->getDataDirPath(), 0755);
-            }
+
             if (!$fs->exists($this->getExportDirPath())) {
                 $fs->mkdir($this->getExportDirPath(), 0755);
             }
             chmod($this->getExportDirPath(), 0777);
 
-            $this->diffHandler = new DiffHandler($this->getDataDirPath(), $this->filename);
+            $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->filename);
 
             $doReload = false;
             $path = $this->diffHandler->getChoices()->getPathname();
@@ -98,45 +101,6 @@ class ExportManager
             }
         }
         return $this;
-    }
-
-    public function getPrefs()
-    {
-        if (empty($this->prefs)) {
-            $fs = new \Symfony\Component\Filesystem\Filesystem();
-            $prefsFile = $this->getDataDirPath().'prefs.json' ;
-            if (!$fs->exists($prefsFile)) {
-                $this->createPrefsFile($prefsFile) ;
-            }
-            $handle = fopen($prefsFile, "r") ;
-            $this->prefs = json_decode(fread($handle, filesize($prefsFile)), true);
-        }
-        return $this->prefs;
-    }
-
-    private function createPrefsFile($prefsFile)
-    {
-        $handle = fopen($prefsFile, "w") ;
-        fwrite($handle, json_encode($this->setPrefs(), JSON_PRETTY_PRINT));
-        fclose($handle) ;
-        chmod($prefsFile, 0755) ;
-    }
-    
-    private function setPrefs()
-    {
-        return [
-            "dwc" => [
-	    "csvDelimiter" => ";",
-	    "csvEnclosure" => "",
-	    "csvLineBreak" => "\\n"
-	    ],
-            "csv" => [
-	    "csvDelimiter" => ";",
-	    "csvEnclosure" => "",
-	    "csvLineBreak" => "\\n"
-	    ],
-            "preferedExport"  => "dwc"
-        ];
     }
     
     public function getDiffHandler()
@@ -183,7 +147,7 @@ class ExportManager
     public function getFiles()
     {
         $returnDirs = [];
-        $institutionDir = $this->getDataDirPath();
+        $institutionDir = $this->user->getDataDirPath();
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != ".." && is_dir($institutionDir . $entry)) {
@@ -200,19 +164,9 @@ class ExportManager
      * @param String $institutionCode
      * @return String
      */
-    public function getDataDirPath()
-    {
-        return realpath($this->exportPath) . '/' . $this->institutionCode . '/';
-    }
-
-    /**
-     * 
-     * @param String $institutionCode
-     * @return String
-     */
     public function getExportDirPath()
     {
-        return $this->getDataDirPath() . $this->filename . '/export/';
+        return $this->user->getDataDirPath() . $this->filename . '/export/';
     }
 
     /**
@@ -323,49 +277,6 @@ class ExportManager
         $this->diffHandler->getChoices()->save($this->getChoices());
     }
 
-    /*public function getDatasWithChoices($entity, $className, $occurrenceId)
-    {
-        $genericEntityManager = $this->genericEntityManager;
-        $relationId = $genericEntityManager->getIdentifierValue($entity);
-
-        $datas = $genericEntityManager->serialize($entity);
-        $serializeTaxon = null;
-        if ($className == 'Determination') {
-            $taxon = $entity->getTaxon();
-            if (is_null($taxon)) {
-                $taxon = new \AppBundle\Entity\Taxon();
-            }
-            $serializeTaxon = $genericEntityManager->serialize($taxon);
-            $datas = array_merge($datas, $serializeTaxon);
-        }
-        if ($className == 'Recolte') {
-            $localisation = $entity->getLocalisation();
-            if (is_null($localisation)) {
-                $localisation = new \AppBundle\Entity\Localisation();
-            }
-            $serializeLocalisation = $genericEntityManager->serialize($localisation);
-            $datas = array_merge($datas, $serializeLocalisation);
-        }
-        if ($className == 'Specimen') {
-            $stratigraphy = $entity->getStratigraphy();
-            if (is_null($stratigraphy)) {
-                $stratigraphy = new \AppBundle\Entity\Stratigraphy();
-            }
-            $serializeStratigraphy = $genericEntityManager->serialize($stratigraphy);
-            $datas = array_merge($datas, $serializeStratigraphy);
-        }
-        $this->replaceDatasWithChoices($datas, $relationId, $className);
-        if (!in_array($className, ['Specimen'])) {
-            $datas = ['occurrenceid' => $occurrenceId] + $datas;
-        }
-        foreach ($datas as $fieldName => $value) {
-            if ($value instanceof \DateTime) {
-                $datas[$fieldName] = $value->format('d-m-Y');
-            }
-        }
-        return $datas;
-    }*/
-
     private function getArrayDatasWithChoices($datas)
     {
         $genericEntityManager = $this->genericEntityManager;
@@ -432,7 +343,7 @@ class ExportManager
         $csvExporter = new \AppBundle\Business\Exporter\CsvExporter(
                 $datasWithChoices, $this->getExportDirPath(), $this->genericEntityManager);
 
-        return $csvExporter->generate($this->getPrefs());
+        return $csvExporter->generate($this->user->getPrefs());
     }
     
     public function getDwc()
@@ -445,7 +356,7 @@ class ExportManager
         $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter(
                 $datasWithChoices, $this->getExportDirPath(), $this->genericEntityManager);
 
-        return $dwcExporter->generate($this->getPrefs());
+        return $dwcExporter->generate($this->user->getPrefs());
     }
 
     /**

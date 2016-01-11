@@ -2,6 +2,8 @@
 
 namespace AppBundle\Business\Exporter;
 
+use AppBundle\Business\User\Prefs ;
+
 /**
  * Description of CsvExporter
  *
@@ -23,17 +25,17 @@ class CsvExporter extends AbstractExporter
         
     }
 
-    public function generate(array $prefs, array $options=[])
+    public function generate(Prefs $prefs, array $options=[])
     {
         if (isset($options['dwc']) && $options['dwc'] == true) {
-            $this->setCsvDelimiter($prefs['dwc']['csvDelimiter']);
-            $this->setCsvEnclosure($prefs['dwc']['csvEnclosure']);
-            $this->setCsvLineBreak($prefs['dwc']['csvLineBreak']);
+            $this->setCsvDelimiter($prefs->getDwcDelimiter());
+            $this->setCsvEnclosure($prefs->getDwcEnclosure());
+            $this->setCsvLineBreak($prefs->getDwcLineBreak());
         }
         else {
-            $this->setCsvDelimiter($prefs['csv']['csvDelimiter']);
-            $this->setCsvEnclosure($prefs['csv']['csvEnclosure']);
-            $this->setCsvLineBreak($prefs['csv']['csvLineBreak']);
+            $this->setCsvDelimiter($prefs->getCsvDelimiter());
+            $this->setCsvEnclosure($prefs->getCsvEnclosure());
+            $this->setCsvLineBreak($prefs->getCsvLineBreak());
         }
         $filesHandler = [];
         $entityExporters = [] ;

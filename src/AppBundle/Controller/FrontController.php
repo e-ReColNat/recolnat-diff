@@ -23,7 +23,7 @@ class FrontController extends Controller
     {
         $institutionCode = 'MHNAIX';
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode);
+        $exportManager = $this->get('exportManager')->init($institutionCode, 'AIX');
         $files = $exportManager->getFiles() ;
         return $this->render('default/index.html.twig', array(
             'institutionCode' => $institutionCode,
@@ -69,11 +69,14 @@ class FrontController extends Controller
                 }
             }
         };
-        array_walk($sortedStats, $callbackCount);
+        if (is_array($sortedStats)) {
+            array_walk($sortedStats, $callbackCount);
+            uasort($sortedStats, function($a, $b) {
+                return count(array_values($a)) < count(array_values($b)) ? 1 : -1;
+            });
+        }
         array_walk($choices, $callbackCountChoices);
-        uasort($sortedStats, function($a, $b) {
-            return count(array_values($a)) < count(array_values($b)) ? 1 : -1;
-        });
+        
 
         $total['sum'] = array_sum($total);
         $totalChoices['sum'] = array_sum($totalChoices);

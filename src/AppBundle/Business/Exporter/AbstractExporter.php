@@ -2,6 +2,7 @@
 
 namespace AppBundle\Business\Exporter;
 
+use AppBundle\Business\User\Prefs ;
 /**
  * Description of Exporter
  *
@@ -63,7 +64,7 @@ abstract class AbstractExporter
         return $value;
     }
     
-    abstract public function generate(array $prefs, array $options=[]);
+    abstract public function generate(Prefs $prefs, array $options=[]);
     abstract public function formatDatas();
     
 }

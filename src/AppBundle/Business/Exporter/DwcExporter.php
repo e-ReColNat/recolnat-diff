@@ -3,6 +3,7 @@
 namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\Exporter\AbstractExporter;
+use AppBundle\Business\User\Prefs ;
 
 /**
  * Description of DwcExporter
@@ -77,11 +78,11 @@ class DwcExporter extends AbstractExporter
         return $formatDatas;
     }
      
-    public function generate(array $prefs, array $options=[]) 
+    public function generate(Prefs $prefs, array $options=[]) 
     {
-        $this->setCsvDelimiter($prefs['dwc']['csvDelimiter']);
-        $this->setCsvEnclosure($prefs['dwc']['csvEnclosure']);
-        $this->setCsvLineBreak($prefs['dwc']['csvLineBreak']);
+        $this->setCsvDelimiter($prefs->getDwcDelimiter());
+        $this->setCsvEnclosure($prefs->getDwcEnclosure());
+        $this->setCsvLineBreak($prefs->getDwcLineBreak());
         $this->formattedDatas = $this->formatDatas() ;
         $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath()) ;
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]) ;
