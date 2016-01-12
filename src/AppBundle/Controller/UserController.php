@@ -41,7 +41,7 @@ class UserController extends Controller
         $user = $this->get('userManager');
         $user->init($institutionCode);
 
-        $prefs = new Prefs();
+        $prefs = $user->getPrefs();
         $form = $this->createForm(UserPrefsType::class, $prefs);
         
         $form->handleRequest($request);
