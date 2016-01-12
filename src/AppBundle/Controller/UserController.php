@@ -48,10 +48,7 @@ class UserController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->savePrefs($prefs) ;
-            var_dump($prefs) ;
         }
-
-        
     
         return $this->render('user/editPrefs.html.twig', array(
                     'institutionCode' => $institutionCode,
