@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * Description of UserPrefs
@@ -17,13 +18,13 @@ class UserPrefsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('dwcDelimiter')
-            ->add('dwcEnclosure')
-            ->add('dwcLineBreak')
-            ->add('csvDelimiter')
-            ->add('csvEnclosure')
-            ->add('csvLineBreak')
-            ->add('save', SubmitType::class)
+            ->add('dwcDelimiter', TextType::class, array('label' => 'prefs.dwcDelimiter'))
+            ->add('dwcEnclosure', TextType::class, array('label' => 'prefs.dwcEnclosure', 'required' => false))
+            ->add('dwcLineBreak', TextType::class, array('label' => 'prefs.dwcLineBreak'))
+            ->add('csvDelimiter', TextType::class, array('label' => 'prefs.csvDelimiter'))
+            ->add('csvEnclosure', TextType::class, array('label' => 'prefs.csvEnclosure', 'required' => false))
+            ->add('csvLineBreak', TextType::class, array('label' => 'prefs.csvLineBreak'))
+            ->add('save', SubmitType::class, array('label' => 'prefs.save'))
         ;
     }
     

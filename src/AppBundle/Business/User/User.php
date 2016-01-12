@@ -66,9 +66,12 @@ class User
         chmod($this->getPrefsFileName(), 0755);
     }
 
-    public function savePrefs()
+    public function savePrefs(Prefs $prefs)
     {
-        
+        $handle = fopen($this->getPrefsFileName(), "w");
+        fwrite($handle, $prefs->toJson());
+        fclose($handle);
+        chmod($this->getPrefsFileName(), 0755);
     }
 
     public function getPrefsFileName() {

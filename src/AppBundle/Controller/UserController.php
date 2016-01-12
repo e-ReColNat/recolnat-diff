@@ -47,9 +47,7 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-        // ... perform some action, such as saving the task to the database
-
-            //return $this->redirectToRoute('task_success');
+            $user->savePrefs($prefs) ;
             var_dump($prefs) ;
         }
 

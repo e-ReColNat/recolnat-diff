@@ -3,12 +3,14 @@
 {% set sumSpecimens = 0 %}
 {% block body %}
     <ul>
-    {% for file in files %}
-        <li>
-            <a href="{{ path('viewfile', {'filename':file.getFilename, 'institutionCode':institutionCode }) }}">{{file.getFilename }}</a>&nbsp;
-            {{'creele'|trans}} {{ file.getCTime|date("d/m/Y H:i:s") }}&nbsp;
-            {{'modifiele'|trans}} {{ file.getMTime|date("d/m/Y H:i:s") }}&nbsp;
-        </li>
-    {% endfor %}
+        {% for file in files %}
+            <li>
+                <a href="{{ path('viewfile', {'filename':file.getFilename, 'institutionCode':institutionCode }) }}">{{file.getFilename}}</a>
+                <ul>
+                    <li>{{'fichier.creele'|trans({'%date%': file.getCTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
+                    <li>{{'fichier.modifiele'|trans({'%date%': file.getMTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
+                </ul>
+            </li>
+        {% endfor %}
     </ul>
 {% endblock %}

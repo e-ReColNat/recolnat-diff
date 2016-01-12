@@ -1,5 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block  body %}
-<a href="{{ path('editPrefsUser', {'institutionCode': institutionCode}) }}">{{ 'editPrefs' | trans }}</a>
+    <h1 class="page-header">{{'prefs.title' | trans}}</h1>
+    <ul>
+        <li>{{ 'dwc-a' | trans }}
+            <ul>
+                <li>{{ 'prefs.dwcDelimiter' | trans }} : {{ prefs.dwcDelimiter}}</li>
+                <li>{{ 'prefs.dwcEnclosure' | trans }} : {{ prefs.dwcEnclosure}}</li>
+                <li>{{ 'prefs.dwcLineBreak' | trans }} : {{ prefs.dwcLineBreak}}</li>
+            </ul>
+        </li>
+        <li>{{ 'csv' | trans }}
+            <ul>
+                <li>{{ 'prefs.csvDelimiter' | trans }} : {{ prefs.csvDelimiter}}</li>
+                <li>{{ 'prefs.csvEnclosure' | trans }} : {{ prefs.csvEnclosure}}</li>
+                <li>{{ 'prefs.csvLineBreak' | trans }} : {{ prefs.csvLineBreak}}</li>
+            </ul>
+        </li>
+    </ul>
+
+    <a href="{{ path('editPrefsUser', {'institutionCode': institutionCode}) }}">{{ 'prefs.edit' | trans }}</a>
 {% endblock %}
