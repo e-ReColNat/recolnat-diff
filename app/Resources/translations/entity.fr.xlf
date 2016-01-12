@@ -586,6 +586,10 @@
                 <source>label.taxon</source> 
                 <target state="translated">{0,1}taxon|]1,Inf]taxons</target> 
             </trans-unit>
+            <trans-unit id="147" approved="yes">
+                <source>label.all</source> 
+                <target state="translated">Toutes</target> 
+            </trans-unit>
         </body>
     </file>
 </xliff>

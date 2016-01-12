@@ -86,7 +86,14 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         $qb = $this->createQueryBuilder('s');
         
         $query = $qb
-                ->select('s')
+                ->select('s, b, d, t, m, st, r, l')
+                ->leftJoin('s.bibliographies', 'b')
+                ->leftJoin('s.determinations', 'd')
+                ->leftJoin('d.taxon', 't')
+                ->leftJoin('s.multimedias', 'm')
+                ->leftJoin('s.stratigraphy', 'st')
+                ->leftJoin('s.recolte', 'r')
+                ->leftJoin('r.localisation', 'l')
                 //->add('from', new From('\AppBundle\Entity\Specimen', 's', 's.occurrenceid'), false)
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
