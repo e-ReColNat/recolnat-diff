@@ -85,7 +85,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
     {
         $qb = $this->createQueryBuilder('s');
         
-        $query = $qb
+        $qb
                 ->select('s, b, d, t, m, st, r, l')
                 ->leftJoin('s.bibliographies', 'b')
                 ->leftJoin('s.determinations', 'd')
@@ -98,8 +98,10 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
+        $query = $qb->getQuery();
+        $query->useResultCache('cache_key', 300);
         //return $query->getQuery()->getResult() ;
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'occurrenceid') ;
+        return $this->orderResultSetBySpecimenId($query->getResult(), 'occurrenceid') ;
     }
 
     /**
