@@ -122,11 +122,6 @@ class Taxon
     private $scientificnameauthorship;
 
     /** 
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $sourcefileid;
-
-    /** 
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $specificepithet;
@@ -677,30 +672,6 @@ class Taxon
     public function getScientificnameauthorship()
     {
         return $this->scientificnameauthorship;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Taxon
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     /**

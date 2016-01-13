@@ -92,11 +92,6 @@ class Multimedia
     private $source;
 
     /** 
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $sourcefileid;
-
-    /** 
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $title;
@@ -487,30 +482,6 @@ class Multimedia
     public function getSource()
     {
         return $this->source;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Multimedia
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     /**

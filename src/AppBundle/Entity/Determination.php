@@ -60,11 +60,6 @@ class Determination
     private $modified;
 
     /** 
-     * @ORM\Column(type="string", length=50, nullable=false)
-     */
-    private $sourcefileid;
-
-    /** 
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $typestatus;
@@ -311,30 +306,6 @@ class Determination
     public function getModified()
     {
         return $this->modified;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Determination
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     /**

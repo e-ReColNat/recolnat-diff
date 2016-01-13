@@ -95,11 +95,6 @@ class Stratigraphy
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $member;
-
-    /** 
-     * @ORM\Column(type="string", length=50, nullable=false)
-     */
-    private $sourcefileid;
     
      /**
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="stratigraphy")
@@ -501,30 +496,6 @@ class Stratigraphy
     public function getMember()
     {
         return $this->member;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Stratigraphy
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     public function __toString()

@@ -102,11 +102,6 @@ class Localisation
     private $municipality;
 
     /** 
-     * @ORM\Column(type="string", length=50, nullable=false)
-     */
-    private $sourcefileid;
-
-    /** 
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $stateprovince;
@@ -551,30 +546,6 @@ class Localisation
     public function getMunicipality()
     {
         return $this->municipality;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Localisation
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     /**

@@ -77,11 +77,6 @@ class Recolte
     private $smonth;
 
     /** 
-     * @ORM\Column(type="string", length=50, nullable=false)
-     */
-    private $sourcefileid;
-
-    /** 
      * @ORM\Column(type="integer", nullable=true, length=4)
      */
     private $syear;
@@ -398,30 +393,6 @@ class Recolte
     public function getSmonth()
     {
         return $this->smonth;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Recolte
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Manager;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * Description of DiffInterface

@@ -57,11 +57,6 @@ class Bibliography
     private $source;
 
     /** 
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $sourcefileid;
-
-    /** 
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $subject;
@@ -288,30 +283,6 @@ class Bibliography
     public function getSource()
     {
         return $this->source;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Bibliography
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     /**

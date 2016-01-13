@@ -126,11 +126,6 @@ class Specimen
      */
     private $sex;
 
-    /** 
-     * @ORM\Column(type="string", length=50, nullable=false)
-     */
-    private $sourcefileid;
-
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Collection", inversedBy="specimens", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
@@ -714,30 +709,6 @@ class Specimen
     public function getSex()
     {
         return $this->sex;
-    }
-
-    /**
-     * Set sourcefileid
-     *
-     * @param string $sourcefileid
-     *
-     * @return Specimen
-     */
-    public function setSourcefileid($sourcefileid)
-    {
-        $this->sourcefileid = $sourcefileid;
-
-        return $this;
-    }
-
-    /**
-     * Get sourcefileid
-     *
-     * @return string
-     */
-    public function getSourcefileid()
-    {
-        return $this->sourcefileid;
     }
 
     /**

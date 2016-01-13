@@ -139,6 +139,7 @@ class DiffManager
         $fieldsName = $fields ;
         $arrayFieldsTypeR=[] ;
         $arrayFieldsTypeI=[] ;
+        var_dump($fieldsName) ;
         foreach ($fieldsName as $key=>$fieldName) {
             if (strtolower($metadata->getTypeOfField($fieldName)) === 'text') {
                 $arrayFieldsTypeR[$key] =sprintf('dbms_lob.substr( %s.%s, %d, 1 )', $aliasR, $fieldName, self::LENGTH_TEXT) ;
@@ -175,6 +176,9 @@ class DiffManager
                     $arrayFieldsTypeI[$key] = sprintf('%s.%s',$aliasI, 'order_') ;
                     break;
                 case 'determinations' : 
+                case 'sourcefileid' : 
+                case 'hascoordinates' : 
+                case 'dwcataxonid' : 
                     unset($arrayFieldsTypeR[$key]);
                     unset($arrayFieldsTypeI[$key]);
                     break;
@@ -186,6 +190,7 @@ class DiffManager
             $aliasSpecimenR = $aliasR ;
             $aliasSpecimenI = $aliasI ;
         }
+        var_dump($arrayFieldsTypeR);
         $arrayFieldsTypeR[] = $this->getSpecimenUniqueIdClause($aliasSpecimenR) ;
         $arrayFieldsTypeI[] = $this->getSpecimenUniqueIdClause($aliasSpecimenI) ;
         return ['recolnat'=>$arrayFieldsTypeR, 'institution'=>$arrayFieldsTypeI] ;
