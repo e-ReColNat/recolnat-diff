@@ -102,7 +102,6 @@ class FrontController extends Controller
     */
     public function diffsAction(Request $request, $institutionCode, $filename, $selectedClassName = "all", $page = 1)
     {
-        //if ($selectedClassName == 'all') {$selectedClassName=[];}
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $this->get('session') ;
         /* @var $exportManager \AppBundle\Manager\ExportManager */
@@ -119,11 +118,12 @@ class FrontController extends Controller
         
         list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
 
-        $specimensRecolnat = $this->getDoctrine() ->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
-        $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
-
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($stats['summary'], $page, $maxItemPerPage);
+        $specimensCode = array_keys($pagination->getItems());
+        
+        $specimensRecolnat = $this->getDoctrine() ->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
+        $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
 
         return $this->render('default/viewDiffs.html.twig', array(
             'institutionCode' => $institutionCode,

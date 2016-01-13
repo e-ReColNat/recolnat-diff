@@ -2,8 +2,6 @@
 <ul class="nav nav-sidebar sidebar-choices">
 {% for specimenId, classWithDiff in stats.summary %}
     <li>
-                {% set specimen = attribute(specimensRecolnat, specimenId) | first %}
-
                 {% set taxon = attribute(stats.taxons, specimenId) %}
 
                 {% set path='' %}
