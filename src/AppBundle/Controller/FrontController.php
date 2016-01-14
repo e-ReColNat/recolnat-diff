@@ -25,9 +25,13 @@ class FrontController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, 'AIX');
         $files = $exportManager->getFiles() ;
+        /* @var $institution \AppBundle\Entity\Institution */
+        $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
+                ->findOneBy(['institutioncode' => $institutionCode]) ;
         return $this->render('default/index.html.twig', array(
             'institutionCode' => $institutionCode,
             'files' => $files,
+            'institution' => $institution,
         ));
     }
     
@@ -39,6 +43,9 @@ class FrontController extends Controller
         if (!is_null($request->query->get('reset', null))) {
             $this->get('session')->clear();
         }
+        /* @var $institution \AppBundle\Entity\Institution */
+        $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
+                ->findOneBy(['institutioncode' => $institutionCode]) ;
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
 
@@ -89,6 +96,7 @@ class FrontController extends Controller
             'diffs' => $diffs,
             'totalChoices' => $totalChoices,
             'total'=> $total,
+            'institution' => $institution,
         ));
     }
     

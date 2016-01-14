@@ -2,6 +2,8 @@
 
 {% set sumSpecimens = 0 %}
 {% block body %}
+    <h1 class="page-header">{{'welcome' | trans({'%name%' : institution.institutionCode},'user') }}</h1>
+    <h2>{{'listFiles' | trans({},'user') }}</h2>
     <ul>
         {% for file in files %}
             <li>

@@ -15,40 +15,38 @@
         {% include 'default/helpers/linkSpecimenFull.html.twig' %}
         <span class="row">
             <div class="col-sm-6">
-                {{'label.institution.fields.institutioncode' | trans({},'entity') }} <span>{{collection.institution.institutioncode}}</span><br>
-                {{'label.collection.fields.collectioncode' | trans({},'entity') }} <span>{{collection.collectioncode}}</span><br>
                 {% if taxon.family is not empty %}
-                    {{'label.taxon.fields.family' | trans({},'entity') }} <span>{{taxon.family}}</span><br>
+                    {{'label.taxon.fields.family' | trans({},'entity') }} : <span>{{taxon.family}}</span><br>
                 {% endif %}
                 {% if taxon.genus is not empty %}
-                    {{'label.taxon.fields.genus' | trans({},'entity') }} <span>{{taxon.genus}}</span><br>
+                    {{'label.taxon.fields.genus' | trans({},'entity') }} : <span>{{taxon.genus}}</span><br>
                 {% endif %}
                 {% if taxon.scientificname is not empty %}
-                    {{'label.taxon.fields.scientificname' | trans({},'entity') }} <span>{{taxon.scientificname}}</span><br>
+                    {{'label.taxon.fields.scientificname' | trans({},'entity') }} : <span>{{taxon.scientificname}}</span><br>
                 {% endif %}
             </div>
             <div class="col-sm-6">
                 {% if localisation is not empty %}
                     {% if localisation.country is not empty %}
-                        {{'label.localisation.fields.country' | trans({},'entity') }} <span>{{localisation.country}}</span><br>
+                        {{'label.localisation.fields.country' | trans({},'entity') }} : <span>{{localisation.country}}</span><br>
                     {% endif %}
                     {% if localisation.county is not empty %}
-                        {{'label.localisation.fields.county' | trans({},'entity') }} <span>{{localisation.county}}</span><br>
+                        {{'label.localisation.fields.county' | trans({},'entity') }} : <span>{{localisation.county}}</span><br>
                     {% endif %}
                     {% if localisation.locality is not empty %}
-                        {{'label.localisation.fields.locality' | trans({},'entity') }} <span>{{localisation.locality}}</span><br>
+                        {{'label.localisation.fields.locality' | trans({},'entity') }} : <span>{{localisation.locality}}</span><br>
                     {% endif %}
                     {% if localisation.verbatimlocality is not empty %}
-                        {{'label.localisation.fields.verbatimlocality' | trans({},'entity') }} <span>{{localisation.verbatimlocality}}</span><br>
+                        {{'label.localisation.fields.verbatimlocality' | trans({},'entity') }} : <span>{{localisation.verbatimlocality}}</span><br>
                     {% endif %}
                     {% if recolte.recordedby is not empty %}
-                        {{'label.recolte.fields.recordedby' | trans({},'entity') }} <span>{{recolte.recordedby}}</span><br>
+                        {{'label.recolte.fields.recordedby' | trans({},'entity') }} : <span>{{recolte.recordedby}}</span><br>
                     {% endif %}
                     {% if recolte.fieldnumber is not empty %}
-                        {{'label.recolte.fields.fieldnumber' | trans({},'entity') }} <span>{{recolte.fieldnumber}}</span><br>
+                        {{'label.recolte.fields.fieldnumber' | trans({},'entity') }} : <span>{{recolte.fieldnumber}}</span><br>
                     {% endif %}
                     {% if recolte.eventdate is not empty %}
-                        {{'label.recolte.fields.eventdate' | trans({},'entity') }} <span>{{recolte.eventdate}}</span><br>
+                        {{'label.recolte.fields.eventdate' | trans({},'entity') }} : <span>{{recolte.eventdate}}</span><br>
                     {% endif %}
                 {% endif %}
             </div>

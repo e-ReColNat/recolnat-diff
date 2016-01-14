@@ -2,6 +2,7 @@
 
 {% set sumSpecimens = 0 %}
 {% block body %}
+    <h1 class="page-header">{{'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ filename},'user') }}</h1>
     {% if stats is not empty %}
         <table class="table table-bordered">
             <tr>

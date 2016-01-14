@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="fr" target-language="fr" datatype="plaintext" original="messages.xliff">
+        <body>
+            <trans-unit id="1" approved="yes">
+                <source>welcome</source> 
+                <target>Bienvenue %name%</target>
+            </trans-unit>
+            <trans-unit id="2" approved="yes">
+                <source>listFiles</source> 
+                <target>Liste des collections consultables sur l'outil de gestion des différences</target>
+            </trans-unit>
+            <trans-unit id="3" approved="yes">
+                <source>file.stats.title</source> 
+                <target>Statistiques pour la collection %name%</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
