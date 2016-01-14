@@ -679,7 +679,6 @@ class Localisation
             'minimumdepthinmeters' => $this->getMinimumdepthinmeters(),
             'minimumelevationinmeters' => $this->getMinimumelevationinmeters(),
             'municipality' => $this->getMunicipality(),
-            'sourcefileid' => $this->getSourcefileid(),
             'stateprovince' => $this->getStateprovince(),
             'verbatimcountry' => $this->getVerbatimcountry(),
             'verbatimelevation' => $this->getVerbatimelevation(),

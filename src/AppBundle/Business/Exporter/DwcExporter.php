@@ -179,27 +179,11 @@ class DwcExporter extends AbstractExporter
         $compt = 0;
         $keys = $entityExporter->getKeysEntity();
         
-        if ($extension == 'Specimen') {
-            //$keys = $this->array_delete($keys, 'geologicalcontextid') ;
-            /*$stratigraphyExporter = new Entity\StratigraphyExporter();
-            $stratigraphyKeys = $stratigraphyExporter->getKeysEntity() ;
-            $stratigraphyKeys = $this->array_delete($stratigraphyKeys, 'occurrenceid') ;
-            $stratigraphyKeys = $this->array_delete($stratigraphyKeys, 'geologicalcontextid') ;
-            $keys = array_merge($keys, $stratigraphyKeys) ;*/
-        }
         if ($extension == 'Recolte') {
             $keys = $this->array_delete($keys, 'locationid') ;
-            /*$localisationExporter = new Entity\LocalisationExporter();
-            $localisationKeys = $localisationExporter->getKeysEntity();
-            $localisationKeys = $this->array_delete($localisationKeys, 'locationid') ;
-            $keys = array_merge($keys, $localisationKeys) ;*/
         }
         if ($extension == 'Determination') {
             $keys= $this->array_delete($keys, 'taxonid') ;
-            /*$taxonExporter = new Entity\TaxonExporter();
-            $taxonKeys = $taxonExporter->getKeysEntity() ;
-            $taxonKeys = $this->array_delete($taxonKeys, 'taxonid') ;
-            $keys = array_merge($keys, $taxonKeys) ;*/
         }
         $keys = $this->array_delete($keys, 'sourcefileid') ;
         foreach ($keys as $key => $fieldName) {

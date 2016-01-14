@@ -504,7 +504,6 @@ class Recolte
             'recordedby' => $this->getRecordedby(),
             'sday' => $this->getSday(),
             'smonth' => $this->getSmonth(),
-            'sourcefileid' => $this->getSourcefileid(),
             'syear' => $this->getSyear(),
             'verbatimeventdate' => $this->getVerbatimeventdate(),
             'locationid' => !is_null($this->getLocalisation()) ? $this->getLocalisation()->getLocationid() : null, 
