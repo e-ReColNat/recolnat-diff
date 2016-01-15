@@ -171,4 +171,21 @@ class BackendController extends Controller
             );
         }
     }
+    
+    /**
+     * @Route("/deleteChoices/{institutionCode}/{filename}", name="deleteChoices", options={"expose"=true})
+     * @param Request $request
+     */
+    public function deleteChoicesAction($institutionCode, $filename)
+    {
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $diffHandler = $exportManager->getDiffHandler();
+        $choices = $diffHandler->getChoices();
+        $choices->deleteChoices();
+        $this->get('session')->clear();
+        $response = new JsonResponse();
+        $response->setData(['deleteChoices'=>true]);
+        return $response;
+    }
 }

@@ -103,6 +103,10 @@ class ExportManager
         return $this;
     }
     
+    /**
+     * 
+     * @return DiffHandler
+     */
     public function getDiffHandler()
     {
         if ($this->diffHandler instanceof DiffHandler) {

@@ -59,28 +59,37 @@
         </tr>
         </table>
      {% endif %}
-    <a href="{{path('exportDwc', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
-        {{'downloadDwc'|trans}}
-    </a>
-    <a href="{{path('exportCsv', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
-        {{'downloadCsv'|trans}}
-    </a>
+     <div class="row">
+         <div class="col-sm-6 col-md-6">
+            <a href="{{path('exportDwc', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
+                {{'downloadDwc'|trans}}
+            </a>
+            <a href="{{path('exportCsv', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
+                {{'downloadCsv'|trans}}
+            </a>
+         </div>
+            <div class="col-sm-3 col-md-2 col-md-offset-2 col-sm-offset-2">
+                <a href="{{path('deleteChoices', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="deleteChoices btn btn-default" role="button">
+                {{'delete.choices'|trans}}
+            </a>
+            </div>
+     </div>
+    {% include 'default/partial/modal.html.twig' %}
 {% endblock %}
 
 
 {% block javascripts %}
     <script type="text/javascript">
     $(document).ready(function(){
-        var modal = $("#spinnerModal") ;
         $(".exportLink").on('click', function(event) {
-            var link =$(this) ;
+            var modalSpinner = $("#spinnerModal") ;
             var url = $(this).attr('href');
             $.ajax({
                 url : url,
                 method: "POST",
                 beforeSend : function(){
-                    modal.find('.modal-body h4').remove();
-                    modal.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
+                    modalSpinner.find('.modal-body h4').remove();
+                    modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
                 }
             })
             .done(function(data) {
@@ -90,6 +99,30 @@
                 path =Routing.generate('download', { path: data.file });
                 window.location=path;
              });
+            event.preventDefault();
+        });
+        
+        $(".deleteChoices").on('click', function(event) {
+            var deleteModal = $("#modal") ;
+            var urlDeleteChoices = $(this).attr('href');
+            deleteModal.find('.modal-title').html('{{'deleteChoices.title' | trans}}');
+            deleteModal.find('.modal-body>p').html('{{'deleteChoices.text' | trans}}');
+            deleteModal.modal('show');
+            deleteModal.find('.confirm').on('click', function(event) {
+                
+                event.preventDefault();
+                $.ajax({
+                url : urlDeleteChoices,
+                method: "POST",
+                global : false, // désactive le spinner
+                })
+                .done(function(data) {
+                    console.log(data);
+                })
+                .success(function() {
+                    window.location.reload();
+                 });
+            });
             event.preventDefault();
         })
     });

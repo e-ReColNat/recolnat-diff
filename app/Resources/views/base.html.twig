@@ -63,7 +63,8 @@
         {% endblock %}
         <script type="text/javascript">
             $(document).ready(function(){
-                var modal = $("#spinnerModal") ;
+                var modalSpinner = $("#spinnerModal") ;
+                
                 $.toaster({ settings : {
                     'timeout' : 5000,
                     'toaster'         :
@@ -79,10 +80,10 @@
                         }
                 } });
                $(document).ajaxStart(function () {
-                    modal.modal('show');
+                    modalSpinner.modal('show');
                 })
                 .ajaxStop(function () {
-                  modal.modal('hide');
+                  modalSpinner.modal('hide');
               })
                 .ajaxComplete(function(event, xhr, settings) {
                 try {

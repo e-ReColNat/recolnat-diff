@@ -210,6 +210,26 @@
                 <source>fichier.modifiele</source>
                 <target>Fichier modifié le %date% à %heure%</target>
             </trans-unit>
+            <trans-unit id="53">
+                <source>delete.choices</source>
+                <target>Supprimer les choix enregistrés</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>modal.agree</source>
+                <target>Ok</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>modal.cancel</source>
+                <target>Annuler</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>deleteChoices.title</source>
+                <target>Êtes vous sûr de vouloir effacer les choix déjà enregistrés ?</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>deleteChoices.text</source>
+                <target>En cliquant sur ok, vous confirmez que les choix que vous aviez précédemment enregistrés seront définitivement supprimés.</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>
