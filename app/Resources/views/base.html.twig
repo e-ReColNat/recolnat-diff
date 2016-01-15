@@ -51,6 +51,7 @@
             </div>
         </div>
     </div>
+                    
     </body>
     <script src="{{ asset('AppBundle/js/jquery.min.js') }}"></script>
     <script src="{{ asset('bootstrap/3.3.5/js/bootstrap.min.js') }}"></script>
@@ -63,6 +64,7 @@
         {% endblock %}
         <script type="text/javascript">
             $(document).ready(function(){
+                
                 var modalSpinner = $("#spinnerModal") ;
                 
                 $.toaster({ settings : {
@@ -79,6 +81,20 @@
                             }
                         }
                 } });
+
+                // Toast Messages
+                var flashMessages=[];
+                
+                    {% for flash_type, flashes in app.session.flashbag.all %}
+                        {% for flash_message in flashes %}
+                            $.toaster({ message : '{{flash_message}}', priority : '{{flash_type}}', title : '{{ ('label.' ~ flash_type) | trans}}' });
+                        {% endfor %}
+                    {% endfor %}
+            
+                if (flashMessages.length > 0) {
+                     for (i = 0; i < flashMessages.length; i++) {
+                     }
+                }
                $(document).ajaxStart(function () {
                     modalSpinner.modal('show');
                 })

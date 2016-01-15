@@ -299,14 +299,14 @@ class ExportManager
                 if (in_array($className, $entitiesNameWithArray)) {
                     foreach ($row as $key2 => $record) {
                         foreach ($record as $fieldName => $value) {
-                            $datasWithChoices[$key][$className][$key2][$fieldName] = $this->convertField($value);
+                            $datasWithChoices[$key][$className][$key2][$fieldName] = $value;
                         }
                         $this->setChoiceForEntity($datasWithChoices, $key, $className, $record, $key2);
                     }
                 } else {
                     if (!empty($row)) {
                         foreach ($row as $fieldName => $value) {
-                            $datasWithChoices[$key][$className][$fieldName] = $this->convertField($value);
+                            $datasWithChoices[$key][$className][$fieldName] = $value;
                         }
                         $this->setChoiceForEntity($datasWithChoices, $key, $className, $row);
                     }
@@ -314,14 +314,6 @@ class ExportManager
             }
         }
         return $datasWithChoices;
-    }
-
-    public static function convertField($value)
-    {
-        if ($value instanceof \DateTime) {
-            return $value->format('d-m-Y');
-        }
-        return $value;
     }
 
     private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2 = null)

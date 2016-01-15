@@ -20,7 +20,7 @@ class UserController extends Controller
     /**
      * @Route("/user/{institutionCode}/prefs/view", name="viewPrefsUser")
      */
-    public function indexAction(Request $request, $institutionCode)
+    public function indexAction($institutionCode)
     {
         /* @var $user \AppBundle\Business\User\User */
         $user = $this->get('userManager');
@@ -47,7 +47,12 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* @var $translator \Symfony\Bundle\FrameworkBundle\Translation\Translator */
+            $translator = $this->get('translator');
+            $message = $translator->trans('prefs.save', [], 'prefs') ;
             $user->savePrefs($prefs) ;
+            $this->addFlash('success',$message) ;
+            return $this->redirectToRoute('viewPrefsUser', ['institutionCode'=>$institutionCode]) ;
         }
     
         return $this->render('user/editPrefs.html.twig', array(

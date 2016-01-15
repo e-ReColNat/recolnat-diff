@@ -14,9 +14,10 @@ class CsvExporter extends AbstractExporter
     /* @var $files \ArrayObject */
 
     private $files;
-    protected $csvDelimiter = "\t";
-    protected $csvEnclosure = "\"";
-    protected $csvLineBreak = "\t";
+    protected $csvDelimiter;
+    protected $csvEnclosure;
+    protected $csvLineBreak;
+    protected $csvDateFormat;
 
     private $fieldsName=[] ;
     private $acceptedFieldsName = [];
@@ -31,11 +32,13 @@ class CsvExporter extends AbstractExporter
             $this->setCsvDelimiter($prefs->getDwcDelimiter());
             $this->setCsvEnclosure($prefs->getDwcEnclosure());
             $this->setCsvLineBreak($prefs->getDwcLineBreak());
+            $this->setCsvDateFormat($prefs->getDwcDateFormat());
         }
         else {
             $this->setCsvDelimiter($prefs->getCsvDelimiter());
             $this->setCsvEnclosure($prefs->getCsvEnclosure());
             $this->setCsvLineBreak($prefs->getCsvLineBreak());
+            $this->setCsvDateFormat($prefs->getCsvDateFormat());
         }
         $filesHandler = [];
         $entityExporters = [] ;
@@ -194,7 +197,10 @@ class CsvExporter extends AbstractExporter
             // Enclose fields containing $delimiter, $enclosure or whitespace
             //if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
             if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc})/", $field)) {
-                $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $this->convertField($field)) . $enclosure;
+                $output[] = $enclosure . str_replace(
+                        $enclosure, $enclosure . $enclosure, 
+                        $this->convertField($field, $this->getCsvDateFormat())
+                        ) . $enclosure;
             } else {
                 $output[] = $field;
             }
@@ -205,17 +211,22 @@ class CsvExporter extends AbstractExporter
 
     public function getCsvDelimiter()
     {
-        return stripcslashes($this->csvDelimiter);
+        return $this->csvDelimiter;
     }
 
     public function getCsvEnclosure()
     {
-        return stripcslashes($this->csvEnclosure);
+        return $this->csvEnclosure;
     }
 
     public function getCsvLineBreak()
     {
-        return stripcslashes($this->csvLineBreak);
+        return $this->csvLineBreak;
+    }
+
+    public function getCsvDateFormat()
+    {
+        return $this->csvDateFormat;
     }
 
     public function getCsvIgnoreHeaderLines()
@@ -225,17 +236,22 @@ class CsvExporter extends AbstractExporter
 
     public function setCsvDelimiter($csvDelimiter)
     {
-        $this->csvDelimiter = $csvDelimiter;
+        $this->csvDelimiter = stripcslashes($csvDelimiter);
     }
 
     public function setCsvEnclosure($csvEnclosure)
     {
-        $this->csvEnclosure = $csvEnclosure;
+        $this->csvEnclosure = stripcslashes($csvEnclosure);
     }
 
     public function setCsvLineBreak($csvLineBreak)
     {
-        $this->csvLineBreak = $csvLineBreak;
+        $this->csvLineBreak = stripcslashes($csvLineBreak);
+    }
+
+    public function setCsvDateFormat($csvDateFormat)
+    {
+        $this->csvDateFormat = stripcslashes($csvDateFormat);
     }
 
     public function setCsvIgnoreHeaderLines($csvIgnoreHeaderLines)

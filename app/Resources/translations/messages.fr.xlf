@@ -163,70 +163,30 @@
                 <target>Comma Separated Value (Csv)</target>
             </trans-unit>
             <trans-unit id="41">
-                <source>prefs.dwcDelimiter</source>
-                <target>Délimiteur Dwc-a</target>
-            </trans-unit>
-            <trans-unit id="42">
-                <source>prefs.dwcEnclosure</source>
-                <target>Caractère d'encadrement Dwc-a</target>
-            </trans-unit>
-            <trans-unit id="43">
-                <source>prefs.dwcLineBreak</source>
-                <target>Saut de ligne Dwc-a</target>
-            </trans-unit>
-            <trans-unit id="44">
-                <source>prefs.csvDelimiter</source>
-                <target>Délimiteur csv</target>
-            </trans-unit>
-            <trans-unit id="45">
-                <source>prefs.csvEnclosure</source>
-                <target>Caractère d'encadrement csv</target>
-            </trans-unit>
-            <trans-unit id="46">
-                <source>prefs.csvLineBreak</source>
-                <target>Saut de ligne csv</target>
-            </trans-unit>
-            <trans-unit id="47">
-                <source>prefs.edit</source>
-                <target>Editer les préférences</target>
-            </trans-unit>
-            <trans-unit id="48">
-                <source>prefs.save</source>
-                <target>Enregistrer les préférences</target>
-            </trans-unit>
-            <trans-unit id="49">
-                <source>prefs.save.title</source>
-                <target>Modifications des préférences de l'export</target>
-            </trans-unit>
-            <trans-unit id="50">
-                <source>prefs.title</source>
-                <target>Préférences de l'export</target>
-            </trans-unit>
-            <trans-unit id="51">
                 <source>fichier.creele</source>
                 <target>Fichier créé le %date% à %heure%</target>
             </trans-unit>
-            <trans-unit id="52">
+            <trans-unit id="42">
                 <source>fichier.modifiele</source>
                 <target>Fichier modifié le %date% à %heure%</target>
             </trans-unit>
-            <trans-unit id="53">
+            <trans-unit id="43">
                 <source>delete.choices</source>
                 <target>Supprimer les choix enregistrés</target>
             </trans-unit>
-            <trans-unit id="54">
+            <trans-unit id="44">
                 <source>modal.agree</source>
                 <target>Ok</target>
             </trans-unit>
-            <trans-unit id="55">
+            <trans-unit id="45">
                 <source>modal.cancel</source>
                 <target>Annuler</target>
             </trans-unit>
-            <trans-unit id="56">
+            <trans-unit id="46">
                 <source>deleteChoices.title</source>
                 <target>Êtes vous sûr de vouloir effacer les choix déjà enregistrés ?</target>
             </trans-unit>
-            <trans-unit id="57">
+            <trans-unit id="47">
                 <source>deleteChoices.text</source>
                 <target>En cliquant sur ok, vous confirmez que les choix que vous aviez précédemment enregistrés seront définitivement supprimés.</target>
             </trans-unit>

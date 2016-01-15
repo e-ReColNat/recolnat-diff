@@ -56,10 +56,16 @@ abstract class AbstractExporter
         return array_diff($array, [$element]);
     }
     
-    public static function convertField($value)
+    /**
+     * 
+     * @param mixed $value
+     * @param string $dateFormat
+     * @return mixed Time
+     */
+    public static function convertField($value, $dateFormat)
     {
         if ($value instanceof \DateTime) {
-            return $value->format('d-m-Y');
+            return $value->format($dateFormat);
         }
         return $value;
     }

@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="fr" target-language="fr" datatype="plaintext" original="messages.xliff">
+        <body>
+            <trans-unit id="1">
+                <source>prefs.dwcDelimiter</source>
+                <target>Délimiteur Dwc-a</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>prefs.dwcEnclosure</source>
+                <target>Caractère d'encadrement Dwc-a</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>prefs.dwcLineBreak</source>
+                <target>Saut de ligne Dwc-a</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>prefs.csvDelimiter</source>
+                <target>Délimiteur csv</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>prefs.csvEnclosure</source>
+                <target>Caractère d'encadrement csv</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>prefs.csvLineBreak</source>
+                <target>Saut de ligne csv</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>prefs.edit</source>
+                <target>Editer les préférences</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>prefs.save</source>
+                <target>Enregistrer les préférences</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>prefs.save.title</source>
+                <target>Modifications des préférences de l'export</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>prefs.title</source>
+                <target>Préférences de l'export</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>prefs.dwcDateFormat</source>
+                <target>Format de date dwc</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>prefs.csvDateFormat</source>
+                <target>Format de date csv</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

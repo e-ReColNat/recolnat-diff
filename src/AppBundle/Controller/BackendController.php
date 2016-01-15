@@ -159,16 +159,10 @@ class BackendController extends Controller
         $translator = $this->get('translator');
         $message = $translator->transChoice('modification.effectuee', count($choices),array('%nbModif%'=>count($choices)));
         if (count($choices) == 0) {
-            $this->get('session')->getFlashBag()->add(
-                'warning',
-                $message
-            );
+            $this->addFlash('warning',$message) ;
         }
         else {
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                $message
-            );
+            $this->addFlash('success',$message) ;
         }
     }
     

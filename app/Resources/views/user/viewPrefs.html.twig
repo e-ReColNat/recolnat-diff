@@ -1,23 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block  body %}
-    <h1 class="page-header">{{'prefs.title' | trans}}</h1>
+    <h1 class="page-header">{{'prefs.title' | trans({}, 'prefs')}}</h1>
     <ul>
         <li>{{ 'dwc-a' | trans }}
             <ul>
-                <li>{{ 'prefs.dwcDelimiter' | trans }} : {{ prefs.dwcDelimiter}}</li>
-                <li>{{ 'prefs.dwcEnclosure' | trans }} : {{ prefs.dwcEnclosure}}</li>
-                <li>{{ 'prefs.dwcLineBreak' | trans }} : {{ prefs.dwcLineBreak}}</li>
+                <li>{{ 'prefs.dwcDelimiter' | trans({}, 'prefs') }} : {{ prefs.dwcDelimiter}}</li>
+                <li>{{ 'prefs.dwcEnclosure' | trans({}, 'prefs') }} : {{ prefs.dwcEnclosure}}</li>
+                <li>{{ 'prefs.dwcLineBreak' | trans({}, 'prefs') }} : {{ prefs.dwcLineBreak}}</li>
+                <li>{{ 'prefs.dwcDateFormat' | trans({}, 'prefs') }} : {{ prefs.dwcDateFormat}}</li>
             </ul>
         </li>
         <li>{{ 'csv' | trans }}
             <ul>
-                <li>{{ 'prefs.csvDelimiter' | trans }} : {{ prefs.csvDelimiter}}</li>
-                <li>{{ 'prefs.csvEnclosure' | trans }} : {{ prefs.csvEnclosure}}</li>
-                <li>{{ 'prefs.csvLineBreak' | trans }} : {{ prefs.csvLineBreak}}</li>
+                <li>{{ 'prefs.csvDelimiter' | trans({}, 'prefs') }} : {{ prefs.csvDelimiter}}</li>
+                <li>{{ 'prefs.csvEnclosure' | trans({}, 'prefs') }} : {{ prefs.csvEnclosure}}</li>
+                <li>{{ 'prefs.csvLineBreak' | trans({}, 'prefs') }} : {{ prefs.csvLineBreak}}</li>
+                <li>{{ 'prefs.csvDateFormat' | trans({}, 'prefs') }} : {{ prefs.csvDateFormat}}</li>
             </ul>
         </li>
     </ul>
 
-    <a href="{{ path('editPrefsUser', {'institutionCode': institutionCode}) }}">{{ 'prefs.edit' | trans }}</a>
+    <a href="{{ path('editPrefsUser', {'institutionCode': institutionCode}) }}">{{ 'prefs.edit' | trans({}, 'prefs') }}</a>
 {% endblock %}
