@@ -1,4 +1,23 @@
-recolnat-sf3
+DWC-DIFF - eRecolnat
 ============
 
-A Symfony project created on December 2, 2015, 11:22 am.
+Outil d'aide décisionnel des données exportés depuis eRecolnat
+
+
+##Architecture serveur
+* PHP 5.6
+    * libraries : 
+        * opcache
+        * pdo
+        * apcu
+        * intl
+        * json
+        * oracle
+        * zip
+    * paramétrages : 
+        * memory_limit : 1024M
+        * Default timezone : Europe/Paris
+        * opcache.max_accelerated_files : 30000
+        * opcache.memory_consumption : 512
+* composer
+* unzip
