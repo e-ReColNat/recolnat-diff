@@ -65,11 +65,6 @@ class CsvExporter extends AbstractExporter
                 // Ecrit les entêtes en première ligne de csv
                 if ($writeHeaders) {
                     $this->fieldsName[$className] = $entityExporters[$className]->getKeysEntity();
-                    /*if (in_array($className, $entitiesNameWithArray)) {
-                        $this->fieldsName[$className] = array_keys(current($datasPerClass));
-                    } else {
-                        $this->fieldsName[$className] = array_keys($datasPerClass);
-                    }*/
                     $this->writeToFile($filesHandler[$className], $this->fieldsName[$className]);
                     $writeHeaders = false;
                 }

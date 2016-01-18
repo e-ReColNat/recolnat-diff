@@ -23,10 +23,11 @@ class DwcExporter extends AbstractExporter
             'Multimedia'
         ];
     protected $formattedDatas=[];
-    protected $csvDelimiter="\t" ;
-    protected $csvEnclosure="\"" ;
-    protected $csvLineBreak="\t" ;
-    protected $csvIgnoreHeaderLines=1 ;
+    protected $dwcDelimiter="\t" ;
+    protected $dwcEnclosure="\"" ;
+    protected $dwcLineBreak="\t" ;
+    protected $dwcIgnoreHeaderLines=1 ;
+    protected $dwcDateFormat='Y-m-d' ;
 
     public function formatDatas()
     {
@@ -80,9 +81,10 @@ class DwcExporter extends AbstractExporter
      
     public function generate(Prefs $prefs, array $options=[]) 
     {
-        $this->setCsvDelimiter($prefs->getDwcDelimiter());
-        $this->setCsvEnclosure($prefs->getDwcEnclosure());
-        $this->setCsvLineBreak($prefs->getDwcLineBreak());
+        $this->setDwcDelimiter($prefs->getDwcDelimiter());
+        $this->setDwcEnclosure($prefs->getDwcEnclosure());
+        $this->setDwcLineBreak($prefs->getDwcLineBreak());
+        $this->setDwcDateFormat($prefs->getDwcDateFormat());
         $this->formattedDatas = $this->formatDatas() ;
         $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath()) ;
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]) ;
@@ -136,11 +138,12 @@ class DwcExporter extends AbstractExporter
     private function setCsvParameterNode(\DOMElement &$node, $rowType)
     {
         $node->setAttribute('encoding', 'UTF-8');
-        $node->setAttribute('fieldsTerminatedBy', $this->getCsvDelimiter());
-        $node->setAttribute('linesTerminatedBy', $this->getCsvLineBreak());
-        $node->setAttribute('fieldsEnclosedBy', $this->getCsvEnclosure());
-        $node->setAttribute('ignoreHeaderLines', $this->getCsvIgnoreHeaderLines());
+        $node->setAttribute('fieldsTerminatedBy', $this->getDwcDelimiter());
+        $node->setAttribute('linesTerminatedBy', $this->getDwcLineBreak());
+        $node->setAttribute('fieldsEnclosedBy', $this->getDwcEnclosure());
+        $node->setAttribute('ignoreHeaderLines', $this->getDwcIgnoreHeaderLines());
         $node->setAttribute('rowType', $rowType);
+        $node->setAttribute('dateFormat', $this->getDwcDateFormat());
     }
 
     /**
@@ -224,43 +227,59 @@ class DwcExporter extends AbstractExporter
         }
     }
 
-    public function getCsvDelimiter()
+    public function getDwcDelimiter()
     {
-        return $this->csvDelimiter;
+        return $this->dwcDelimiter;
     }
 
-    public function getCsvEnclosure()
+    public function getDwcEnclosure()
     {
-        return $this->csvEnclosure;
+        return $this->dwcEnclosure;
     }
 
-    public function getCsvLineBreak()
+    public function getDwcLineBreak()
     {
-        return $this->csvLineBreak;
+        return $this->dwcLineBreak;
     }
 
-    public function getCsvIgnoreHeaderLines()
+    public function getDwcIgnoreHeaderLines()
     {
-        return $this->csvIgnoreHeaderLines;
+        return $this->dwcIgnoreHeaderLines;
     }
 
-    public function setCsvDelimiter($csvDelimiter)
+    public function setDwcDelimiter($dwcDelimiter)
     {
-        $this->csvDelimiter = $csvDelimiter;
+        $this->dwcDelimiter = $dwcDelimiter;
     }
 
-    public function setCsvEnclosure($csvEnclosure)
+    public function setDwcEnclosure($dwcEnclosure)
     {
-        $this->csvEnclosure = $csvEnclosure;
+        $this->dwcEnclosure = $dwcEnclosure;
     }
 
-    public function setCsvLineBreak($csvLineBreak)
+    public function setDwcLineBreak($dwcLineBreak)
     {
-        $this->csvLineBreak = $csvLineBreak;
+        $this->dwcLineBreak = $dwcLineBreak;
     }
 
-    public function setCsvIgnoreHeaderLines($csvIgnoreHeaderLines)
+    public function setDwcIgnoreHeaderLines($dwcIgnoreHeaderLines)
     {
-        $this->csvIgnoreHeaderLines = $csvIgnoreHeaderLines;
+        $this->dwcIgnoreHeaderLines = $dwcIgnoreHeaderLines;
     }
+    
+    public function getDwcDateFormat()
+    {
+        $dateFormat = $this->dwcDateFormat ;
+        $dateFormat = str_replace('d', 'DD', $dateFormat) ;
+        $dateFormat = str_replace('m', 'MM', $dateFormat) ;
+        $dateFormat = str_replace('y', 'YYYY', $dateFormat) ;
+        $dateFormat = str_replace('c', 'YYYY-MM-DDTHH:MM:SSZ', $dateFormat) ;
+        return $dateFormat;
+    }
+
+    public function setDwcDateFormat($dwcDateFormat)
+    {
+        $this->dwcDateFormat = $dwcDateFormat;
+    }
+
 }
