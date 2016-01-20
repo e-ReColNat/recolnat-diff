@@ -34,7 +34,7 @@
             </div>
                 
             </div>
-            {% include 'default/partial/filter.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
+            {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
             {% for specimenId, classWithDiff in summary %}
                 <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}" data-specimenid="{{specimenId}}">
                     {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}

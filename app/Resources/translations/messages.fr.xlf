@@ -111,11 +111,11 @@
                 <target>{1}%nbDiffs% diff.|]1,Inf]%nbDiffs% diffs.</target>
             </trans-unit>
             <trans-unit id="28">
-                <source>label.legend.filter1</source>
+                <source>label.legend.origin</source>
                 <target>Choisir les données</target>
             </trans-unit>
             <trans-unit id="29">
-                <source>label.legend.filter2</source>
+                <source>label.legend.specimens</source>
                 <target>Pour</target>
             </trans-unit>
             <trans-unit id="30">

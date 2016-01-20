@@ -40,7 +40,6 @@ abstract class AbstractEntityExporter
 
     public function getKeysEntity()
     {
-        //return array_keys($this->entity->toArray());
         return array_keys($this->getExportProperties());
     }
 

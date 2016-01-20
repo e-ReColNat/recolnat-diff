@@ -9,23 +9,14 @@ namespace AppBundle\Business\Exporter\Entity;
  */
 class DeterminationExporter extends AbstractEntityExporter
 {
+
     public function getExportProperties()
     {
-        $taxonExporter = new TaxonExporter() ;
+        $taxonExporter = new TaxonExporter();
         return array_merge($this->arrayExportTerm, $taxonExporter->getExportProperties());
     }
-    
-    /*public function getExportProperty($fieldName) {
-        if (array_key_exists($fieldName, $this->arrayExportTerm)) {
-            return $this->arrayExportTerm[$fieldName] ;
-        }
-        else {
-            $taxonExporter = new TaxonExporter() ;
-            return $taxonExporter->getXmlTerm($fieldName);
-        }
-        return null ;
-    }*/
-    public function setExportTerm() 
+
+    public function setExportTerm()
     {
         $this->arrayExportTerm = [
             'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
@@ -41,7 +32,8 @@ class DeterminationExporter extends AbstractEntityExporter
             'typestatus' => 'http://rs.tdwg.org/dwc/terms/typeStatus',
             'taxonid' => 'http://rs.tdwg.org/dwc/terms/taxonID',
         ];
-    }    
+    }
+
     public function getNameSpace()
     {
         return 'http://rs.tdwg.org/dwc/terms/Identification';
@@ -51,9 +43,10 @@ class DeterminationExporter extends AbstractEntityExporter
     {
         return 'identificationid';
     }
-    
+
     public function getCoreIdFieldName()
     {
         return 'occurrenceid';
     }
+
 }

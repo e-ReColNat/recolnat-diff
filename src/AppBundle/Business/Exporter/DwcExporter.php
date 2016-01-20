@@ -181,14 +181,14 @@ class DwcExporter extends AbstractExporter
         $this->setNodeFile($coreNode, $extension.'.csv');
         $compt = 0;
         $keys = $entityExporter->getKeysEntity();
-        
+        /*
         if ($extension == 'Recolte') {
             $keys = $this->array_delete($keys, 'locationid') ;
         }
         if ($extension == 'Determination') {
             $keys= $this->array_delete($keys, 'taxonid') ;
         }
-        $keys = $this->array_delete($keys, 'sourcefileid') ;
+        $keys = $this->array_delete($keys, 'sourcefileid') ;*/
         foreach ($keys as $key => $fieldName) {
             if ($fieldName == $entityExporter->getCoreIdFieldName()) {
                 $this->setIndexNode($coreNode, $key, $flagCore, $compt);

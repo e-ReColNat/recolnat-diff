@@ -24,7 +24,7 @@ class TaxonExporter extends AbstractEntityExporter
             'namepublishedin' => 'http://rs.tdwg.org/dwc/terms/namePublishedIn',
             'namepublishedinyear' => 'http://rs.tdwg.org/dwc/terms/namePublishedInYear',
             'nomenclaturalcode' => 'http://rs.tdwg.org/dwc/terms/nomenclaturalCode',
-            'nomenclaturalstatus' => 'http://rs.tdwg.org/dwc/terms/taxonomicStatus',
+            'nomenclaturalstatus' => 'http://rs.tdwg.org/dwc/terms/nomenclaturalStatus',
             'order' => 'http://rs.tdwg.org/dwc/terms/order',
             'originalnameusage' => 'http://rs.tdwg.org/dwc/terms/originalNameUsage',
             'parentnameusage' => 'http://rs.tdwg.org/dwc/terms/parentNameUsage',

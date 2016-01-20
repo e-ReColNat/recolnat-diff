@@ -138,7 +138,7 @@ $(document).ready(function(){
         $("#form-filters").submit(function(event) {
             var data = $(this).serializeArray();
             data.push({name: 'maxItemPerPage', value: maxItemPerPage});
-            if ($("[name='selectLevel2']").filter(":checked").val() === 'selectedSpecimens') {
+            if ($("[name='specimens']").filter(":checked").val() === 'selectedSpecimens') {
                 if (selectedSpecimens.length === 0) {
                     smallModal.find('.modal-title').text('Erreur');
                     smallModal.find('.modal-body').text('Vous devez sélectionner au moins un spécimen');

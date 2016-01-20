@@ -1,53 +1,53 @@
 {% set classesName = {1:'specimen',2:'bibliography',3:'determination',4:'localisation',5:'recolte',6:'stratigraphy',7:'taxon'} %}
 <div class="well">
     <form id="form-filters" class="form-horizontal">
-        <div class="form-group filter-level1" >
+        <div class="form-group filter-origin" >
             <fieldset>
-                <legend>{{ 'label.legend.filter1' | trans }}</legend>
+                <legend>{{ 'label.legend.origin' | trans }}</legend>
                 <div class="radio col-sm-3">
-                    <label for="radio1-selectLevel1">
-                        <input type="radio" id="radio1-selectLevel1" name="selectLevel1" value="recolnat">
+                    <label for="radio1-origin">
+                        <input type="radio" id="radio1-origin" name="origin" value="recolnat">
                         {{ 'label.choixRecolnat' | trans }}
                     </label>
                 </div>
                 <div class="radio col-sm-3">
-                    <label for="radio2-selectLevel1">
-                        <input type="radio" id="radio2-selectLevel1" name="selectLevel1" value="institution">
+                    <label for="radio2-origin">
+                        <input type="radio" id="radio2-origin" name="origin" value="institution">
                         {{ 'label.choixInstitution' | trans }}
                     </label>
                 </div>
             </fieldset>
         </div>
-        <div class="form-group filter-level2">
+        <div class="form-group filter-specimens">
             <fieldset>
-                <legend>{{ 'label.legend.filter2' | trans }}</legend>
+                <legend>{{ 'label.legend.specimens' | trans }}</legend>
                 <div class="radio col-sm-3">
-                    <label for="radio1-selectLevel2">
-                        <input type="radio" id='radio1-selectLevel2' name="selectLevel2" value="allDatas">
+                    <label for="radio1-specimens">
+                        <input type="radio" id='radio1-specimens' name="specimens" value="allDatas">
                         {{ 'label.selectAllPages' | trans }} ({{ pagination.getTotalItemCount }})
                     </label>
                 </div>
                 <div class="radio col-sm-3">
-                    <label for="radio2-selectLevel2">
-                    <input type="radio" id="radio2-selectLevel2" name="selectLevel2" value="page">
+                    <label for="radio2-specimens">
+                    <input type="radio" id="radio2-specimens" name="specimens" value="page">
                     {{ 'label.selectPageDatas' | trans }}
                     </label>
                 </div>
                 <div class="radio col-sm-3">
-                    <label for="radio3-selectLevel2">
-                        <input type="radio" id="radio3-selectLevel2" name="selectLevel2" value="selectedSpecimens">
+                    <label for="radio3-specimens">
+                        <input type="radio" id="radio3-specimens" name="specimens" value="selectedSpecimens">
                         {{ 'label.selectSpecimen' | trans }}
                     </label>
                 </div>
             </fieldset>
         </div>
-        <div class="form-group filter-level3">
+        <div class="form-group filter-classesName">
             <fieldset>
                 <legend>{{ 'label.selectOnlyClass' | trans }}<button type="submit" id="selectAllClasses" class="btn btn-primary col-sm-offset-1 btn-xs">{{ 'label.selectAllClasses' | trans}}</button></legend>
                 {% for className in classesName %}
                     <div class="checkbox col-sm-3">
-                        <label for="checkbox{{loop.index}}-selectLevel3">
-                            <input type="checkbox" id='checkbox{{loop.index}}-selectLevel3' name="selectLevel3[]" value="{{className}}">
+                        <label for="checkbox{{loop.index}}-classesName">
+                            <input type="checkbox" id='checkbox{{loop.index}}-selectLevel3' name="classesName[]" value="{{className}}">
                             {{ ('label.'~className) |transchoice(2,{},'entity') }}
                         </label>
                     </div>
@@ -73,7 +73,7 @@
     window.onload = function() {
     $(document).ready(function(){
         $("#selectAllClasses").click(function(event) {
-            $("#form-filters").find("[name^='selectLevel3']").not($(this)).prop('checked', true);
+            $("#form-filters").find("[name^='classesName']").not($(this)).prop('checked', true);
             event.preventDefault();
         })
     });

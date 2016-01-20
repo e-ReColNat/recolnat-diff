@@ -190,7 +190,6 @@ class CsvExporter extends AbstractExporter
             }
 
             // Enclose fields containing $delimiter, $enclosure or whitespace
-            //if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
             if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc})/", $field)) {
                 $output[] = $enclosure . str_replace(
                         $enclosure, $enclosure . $enclosure, 
