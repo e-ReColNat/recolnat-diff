@@ -1,4 +1,4 @@
-{% if attribute(stats.summary, specimenId) is not empty %}
+{% if attribute(diffs.summary, specimenId) is not empty %}
 <table class="diff table table-striped table-bordered table-condensed">
     <caption class="bg-primary">Différences</caption>
     <thead>
@@ -12,43 +12,30 @@
         </tr>
     </thead>
     <tbody>
-        {% set summary = attribute(stats.summary, specimenId) %}
-        
-        {% for class in summary|keys %}
-                {% set diffSpecimen = attribute(stats.classes, class) %}
-                {% set diffs = attribute(diffSpecimen, specimenId) %}
-
-                {% set comptFields = 0 %}
-                {% for relationId, fields in diffs %}
-                    {% for fieldName, data in fields %}
-                        {% set comptFields = comptFields+1 %}
-                    {% endfor %}
-                {% endfor %}
-                {% for relationId, fields in diffs %}
-
-                    {% set relationRecolnat = relationById(specimenRecolnat, class, relationId) %}
-                    {% set relationInstitution = relationById(specimenInstitution, class, relationId) %}
-                    {% set relationToString = relationByIdToString(specimenRecolnat, class, relationId) %}
-
-                    {% set rowspan = diffs|length + comptFields  %}
+        {% set specimen = attribute(diffs.summary, specimenId) %}
+        {% for className, details in specimen.classes %}
+            {% set relationId = details.id %}
+                {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}
+                {% set relationInstitution = relationById(specimenInstitution, className, relationId) %}
+                {% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
+                {% set rowspan = details.fields | length  +1 %}
                     <tr class="diff-entity success">
-                        {% if loop.first %}
-                            <td class="warning diff-class{{loop.parent.loop.index is even ? " even" :"" }}" rowspan="{{rowspan}}" style="width: 10px !important;">
-                                <div>{{('label.' ~ class|lower ~ '.abbr') |trans({},'entity')|capitalize}}</div>
-                              </td>
-                        {% endif %}
+                        <td class="warning diff-class{{loop.index is even ? " even" :"" }}" rowspan="{{rowspan}}" style="width: 10px !important;">
+                            <div>{{('label.' ~ className|lower ~ '.abbr') |trans({},'entity')|capitalize}}</div>
+                          </td>
                         <td colspan="2">{{ relationToString }}</td>
                         <td>
-                            <input type="radio" data-class="{{class}}" data-type='diff-entity' name="{{relationId}}" value="recolnat">
+                            <input type="radio" data-class="{{className}}" data-type='diff-entity' name="{{relationId}}" value="recolnat">
                         </td>
                         <td>&nbsp;</td>
                         <td>
-                            <input type="radio" data-class="{{class}}" data-type='diff-entity' name="{{relationId}}" value="institution">
+                            <input type="radio" data-class="{{className}}" data-type='diff-entity' name="{{relationId}}" value="institution">
                         </td>
                     </tr>
-                    {% for fieldName, data in fields %}
+            
+            {% for fieldName, datas in details.fields %}
                     <tr class="diff-field">
-                        <td>{{ ('label.'~class|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>
+                        <td>{{ ('label.'~className|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>
                         <td>
                             {{ fieldToString(relationRecolnat, fieldName)}}
                         </td>
@@ -62,7 +49,6 @@
                             {% include 'default/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}
                         </td>
                     </tr>
-                    {% endfor %}
                 {% endfor %}
         {% endfor %}
     </tbody>

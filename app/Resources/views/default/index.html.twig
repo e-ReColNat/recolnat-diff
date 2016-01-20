@@ -7,7 +7,7 @@
     <ul>
         {% for file in files %}
             <li>
-                <a href="{{ path('viewfile', {'filename':file.getFilename, 'institutionCode':institutionCode }) }}">{{file.getFilename}}</a>
+                <a href="{{ path('viewfile', {'collectionCode':file.getFilename, 'institutionCode':institutionCode }) }}">{{file.getFilename}}</a>
                 <ul>
                     <li>{{'fichier.creele'|trans({'%date%': file.getCTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
                     <li>{{'fichier.modifiele'|trans({'%date%': file.getMTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>

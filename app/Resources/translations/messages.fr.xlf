@@ -190,6 +190,22 @@
                 <source>deleteChoices.text</source>
                 <target>En cliquant sur ok, vous confirmez que les choix que vous aviez précédemment enregistrés seront définitivement supprimés.</target>
             </trans-unit>
+            <trans-unit id="48">
+                <source>delete.diffs</source>
+                <target>Réactualiser les différences</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>deleteDiffs.title</source>
+                <target>Êtes vous sûr de vouloir réactualiser les différences détectées ?</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>deleteDiffs.text</source>
+                <target>En cliquant sur ok, vous confirmez relancer le processus de détection des différences.</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>generateDiffs</source>
+                <target>Génération en cours</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>

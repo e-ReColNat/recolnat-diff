@@ -154,7 +154,7 @@ class GenericEntityManager
             }
             return $data;
         } else {
-            throw new Exception('\AppBundle\Entity\\' . $className, 'get' . $fieldName . ' doesn\'t exists.');
+            throw new \Exception('\AppBundle\Entity\\' . $className. ' get' . $fieldName . ' doesn\'t exists.');
         }
     }
 

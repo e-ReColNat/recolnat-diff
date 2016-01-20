@@ -15,23 +15,23 @@ use Symfony\Component\HttpFoundation\Response;
 class BackendController extends Controller
 {
      /**
-     * @Route("/{institutionCode}/{filename}/export/dwc", name="exportDwc")
+     * @Route("/{institutionCode}/{collectionCode}/export/dwc", name="exportDwc")
      */
-    public function exportDwcAction($institutionCode, $filename)
+    public function exportDwcAction($institutionCode, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $dwc = $exportManager->getDwc();
         return new JsonResponse(['file' =>  urlencode($dwc)]);
     }
     
      /**
-     * @Route("/{institutionCode}/{filename}/export/csv", name="exportCsv")
+     * @Route("/{institutionCode}/{collectionCode}/export/csv", name="exportCsv")
      */
-    public function exportCsvAction($institutionCode, $filename)
+    public function exportCsvAction($institutionCode, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $csv = $exportManager->getCsv();
         return new JsonResponse(['file' =>  urlencode($csv)]);
     }
@@ -46,23 +46,23 @@ class BackendController extends Controller
             $path=  urldecode($path);
             $response->setContent(file_get_contents($path));
             $response->headers->set('Content-Type', 'application/zip');
-            $response->headers->set('Content-Disposition', 'attachment; filename="' . basename($path). '"');
+            $response->headers->set('Content-Disposition', 'attachment; collectionCode="' . basename($path). '"');
         }
 
         return $response;
     }
     
     /**
-     * @Route("/setChoice/{institutionCode}/{filename}", name="setChoice", options={"expose"=true})
+     * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
      * @param Request $request
      * @param string $institutionCode
      * @param array choices
      */
-    public function setChoiceAction(Request $request, $institutionCode, $filename)
+    public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
     {
         $choices = $request->get('choices');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $exportManager->setChoices($choices);
         $exportManager->saveChoices();
 
@@ -74,13 +74,13 @@ class BackendController extends Controller
     }
     
     /**
-     * @Route("/setChoices/{institutionCode}/{filename}", name="setChoices", options={"expose"=true})
+     * @Route("/setChoices/{institutionCode}/{collectionCode}", name="setChoices", options={"expose"=true})
      * @param Request $request
      */
-    public function setChoicesAction(Request $request, $institutionCode, $filename)
+    public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $selectLevel1 = $request->get('selectLevel1', null);
         $selectLevel2 = $request->get('selectLevel2', null);
         $selectLevel3 = $request->get('selectLevel3', []);
@@ -100,21 +100,21 @@ class BackendController extends Controller
             $specimensWithoutChoices=$exportManager->getChoices() ;
         }
         if (!is_null($institutionCode) && !is_null($selectLevel1) && !is_null($selectLevel2)) {
-            list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
+            $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
             switch ($selectLevel2) {
                 case 'page' :
                     $paginator = $this->get('knp_paginator');
-                    $pagination = $paginator->paginate($stats['summary'], $page, $maxItemPerPage);
+                    $pagination = $paginator->paginate($diffs['summary'], $page, $maxItemPerPage);
                     $items = $pagination->getItems();
                     break;
                 case 'allDatas' :
-                    $items = $stats['summary'] ;
+                    $items = $diffs['summary'] ;
                     break;
                 case 'selectedSpecimens' :
                     if (!is_null($selectedSpecimens)) {
                         foreach ($selectedSpecimens as $specimenCode) {
-                            if (isset($stats['summary'][$specimenCode]))  {
-                                $items[$specimenCode] = $stats['summary'][$specimenCode] ;
+                            if (isset($diffs['summary'][$specimenCode]))  {
+                                $items[$specimenCode] = $diffs['summary'][$specimenCode] ;
                             }
                         }
                     }
@@ -122,10 +122,11 @@ class BackendController extends Controller
             }
             if (count($items) > 0) {
                 foreach ($items as $specimenCode=>$row) {
-                    foreach ($row as $className => $data) {
-                        $rowClass = $stats['classes'][$className][$specimenCode] ;
-                        foreach ($rowClass as $relationId => $rowFields) {
-                            foreach($rowFields as $fieldName=>$dataFields) {
+                    foreach ($row['classes'] as $className => $data) {
+                        $rowClass = $diffs['summary'][$specimenCode]['classes'][$className] ;
+                        $relationId = $rowClass['id'] ;
+                        foreach ($rowClass['fields'] as $fieldName=>$rowFields) {
+                            //foreach($rowFields as $fieldName=>$dataFields) {
                                 $doUpdate = false ;
                                 if (in_array(strtolower($className), $selectLevel3)) {
                                     $doUpdate = true ;
@@ -139,7 +140,7 @@ class BackendController extends Controller
                                         "specimenId" => $specimenCode,
                                     ];
                                 }
-                            }
+                            //}
                         }
                     }
                 }
@@ -167,19 +168,37 @@ class BackendController extends Controller
     }
     
     /**
-     * @Route("/deleteChoices/{institutionCode}/{filename}", name="deleteChoices", options={"expose"=true})
+     * @Route("/deleteChoices/{institutionCode}/{collectionCode}", name="deleteChoices", options={"expose"=true})
      * @param Request $request
      */
-    public function deleteChoicesAction($institutionCode, $filename)
+    public function deleteChoicesAction($institutionCode, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $diffHandler = $exportManager->getDiffHandler();
         $choices = $diffHandler->getChoices();
         $choices->deleteChoices();
         $this->get('session')->clear();
         $response = new JsonResponse();
         $response->setData(['deleteChoices'=>true]);
+        return $response;
+    }
+    
+    /**
+     * @Route("/deleteDiffs/{institutionCode}/{collectionCode}", name="deleteDiffs", options={"expose"=true})
+     * @param Request $request
+     */
+    public function deleteDiffsAction($institutionCode, $collectionCode)
+    {
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $diffHandler = $exportManager->getDiffHandler();
+        $diffs = $diffHandler->getDiffs();
+        $diffs->deleteChoices();
+        $exportManager->launchDiffProcess() ;
+        $this->get('session')->clear();
+        $response = new JsonResponse();
+        $response->setData(['deleteDiffs'=>true]);
         return $response;
     }
 }

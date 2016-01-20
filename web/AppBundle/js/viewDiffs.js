@@ -1,7 +1,7 @@
 $(document).ready(function(){
     
         var institutionCode = $('#diffs').data('institutioncode');
-        var filename = $('#diffs').data('filename');
+        var collectionCode = $('#diffs').data('collectioncode');
         var selectedClassName = $('#diffs').data('selectedclassname');
         var smallModal = $('#smallModal') ;
          var selectedSpecimens=new Array();
@@ -125,7 +125,7 @@ $(document).ready(function(){
                 setChoice(choices, $(this), specimenId);
             }
             $.ajax({
-                url : Routing.generate('setChoice', { institutionCode: institutionCode, filename:filename}),
+                url : Routing.generate('setChoice', { institutionCode: institutionCode, collectionCode:collectionCode}),
                 data: {'choices' : choices},
                 method: "POST"
             })
@@ -151,7 +151,7 @@ $(document).ready(function(){
             }
             
             $.ajax({
-                url : Routing.generate('setChoices', { institutionCode: institutionCode, filename:filename}),
+                url : Routing.generate('setChoices', { institutionCode: institutionCode, collectionCode:collectionCode}),
                 data: data,
                 method: "POST"
             })

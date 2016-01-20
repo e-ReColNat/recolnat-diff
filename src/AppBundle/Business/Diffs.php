@@ -21,17 +21,11 @@ class Diffs extends \SplFileObject
         chmod($this->getPathname(), 0755);
     }
     
-    public function saveDiffs(array $diffs, array $stats, array $specimensCode) {
+    public function save(array $diffs) {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         if ($fs->exists($this->getPathname())) {
             
-            $responseJson = json_encode(
-                    [
-                    'specimensCode' => $specimensCode,
-                    'stats' => $stats, 
-                    'diffs' => $diffs
-                    ]
-                    , JSON_PRETTY_PRINT);
+            $responseJson = json_encode($diffs, JSON_PRETTY_PRINT);
             $fs->dumpFile($this->getPathname(), $responseJson);
             chmod($this->getPathname(), 0755);
         }
@@ -41,44 +35,36 @@ class Diffs extends \SplFileObject
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         if ($fs->exists($this->getPathname())) {
             $fileContent=json_decode(file_get_contents($this->getPathname()),true);
-            $specimensCode = $fileContent['specimensCode'];
-            $diffs = $fileContent['diffs'];
-            $stats = $fileContent['stats'];
-            return array(
-            'specimensCode' => $specimensCode,
-            'stats' => $stats, 
-            'diffs' => $diffs) ;
+            return $fileContent ;
         }
         return array(
-            'specimensCode' => [],
-            'stats' => [], 
-            'diffs' => []) ;
+            ) ;
     }
     /**
      * renvoie les résultats dont au moins une différence fait partie de $classesName
-     * @param array $stats
+     * @param array $diffs
      * @param array $classesName
      * @return array
      */
-    public function filterByClassesName($stats, array $classesName=[]) {
-        $returnStats=$stats;
+    public function filterByClassesName($diffs, array $classesName=[]) {
+        $returnStats=$diffs;
         if (count($classesName)>0) {
             $returnStats['classes']=[] ;
             $returnStats['summary'] = [];
             foreach ($classesName as $className) {
                 $className = ucfirst(strtolower($className));
-                if (isset($stats['classes'][$className])) {
-                    $returnStats['classes'][$className] = $stats['classes'][$className] ;
+                if (isset($diffs['classes'][$className])) {
+                    $returnStats['classes'][$className] = $diffs['classes'][$className] ;
                 }
             }
-            foreach ($returnStats['classes'] as $className => $row) {
-                foreach ($row as $specimenCode => $fields) {
-                    if (isset($stats['summary'][$specimenCode])) {
-                        $returnStats['summary'][$specimenCode] = $stats['summary'][$specimenCode] ;
-                        // Rajout dans les classes si un specimen a des mofifications dans des class non sélectionnées
-                        foreach (array_keys($returnStats['summary'][$specimenCode]) as $className) {
+            foreach ($returnStats['classes'] as $className => $specimensCode) {
+                foreach ($specimensCode as $specimenCode) {
+                    if (isset($diffs['summary'][$specimenCode])) {
+                        $returnStats['summary'][$specimenCode] = $diffs['summary'][$specimenCode] ;
+                        // Rajout dans les classes si un specimen a des modifications dans des classes non sélectionnées
+                        foreach (array_keys($returnStats['summary'][$specimenCode]['classes']) as $className) {
                             if (!isset($returnStats['classes'][$className][$specimenCode])) {
-                                $returnStats['classes'][$className][$specimenCode] = $stats['classes'][$className][$specimenCode] ;
+                                $returnStats['classes'][$className][] = $specimenCode ;
                             }
                         }
                     }
@@ -90,20 +76,20 @@ class Diffs extends \SplFileObject
     
     /**
      * renvoie les résultats dont le specimenCode fait partie de $selectedSpecimensCode
-     * @param array $stats
+     * @param array $diffs
      * @param array $selectedSpecimensCode
      * @return array
      */
-    public function filterBySpecimensCode($stats,array $selectedSpecimensCode=[]) {
-        $returnStats=$stats;
+    public function filterBySpecimensCode($diffs,array $selectedSpecimensCode=[]) {
+        $returnStats=$diffs;
         if (count($selectedSpecimensCode)>0) {
             // Remise du summary à zero
             $returnStats['summary']=[];
-            $returnStats['classes']=$stats['classes'];
-            foreach ($stats['classes'] as $className => $row) {
-                foreach ($row as $specimenCode => $fields) {
+            $returnStats['classes']=$diffs['classes'];
+            foreach ($diffs['classes'] as $className => $specimensCode) {
+                foreach ($specimensCode as $specimenCode) {
                     if (in_array($specimenCode, $selectedSpecimensCode)) {
-                        $returnStats['summary'][$specimenCode] = $stats['summary'][$specimenCode] ;
+                        $returnStats['summary'][$specimenCode] = $diffs['summary'][$specimenCode] ;
                     }
                     else {
                         unset($returnStats['classes'][$className][$specimenCode]);
@@ -116,12 +102,12 @@ class Diffs extends \SplFileObject
     
     /**
      * filtre les résultats dont les choix ont été complétement faits
-     * @param type $stats
+     * @param type $diffs
      * @param array $choicesToRemove
      * @return type
      */
-    public function filterByChoicesDone($stats, array $choicesToRemove=[]) {
-        $returnStats=$stats;
+    public function filterByChoicesDone($diffs, array $choicesToRemove=[]) {
+        $returnStats=$diffs;
         if (count($choicesToRemove) >0) {
             $tempChoices=[] ;
             foreach ($choicesToRemove as $choice) {
@@ -169,4 +155,10 @@ class Diffs extends \SplFileObject
         return $returnStats;
     }
     
+    public function deleteChoices()
+    {
+        parent::__construct($this->getPathname(), 'w+');
+        parent::__construct($this->getPathname(), 'c+');
+        $this->generateDiff=true;
+    }
 }

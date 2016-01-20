@@ -25,15 +25,16 @@ class DiffStatsManager
      * @var EntityManager 
      */
     protected $emD;
+    protected $diffs = array();
+    protected $classes = array();
     protected $stats = array();
 
     public function __construct(EntityManager $emR, EntityManager $emD)
     {
         $this->emR = $emR;
         $this->emD = $emD;
-        $this->stats['summary'] = [];
-        $this->stats['classes'] = [];
-        $this->stats['taxons'] = [];
+        $this->diffs['summary'] = [];
+        $this->diffs['classes'] = [];
     }
 
     public function init($arrayIds)
@@ -41,55 +42,76 @@ class DiffStatsManager
         $this->arrayIds = $arrayIds;
         $taxonRepository = $this->emR->getRepository('\AppBundle\entity\Specimen') ;
         if (count($this->arrayIds) > 0) {
-            foreach ($this->arrayIds as $class => $ids) {
+            foreach ($this->arrayIds as $class => $specimensCode) {
                 $nameDiffClassManager = '\\AppBundle\\Manager\\Diff' . ucfirst(strtolower($class));
                 /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
                 $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
-                $diffClassManager->init($class, $ids);
-                $this->addStats($class, $diffClassManager->getStats());
-                $this->computeStats($class);
+                $diffClassManager->init($class, $specimensCode);
+                $this->addDiffs($class, $diffClassManager->getStats());
+                $this->computeDiffs($class);
             }
         }
+        $this->diffs['classes'] = $this->classes ;
         return $this;
     }
-    private function computeStats($class)
+    private function setTaxon($specimenCode) {
+        if (!isset($this->diffs['summary'][$specimenCode]['display'])) {
+            $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon') ;
+            $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
+            $this->diffs['summary'][$specimenCode]['taxon'] = $taxon instanceof \AppBundle\Entity\Taxon ? $taxon->__toString() : '';
+        }
+    }
+    private function computeDiffs($className)
     {
-        $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon') ;
-        if (isset($this->stats['classes'][$class])) {
-            foreach ($this->stats['classes'][$class] as $specimenCode => $rows) {
-                if (!isset($this->stats['summary'][$specimenCode])) {
-                    $this->stats['summary'][$specimenCode] = [];
+        $this->stats[$className]=[];
+        if (isset($this->diffs['classes'][$className])) {
+            foreach ($this->diffs['classes'][$className] as $specimenCode => $rows) {
+                $this->setTaxon($specimenCode) ;
+                if (!isset($this->diffs['summary'][$specimenCode])) {
+                    $this->diffs['summary'][$specimenCode] = [];
+                    $this->diffs['summary'][$specimenCode]['classes'] = [];
                 }
-                if (!isset($this->stats['summary'][$specimenCode][$class])) {
-                    $this->stats['summary'][$specimenCode][$class]['records'] = count($rows);
-                }
-                if (!isset($this->stats['summary'][$specimenCode][$class]['fields'])) {
-                    $this->stats['summary'][$specimenCode][$class]['fields'] = 0;
+                if (!isset($this->diffs['summary'][$specimenCode]['classes'][$className])) {
+                    $this->diffs['summary'][$specimenCode]['classes'][$className] = [];
                 }
                 foreach ($rows as $recordId => $fields) {
-                    $this->stats['summary'][$specimenCode][$class]['fields']+=count($fields);
-                }
-                if (!isset($this->stats['taxons'][$specimenCode])) {
-                    $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
-                    $this->stats['taxons'][$specimenCode] = $taxon instanceof \AppBundle\Entity\Taxon ? $taxon->__toString() : '';
+                    $this->setStatsForClass($className, $fields);
+                    $this->diffs['summary'][$specimenCode]['classes'][$className]['fields'] = $fields;
+                    $this->diffs['summary'][$specimenCode]['classes'][$className]['id'] = $recordId;
                 }
             }
         }
     }
 
-    public function getStats()
+    public function getAllStats() 
     {
-        return $this->stats;
+        return $this->stats ;
+    }
+    
+    private function setStatsForClass($className, $fields) 
+    {
+        $fieldsName = array_keys($fields) ;
+        foreach ($fieldsName as $fieldName) {
+            if (!isset($this->stats[$className][$fieldName])) {
+                $this->stats[$className][$fieldName] = 0;
+            }
+            $this->stats[$className][$fieldName]++ ;
+        }
+    }
+    public function getDiffs()
+    {
+        return $this->diffs;
     }
 
-    public function addStats($class, $stats)
+    public function addDiffs($class, $stats)
     {
-        $this->stats['classes'][$class] = $stats;
+        $this->diffs['classes'][$class] = $stats;
+        $this->classes[$class] = array_keys($stats) ;
     }
 
     public function getAllSpecimensId()
     {
-        return array_keys($this->stats['summary']);
+        return array_keys($this->diffs['summary']);
     }
 
 }

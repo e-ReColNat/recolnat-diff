@@ -16,7 +16,7 @@ class DiffHandler
     /*
      * @var Diffs
      */
-    protected $diffsFile ;
+    protected $diffs ;
     
     protected $dirPath;
     protected $filename;
@@ -69,7 +69,7 @@ class DiffHandler
      */
     public function getDiffs()
     {
-        return $this->diffsFile;
+        return $this->diffs;
     }
 
     public function setChoicesFile()
@@ -80,7 +80,7 @@ class DiffHandler
 
     public function setDiffsFile()
     {
-        $this->diffsFile = new Diffs($this->getPath());
+        $this->diffs = new Diffs($this->getPath());
         return $this;
     }
 }

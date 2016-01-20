@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Manager\GenericEntityManager;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Business\User\User ;
+use AppBundle\Business\User\User;
 
 /**
  * Description of ExportManager
@@ -22,16 +22,19 @@ class ExportManager
 
     /** @var $genericEntityManager GenericEntityManager */
     private $genericEntityManager;
-    private $filename = null;
+    private $collectionCode = null;
+
+    /** @var \AppBundle\Manager\DiffManager */
     protected $diffManager;
     protected $maxItemPerPage;
-    /* @var $user AppBundle\Business\User\User */
-    protected $user ;
+
+    /** @var $user AppBundle\Business\User\User */
+    protected $user;
 
     /** @var \AppBundle\Business\DiffHandler */
     private $diffHandler;
+    private $prefs;
 
-    private $prefs ;
     /**
      * 
      * @param string $export_path
@@ -55,14 +58,15 @@ class ExportManager
      * @param String $institutionCode
      * @return \AppBundle\Manager\ExportManager
      */
-    public function init($institutionCode, $filename = null)
+    public function init($institutionCode, $collectionCode)
     {
         $this->institutionCode = $institutionCode;
-        $this->user = new User($this->exportPath, $this->maxItemPerPage) ;
-        $this->user->init($institutionCode);
+        $this->collectionCode = $collectionCode;
+        $this->user = new User($this->exportPath, $this->maxItemPerPage);
+        $this->user->init($this->institutionCode);
 
-        if (!is_null($filename)) {
-            $this->filename = $filename;
+        if (!is_null($collectionCode)) {
+            $this->collectionCode = $collectionCode;
             $fs = new \Symfony\Component\Filesystem\Filesystem();
 
             if (!$fs->exists($this->getExportDirPath())) {
@@ -70,25 +74,23 @@ class ExportManager
             }
             chmod($this->getExportDirPath(), 0777);
 
-            $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->filename);
+            $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collectionCode);
 
             $doReload = false;
             $path = $this->diffHandler->getChoices()->getPathname();
             if ($this->diffHandler->getDiffs()->generateDiff) {
-                $results = $this->diffManager->init($institutionCode);
-                $this->sessionManager->set('diffs', $results['diffs']);
-                $this->sessionManager->set('specimensCode', $results['specimensCode']);
-                $this->sessionManager->set('stats', $results['stats']);
-                $this->diffHandler->getDiffs()->saveDiffs($results['diffs'], $results['stats'], $results['specimensCode']);
-                $this->diffHandler->getDiffs()->generateDiff = false;
+                $results = $this->launchDiffProcess();
             } else {
                 $results = $this->diffHandler->getDiffs()->getData();
-                $this->sessionManager->set('diffs', $results['diffs']);
-                $this->sessionManager->set('specimensCode', $results['specimensCode']);
-                $this->sessionManager->set('stats', $results['stats']);
             }
+            $stats = $results['stats'];
+            unset($results['stats']);
+            $this->sessionManager->set('diffs', $results);
+            $this->sessionManager->set('stats', $stats);
+            $this->sessionManager->set('specimensCode', $this->getSpecimensCode());
 
-            if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $filename)) {
+
+            if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $this->collectionCode)) {
                 $doReload = true;
             }
             if (!($this->sessionManager->has('choices') ) || empty($this->sessionManager->get('choices'))) {
@@ -97,12 +99,56 @@ class ExportManager
             if ($doReload && $fs->exists($path)) {
                 $this->sessionManager->set('choices', $this->diffHandler->getChoices()->getContent());
             } else {
-                $this->sessionManager->set('file', $filename);
+                $this->sessionManager->set('file', $this->collectionCode);
             }
         }
         return $this;
     }
-    
+
+    public function getStats()
+    {
+        return $this->sessionManager->get('stats');
+    }
+
+    public function getSumStats()
+    {
+        $stats = $this->getExpandedStats();
+        $sumStats=['specimens'=>0, 'diffs' => 0, 'fields'=>0] ;
+        foreach ($stats as $datas) {
+            $sumStats['specimens']+=$datas['specimens'] ;
+            $sumStats['diffs']+=$datas['diffs'] ;
+            $sumStats['fields']+=count($datas['fields']) ;
+        }
+        return $sumStats;
+    }
+    public function getExpandedStats()
+    {
+        $stats =  [];
+        $diffs = $this->sessionManager->get('diffs');
+        foreach ($this->getStats() as $className=> $fields) {
+            $stats[$className]['diffs'] = array_sum($fields) ;
+            $stats[$className]['fields'] = $fields ;
+            $stats[$className]['specimens'] = count($diffs['classes'][$className]) ;
+        }
+        return $stats;
+    }
+    public function getCondensedStats()
+    {
+        $stats =  [];
+        foreach ($this->getStats() as $className=> $fields) {
+            $stats[$className] = array_sum($fields) ;
+        }
+        return $stats;
+    }
+
+    public function launchDiffProcess()
+    {
+        $results = $this->diffManager->init($this->institutionCode, $this->collectionCode);
+        $this->diffHandler->getDiffs()->save($results);
+        $this->diffHandler->getDiffs()->generateDiff = false;
+        return $results;
+    }
+
     /**
      * 
      * @return DiffHandler
@@ -115,7 +161,7 @@ class ExportManager
         return null;
     }
 
-    public function getSpecimenIdsAndDiffsAndStats(Request $request, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
+    public function getDiffs(Request $request, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
     {
         $session = $this->sessionManager;
         $className = [];
@@ -129,10 +175,16 @@ class ExportManager
         if (!is_null($request->query->get('reset', null))) {
             $session->clear();
         }
-        $stats = $this->sessionManager->get('stats');
-        $stats = $this->diffHandler->getDiffs()->filterResults($stats, $className, $specimensWithChoices, $choicesToRemove);
-        $session->set('stats', $stats);
-        return [$session->get('specimensCode'), $session->get('diffs'), $stats];
+        $allDiffs = $this->sessionManager->get('diffs');
+        $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $className, $specimensWithChoices, $choicesToRemove);
+        $session->set('diffs', $diffs);
+        return $diffs;
+    }
+
+    public function getSpecimensCode()
+    {
+        $stats = $this->sessionManager->get('diffs');
+        return array_keys($stats['summary']);
     }
 
     public function getMaxItemPerPage(Request $request)
@@ -170,7 +222,7 @@ class ExportManager
      */
     public function getExportDirPath()
     {
-        return $this->user->getDataDirPath() . $this->filename . '/export/';
+        return $this->user->getDataDirPath() . $this->collectionCode . '/export/';
     }
 
     /**
@@ -180,7 +232,7 @@ class ExportManager
      */
     public function getChoicesFileName()
     {
-        if (!is_null($this->filename)) {
+        if (!is_null($this->collectionCode)) {
             return $this->diffHandler->getChoices()->getPathname();
         }
         return null;
@@ -292,7 +344,7 @@ class ExportManager
             'Bibliography',
         ];
         foreach ($datas as $key => $specimen) {
-            $arraySpecimenWithEntities = $genericEntityManager->formatArraySpecimen($specimen) ;
+            $arraySpecimenWithEntities = $genericEntityManager->formatArraySpecimen($specimen);
             $datasWithChoices[$key] = $arraySpecimenWithEntities;
             foreach ($arraySpecimenWithEntities as $className => $row) {
                 $key2 = null;
@@ -330,7 +382,7 @@ class ExportManager
         }
     }
 
-    public function getCsv() 
+    public function getCsv()
     {
         $specimenCodes = $this->sessionManager->get('specimensCode');
         $genericEntityManager = $this->genericEntityManager;
@@ -341,7 +393,7 @@ class ExportManager
 
         return $csvExporter->generate($this->user->getPrefs());
     }
-    
+
     public function getDwc()
     {
         $specimenCodes = $this->sessionManager->get('specimensCode');

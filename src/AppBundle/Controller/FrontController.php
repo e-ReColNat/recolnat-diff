@@ -22,8 +22,9 @@ class FrontController extends Controller
     public function indexAction(Request $request) 
     {
         $institutionCode = 'MHNAIX';
+        $collectionCode = 'AIX';
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, 'AIX');
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $files = $exportManager->getFiles() ;
         /* @var $institution \AppBundle\Entity\Institution */
         $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
@@ -36,9 +37,9 @@ class FrontController extends Controller
     }
     
     /**
-     * @Route("{institutionCode}/{filename}/view", name="viewfile")
+     * @Route("{institutionCode}/{collectionCode}/view", name="viewfile")
      */
-    public function viewFileAction(Request $request, $filename, $institutionCode) 
+    public function viewFileAction(Request $request, $collectionCode, $institutionCode) 
     {
         if (!is_null($request->query->get('reset', null))) {
             $this->get('session')->clear();
@@ -47,25 +48,16 @@ class FrontController extends Controller
         $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
                 ->findOneBy(['institutioncode' => $institutionCode]) ;
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
 
-        list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request);
+        $diffs = $exportManager->getDiffs($request);
         
         $choices=$exportManager->getChoicesForDisplay();
-        $sortedStats = $stats['classes'] ;
-        $total = [] ;
+        $diffs = $exportManager->getExpandedStats();
         $totalChoices = [] ;
+        $sumStats = $exportManager->getSumStats() ;
+
      
-        $callbackCount = function($value, $className) use (&$total){
-            if (is_array($value)) {
-                if (!isset($total[$className])) { $total[$className]=0; }
-                foreach ($value as $row) {
-                    foreach ($row as $fields) {
-                        $total[$className] += count($fields) ;
-                    }
-                }
-            }
-        };
         $callbackCountChoices = function($value, $className) use (&$totalChoices){
             if (is_array($value)) {
                 if (!isset($total[$className])) { $totalChoices[$className]=0; }
@@ -76,44 +68,35 @@ class FrontController extends Controller
                 }
             }
         };
-        if (is_array($sortedStats)) {
-            array_walk($sortedStats, $callbackCount);
-            uasort($sortedStats, function($a, $b) {
-                return count(array_values($a)) < count(array_values($b)) ? 1 : -1;
-            });
-        }
         array_walk($choices, $callbackCountChoices);
-        
-
-        $total['sum'] = array_sum($total);
+        $totalDiffs = array_sum($diffs);
         $totalChoices['sum'] = array_sum($totalChoices);
         
         return $this->render('default/viewFile.html.twig', array(
             'diffHandler'=>$exportManager->getDiffHandler(),
             'institutionCode' => $institutionCode,
-            'filename' => $filename,
-            'stats' => $sortedStats,
+            'collectionCode' => $collectionCode,
             'diffs' => $diffs,
+            'sumStats' => $sumStats,
             'totalChoices' => $totalChoices,
-            'total'=> $total,
             'institution' => $institution,
         ));
     }
     
     /**
-    * @Route("{institutionCode}/{filename}/diffs/{selectedClassName}/{page}", name="diffs", 
+    * @Route("{institutionCode}/{collectionCode}/diffs/{selectedClassName}/{page}", name="diffs", 
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
-    * @Route("{institutionCode}/{filename}/choices/{selectedClassName}/{page}", name="choices", 
+    * @Route("{institutionCode}/{collectionCode}/choices/{selectedClassName}/{page}", name="choices", 
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
-    * @Route("{institutionCode}/{filename}/todo/{selectedClassName}/{page}", name="todo", 
+    * @Route("{institutionCode}/{collectionCode}/todo/{selectedClassName}/{page}", name="todo", 
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
     */
-    public function diffsAction(Request $request, $institutionCode, $filename, $selectedClassName = "all", $page = 1)
+    public function diffsAction(Request $request, $institutionCode, $collectionCode, $selectedClassName = "all", $page = 1)
     {
         /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $this->get('session') ;
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $filename);
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
         
         list($specimensWithChoices,$specimensWithoutChoices)=[[],[]];
@@ -124,10 +107,10 @@ class FrontController extends Controller
             $specimensWithoutChoices=$exportManager->getChoices() ;
         }
         
-        list($specimensCode, $diffs, $stats) = $exportManager->getSpecimenIdsAndDiffsAndStats($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
+        $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
 
         $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate($stats['summary'], $page, $maxItemPerPage);
+        $pagination = $paginator->paginate($diffs['summary'], $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
         
         $specimensRecolnat = $this->getDoctrine() ->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
@@ -135,8 +118,7 @@ class FrontController extends Controller
 
         return $this->render('default/viewDiffs.html.twig', array(
             'institutionCode' => $institutionCode,
-            'filename'=> $filename,
-            'stats' => $stats,
+            'collectionCode'=> $collectionCode,
             'diffs' => $diffs,
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,

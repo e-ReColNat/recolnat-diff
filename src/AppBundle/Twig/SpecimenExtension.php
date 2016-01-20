@@ -81,6 +81,14 @@ class SpecimenExtension extends \Twig_Extension
         return $return ;
     }
     
+    /**
+     * Renvoie le nom minimum d'une extension d'un specimen
+     * ex : pour la Récolte d'un specimen on aura la date et nom d'un récolteur
+     * @param \AppBundle\Entity\Specimen $specimen
+     * @param string $class
+     * @param string $id
+     * @return string
+     */
     public function getRelationByIdToString(\AppBundle\Entity\Specimen $specimen, $class, $id) {
         $relation = $this->getRelationById($specimen, $class, $id) ;
         $toString='';

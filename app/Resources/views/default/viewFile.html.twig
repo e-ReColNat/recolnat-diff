@@ -2,8 +2,8 @@
 
 {% set sumSpecimens = 0 %}
 {% block body %}
-    <h1 class="page-header">{{'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ filename},'user') }}</h1>
-    {% if stats is not empty %}
+    <h1 class="page-header">{{'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ collectionCode},'user') }}</h1>
+    {% if diffs is not empty %}
         <table class="table table-bordered">
             <tr>
                 <th>&nbsp;</th>
@@ -12,26 +12,24 @@
                 <th>{{'header.nb.reste' | trans}}</th>
                 <th>{{'header.nb.choix' | trans}}</th>
             </tr>
-        {% for class in stats|keys %}
-            {% set sumSpecimens = sumSpecimens + attribute(stats, class) | length %}
+        {% for className, detailedStats in diffs %}
             <tr>
-                {% set totalCountClass=attribute(stats, class) | length %}
-                <td>{{('label.'~class|lower) | transchoice(totalCountClass, {}, 'entity')|capitalize}}</td>
-                {% set transClass=('label.'~class|lower) | transchoice(totalCountClass, {}, 'entity') %}
+                <td>{{('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize}}</td>
+                {% set transClass=('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity') %}
                 <td>
-                    {% if totalCountClass > 0 %}
-                    <a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}" 
+                    {% if detailedStats.diffs > 0 %}
+                    <a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}" 
 {#                       title="{{'title.link.all' | transchoice(totalCountClass, {'%count%' : totalCountClass, '%className%' : transClass})}}"#}
                        >
                     {% endif %}
-                        {{totalCountClass}}
-                    {% if totalCountClass > 0 %}</a>{% endif %}
+                        {{detailedStats.specimens}}
+                    {% if detailedStats.specimens > 0 %}</a>{% endif %}
                 </td>
-                <td><a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">{{attribute(total, class)}}</a></td>
+                <td><a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}">{{detailedStats.diffs}}</a></td>
                 <td>
-                    {% set nbTodo = attribute(totalChoices, class) is defined ? attribute(total, class) - attribute(totalChoices, class) : attribute(total, class) %}
+                    {% set nbTodo = attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs %}
                     {% if nbTodo > 0 %}
-                        <a href="{{path('todo', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}">
+                        <a href="{{path('todo', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}">
                     {% endif %}
                             {{ nbTodo }}
                     {% if nbTodo > 0 %}
@@ -39,9 +37,9 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% set nbChoices = attribute(totalChoices, class) is defined ? attribute(totalChoices, class) : 0 %}
+                    {% set nbChoices = attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 %}
                     {% if nbChoices > 0 %}
-                        <a href="{{path('choices', {'filename' : filename, 'institutionCode':institutionCode, 'selectedClassName' : class|lower})}}" title="">
+                        <a href="{{path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}" title="">
                     {% endif %}
                             {{ nbChoices }}
                     {% if nbChoices > 0 %}
@@ -52,26 +50,29 @@
         {% endfor %}
         <tr>
             <td>{{ 'label.total' | trans }}</td>
-            <td><a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ sumSpecimens }}</a></td>
-            <td><a href="{{path('diffs', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ total.sum }}</a></td>
-            <td><a href="{{path('todo', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ total.sum - totalChoices.sum }}</a></td>
-            <td><a href="{{path('choices', {'filename' : filename, 'institutionCode':institutionCode})}}">{{ totalChoices.sum }}</a></td>
+            <td><a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ sumStats.specimens }}</a></td>
+            <td><a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ sumStats.diffs }}</a></td>
+            <td><a href="{{path('todo', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ sumStats.diffs - totalChoices.sum }}</a></td>
+            <td><a href="{{path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ totalChoices.sum }}</a></td>
         </tr>
         </table>
      {% endif %}
      <div class="row">
-         <div class="col-sm-6 col-md-6">
-            <a href="{{path('exportDwc', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
+         <div class="col-sm-4 col-md-4">
+            <a href="{{path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
                 {{'downloadDwc'|trans}}
             </a>
-            <a href="{{path('exportCsv', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
+            <a href="{{path('exportCsv', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
                 {{'downloadCsv'|trans}}
             </a>
          </div>
-            <div class="col-sm-3 col-md-2 col-md-offset-2 col-sm-offset-2">
-                <a href="{{path('deleteChoices', {'filename' : filename, 'institutionCode' : institutionCode})}}" class="deleteChoices btn btn-default" role="button">
+            <div class="col-sm-6 col-md-6 col-md-offset-2 col-sm-offset-2">
+                <a href="{{path('deleteChoices', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="delete deleteChoices btn btn-default" role="button">
                 {{'delete.choices'|trans}}
-            </a>
+                </a>
+                <a href="{{path('deleteDiffs', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="delete deleteDiffs btn btn-default" role="button">
+                {{'delete.diffs'|trans}}
+                </a>
             </div>
      </div>
     {% include 'default/partial/modal.html.twig' %}
@@ -81,8 +82,8 @@
 {% block javascripts %}
     <script type="text/javascript">
     $(document).ready(function(){
+        var modalSpinner = $("#spinnerModal") ;
         $(".exportLink").on('click', function(event) {
-            var modalSpinner = $("#spinnerModal") ;
             var url = $(this).attr('href');
             $.ajax({
                 url : url,
@@ -102,19 +103,30 @@
             event.preventDefault();
         });
         
-        $(".deleteChoices").on('click', function(event) {
-            var deleteModal = $("#modal") ;
+        $(".delete").on('click', function(event) {
+            var modalDelete = $("#modal") ;
             var urlDeleteChoices = $(this).attr('href');
-            deleteModal.find('.modal-title').html('{{'deleteChoices.title' | trans}}');
-            deleteModal.find('.modal-body>p').html('{{'deleteChoices.text' | trans}}');
-            deleteModal.modal('show');
-            deleteModal.find('.confirm').on('click', function(event) {
+            if ($(this).hasClass('deleteChoices')) {
+                modalDelete.find('.modal-title').html('{{'deleteChoices.title' | trans}}');
+                modalDelete.find('.modal-body>p').html('{{'deleteChoices.text' | trans}}');
+            }
+            else {
+                modalDelete.find('.modal-title').html('{{'deleteDiffs.title' | trans}}');
+                modalDelete.find('.modal-body>p').html('{{'deleteDiffs.text' | trans}}');
+            }
+            modalDelete.modal('show');
+            modalDelete.find('.confirm').on('click', function(event) {
                 
                 event.preventDefault();
                 $.ajax({
                 url : urlDeleteChoices,
                 method: "POST",
                 global : false, // désactive le spinner
+                beforeSend : function() {
+                    modalDelete.modal('hide');
+                    modalSpinner.find('.modal-body').append('<p class="text-center">{{'generateDiffs' | trans}}</p>');
+                    modalSpinner.modal('show');
+                    }
                 })
                 .done(function(data) {
                     console.log(data);

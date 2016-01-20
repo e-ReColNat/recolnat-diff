@@ -1,18 +1,19 @@
 {% set page = 1 %}
 <ul class="nav nav-sidebar sidebar-choices">
-{% for specimenId, classWithDiff in stats.summary %}
+{% for specimenId, datas in diffs.summary %}
+    {% set classWithDiff = datas.classes %}
     <li>
-                {% set taxon = attribute(stats.taxons, specimenId) %}
+                {% set taxon = datas.taxon %}
 
                 {% set path='' %}
                 {% if page != currentPage %}
-                    {% set path = path('diffs', {'filename' : filename, 'page' : page, 'institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) %}
+                    {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) %}
                 {% endif %}
 
                 <a href="{{path}}#{{specimenId}}">{{taxon}}</a>
                 <ul class="choices">
                 {% for className in classWithDiff | keys %}
-                    {% set nbDiffs = countDiffs(stats, className, specimenId) %}
+                    {% set nbDiffs = countDiffs(diffs, className, specimenId) %}
                     {% set nbChoices = countChoices(choices, specimenId, className) %}
                     <li>
                         <div class ="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning'}}" id="facet-{{specimenId}}-{{className}}" data-classname="{{className}}" data-comptchoices="{{nbChoices}}" data-comptdiffs="{{nbDiffs}}">
