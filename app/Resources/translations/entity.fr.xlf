@@ -20,7 +20,7 @@
             </trans-unit>
             <trans-unit id="5">
                 <source>label.specimen.fields.basisofrecord</source> 
-                <target state="translated"></target> 
+                <target state="translated">Base de registre</target> 
             </trans-unit>
             <trans-unit id="6" approved="yes">
                 <source>label.specimen.fields.bibliographiccitation</source> 
@@ -120,7 +120,7 @@
             </trans-unit>
             <trans-unit id="30" approved="yes">
                 <source>label.bibliography.fields.rights</source> 
-                <target state="translated">Copy</target> 
+                <target state="translated">Droits</target> 
             </trans-unit>
             <trans-unit id="31" approved="yes">
                 <source>label.bibliography.fields.source</source> 
@@ -128,7 +128,7 @@
             </trans-unit>
             <trans-unit id="32" approved="yes">
                 <source>label.bibliography.fields.sourcefileid</source> 
-                <target state="translated">sourc</target> 
+                <target state="translated">sourcefileid</target> 
             </trans-unit>
             <trans-unit id="33" approved="yes">
                 <source>label.bibliography.fields.subject</source> 

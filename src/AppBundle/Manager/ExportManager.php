@@ -113,30 +113,95 @@ class ExportManager
     public function getSumStats()
     {
         $stats = $this->getExpandedStats();
-        $sumStats=['specimens'=>0, 'diffs' => 0, 'fields'=>0] ;
+        $sumStats = ['specimens' => 0, 'diffs' => 0, 'fields' => 0];
         foreach ($stats as $datas) {
-            $sumStats['specimens']+=$datas['specimens'] ;
-            $sumStats['diffs']+=$datas['diffs'] ;
-            $sumStats['fields']+=count($datas['fields']) ;
+            $sumStats['specimens']+=$datas['specimens'];
+            $sumStats['diffs']+=$datas['diffs'];
+            $sumStats['fields']+=count($datas['fields']);
         }
         return $sumStats;
     }
-    public function getExpandedStats()
+
+    public function getExpandedStats($sortedFields = 'desc')
     {
-        $stats =  [];
+        $stats = [];
         $diffs = $this->sessionManager->get('diffs');
-        foreach ($this->getStats() as $className=> $fields) {
-            $stats[$className]['diffs'] = array_sum($fields) ;
-            $stats[$className]['fields'] = $fields ;
-            $stats[$className]['specimens'] = count($diffs['classes'][$className]) ;
+        foreach ($this->getStats() as $className => $fields) {
+            $stats[$className]['diffs'] = array_sum($fields);
+            $tempFields = $fields;
+            switch ($sortedFields) {
+                case 'desc' :
+                    arsort($tempFields);
+                    break;
+                case 'asc' :
+                    asort($tempFields);
+                    break;
+            }
+            $stats[$className]['fields'] = $tempFields;
+            $stats[$className]['specimens'] = count($diffs['classes'][$className]);
         }
         return $stats;
     }
+
+    public function getStatsBySimilarity($classesName = [], $dateFormat ='d/M/Y')
+    {
+        $diffs = $this->sessionManager->get('diffs');
+        if (empty($classesName)) {
+            $classesName = array_keys($diffs['classes']) ;
+        }
+        array_map(function($value) {
+            return ucfirst(strtolower($value)) ;
+        }, $classesName) ;
+        
+        $dataSeparator = '\#|#/';
+        $stats = [];
+        foreach ($classesName as $className) {
+            if (isset($diffs['classes'][$className]) && !empty($diffs['classes'][$className])) {
+                foreach ($diffs['classes'][$className] as $specimenCode) {
+                    if (isset($diffs['summary'][$specimenCode])) {
+                        $details = $diffs['summary'][$specimenCode]['classes'][$className] ;
+                        foreach ($details['fields'] as $fieldName => $datas) {
+                            if (is_array($datas['recolnat']) && isset($datas['recolnat']['date'])) {
+                                $date = new \DateTime($datas['recolnat']['date']) ;
+                                $datas['recolnat'] = $date->format($dateFormat)  ;
+                            }
+                            if (is_array($datas['institution']) && isset($datas['institution']['date'])) {
+                                //$datas['institution'] = $datas['institution']['date'] ;
+                                $date = new \DateTime($datas['institution']['date']) ;
+                                $datas['institution'] = $date->format($dateFormat)  ;
+                            }
+                            //if (!is_array($datas['recolnat']) && !is_array($datas['institution'])) {
+                                $concatDatas = md5(implode($dataSeparator, [$className, $fieldName, $datas['recolnat'], $datas['institution']])) ;
+
+                                !isset($stats[$concatDatas]) ? $stats[$concatDatas] = [] : false;
+                                !isset($stats[$concatDatas]['specimensCode']) ? $stats[$concatDatas]['specimensCode'] = [] : false;
+                                $stats[$concatDatas]['specimensCode'][$specimenCode] = $details['id'];
+
+                                !isset($stats[$concatDatas]['datas']) ? $stats[$concatDatas]['datas'] = $datas : false;
+                                !isset($stats[$concatDatas]['className']) ? $stats[$concatDatas]['className'] = $className : false;
+                                !isset($stats[$concatDatas]['fieldName']) ? $stats[$concatDatas]['fieldName'] = $fieldName : false;
+                            /*}
+                            else {
+                                dump(array_merge($datas['recolnat'], [$className, $fieldName])) ;
+                            }*/
+                        }
+                    }
+                }
+            }
+        }
+        uasort($stats, function ($a, $b) {
+                $a = count($a['specimensCode']);
+                $b = count($b['specimensCode']);
+                return ($a == $b) ? 0 : (($a > $b) ? -1 : 1);
+            });
+        return $stats;
+    }
+    
     public function getCondensedStats()
     {
-        $stats =  [];
-        foreach ($this->getStats() as $className=> $fields) {
-            $stats[$className] = array_sum($fields) ;
+        $stats = [];
+        foreach ($this->getStats() as $className => $fields) {
+            $stats[$className] = array_sum($fields);
         }
         return $stats;
     }
@@ -161,7 +226,7 @@ class ExportManager
         return null;
     }
 
-    public function getDiffs(Request $request, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
+    public function getDiffs(Request $request = null, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
     {
         $session = $this->sessionManager;
         $className = [];
@@ -172,7 +237,7 @@ class ExportManager
             $className = $selectedClassName;
         }
 
-        if (!is_null($request->query->get('reset', null))) {
+        if (!is_null($request) && !is_null($request->query->get('reset', null))) {
             $session->clear();
         }
         $allDiffs = $this->sessionManager->get('diffs');

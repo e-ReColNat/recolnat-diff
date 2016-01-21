@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if stats is not empty %}
+        <table class="table table-bordered table-condensed table-striped diffs">
+            <thead>
+                <tr>
+                    <th>{{'className' | trans}}</th>
+                    <th>{{'fieldName' | trans}}</th>
+                    <th>Recolnat</th>
+                    <th>Institution</th>
+                    <th>count</th>
+                </tr>
+            </thead>
+            <tbody>
+        {% for md5key, data in stats %}
+            <tr>
+                <td>{{data.className}}</td>
+                <td>{{('label.'~(data.className | lower) ~'.fields.'~data.fieldName) | trans({}, 'entity')}}</td>
+                <td>{{data.datas.recolnat}}
+                <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="recolnat">
+                </td>
+                <td>{{data.datas.institution}}
+                <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="institution">
+                </td>
+                <td>
+                    {{data.specimensCode | length}}
+                    <span class="hidden" rel="{{md5key}}">
+                        {{data.specimensCode | json_encode}}
+                    </span>
+                </td>
+            </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{#    <h1 class="page-header">{{'welcome' | trans({'%name%' : institution.institutionCode},'user') }}</h1>
+    <h2>{{'listFiles' | trans({},'user') }}</h2>
+    <ul>
+        {% for file in files %}
+            <li>
+                <a href="{{ path('viewfile', {'collectionCode':file.getFilename, 'institutionCode':institutionCode }) }}">{{file.getFilename}}</a>
+                <ul>
+                    <li>{{'fichier.creele'|trans({'%date%': file.getCTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
+                    <li>{{'fichier.modifiele'|trans({'%date%': file.getMTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>#}
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="{{ asset('AppBundle/js/viewDiffs.js') }}"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(".choice").on('change', function() {
+            // recuperation des clés des enregistrements concernés
+            specimensCode = jQuery.parseJSON($("table.diffs").find("[rel='"+$(this).attr('name')+"']").html());
+            var choices=new Array() ;
+            var radioInput = $(this);
+            var fieldName=radioInput.data('fieldname');
+            var className=radioInput.data('class');
+            var choice = radioInput.attr('value') ;
+            $.each(specimensCode, function(specimenCode, relationId) {
+                temp = {
+                    'className' : className, 
+                    'fieldName' : fieldName,
+                    'relationId' : relationId,
+                    'choice' : choice,
+                    'specimenId' : specimenCode
+                };
+                choices.push(temp);
+            });
+        $.ajax({
+                url : Routing.generate('setChoice', { institutionCode: '{{institutionCode}}', collectionCode:'{{collectionCode}}'}),
+                data: {'choices' : choices},
+                method: "POST"
+            })
+        });
+    });
+    </script>
+{% endblock %}

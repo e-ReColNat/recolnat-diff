@@ -3,7 +3,7 @@
 {% set sumSpecimens = 0 %}
 {% block body %}
     <h1 class="page-header">{{'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ collectionCode},'user') }}</h1>
-    {% if diffs is not empty %}
+    {% if stats is not empty %}
         <table class="table table-bordered">
             <tr>
                 <th>&nbsp;</th>
@@ -12,7 +12,7 @@
                 <th>{{'header.nb.reste' | trans}}</th>
                 <th>{{'header.nb.choix' | trans}}</th>
             </tr>
-        {% for className, detailedStats in diffs %}
+        {% for className, detailedStats in stats %}
             <tr>
                 <td>{{('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize}}</td>
                 {% set transClass=('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity') %}
