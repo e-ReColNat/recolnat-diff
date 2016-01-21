@@ -50,7 +50,7 @@ class Diffs extends \SplFileObject
         $returnStats=$diffs;
         if (count($classesName)>0) {
             $returnStats['classes']=[] ;
-            $returnStats['summary'] = [];
+            $returnStats['datas'] = [];
             foreach ($classesName as $className) {
                 $className = ucfirst(strtolower($className));
                 if (isset($diffs['classes'][$className])) {
@@ -59,10 +59,10 @@ class Diffs extends \SplFileObject
             }
             foreach ($returnStats['classes'] as $className => $specimensCode) {
                 foreach ($specimensCode as $specimenCode) {
-                    if (isset($diffs['summary'][$specimenCode])) {
-                        $returnStats['summary'][$specimenCode] = $diffs['summary'][$specimenCode] ;
+                    if (isset($diffs['datas'][$specimenCode])) {
+                        $returnStats['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
                         // Rajout dans les classes si un specimen a des modifications dans des classes non sélectionnées
-                        foreach (array_keys($returnStats['summary'][$specimenCode]['classes']) as $className) {
+                        foreach (array_keys($returnStats['datas'][$specimenCode]['classes']) as $className) {
                             if (!isset($returnStats['classes'][$className][$specimenCode])) {
                                 $returnStats['classes'][$className][] = $specimenCode ;
                             }
@@ -83,13 +83,13 @@ class Diffs extends \SplFileObject
     public function filterBySpecimensCode($diffs,array $selectedSpecimensCode=[]) {
         $returnStats=$diffs;
         if (count($selectedSpecimensCode)>0) {
-            // Remise du summary à zero
-            $returnStats['summary']=[];
+            // Remise du datas à zero
+            $returnStats['datas']=[];
             $returnStats['classes']=$diffs['classes'];
             foreach ($diffs['classes'] as $className => $specimensCode) {
                 foreach ($specimensCode as $specimenCode) {
                     if (in_array($specimenCode, $selectedSpecimensCode)) {
-                        $returnStats['summary'][$specimenCode] = $diffs['summary'][$specimenCode] ;
+                        $returnStats['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
                     }
                     else {
                         unset($returnStats['classes'][$className][$specimenCode]);
@@ -128,9 +128,9 @@ class Diffs extends \SplFileObject
                         }
                         if ($totalStatFields == $comptFieldChoice) {
                             unset($returnStats['classes'][$className][$specimenCode]) ;
-                            unset($returnStats['summary'][$specimenCode][$className]) ;
-                            if (isset($returnStats['summary'][$specimenCode]) && count($returnStats['summary'][$specimenCode]) == 0) {
-                                unset($returnStats['summary'][$specimenCode]);
+                            unset($returnStats['datas'][$specimenCode][$className]) ;
+                            if (isset($returnStats['datas'][$specimenCode]) && count($returnStats['datas'][$specimenCode]) == 0) {
+                                unset($returnStats['datas'][$specimenCode]);
                             }
                         }
                     }

@@ -33,7 +33,7 @@ class DiffStatsManager
     {
         $this->emR = $emR;
         $this->emD = $emD;
-        $this->diffs['summary'] = [];
+        $this->diffs['datas'] = [];
         $this->diffs['classes'] = [];
     }
 
@@ -55,10 +55,10 @@ class DiffStatsManager
         return $this;
     }
     private function setTaxon($specimenCode) {
-        if (!isset($this->diffs['summary'][$specimenCode]['display'])) {
+        if (!isset($this->diffs['datas'][$specimenCode]['display'])) {
             $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon') ;
             $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
-            $this->diffs['summary'][$specimenCode]['taxon'] = $taxon instanceof \AppBundle\Entity\Taxon ? $taxon->__toString() : '';
+            $this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof \AppBundle\Entity\Taxon ? $taxon->__toString() : '';
         }
     }
     private function computeDiffs($className)
@@ -67,17 +67,17 @@ class DiffStatsManager
         if (isset($this->diffs['classes'][$className])) {
             foreach ($this->diffs['classes'][$className] as $specimenCode => $rows) {
                 $this->setTaxon($specimenCode) ;
-                if (!isset($this->diffs['summary'][$specimenCode])) {
-                    $this->diffs['summary'][$specimenCode] = [];
-                    $this->diffs['summary'][$specimenCode]['classes'] = [];
+                if (!isset($this->diffs['datas'][$specimenCode])) {
+                    $this->diffs['datas'][$specimenCode] = [];
+                    $this->diffs['datas'][$specimenCode]['classes'] = [];
                 }
-                if (!isset($this->diffs['summary'][$specimenCode]['classes'][$className])) {
-                    $this->diffs['summary'][$specimenCode]['classes'][$className] = [];
+                if (!isset($this->diffs['datas'][$specimenCode]['classes'][$className])) {
+                    $this->diffs['datas'][$specimenCode]['classes'][$className] = [];
                 }
                 foreach ($rows as $recordId => $fields) {
                     $this->setStatsForClass($className, $fields);
-                    $this->diffs['summary'][$specimenCode]['classes'][$className]['fields'] = $fields;
-                    $this->diffs['summary'][$specimenCode]['classes'][$className]['id'] = $recordId;
+                    $this->diffs['datas'][$specimenCode]['classes'][$className]['fields'] = $fields;
+                    $this->diffs['datas'][$specimenCode]['classes'][$className]['id'] = $recordId;
                 }
             }
         }
@@ -111,7 +111,7 @@ class DiffStatsManager
 
     public function getAllSpecimensId()
     {
-        return array_keys($this->diffs['summary']);
+        return array_keys($this->diffs['datas']);
     }
 
 }

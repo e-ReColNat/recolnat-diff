@@ -106,17 +106,17 @@ class BackendController extends Controller
             switch ($inputSpecimens) {
                 case 'page' :
                     $paginator = $this->get('knp_paginator');
-                    $pagination = $paginator->paginate($diffs['summary'], $page, $maxItemPerPage);
+                    $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
                     $items = $pagination->getItems();
                     break;
                 case 'allDatas' :
-                    $items = $diffs['summary'];
+                    $items = $diffs['datas'];
                     break;
                 case 'selectedSpecimens' :
                     if (!is_null($selectedSpecimens)) {
                         foreach ($selectedSpecimens as $specimenCode) {
-                            if (isset($diffs['summary'][$specimenCode])) {
-                                $items[$specimenCode] = $diffs['summary'][$specimenCode];
+                            if (isset($diffs['datas'][$specimenCode])) {
+                                $items[$specimenCode] = $diffs['datas'][$specimenCode];
                             }
                         }
                     }
@@ -125,7 +125,7 @@ class BackendController extends Controller
             if (count($items) > 0) {
                 foreach ($items as $specimenCode => $row) {
                     foreach ($row['classes'] as $className => $data) {
-                        $rowClass = $diffs['summary'][$specimenCode]['classes'][$className];
+                        $rowClass = $diffs['datas'][$specimenCode]['classes'][$className];
                         $relationId = $rowClass['id'];
                         foreach ($rowClass['fields'] as $fieldName => $rowFields) {
                             $doUpdate = false;

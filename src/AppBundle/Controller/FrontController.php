@@ -137,7 +137,7 @@ class FrontController extends Controller
         $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
 
         $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate($diffs['summary'], $page, $maxItemPerPage);
+        $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
 
         $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);

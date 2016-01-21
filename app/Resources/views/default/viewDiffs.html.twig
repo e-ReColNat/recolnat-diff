@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% set summary = pagination.items %}
+    {% set datas = pagination.items %}
     {% if diffs is not empty %}
     <div class="row">
         
@@ -35,7 +35,7 @@
                 
             </div>
             {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
-            {% for specimenCode, classWithDiff in summary %}
+            {% for specimenCode, classWithDiff in datas %}
                 <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenCode}}" data-specimencode="{{specimenCode}}">
                     {% set specimenRecolnat = attribute(specimensRecolnat, specimenCode) | first %}
                     {% set specimenInstitution = attribute(specimensInstitution, specimenCode) | first %}

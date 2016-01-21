@@ -158,32 +158,26 @@ class ExportManager
         foreach ($classesName as $className) {
             if (isset($diffs['classes'][$className]) && !empty($diffs['classes'][$className])) {
                 foreach ($diffs['classes'][$className] as $specimenCode) {
-                    if (isset($diffs['summary'][$specimenCode])) {
-                        $details = $diffs['summary'][$specimenCode]['classes'][$className] ;
+                    if (isset($diffs['datas'][$specimenCode])) {
+                        $details = $diffs['datas'][$specimenCode]['classes'][$className] ;
                         foreach ($details['fields'] as $fieldName => $datas) {
                             if (is_array($datas['recolnat']) && isset($datas['recolnat']['date'])) {
                                 $date = new \DateTime($datas['recolnat']['date']) ;
                                 $datas['recolnat'] = $date->format($dateFormat)  ;
                             }
                             if (is_array($datas['institution']) && isset($datas['institution']['date'])) {
-                                //$datas['institution'] = $datas['institution']['date'] ;
                                 $date = new \DateTime($datas['institution']['date']) ;
                                 $datas['institution'] = $date->format($dateFormat)  ;
                             }
-                            //if (!is_array($datas['recolnat']) && !is_array($datas['institution'])) {
-                                $concatDatas = md5(implode($dataSeparator, [$className, $fieldName, $datas['recolnat'], $datas['institution']])) ;
+                            $concatDatas = md5(implode($dataSeparator, [$className, $fieldName, $datas['recolnat'], $datas['institution']])) ;
 
-                                !isset($stats[$concatDatas]) ? $stats[$concatDatas] = [] : false;
-                                !isset($stats[$concatDatas]['specimensCode']) ? $stats[$concatDatas]['specimensCode'] = [] : false;
-                                $stats[$concatDatas]['specimensCode'][$specimenCode] = $details['id'];
+                            !isset($stats[$concatDatas]) ? $stats[$concatDatas] = [] : false;
+                            !isset($stats[$concatDatas]['specimensCode']) ? $stats[$concatDatas]['specimensCode'] = [] : false;
+                            $stats[$concatDatas]['specimensCode'][$specimenCode] = $details['id'];
 
-                                !isset($stats[$concatDatas]['datas']) ? $stats[$concatDatas]['datas'] = $datas : false;
-                                !isset($stats[$concatDatas]['className']) ? $stats[$concatDatas]['className'] = $className : false;
-                                !isset($stats[$concatDatas]['fieldName']) ? $stats[$concatDatas]['fieldName'] = $fieldName : false;
-                            /*}
-                            else {
-                                dump(array_merge($datas['recolnat'], [$className, $fieldName])) ;
-                            }*/
+                            !isset($stats[$concatDatas]['datas']) ? $stats[$concatDatas]['datas'] = $datas : false;
+                            !isset($stats[$concatDatas]['className']) ? $stats[$concatDatas]['className'] = $className : false;
+                            !isset($stats[$concatDatas]['fieldName']) ? $stats[$concatDatas]['fieldName'] = $fieldName : false;
                         }
                     }
                 }
@@ -249,7 +243,7 @@ class ExportManager
     public function getSpecimensCode()
     {
         $stats = $this->sessionManager->get('diffs');
-        return array_keys($stats['summary']);
+        return array_keys($stats['datas']);
     }
 
     public function getMaxItemPerPage(Request $request)

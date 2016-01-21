@@ -1,6 +1,6 @@
 {% set page = 1 %}
 <ul class="nav nav-sidebar sidebar-choices">
-{% for specimenCode, datas in diffs.summary %}
+{% for specimenCode, datas in diffs.datas %}
     {% set classWithDiff = datas.classes %}
     <li>
                 {% set taxon = datas.taxon %}
