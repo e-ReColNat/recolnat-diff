@@ -834,7 +834,7 @@ class Specimen
         return $this->bibliographies;
     }
     
-    public function getSpecimenId()
+    public function getSpecimenCode()
     {
         return $this->getInstitutioncode().$this->getCollectioncode().$this->getCatalognumber() ;
     }

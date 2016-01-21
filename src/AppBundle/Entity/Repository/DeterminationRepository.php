@@ -62,11 +62,11 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         
         $query = $qb
                 ->select('d')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
+                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
                 ->join('d.specimen', 's', Join::WITH);
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'identificationid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'identificationid') ;
     }
     
     /**
@@ -82,6 +82,6 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
                 ->select('d')
                 ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
         $query->setParameter('occurrenceid', $occurrenceId);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getOneOrNullResult()) ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getOneOrNullResult()) ;
     }
 }

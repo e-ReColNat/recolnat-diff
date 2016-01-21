@@ -35,10 +35,10 @@
                 
             </div>
             {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
-            {% for specimenId, classWithDiff in summary %}
-                <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenId}}" data-specimenid="{{specimenId}}">
-                    {% set specimenRecolnat = attribute(specimensRecolnat, specimenId) | first %}
-                    {% set specimenInstitution = attribute(specimensInstitution, specimenId) | first %}
+            {% for specimenCode, classWithDiff in summary %}
+                <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenCode}}" data-specimencode="{{specimenCode}}">
+                    {% set specimenRecolnat = attribute(specimensRecolnat, specimenCode) | first %}
+                    {% set specimenInstitution = attribute(specimensInstitution, specimenCode) | first %}
 
                     {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
 

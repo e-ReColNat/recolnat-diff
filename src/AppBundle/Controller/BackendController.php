@@ -96,7 +96,7 @@ class BackendController extends Controller
 
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
         if ($type == 'choices') {
-            $specimensWithChoices = array_keys($exportManager->getChoicesBySpecimenId());
+            $specimensWithChoices = array_keys($exportManager->getChoicesBySpecimenCode());
         }
         if ($type == 'todo') {
             $specimensWithoutChoices = $exportManager->getChoices();
@@ -138,7 +138,7 @@ class BackendController extends Controller
                                     "fieldName" => $fieldName,
                                     "relationId" => $relationId,
                                     "choice" => $inputOrigin,
-                                    "specimenId" => $specimenCode,
+                                    "specimenCode" => $specimenCode,
                                 ];
                             }
                         }

@@ -62,11 +62,11 @@ class TaxonRepository extends RecolnatRepositoryAbstract
         
         $query = $qb
            ->select('t')
-            ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
+            ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
             ->innerJoin('t.determination', 'd')
             ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'taxonid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'taxonid') ;
     }
     
     public function findBestTaxon($occurrenceId) {

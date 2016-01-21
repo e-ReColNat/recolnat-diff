@@ -79,9 +79,8 @@ class DiffManager
         $aliasR = 'r';
         $aliasI = 'i';
 
-        $identifier = 'specimenId' ;
+        $identifier = 'specimenCode' ;
         $strQuery='SELECT '.$identifier.' FROM (';
-        //$strQuery='';
         $arrayFields = $this->formatFieldsName($metadata, $aliasR, $aliasI) ;
         $strFromClauseRecolnat = $this->getFromClause($aliasR, false);
         $strFromClauseDiff = $this->getFromClause($aliasI, true);
@@ -94,14 +93,13 @@ class DiffManager
                 implode(', ', $arrayFields['institution']).
                 sprintf($strFromClauseDiff, self::RECOLNAT_DIFF_DB.'.'.$metadata->getTableName())
                 ;
-        //$sqlGroupByCount = ' ) GROUP BY %s HAVING COUNT(*) >1' ;
         $sqlGroupByCount = ')' ;
         return sprintf($strUnionQuery.$sqlGroupByCount, $identifier, $identifier, $identifier) ;
     }
 
     private function getSpecimenUniqueIdClause($alias)
     {
-        return sprintf(' %s.institutioncode||%s.collectioncode||%s.catalognumber as specimenId ', $alias, $alias, $alias);
+        return sprintf(' %s.institutioncode||%s.collectioncode||%s.catalognumber as specimenCode ', $alias, $alias, $alias);
     }
     private function formatFieldsName(\Doctrine\ORM\Mapping\ClassMetadata $metadata, $aliasR, $aliasI)
     {

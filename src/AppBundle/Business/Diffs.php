@@ -114,13 +114,13 @@ class Diffs extends \SplFileObject
                 if (!isset($tempChoices[$choice['className']])) {
                     $tempChoices[$choice['className']]=[];
                 }
-                if (!isset($tempChoices[$choice['className']][$choice['specimenId']])) {
-                    $tempChoices[$choice['className']][$choice['specimenId']]=0;
+                if (!isset($tempChoices[$choice['className']][$choice['specimenCode']])) {
+                    $tempChoices[$choice['className']][$choice['specimenCode']]=0;
                 }
-                $tempChoices[$choice['className']][$choice['specimenId']]++;
+                $tempChoices[$choice['className']][$choice['specimenCode']]++;
             }
-            foreach ($tempChoices as $className => $choiceSpecimenId) {
-                foreach ($choiceSpecimenId as $specimenCode => $comptFieldChoice) {
+            foreach ($tempChoices as $className => $choiceSpecimenCode) {
+                foreach ($choiceSpecimenCode as $specimenCode => $comptFieldChoice) {
                     if (isset($returnStats['classes'][$className]) && isset($returnStats['classes'][$className][$specimenCode])) {
                         $totalStatFields=0;
                         foreach ($returnStats['classes'][$className][$specimenCode] as $statsFields) {

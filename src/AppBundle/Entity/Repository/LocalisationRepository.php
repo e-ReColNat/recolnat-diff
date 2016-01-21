@@ -65,7 +65,7 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
         $qb = $this->createQueryBuilder('l');
         $query = $this->getEntityManager()->createQueryBuilder('l')
                 ->select('l')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
+                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
                 ->from('AppBundle\Entity\Localisation', 'l')
@@ -75,6 +75,6 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ;
 
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'locationid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'locationid') ;
     }
 }

@@ -64,11 +64,11 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
         $query = $this->getEntityManager()->createQueryBuilder()
                 ->select('b')
                 ->from('AppBundle\Entity\Bibliography', 'b')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
+                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
                 ->join('b.specimen', 's', Join::WITH);
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'referenceid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'referenceid') ;
     }
     
 }

@@ -1,4 +1,4 @@
-{% if attribute(diffs.summary, specimenId) is not empty %}
+{% if attribute(diffs.summary, specimenCode) is not empty %}
 <table class="diff table table-striped table-bordered table-condensed">
     <caption class="bg-primary">Différences</caption>
     <thead>
@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tbody>
-        {% set specimen = attribute(diffs.summary, specimenId) %}
+        {% set specimen = attribute(diffs.summary, specimenCode) %}
         {% for className, details in specimen.classes %}
             {% set relationId = details.id %}
                 {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}

@@ -73,7 +73,6 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
-        //return $query->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         return $query->getQuery()->getArrayResult();
     }
     /**
@@ -94,14 +93,12 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->leftJoin('s.stratigraphy', 'st')
                 ->leftJoin('s.recolte', 'r')
                 ->leftJoin('r.localisation', 'l')
-                //->add('from', new From('\AppBundle\Entity\Specimen', 's', 's.occurrenceid'), false)
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid');
+                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
         $query = $qb->getQuery();
         $query->useResultCache('cache_key', 300);
-        //return $query->getQuery()->getResult() ;
-        return $this->orderResultSetBySpecimenId($query->getResult(), 'occurrenceid') ;
+        return $this->orderResultSetBySpecimenCode($query->getResult(), 'occurrenceid') ;
     }
 
     /**

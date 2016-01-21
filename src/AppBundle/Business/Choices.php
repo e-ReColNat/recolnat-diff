@@ -29,6 +29,7 @@ class Choices extends \SplFileObject
     {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         $fs->dumpFile($this->getPathname(), json_encode($choices, JSON_PRETTY_PRINT));
+        chmod($this->getPathname(), 0755);
     }
 
     public function deleteChoices()

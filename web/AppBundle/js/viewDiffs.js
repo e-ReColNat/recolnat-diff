@@ -23,7 +23,7 @@ $(document).ready(function(){
         }
         
         // Rajoute les choix effectués au tableau choices
-        function setChoice(choices, element, specimenId) {
+        function setChoice(choices, element, specimenCode) {
             fieldName=element.data('fieldname');
             className=element.data('class');
             choice = element.attr('value') ;
@@ -33,7 +33,7 @@ $(document).ready(function(){
                 'fieldName' : fieldName,
                 'relationId' : relationId,
                 'choice' : choice,
-                'specimenId' : specimenId
+                'specimenCode' : specimenCode
             };
             flag = false;
             if (choices.length > 0) {
@@ -62,16 +62,16 @@ $(document).ready(function(){
             choices = data.choices ;
             $.each(data.choices, function(i) {
                 $("input[type=radio][data-relationid='" + choices[i]['relationId'] + "'][data-fieldname='" + choices[i]['fieldName'] + "'][value="+choices[i]['choice']+"]").prop('checked', true);
-                if (typeof comptchoices[choices[i]['specimenId']] === "undefined") {
-                    comptchoices[choices[i]['specimenId']]=[];
+                if (typeof comptchoices[choices[i]['specimenCode']] === "undefined") {
+                    comptchoices[choices[i]['specimenCode']]=[];
                 }
-                if (typeof comptchoices[choices[i]['specimenId']][choices[i]['className']] === "undefined") {
-                    comptchoices[choices[i]['specimenId']][choices[i]['className']] =1;
+                if (typeof comptchoices[choices[i]['specimenCode']][choices[i]['className']] === "undefined") {
+                    comptchoices[choices[i]['specimenCode']][choices[i]['className']] =1;
                 }
                 else {
-                    comptchoices[choices[i]['specimenId']][choices[i]['className']]++;
+                    comptchoices[choices[i]['specimenCode']][choices[i]['className']]++;
                 }
-                $("#facet-"+choices[i]['specimenId']+"-"+choices[i]['className']).data('comptchoices', comptchoices[choices[i]['specimenId']][choices[i]['className']]) ;
+                $("#facet-"+choices[i]['specimenCode']+"-"+choices[i]['className']).data('comptchoices', comptchoices[choices[i]['specimenCode']][choices[i]['className']]) ;
             });
             $("[id^='facet-']").each(function() {
                 formattedTemplate = formatTemplate($(this).find('.facet-className').html(), $(this).data('comptchoices'), $(this).data('comptdiffs')) ;
@@ -109,7 +109,7 @@ $(document).ready(function(){
             var tableContext = $(this).parents('table.diff');
             var relationId = $(this).attr('name') ;
             var choice = $(this).attr('value') ;
-            var specimenId = $(this).parents('section').data('specimenid');
+            var specimenCode = $(this).parents('section').data('specimencode');
             if ($(this).data('type') === 'diff-entity') {
                 tableContext.find( ":radio")
                         .filter("[name^='"+relationId+"']")
@@ -118,11 +118,11 @@ $(document).ready(function(){
                         .map(
                         function() {
                             $(this).prop('checked', true);
-                            setChoice(choices, $(this), specimenId);
+                            setChoice(choices, $(this), specimenCode);
                         });
             }
             else {
-                setChoice(choices, $(this), specimenId);
+                setChoice(choices, $(this), specimenCode);
             }
             $.ajax({
                 url : Routing.generate('setChoice', { institutionCode: institutionCode, collectionCode:collectionCode}),

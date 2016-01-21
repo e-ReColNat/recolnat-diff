@@ -57,7 +57,7 @@ abstract class DiffAbstract
         $this->compare();
         return $this;
     }
-    protected function addStat($fieldName, $specimenId, $id, $dataR, $dataI)
+    protected function addStat($fieldName, $specimenCode, $id, $dataR, $dataI)
     {
          if (!isset($this->fields)) {
             $this->fields = [];
@@ -65,15 +65,15 @@ abstract class DiffAbstract
          if (!isset($this->fields[$fieldName])) {
             $this->fields[$fieldName] = 0;
          }
-         if (!isset($this->stats[$specimenId])) {
-            $this->stats[$specimenId] = [];
+         if (!isset($this->stats[$specimenCode])) {
+            $this->stats[$specimenCode] = [];
          }
-         if (!isset($this->stats[$specimenId][$id])) {
-            $this->stats[$specimenId][$id] = [];
+         if (!isset($this->stats[$specimenCode][$id])) {
+            $this->stats[$specimenCode][$id] = [];
          }
-         $this->stats[$specimenId][$id][$fieldName] = [];
-         $this->stats[$specimenId][$id][$fieldName]['recolnat'] = $dataR;
-         $this->stats[$specimenId][$id][$fieldName]['institution'] = $dataI;
+         $this->stats[$specimenCode][$id][$fieldName] = [];
+         $this->stats[$specimenCode][$id][$fieldName]['recolnat'] = $dataR;
+         $this->stats[$specimenCode][$id][$fieldName]['institution'] = $dataI;
          $this->fields[$fieldName]++;
     }
     
@@ -91,9 +91,9 @@ abstract class DiffAbstract
         $metadata = $this->emR->getMetadataFactory()->getMetadataFor($this->classFullName) ;
          
         $fieldNames = $metadata->getFieldNames();
-        foreach ($this->recordsRecolnat as $specimenId=>$diffRecordsRecolnat) {
-            if (isset($this->recordsInstitution[$specimenId])) {
-                $diffRecordsInstitution = $this->recordsInstitution[$specimenId] ;
+        foreach ($this->recordsRecolnat as $specimenCode=>$diffRecordsRecolnat) {
+            if (isset($this->recordsInstitution[$specimenCode])) {
+                $diffRecordsInstitution = $this->recordsInstitution[$specimenCode] ;
                 /* @var $recordRecolnat \AppBundle\Entity\Specimen */
                 foreach ($diffRecordsRecolnat as $idRecord => $recordRecolnat) {
                     $recordInstitution = $diffRecordsInstitution[$idRecord] ;
@@ -103,7 +103,7 @@ abstract class DiffAbstract
                             $dataR = $recordRecolnat->{$getter}() ;
                             $dataI = $recordInstitution->{$getter}() ;
                             if ($dataR !== $dataI) {
-                                $this->addStat($fieldName,$specimenId, $idRecord, $dataR, $dataI);
+                                $this->addStat($fieldName,$specimenCode, $idRecord, $dataR, $dataI);
                             }
                         }
                     }

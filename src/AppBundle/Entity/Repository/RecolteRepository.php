@@ -64,13 +64,13 @@ class RecolteRepository extends RecolnatRepositoryAbstract
         
         $query = $this->getEntityManager()->createQueryBuilder('r')
                 ->select('r')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
+                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
                 ->where($qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'))
                 ->andWhere('s.recolte = r.eventid')
                 ;
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'eventid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'eventid') ;
     }
 }

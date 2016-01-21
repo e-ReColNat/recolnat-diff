@@ -377,17 +377,17 @@ class ExportManager
         return $returnChoices;
     }
 
-    public function getChoicesBySpecimenId()
+    public function getChoicesBySpecimenCode()
     {
         $choices = $this->getChoices();
         $returnChoices = array();
         if (count($choices) > 0) {
             foreach ($choices as $choice) {
-                if (!isset($returnChoices[$choice['specimenId']])) {
-                    $returnChoices[$choice['specimenId']] = [];
+                if (!isset($returnChoices[$choice['specimenCode']])) {
+                    $returnChoices[$choice['specimenCode']] = [];
                 }
-                unset($choice[$choice['specimenId']]);
-                $returnChoices[$choice['specimenId']][] = $choice;
+                unset($choice[$choice['specimenCode']]);
+                $returnChoices[$choice['specimenCode']][] = $choice;
             }
         }
         return $returnChoices;

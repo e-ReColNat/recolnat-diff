@@ -64,10 +64,10 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
         
         $query = $qb
                 ->select('st')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimenid')
+                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
                 ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenId($query->getQuery()->getResult(), 'geologicalcontextid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'geologicalcontextid') ;
     }
 }
