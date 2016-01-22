@@ -22,18 +22,18 @@
             <div class="navigation row">
                 <div class="col-sm-7 col-sm-offset-3">
                 {{ knp_pagination_render(pagination) }}
-                <div class="pull-right">
-                    <label for="maxItemPerPage">{{'label.maxItemPerPage' | trans }}</label>
-                    <select name="maxItemPerPage" id="maxItemPerPage">
-                        <option value="5" {{maxItemPerPage == 5 ? 'selected="true"':''}}>5</option>
-                        <option value="10" {{maxItemPerPage == 10 ? 'selected="true"':''}}>10</option>
-                        <option value="20" {{maxItemPerPage == 20 ? 'selected="true"':''}}>20</option>
-                        <option value="50" {{maxItemPerPage == 50 ? 'selected="true"':''}}>50</option>
-                    </select>
+                    <div class="pull-right">
+                        <label for="maxItemPerPage">{{'label.maxItemPerPage' | trans }}</label>
+                        <select name="maxItemPerPage" id="maxItemPerPage">
+                            <option value="5" {{maxItemPerPage == 5 ? 'selected="true"':''}}>5</option>
+                            <option value="10" {{maxItemPerPage == 10 ? 'selected="true"':''}}>10</option>
+                            <option value="20" {{maxItemPerPage == 20 ? 'selected="true"':''}}>20</option>
+                            <option value="50" {{maxItemPerPage == 50 ? 'selected="true"':''}}>50</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-                
-            </div>
+                        
             {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
             {% for specimenCode, classWithDiff in datas %}
                 <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenCode}}" data-specimencode="{{specimenCode}}">
@@ -74,21 +74,5 @@
                 localStorage.setItem('maxItemPerPage', maxItemPerPage);
                 jQuery(location).attr('href', url.replace('_itemNum',maxItemPerPage));
             });
-                
-            function maybeScrollToHash() {
-                // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
-                if (window.location.hash && $(window.location.hash).length) {
-                    var newTop = $(window.location.hash).offset().top +parseInt($(window.location.hash).css('padding-top'),10) - $('.navbar-fixed-top').height() - parseInt($('body').css('padding-top'),10) +parseInt($('.navbar-fixed-top').css('margin-bottom'),10);
-                    $(window).scrollTop(newTop);
-                }
-            }
-
-            $(window).bind('hashchange', function(e) {
-                e.preventDefault();
-                maybeScrollToHash();
-            });
-
-            maybeScrollToHash(); 
-        });
     </script>
 {% endblock %}

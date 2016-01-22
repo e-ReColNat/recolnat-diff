@@ -206,6 +206,30 @@
                 <source>generateDiffs</source>
                 <target>Génération en cours</target>
             </trans-unit>
+            <trans-unit id="52">
+                <source>empty.field</source>
+                <target>Champ vide</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>stats.details</source>
+                <target>Statistiques détaillées</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>className</source>
+                <target>Nom de la classe</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>fieldName</source>
+                <target>Nom du champ</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>view.specimens</source>
+                <target>Voir les %count% specimens</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>count.abbr</source>
+                <target>Nb</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>

@@ -1,5 +1,20 @@
 $(document).ready(function(){
-    
+        function maybeScrollToHash() {
+                // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
+                if (window.location.hash && $(window.location.hash).length) {
+                    var newTop = $(window.location.hash).offset().top +parseInt($(window.location.hash).css('padding-top'),10) - $('.navbar-fixed-top').height() - parseInt($('body').css('padding-top'),10) +parseInt($('.navbar-fixed-top').css('margin-bottom'),10);
+                    $(window).scrollTop(newTop);
+                }
+            }
+
+        $(window).bind('hashchange', function(e) {
+            e.preventDefault();
+            maybeScrollToHash();
+        });
+
+        maybeScrollToHash(); 
+        
+        
         var institutionCode = $('#diffs').data('institutioncode');
         var collectionCode = $('#diffs').data('collectioncode');
         var selectedClassName = $('#diffs').data('selectedclassname');

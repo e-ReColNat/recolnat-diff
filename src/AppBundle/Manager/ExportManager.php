@@ -122,14 +122,19 @@ class ExportManager
         return $sumStats;
     }
 
-    public function getExpandedStats($sortedFields = 'desc')
+    /**
+     * Renvoie les stats des diffs avec les données
+     * @param string $order
+     * @return array
+     */
+    public function getExpandedStats($order = 'desc')
     {
         $stats = [];
         $diffs = $this->sessionManager->get('diffs');
         foreach ($this->getStats() as $className => $fields) {
             $stats[$className]['diffs'] = array_sum($fields);
             $tempFields = $fields;
-            switch ($sortedFields) {
+            switch ($order) {
                 case 'desc' :
                     arsort($tempFields);
                     break;
@@ -143,6 +148,12 @@ class ExportManager
         return $stats;
     }
 
+    /**
+     * Renvoie les statistiques de diffs présentant les mêmes données modifiées pour des champs identiques
+     * @param array $classesName
+     * @param string $dateFormat
+     * @return array
+     */
     public function getStatsBySimilarity($classesName = [], $dateFormat ='d/M/Y')
     {
         $diffs = $this->sessionManager->get('diffs');
@@ -160,7 +171,9 @@ class ExportManager
                 foreach ($diffs['classes'][$className] as $specimenCode) {
                     if (isset($diffs['datas'][$specimenCode])) {
                         $details = $diffs['datas'][$specimenCode]['classes'][$className] ;
+                        $taxon = $diffs['datas'][$specimenCode]['taxon'] ;
                         foreach ($details['fields'] as $fieldName => $datas) {
+                            // Traitement des dates
                             if (is_array($datas['recolnat']) && isset($datas['recolnat']['date'])) {
                                 $date = new \DateTime($datas['recolnat']['date']) ;
                                 $datas['recolnat'] = $date->format($dateFormat)  ;
@@ -169,11 +182,14 @@ class ExportManager
                                 $date = new \DateTime($datas['institution']['date']) ;
                                 $datas['institution'] = $date->format($dateFormat)  ;
                             }
+                            // Création d'une clé unique
                             $concatDatas = md5(implode($dataSeparator, [$className, $fieldName, $datas['recolnat'], $datas['institution']])) ;
 
                             !isset($stats[$concatDatas]) ? $stats[$concatDatas] = [] : false;
+                            !isset($stats[$concatDatas]['taxons']) ? $stats[$concatDatas]['taxons'] = [] : false;
                             !isset($stats[$concatDatas]['specimensCode']) ? $stats[$concatDatas]['specimensCode'] = [] : false;
                             $stats[$concatDatas]['specimensCode'][$specimenCode] = $details['id'];
+                            $stats[$concatDatas]['taxons'][$specimenCode] = $taxon;
 
                             !isset($stats[$concatDatas]['datas']) ? $stats[$concatDatas]['datas'] = $datas : false;
                             !isset($stats[$concatDatas]['className']) ? $stats[$concatDatas]['className'] = $className : false;
@@ -222,7 +238,6 @@ class ExportManager
 
     public function getDiffs(Request $request = null, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
     {
-        $session = $this->sessionManager;
         $className = [];
         if (is_string($selectedClassName) && $selectedClassName != 'all') {
             $className = [$selectedClassName];
@@ -232,14 +247,22 @@ class ExportManager
         }
 
         if (!is_null($request) && !is_null($request->query->get('reset', null))) {
-            $session->clear();
+            $this->sessionManager->clear();
         }
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $className, $specimensWithChoices, $choicesToRemove);
-        $session->set('diffs', $diffs);
+        //$this->sessionManager->set('diffs', $diffs);
         return $diffs;
     }
 
+    public function getDiffsBySpecimensCode($specimensCode) 
+    {
+        $allDiffs = $this->sessionManager->get('diffs');
+        $diffs = $this->diffHandler->getDiffs()->filterBySpecimensCode($allDiffs, $specimensCode);
+        //$this->sessionManager->set('diffs', $diffs);
+        return $diffs;
+    }
+    
     public function getSpecimensCode()
     {
         $stats = $this->sessionManager->get('diffs');

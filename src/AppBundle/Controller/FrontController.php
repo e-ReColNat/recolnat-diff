@@ -43,6 +43,10 @@ class FrontController extends Controller
      */
     public function statsAction($collectionCode, $institutionCode)
     {
+        /* @var $institution \AppBundle\Entity\Institution */
+        $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
+                ->findOneBy(['institutioncode' => $institutionCode]);
+        
         /* @var $user \AppBundle\Business\User\User */
         $user = $this->get('userManager');
         $user->init($institutionCode);
@@ -50,16 +54,15 @@ class FrontController extends Controller
         
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $stats = $exportManager->getExpandedStats();
         $diffs = $exportManager->getDiffs();
         $statsBySimilarity = $exportManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
-        dump($diffs);
-        dump($statsBySimilarity);
-        dump($stats);
+        $sumStats = $exportManager->getSumStats();
         return $this->render('default/stats.html.twig', array(
                     'institutionCode' => $institutionCode,
                     'collectionCode' => $collectionCode,
                     'stats' => $statsBySimilarity,
+                    'institution' => $institution,
+                    'sumStats' => $sumStats,
         ));
     }
 
@@ -120,8 +123,6 @@ class FrontController extends Controller
      */
     public function diffsAction(Request $request, $institutionCode, $collectionCode, $selectedClassName = "all", $page = 1)
     {
-        /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
-        $session = $this->get('session');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -158,6 +159,32 @@ class FrontController extends Controller
         ));
     }
 
+    /**
+     * @Route("{institutionCode}/{collectionCode}/specimens/view/{jsonSpecimensCode}", name="viewSpecimens")
+     */
+    public function viewSpecimensAction($institutionCode, $collectionCode, $jsonSpecimensCode)
+    {
+        $specimensCode = json_decode($jsonSpecimensCode) ;
+        dump($specimensCode) ;
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $diffs = $exportManager->getDiffsBySpecimensCode($specimensCode);
+        
+        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
+        $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
+        
+        return $this->render('default/viewSpecimens.html.twig', array(
+                    'institutionCode' => $institutionCode,
+                    'collectionCode' => $collectionCode,
+                    'diffs' => $diffs,
+                    'specimensRecolnat' => $specimensRecolnat,
+                    'specimensInstitution' => $specimensInstitution,
+                    'choicesFacets' => $exportManager->getChoices(),
+                    'choices' => $exportManager->getChoicesForDisplay(),
+                    'specimensCode' => $specimensCode,
+        ));
+    }
+    
     /**
      * @Route("/generateDiff/{institutionCode}/{compt}", name="generateDiff")
      */

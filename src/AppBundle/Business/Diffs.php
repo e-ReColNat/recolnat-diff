@@ -47,31 +47,31 @@ class Diffs extends \SplFileObject
      * @return array
      */
     public function filterByClassesName($diffs, array $classesName=[]) {
-        $returnStats=$diffs;
+        $returnDiffs=$diffs;
         if (count($classesName)>0) {
-            $returnStats['classes']=[] ;
-            $returnStats['datas'] = [];
+            $returnDiffs['classes']=[] ;
+            $returnDiffs['datas'] = [];
             foreach ($classesName as $className) {
                 $className = ucfirst(strtolower($className));
                 if (isset($diffs['classes'][$className])) {
-                    $returnStats['classes'][$className] = $diffs['classes'][$className] ;
+                    $returnDiffs['classes'][$className] = $diffs['classes'][$className] ;
                 }
             }
-            foreach ($returnStats['classes'] as $className => $specimensCode) {
+            foreach ($returnDiffs['classes'] as $className => $specimensCode) {
                 foreach ($specimensCode as $specimenCode) {
                     if (isset($diffs['datas'][$specimenCode])) {
-                        $returnStats['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
+                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
                         // Rajout dans les classes si un specimen a des modifications dans des classes non sélectionnées
-                        foreach (array_keys($returnStats['datas'][$specimenCode]['classes']) as $className) {
-                            if (!isset($returnStats['classes'][$className][$specimenCode])) {
-                                $returnStats['classes'][$className][] = $specimenCode ;
+                        foreach (array_keys($returnDiffs['datas'][$specimenCode]['classes']) as $className) {
+                            if (!isset($returnDiffs['classes'][$className][$specimenCode])) {
+                                $returnDiffs['classes'][$className][] = $specimenCode ;
                             }
                         }
                     }
                 }
             }
         }
-        return $returnStats ;
+        return $returnDiffs ;
     }
     
     /**
@@ -81,23 +81,23 @@ class Diffs extends \SplFileObject
      * @return array
      */
     public function filterBySpecimensCode($diffs,array $selectedSpecimensCode=[]) {
-        $returnStats=$diffs;
+        $returnDiffs=$diffs;
         if (count($selectedSpecimensCode)>0) {
             // Remise du datas à zero
-            $returnStats['datas']=[];
-            $returnStats['classes']=$diffs['classes'];
+            $returnDiffs['datas']=[];
+            $returnDiffs['classes']=$diffs['classes'];
             foreach ($diffs['classes'] as $className => $specimensCode) {
                 foreach ($specimensCode as $specimenCode) {
                     if (in_array($specimenCode, $selectedSpecimensCode)) {
-                        $returnStats['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
+                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
                     }
                     else {
-                        unset($returnStats['classes'][$className][$specimenCode]);
+                        unset($returnDiffs['classes'][$className][$specimenCode]);
                     }
                 }
             }
         }
-        return $returnStats;
+        return $returnDiffs;
     }
     
     /**
@@ -107,7 +107,7 @@ class Diffs extends \SplFileObject
      * @return type
      */
     public function filterByChoicesDone($diffs, array $choicesToRemove=[]) {
-        $returnStats=$diffs;
+        $returnDiffs=$diffs;
         if (count($choicesToRemove) >0) {
             $tempChoices=[] ;
             foreach ($choicesToRemove as $choice) {
@@ -121,39 +121,40 @@ class Diffs extends \SplFileObject
             }
             foreach ($tempChoices as $className => $choiceSpecimenCode) {
                 foreach ($choiceSpecimenCode as $specimenCode => $comptFieldChoice) {
-                    if (isset($returnStats['classes'][$className]) && isset($returnStats['classes'][$className][$specimenCode])) {
+                    if (isset($returnDiffs['classes'][$className]) && isset($returnDiffs['classes'][$className][$specimenCode])) {
                         $totalStatFields=0;
-                        foreach ($returnStats['classes'][$className][$specimenCode] as $statsFields) {
-                            $totalStatFields+=count($statsFields) ;
+                        foreach ($returnDiffs['classes'][$className][$specimenCode] as $diffsFields) {
+                            $totalStatFields+=count($diffsFields) ;
                         }
                         if ($totalStatFields == $comptFieldChoice) {
-                            unset($returnStats['classes'][$className][$specimenCode]) ;
-                            unset($returnStats['datas'][$specimenCode][$className]) ;
-                            if (isset($returnStats['datas'][$specimenCode]) && count($returnStats['datas'][$specimenCode]) == 0) {
-                                unset($returnStats['datas'][$specimenCode]);
+                            unset($returnDiffs['classes'][$className][$specimenCode]) ;
+                            unset($returnDiffs['datas'][$specimenCode][$className]) ;
+                            if (isset($returnDiffs['datas'][$specimenCode]) && count($returnDiffs['datas'][$specimenCode]) == 0) {
+                                unset($returnDiffs['datas'][$specimenCode]);
                             }
                         }
                     }
                 }
             }
         }
-        return $returnStats ;
+        return $returnDiffs ;
     }
     
     /**
      * filtre les résultats
-     * @param array $stats
+     * @param array $diffs
      * @param array $classesName
      * @param array $selectedSpecimensCode
      * @param array $choicesToRemove
      * @return array
      */
-    public function filterResults($stats, array $classesName=[], array $selectedSpecimensCode=[], array $choicesToRemove=[]) {
-        $returnStats = $this->filterByClassesName($stats, $classesName) ;
-        $returnStats = $this->filterBySpecimensCode($returnStats, $selectedSpecimensCode);
-        $returnStats = $this->filterByChoicesDone($returnStats, $choicesToRemove);
-        return $returnStats;
+    public function filterResults($diffs, array $classesName=[], array $selectedSpecimensCode=[], array $choicesToRemove=[]) {
+        $returnDiffs = $this->filterByClassesName($diffs, $classesName) ;
+        $returnDiffs = $this->filterBySpecimensCode($returnDiffs, $selectedSpecimensCode);
+        $returnDiffs = $this->filterByChoicesDone($returnDiffs, $choicesToRemove);
+        return $returnDiffs;
     }
+    
     
     public function deleteChoices()
     {
