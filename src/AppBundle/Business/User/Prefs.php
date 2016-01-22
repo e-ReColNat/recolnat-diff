@@ -19,6 +19,15 @@ class Prefs
     protected $csvLineBreak = "\\n";
     protected $csvDateFormat = "d-m-Y";
 
+    const DATE_DISPLAY_FORMAT = [
+        '18/01/2016' => 'd/m/Y', 
+        '18-01-2016' => 'd-m-Y',
+        '18012016' => 'dmY',
+        '2016/01/18' => 'Y/m/d',
+        '2016-01-18' => 'Y-m-d',
+        '20160118' => 'Ymd',
+        '2016-01-16T15:19:21' => 'Y-m-d\TH:i:s',
+    ] ;
     public function getDwcDelimiter()
     {
         return $this->dwcDelimiter;
@@ -87,6 +96,18 @@ class Prefs
     public function getCsvDateFormat()
     {
         return $this->csvDateFormat;
+    }
+
+    public function getDwcDateFormatForDisplay()
+    {
+        $dateDisplay = array_flip(self::DATE_DISPLAY_FORMAT);
+        return $dateDisplay[$this->dwcDateFormat];
+    }
+
+    public function getCsvDateFormatForDisplay()
+    {
+        $dateDisplay = array_flip(self::DATE_DISPLAY_FORMAT);
+        return $dateDisplay[$this->csvDateFormat];
     }
 
     public function setDwcDateFormat($dwcDateFormat)

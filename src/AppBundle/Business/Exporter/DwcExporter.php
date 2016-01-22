@@ -181,14 +181,6 @@ class DwcExporter extends AbstractExporter
         $this->setNodeFile($coreNode, $extension.'.csv');
         $compt = 0;
         $keys = $entityExporter->getKeysEntity();
-        /*
-        if ($extension == 'Recolte') {
-            $keys = $this->array_delete($keys, 'locationid') ;
-        }
-        if ($extension == 'Determination') {
-            $keys= $this->array_delete($keys, 'taxonid') ;
-        }
-        $keys = $this->array_delete($keys, 'sourcefileid') ;*/
         foreach ($keys as $key => $fieldName) {
             if ($fieldName == $entityExporter->getCoreIdFieldName()) {
                 $this->setIndexNode($coreNode, $key, $flagCore, $compt);
@@ -269,12 +261,9 @@ class DwcExporter extends AbstractExporter
     
     public function getDwcDateFormat()
     {
-        $dateFormat = $this->dwcDateFormat ;
-        $dateFormat = str_replace('d', 'DD', $dateFormat) ;
-        $dateFormat = str_replace('m', 'MM', $dateFormat) ;
-        $dateFormat = str_replace('y', 'YYYY', $dateFormat) ;
-        $dateFormat = str_replace('c', 'YYYY-MM-DDTHH:MM:SSZ', $dateFormat) ;
-        return $dateFormat;
+        $search=['d', 'm', 'Y', 'H', 'i', 's', '\T'] ;
+        $replace=['DD', 'MM', 'YYYY', 'hh', 'mm', 'ss', 'T'] ;
+        return str_replace($search, $replace, $this->dwcDateFormat);
     }
 
     public function setDwcDateFormat($dwcDateFormat)
