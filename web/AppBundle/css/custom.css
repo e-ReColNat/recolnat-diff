@@ -49,27 +49,25 @@ table.diff .input {
     overflow-y: scroll;
     height : 95vh;
 }
-.sidebar {
-    overflow-x: hidden;
-    padding: 20px;
-    position: fixed;
-    z-index: 1000;
-}
-.sidebar ul.choices {
+
+#sidebar-wrapper ul.choices {
     font-size : 85%;
     list-style: outside none none;
     padding-left : 10px;
 }
-.sidebar-choices> li > a {
+#sidebar-wrapper> li > a {
     padding : 5px 5px 3px 5px;
 }
-.sidebar-choices> li:hover {
+#sidebar-wrapper> li:hover {
     background-color: #eee;
 }
-.sidebar-choices> li {
+#sidebar-wrapper .nav > li {
     border-bottom: 1px solid #ddd;
 }
-.sidebar-choices> li:last-child {
+#sidebar-wrapper .nav> li > a{
+    padding: 0 15px;
+}
+#sidebar-wrapper> li:last-child {
     border-bottom: none;
 }
 #form-filters legend {
