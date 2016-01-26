@@ -1,0 +1,14 @@
+<ol class="breadcrumb col-sm-offset-1">
+    <li><a href="{{path('index', {'institutionCode':institutionCode})}}">{{institutionCode}}</a></li>
+    <li><a href="{{path('viewfile', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{collectionCode}}</a></li>
+    
+    {% if selectedClassName is defined %}
+    <li>{{selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : ''}}</li>
+    {% endif %}
+    
+    {% if pagination is defined %}
+    <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
+    {% else %}
+    <li class="active">{{ specimensCode | length }} {{ 'label.specimen' | transchoice(specimensCode | length, {}, 'entity') }}</li>
+    {% endif %}
+</ol>
