@@ -85,3 +85,23 @@ table.diff .input {
 .pagination {
     margin : 0;
 }
+#diffs .tab-pane {
+    padding : 1em;
+    background : #fff;
+}
+#diffs .tab-pane .row{
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1em;
+}
+#diffs .tab-pane .row:last-child{
+    border-bottom: none;
+}
+.nav-tabs>.disabled>a, .nav-pills>.disabled>a {
+    color: #999;
+    cursor: default;
+    border: none; /** add this for tabs/pills **/
+}
+
+.nav-tabs>.disabled>a:hover, .nav-pills>.disabled>a:hover {
+    background-color: transparent;
+}

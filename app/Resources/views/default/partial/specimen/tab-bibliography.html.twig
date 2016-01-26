@@ -1,0 +1,21 @@
+{% for bibliography in specimen.bibliographies%}
+    {% if bibliography is not null %}
+    <div class="row">
+            <div class="col-sm-6">
+                {{printLabelAndField(bibliography, 'bibliography', 'title', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'subject', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'datePublication', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'creator', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'type', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'language', true, '<br />')|raw}}
+            </div>
+            <div class="col-sm-6">
+                {{printLabelAndField(bibliography, 'bibliography', 'bibliographiccitation', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'identifier', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'rights', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'source', true, '<br />')|raw}}
+                {{printLabelAndField(bibliography, 'bibliography', 'taxonremarks', true, '<br />')|raw}}
+            </div>
+    </div>
+    {% endif %}
+{% endfor %}

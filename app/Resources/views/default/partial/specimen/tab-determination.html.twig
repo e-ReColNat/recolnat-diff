@@ -1,0 +1,47 @@
+{% for determination in specimen.determinations%}
+<div class="row">
+        <div class="col-sm-4">
+            {{printLabelAndField(determination, 'determination', 'identifiedby', true, '<br />')|raw}}
+            {{printLabelAndField(determination, 'determination', 'dateidentified', true, '<br />')|raw}}
+            {{printLabelAndField(determination, 'determination', 'identificationqualifier', true, '<br />')|raw}}
+            {{printLabelAndField(determination, 'determination', 'identificationreferences', true, '<br />')|raw}}
+            {{printLabelAndField(determination, 'determination', 'identificationremarks', true, '<br />')|raw}}
+            {{printLabelAndField(determination, 'determination', 'identificationverifstatus', true, '<br />')|raw}}
+            {{printLabelAndField(determination, 'determination', 'typestatus', true, '<br />')|raw}}
+        </div>
+        {% set taxon = determination.taxon %}
+        {% if taxon is not null %}
+            <div class="col-sm-4">
+                {{printLabelAndField(taxon, 'taxon', 'kingdom', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'phylum', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'class', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'order', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'family', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'genus', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'subgenus', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'specificepithet', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'infraspecificepithet', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'scientificname', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'scientificnameauthorship', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'taxonomicstatus', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'acceptednameusage', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'created', true, '<br />')|raw}}
+            </div>
+            <div class="col-sm-4">
+                {{printLabelAndField(taxon, 'taxon', 'higherclassification', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'modified', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'nameaccordingto', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'namepublishedin', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'namepublishedinyear', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'nomenclaturalcode', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'nomenclaturalstatus', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'originalnameusage', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'parentnameusage', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'taxonrank', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'taxonremarks', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'verbatimtaxonrank', true, '<br />')|raw}}
+                {{printLabelAndField(taxon, 'taxon', 'vernacularname', true, '<br />')|raw}}
+            </div>
+        {% endif %}
+</div>
+{% endfor%}

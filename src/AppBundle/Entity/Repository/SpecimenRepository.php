@@ -34,6 +34,23 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->getQuery() ;
         return $query->getOneOrNullResult();
     }
+    public function findOneBySpecimenCode($specimenCode)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb
+                ->select('s, b, d, t, m, st, r, l')
+                ->leftJoin('s.bibliographies', 'b')
+                ->leftJoin('s.determinations', 'd')
+                ->leftJoin('d.taxon', 't')
+                ->leftJoin('s.multimedias', 'm')
+                ->leftJoin('s.stratigraphy', 'st')
+                ->leftJoin('s.recolte', 'r')
+                ->leftJoin('r.localisation', 'l')
+                ;
+        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCode'));
+        $qb->setParameter('specimenCode', $specimenCode);
+        return $qb->getQuery()->getOneOrNullResult();
+    }
     /**
      * 
      * @param array $specimenCodes

@@ -230,6 +230,34 @@
                 <source>count.abbr</source>
                 <target>Nb</target>
             </trans-unit>
+            <trans-unit id="58">
+                <source>tab.diffs</source>
+                <target>Différences</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>tab.specimen</source>
+                <target>Spécimen</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>tab.multimedia</source>
+                <target>Multimédia</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>tab.determination</source>
+                <target>Taxonymie</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>tab.recolte</source>
+                <target>Récolte</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>tab.bibliography</source>
+                <target>Bibliographie</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>tab.stratigraphy</source>
+                <target>Stratigraphie</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>

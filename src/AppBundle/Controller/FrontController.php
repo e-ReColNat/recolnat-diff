@@ -165,7 +165,6 @@ class FrontController extends Controller
     public function viewSpecimensAction($institutionCode, $collectionCode, $jsonSpecimensCode)
     {
         $specimensCode = json_decode($jsonSpecimensCode) ;
-        dump($specimensCode) ;
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $diffs = $exportManager->getDiffsBySpecimensCode($specimensCode);
@@ -182,6 +181,21 @@ class FrontController extends Controller
                     'choicesFacets' => $exportManager->getChoices(),
                     'choices' => $exportManager->getChoicesForDisplay(),
                     'specimensCode' => $specimensCode,
+        ));
+    }
+    
+    /**
+     * @Route("{institutionCode}/{collectionCode}/specimen/tab/{specimenCode}/{type}", name="tabSpecimen")
+     */
+    public function viewSpecimenTabAction($institutionCode, $collectionCode, $specimenCode, $type)
+    {
+        $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findOneBySpecimenCode($specimenCode);
+        
+        $template = 'tab-'.strtolower($type).'.html.twig';
+        
+        return $this->render('default/partial/specimen/'.$template, array(
+                    'specimen' => $specimen,
+                    'specimenCode' => $specimenCode,
         ));
     }
     

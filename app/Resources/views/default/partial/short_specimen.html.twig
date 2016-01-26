@@ -15,48 +15,21 @@
         {% include 'default/helpers/linkSpecimenFull.html.twig' %}
         <span class="row">
             <div class="col-sm-6">
-                {% if taxon.family is not empty %}
-                    {{'label.taxon.fields.family' | trans({},'entity') }} : <span>{{taxon.family}}</span><br>
-                {% endif %}
-                {% if taxon.genus is not empty %}
-                    {{'label.taxon.fields.genus' | trans({},'entity') }} : <span>{{taxon.genus}}</span><br>
-                {% endif %}
-                {% if taxon.scientificname is not empty %}
-                    {{'label.taxon.fields.scientificname' | trans({},'entity') }} : <span>{{taxon.scientificname}}</span><br>
-                {% endif %}
+                    {{printLabelAndField(taxon, 'taxon', 'family', false, '<br />')|raw}}
+                    {{printLabelAndField(taxon, 'taxon', 'genus', false, '<br />')|raw}}
+                    {{printLabelAndField(taxon, 'taxon', 'scientificname', false, '<br />')|raw}}
             </div>
             <div class="col-sm-6">
                 {% if localisation is not empty %}
-                    {% if localisation.country is not empty %}
-                        {{'label.localisation.fields.country' | trans({},'entity') }} : <span>{{localisation.country}}</span><br>
-                    {% endif %}
-                    {% if localisation.county is not empty %}
-                        {{'label.localisation.fields.county' | trans({},'entity') }} : <span>{{localisation.county}}</span><br>
-                    {% endif %}
-                    {% if localisation.locality is not empty %}
-                        {{'label.localisation.fields.locality' | trans({},'entity') }} : <span>{{localisation.locality}}</span><br>
-                    {% endif %}
-                    {% if localisation.verbatimlocality is not empty %}
-                        {{'label.localisation.fields.verbatimlocality' | trans({},'entity') }} : <span>{{localisation.verbatimlocality}}</span><br>
-                    {% endif %}
-                    {% if recolte.recordedby is not empty %}
-                        {{'label.recolte.fields.recordedby' | trans({},'entity') }} : <span>{{recolte.recordedby}}</span><br>
-                    {% endif %}
-                    {% if recolte.fieldnumber is not empty %}
-                        {{'label.recolte.fields.fieldnumber' | trans({},'entity') }} : <span>{{recolte.fieldnumber}}</span><br>
-                    {% endif %}
-                    {% if recolte.eventdate is not empty %}
-                        {{'label.recolte.fields.eventdate' | trans({},'entity') }} : <span>{{recolte.eventdate}}</span><br>
-                    {% endif %}
+                    {{printLabelAndField(localisation, 'localisation', 'country', false, '<br />')|raw}}
+                    {{printLabelAndField(localisation, 'localisation', 'county', false, '<br />')|raw}}
+                    {{printLabelAndField(localisation, 'localisation', 'locality', false, '<br />')|raw}}
+                    {{printLabelAndField(localisation, 'localisation', 'verbatimlocality', false, '<br />')|raw}}
+                    {{printLabelAndField(recolte, 'recolte', 'recordedby', false, '<br />')|raw}}
+                    {{printLabelAndField(recolte, 'recolte', 'fieldnumber', false, '<br />')|raw}}
+                    {{printLabelAndField(recolte, 'recolte', 'eventdate', false, '<br />')|raw}}
                 {% endif %}
             </div>
         </span>
     </div>
-    {% if multimedias is not empty %}
-        <div class="col-sm-3">
-            {% for multimedia in multimedias %}
-                <a href="{{multimedia.identifier}}"><img  src="{{thumb(multimedia.identifier, 25)}}" class="img-thumbnail"></a>
-                {% endfor %}
-        </div>
-    {% endif %}
 </div>

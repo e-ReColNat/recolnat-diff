@@ -367,7 +367,7 @@
                 <target state="translated">Formation</target> 
             </trans-unit>
             <trans-unit id="92" approved="yes">
-                <source>label.stratigraphy.fields.group_</source> 
+                <source>label.stratigraphy.fields.group</source> 
                 <target state="translated">Group</target> 
             </trans-unit>
             <trans-unit id="93" approved="yes">
@@ -589,6 +589,74 @@
             <trans-unit id="147" approved="yes">
                 <source>label.all</source> 
                 <target state="translated">Toutes</target> 
+            </trans-unit>
+            <trans-unit id="148" approved="yes">
+                <source>label.multimedia.fields.audience</source> 
+                <target state="translated">Public visé</target> 
+            </trans-unit>
+            <trans-unit id="149" approved="yes">
+                <source>label.multimedia.fields.contributor</source> 
+                <target state="translated">Contributeur</target> 
+            </trans-unit>
+            <trans-unit id="150" approved="yes">
+                <source>label.multimedia.fields.created</source> 
+                <target state="translated">Créée le</target> 
+            </trans-unit>
+            <trans-unit id="151" approved="yes">
+                <source>label.multimedia.fields.creator</source> 
+                <target state="translated">Créateur</target> 
+            </trans-unit>
+            <trans-unit id="152" approved="yes"> 
+                <source>label.multimedia.fields.description</source> 
+                <target state="translated">Description</target> 
+            </trans-unit>
+            <trans-unit id="153" approved="yes">
+                <source>label.multimedia.fields.discriminator</source> 
+                <target state="translated">Discriminateur</target> 
+            </trans-unit>
+            <trans-unit id="154" approved="yes"> 
+                <source>label.multimedia.fields.format</source> 
+                <target state="translated">Format</target> 
+            </trans-unit>
+            <trans-unit id="155" approved="yes"> 
+                <source>label.multimedia.fields.identifier</source> 
+                <target state="translated">Identifiant</target> 
+            </trans-unit>
+            <trans-unit id="156" approved="yes"> 
+                <source>label.multimedia.fields.license</source> 
+                <target state="translated">Licence</target> 
+            </trans-unit>
+            <trans-unit id="157" approved="yes">
+                <source>label.multimedia.fields.modified</source> 
+                <target state="translated">Modifiée le</target> 
+            </trans-unit>
+            <trans-unit id="158" approved="yes">
+                <source>label.multimedia.fields.publisher</source> 
+                <target state="translated">Éditeur</target> 
+            </trans-unit>
+            <trans-unit id="159" approved="yes">
+                <source>label.multimedia.fields.references</source> 
+                <target state="translated">Références</target> 
+            </trans-unit>
+            <trans-unit id="160" approved="yes">
+                <source>label.multimedia.fields.rights</source> 
+                <target state="translated">Droits</target> 
+            </trans-unit>
+            <trans-unit id="161" approved="yes">
+                <source>label.multimedia.fields.rightsholder</source> 
+                <target state="translated">Titulaire des droits</target> 
+            </trans-unit>
+            <trans-unit id="162" approved="yes">
+                <source>label.multimedia.fields.source</source> 
+                <target state="translated">Source</target> 
+            </trans-unit>
+            <trans-unit id="163" approved="yes">
+                <source>label.multimedia.fields.title</source> 
+                <target state="translated">Titre</target> 
+            </trans-unit>
+            <trans-unit id="164" approved="yes">
+                <source>label.multimedia.fields.type</source> 
+                <target state="translated">Traduit</target> 
             </trans-unit>
         </body>
     </file>

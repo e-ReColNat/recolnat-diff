@@ -1,4 +1,15 @@
 $(document).ready(function(){
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            currTabTarget = $(e.target).attr('href');
+
+            var remoteUrl = $(this).attr('data-tab-remote');
+            var loadedOnce = $(this).data('loaded');
+            if (remoteUrl !== '' && !loadedOnce) {                
+                $(currTabTarget).load(remoteUrl);
+                $(this).data('loaded',true);
+            }
+        });
+    
         function maybeScrollToHash() {
                 // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
                 if (window.location.hash && $(window.location.hash).length) {
