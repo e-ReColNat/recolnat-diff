@@ -1,6 +1,16 @@
 <ol class="breadcrumb col-sm-offset-1">
     <li><a href="{{path('index', {'institutionCode':institutionCode})}}">{{institutionCode}}</a></li>
+    
+    {% if app.request.get('_route') =='viewfile' %}
+    <li class="active">{{collectionCode}}</li>
+    {% else %}
     <li><a href="{{path('viewfile', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{collectionCode}}</a></li>
+    {% endif %}
+    
+    {% if app.request.get('_route') =='stats' %}
+    <li class="active">{{'stats.details'|trans}}</li>
+    {% endif %}
+    
     
     {% if selectedClassName is defined %}
     <li>{{selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : ''}}</li>
@@ -9,6 +19,8 @@
     {% if pagination is defined %}
     <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
     {% else %}
+    {% if specimensCode is defined %}
     <li class="active">{{ specimensCode | length }} {{ 'label.specimen' | transchoice(specimensCode | length, {}, 'entity') }}</li>
+    {% endif %}
     {% endif %}
 </ol>

@@ -82,6 +82,7 @@ class FrontController extends Controller
 
         $choices = $exportManager->getChoicesForDisplay();
         $stats = $exportManager->getExpandedStats();
+        dump($stats);
         $totalChoices = [];
         $sumStats = $exportManager->getSumStats();
 
@@ -98,9 +99,19 @@ class FrontController extends Controller
                 }
             }
         };
+
+        $sortStats = function($a, $b) {
+            if ($a['diffs'] == $b['diffs']) {
+                return 0;
+            }
+            return ($a['diffs'] > $b['diffs']) ? -1 : 1;
+        };
+        uasort($stats, $sortStats);
+
         array_walk($choices, $callbackCountChoices);
         $totalDiffs = array_sum($stats);
         $totalChoices['sum'] = array_sum($totalChoices);
+        dump($stats);
 
         return $this->render('default/viewFile.html.twig', array(
                     'diffHandler' => $exportManager->getDiffHandler(),
