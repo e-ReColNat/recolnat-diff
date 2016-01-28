@@ -28,7 +28,8 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "knplabs/knp-paginator-bundle" : "dev-master",
         "friendsofsymfony/jsrouting-bundle": "dev-master",
-        "symfony/assetic-bundle": "~2.7-dev"
+        "symfony/assetic-bundle": "~2.7-dev",
+        "leafo/lessphp": "^0.5.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

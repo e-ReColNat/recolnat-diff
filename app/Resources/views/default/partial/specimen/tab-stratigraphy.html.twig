@@ -1,5 +1,4 @@
 {% set stratigraphy = specimen.stratigraphy %}
-{% if stratigraphy is not null %}
 <div class="row">
         <div class="col-sm-6">
             {{printLabelAndField(stratigraphy, 'stratigraphy', 'bed', true, '<br />')|raw}}
@@ -20,4 +19,3 @@
             {{printLabelAndField(stratigraphy, 'stratigraphy', 'member', true, '<br />')|raw}}
         </div>
 </div>
-{% endif %}

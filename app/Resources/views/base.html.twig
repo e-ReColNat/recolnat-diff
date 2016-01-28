@@ -8,8 +8,11 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     <link rel="stylesheet" href="{{ asset('AppBundle/css/bootstrap.and.theme.css') }}">
     <link rel="stylesheet" href="{{ asset('AppBundle/css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('AppBundle/css/custom.css') }}">
+    {#<link rel="stylesheet" href="{{ asset('AppBundle/css/custom.css') }}">#}
     <link rel="stylesheet" href="{{ asset('AppBundle/css/simple-sidebar.css') }}">
+    {% stylesheets '@AppBundle/Resources/less/custom.less'%}
+    <link rel="stylesheet" href="{{ asset_url}}">
+    {% endstylesheets %}
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">

@@ -3,129 +3,102 @@
 {% set sumSpecimens = 0 %}
 {% block body %}
     {% include 'default/partial/breadcrumb.html.twig' %}
-    <h1 class="page-header">{{'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ collectionCode},'user') }}
-        <small><a href="{{path('stats', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ 'stats.details'| trans}}</a></small></h1>
+    <h1 class="page-header">{{ 'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ collectionCode},'user') }}
+        <small>
+            <a href="{{ path('stats', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ 'stats.details'| trans }}</a>
+        </small>
+    </h1>
     {% if stats is not empty %}
         <table class="table table-bordered">
             <tr>
                 <th>&nbsp;</th>
-                <th>{{'header.nb.specimens' | trans}}</th>
-                <th>{{'header.nb.differences' | trans}}</th>
-                <th>{{'header.nb.reste' | trans}}</th>
-                <th>{{'header.nb.choix' | trans}}</th>
+                <th>{{ 'header.nb.specimens' | trans }}</th>
+                <th>{{ 'header.nb.differences' | trans }}</th>
+                <th>{{ 'header.nb.reste' | trans }}</th>
+                <th>{{ 'header.nb.choix' | trans }}</th>
             </tr>
-        {% for className, detailedStats in stats %}
-            <tr class="datas">
-                <td class="className">{{('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize}}</td>
-                {% set transClass=('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity') %}
-                <td class="nbSpecimens">
-                    {% if detailedStats.specimens > 0 %}
-                        <a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}" >
-                        {{detailedStats.specimens}}
-                        </a>
-                    {% else %}
-                        0
-                    {% endif %}
-                </td>
-                <td class="nbDiffs">
-                    <a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}">
-                        {{detailedStats.diffs}}
-                    </a>
-                </td>
-                <td class="nbTodos">
-                    {% set nbTodos = attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs %}
-                    {% if nbTodos > 0 %}
-                        <a href="{{path('todo', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}">
-                            {{ nbTodos }}
-                        </a>
+            {% for className, detailedStats in stats %}
+                <tr class="datas {{ className|lower }}">
+                    <td class="className">{{ ('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize }}</td>
+                    {% set transClass=('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity') %}
+                    <td class="nbSpecimens">
+                        {% if detailedStats.specimens > 0 %}
+                            <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}">
+                                {{ detailedStats.specimens }}
+                            </a>
                         {% else %}
                             0
-                    {% endif %}
-                </td>
-                <td  class="nbChoices">
-                    {% set nbChoices = attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 %}
-                    {% if nbChoices > 0 %}
-                        <a href="{{path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower})}}" title="">
-                            {{ nbChoices }}
+                        {% endif %}
+                    </td>
+                    <td class="nbDiffs">
+                        <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}">
+                            {{ detailedStats.diffs }}
                         </a>
+                    </td>
+                    <td class="nbTodos">
+                        {% set nbTodos = attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs %}
+                        {% if nbTodos > 0 %}
+                            <a href="{{ path('todos', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}">
+                                {{ nbTodos }}
+                            </a>
                         {% else %}
                             0
-                    {% endif %}
+                        {% endif %}
+                    </td>
+                    <td class="nbChoices">
+                        {% set nbChoices = attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 %}
+                        {% if nbChoices > 0 %}
+                            <a href="{{ path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}"
+                               title="">
+                                {{ nbChoices }}
+                            </a>
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>{{ 'label.total' | trans }}</td>
+                <td>
+                    <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ sumStats.specimens }}</a>
+                </td>
+                <td>
+                    <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ sumStats.diffs }}</a>
+                </td>
+                <td>
+                    <a href="{{ path('todos', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ sumStats.diffs - totalChoices.sum }}</a>
+                </td>
+                <td>
+                    <a href="{{ path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ totalChoices.sum }}</a>
                 </td>
             </tr>
-        {% endfor %}
-        <tr>
-            <td>{{ 'label.total' | trans }}</td>
-            <td><a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ sumStats.specimens }}</a></td>
-            <td><a href="{{path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ sumStats.diffs }}</a></td>
-            <td><a href="{{path('todo', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ sumStats.diffs - totalChoices.sum }}</a></td>
-            <td><a href="{{path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{ totalChoices.sum }}</a></td>
-        </tr>
         </table>
-     {% endif %}
-     <div class="row">
-         <div class="col-sm-4 col-md-4">
-            <a href="{{path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
-                {{'downloadDwc'|trans}}
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-4 col-md-4">
+            <a href="{{ path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class="exportLink btn btn-default" role="button">
+                {{ 'downloadDwc'|trans }}
             </a>
-            <a href="{{path('exportCsv', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="exportLink btn btn-default" role="button">
-                {{'downloadCsv'|trans}}
+            <a href="{{ path('exportCsv', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class="exportLink btn btn-default" role="button">
+                {{ 'downloadCsv'|trans }}
             </a>
-         </div>
-            <div class="col-sm-6 col-md-6 col-md-offset-2 col-sm-offset-2">
-                <a href="{{path('deleteChoices', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="delete deleteChoices btn btn-default" role="button">
-                {{'delete.choices'|trans}}
-                </a>
-                <a href="{{path('deleteDiffs', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode})}}" class="delete deleteDiffs btn btn-default" role="button">
-                {{'delete.diffs'|trans}}
-                </a>
-            </div>
-     </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-md-offset-2 col-sm-offset-2">
+            <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class="delete deleteChoices btn btn-default" role="button">
+                {{ 'delete.choices'|trans }}
+            </a>
+            <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class="delete deleteDiffs btn btn-default" role="button">
+                {{ 'delete.diffs'|trans }}
+            </a>
+        </div>
+    </div>
     {% include 'default/partial/modal.html.twig' %}
-    
-<style>
-    .chart div {
-      font: 10px sans-serif;
-      background-color: steelblue;
-      text-align: right;
-      padding: 3px;
-      margin: 1px;
-      color: white;
-    }
 
-
-    .chart rect {
-        fill: steelblue;
-    }
-    .chart rect.specimen {
-        fill: #c0504d;
-    }
-    .chart rect.bibliography {
-        fill: #4f81bd;
-    }
-    .chart rect.determination {
-        fill: #9bbb59;
-    }
-    .chart rect.localisation {
-        fill: #8064a2;
-    }
-    .chart rect.recolte {
-        fill: #4bacc6;
-    }
-    .chart rect.stratigraphy {
-        fill: #f79646;
-    }
-
-    .chart text {
-        fill: black;
-        text-anchor: start;
-    }
-    .chart text.title {
-        fill: black;
-        font: 1.2em sans-serif;
-        text-anchor: middle;
-    }
-</style>
 
     <svg class="chart"></svg>
 {% endblock %}
@@ -134,79 +107,81 @@
 {% block javascripts %}
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script type="text/javascript">
+        var collectionCode = '{{ collectionCode }}' ;
+        var institutionCode = '{{ institutionCode }}' ;
         var datas = [
             {% for className, detailedStats in stats %}
-                {
-                    name : '{{className|lower}}',
-                    specimens : {{detailedStats.specimens}},
-                    diffs : {{detailedStats.diffs}},
-                    todos : {{attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs}},
-                    choices : {{attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0}}
+            {
+                name: '{{ className|lower }}',
+                specimens: {{ detailedStats.specimens }},
+                diffs: {{ detailedStats.diffs }},
+                todos: {{ attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs }},
+                choices: {{ attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 }}
 
-                }
-                {{ loop.last == false ? ',':''}}
-                    
+            }
+            {{ loop.last == false ? ',':'' }}
+
             {% endfor %}
         ];
     </script>
     <script src="{{ asset('AppBundle/js/viewFile.js') }}"></script>
     <script type="text/javascript">
-    $(document).ready(function(){
-        var modalSpinner = $("#spinnerModal") ;
-        $(".exportLink").on('click', function(event) {
-            var url = $(this).attr('href');
-            $.ajax({
-                url : url,
-                method: "POST",
-                beforeSend : function(){
-                    modalSpinner.find('.modal-body h4').remove();
-                    modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
-                }
-            })
-            .done(function(data) {
-                console.log(data);
-            })
-            .success(function(data) {
-                path =Routing.generate('download', { path: data.file });
-                window.location=path;
-             });
-            event.preventDefault();
-        });
-        
-        $(".delete").on('click', function(event) {
-            var modalDelete = $("#modal") ;
-            var urlDeleteChoices = $(this).attr('href');
-            if ($(this).hasClass('deleteChoices')) {
-                modalDelete.find('.modal-title').html('{{'deleteChoices.title' | trans}}');
-                modalDelete.find('.modal-body>p').html('{{'deleteChoices.text' | trans}}');
-            }
-            else {
-                modalDelete.find('.modal-title').html('{{'deleteDiffs.title' | trans}}');
-                modalDelete.find('.modal-body>p').html('{{'deleteDiffs.text' | trans}}');
-            }
-            modalDelete.modal('show');
-            modalDelete.find('.confirm').on('click', function(event) {
-                
-                event.preventDefault();
+        $(document).ready(function () {
+            var modalSpinner = $("#spinnerModal");
+            $(".exportLink").on('click', function (event) {
+                var url = $(this).attr('href');
                 $.ajax({
-                url : urlDeleteChoices,
-                method: "POST",
-                global : false, // désactive le spinner
-                beforeSend : function() {
-                    modalDelete.modal('hide');
-                    modalSpinner.find('.modal-body').append('<p class="text-center">{{'generateDiffs' | trans}}</p>');
-                    modalSpinner.modal('show');
-                    }
-                })
-                .done(function(data) {
-                    console.log(data);
-                })
-                .success(function() {
-                    window.location.reload();
-                 });
+                            url: url,
+                            method: "POST",
+                            beforeSend: function () {
+                                modalSpinner.find('.modal-body h4').remove();
+                                modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
+                            }
+                        })
+                        .done(function (data) {
+                            console.log(data);
+                        })
+                        .success(function (data) {
+                            path = Routing.generate('download', {path: data.file});
+                            window.location = path;
+                        });
+                event.preventDefault();
             });
-            event.preventDefault();
-        })
-    });
+
+            $(".delete").on('click', function (event) {
+                var modalDelete = $("#modal");
+                var urlDeleteChoices = $(this).attr('href');
+                if ($(this).hasClass('deleteChoices')) {
+                    modalDelete.find('.modal-title').html('{{ 'deleteChoices.title' | trans }}');
+                    modalDelete.find('.modal-body>p').html('{{ 'deleteChoices.text' | trans }}');
+                }
+                else {
+                    modalDelete.find('.modal-title').html('{{ 'deleteDiffs.title' | trans }}');
+                    modalDelete.find('.modal-body>p').html('{{ 'deleteDiffs.text' | trans }}');
+                }
+                modalDelete.modal('show');
+                modalDelete.find('.confirm').on('click', function (event) {
+
+                    event.preventDefault();
+                    $.ajax({
+                                url: urlDeleteChoices,
+                                method: "POST",
+                                global: false, // désactive le spinner
+                                beforeSend: function () {
+                                    modalDelete.modal('hide');
+                                    modalSpinner.find('.modal-body').append('<p class="text-center">{{ 'generateDiffs' | trans }}</p>');
+                                    modalSpinner.modal('show');
+                                }
+                            })
+                            .done(function (data) {
+                                console.log(data);
+                            })
+                            .success(function () {
+                                window.location.reload();
+                            });
+                });
+                event.preventDefault();
+            })
+        });
     </script>
 {% endblock %}

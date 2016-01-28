@@ -19,8 +19,8 @@
                 {% set relationInstitution = relationById(specimenInstitution, className, relationId) %}
                 {% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
                 {% set rowspan = details.fields | length  +1 %}
-                    <tr class="diff-entity success">
-                        <td class="warning diff-class{{loop.index is even ? " even" :"" }}" rowspan="{{rowspan}}" style="width: 10px !important;">
+                    <tr class="{{ className | lower }} light">
+                        <td class="diff-class" rowspan="{{rowspan}}" style="width: 10px !important;">
                             <div>{{('label.' ~ className|lower ~ '.abbr') |trans({},'entity')|capitalize}}</div>
                           </td>
                         <td colspan="2">{{ relationToString }}</td>
@@ -34,7 +34,7 @@
                     </tr>
             
             {% for fieldName, datas in details.fields %}
-                    <tr class="diff-field">
+                    <tr class="{{ className | lower }} lighter">
                         <td>{{ ('label.'~className|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>
                         <td>
                             {{ fieldToString(relationRecolnat, fieldName)}}

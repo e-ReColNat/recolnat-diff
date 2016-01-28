@@ -35,13 +35,13 @@
                 {% set countDiffs = countDiffs + (data.specimensCode | length) %}
                 
                 {% if percent >= 20 and flagPareto == 0 %}
-                    {% set classTr = 'class="info"' %}
+                    {% set classTr = 'info' %}
                     {% set flagPareto = 1 %}
                 {% else %}
                         {% set classTr = '' %}
                 {% endif %}
                 
-                <tr {{classTr | raw}}>
+                <tr class="{{classTr}} {{data.className|lower}} lighter">
                     <td>{{ loop.index}} - {{countDiffs}}</td>
                     <td>{{data.className}}</td>
                     <td>{{('label.'~(data.className | lower) ~'.fields.'~data.fieldName) | trans({}, 'entity')}}</td>

@@ -1,39 +1,41 @@
 {% set page = 1 %}
 <ul class="nav sidebar-nav sidebar-choices">
-{% for specimenCode, datas in diffs.datas %}
-    {% set classWithDiff = datas.classes %}
-    <li>
-                {% set taxon = datas.taxon %}
+    {% for specimenCode, datas in diffs.datas %}
+        {% set classWithDiff = datas.classes %}
+        <li>
+            {% set taxon = datas.taxon %}
 
-                {% set path='' %}
-                {% if page != currentPage %}
-                    {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) %}
-                {% endif %}
+            {% set path='' %}
+            {% if page != currentPage %}
+                {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) %}
+            {% endif %}
 
-                <a href="{{path}}#{{specimenCode}}">{{taxon}}</a>
-                <ul class="choices">
+            <a href="{{ path }}#{{ specimenCode }}">{{ taxon }}</a>
+            <ul class="choices">
                 {% for className in classWithDiff | keys %}
                     {% set nbDiffs = countDiffs(diffs, className, specimenCode) %}
                     {% set nbChoices = countChoices(choices, specimenCode, className) %}
-                    <li>
-                        <div class ="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning'}}" id="facet-{{specimenCode}}-{{className}}" data-classname="{{className}}" data-comptchoices="{{nbChoices}}" data-comptdiffs="{{nbDiffs}}">
-                            <span class="facet-className">{{('label.'~ (className|lower)~'.abbr') | trans({},'entity') | capitalize}}</span>&nbsp;:&nbsp;
+                    <li class="{{ className|lower }} light">
+                        <div class="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning' }}"
+                             id="facet-{{ specimenCode }}-{{ className }}" data-classname="{{ className }}"
+                             data-comptchoices="{{ nbChoices }}" data-comptdiffs="{{ nbDiffs }}">
+                            <span class="facet-className">{{ ('label.'~ (className|lower)~'.abbr') | trans({},'entity') | capitalize }}</span>&nbsp;:&nbsp;
                             <span class="facet-choix">{{ 'label.choix' | transchoice(nbChoices, {'%nbChoices%': nbChoices}) }}</span>&nbsp;/&nbsp;
                             <span class="facet-diffs">{{ 'label.differences.abbr' | transchoice(nbDiffs, {'%nbDiffs%': nbDiffs}) }}</span>
                         </div>
                     </li>
                 {% endfor %}
-                </ul>
-                {% if ( loop.index % itemNumberPerPage) == 0  %}
-                    {% set page = page +1 %}
-                {% endif %}
-    </li>
-{% endfor %}
+            </ul>
+            {% if ( loop.index % itemNumberPerPage) == 0 %}
+                {% set page = page +1 %}
+            {% endif %}
+        </li>
+    {% endfor %}
 </ul>
 
 
 <div class="hidden" id="template-facet">
-    <span class="facet-className">{0}</span>&nbsp;:&nbsp; 
+    <span class="facet-className">{0}</span>&nbsp;:&nbsp;
     <span class="facet-choix">{1}</span>&nbsp;/&nbsp;
     <span class="facet-diffs">{2}</span>
 </div>

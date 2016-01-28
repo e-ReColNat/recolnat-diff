@@ -126,11 +126,11 @@ class FrontController extends Controller
 
     /**
      * @Route("{institutionCode}/{collectionCode}/diffs/{selectedClassName}/{page}", name="diffs", 
-     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
+     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
      * @Route("{institutionCode}/{collectionCode}/choices/{selectedClassName}/{page}", name="choices", 
-     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
-     * @Route("{institutionCode}/{collectionCode}/todo/{selectedClassName}/{page}", name="todo", 
-     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"})
+     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
+     * @Route("{institutionCode}/{collectionCode}/todo/{selectedClassName}/{page}", name="todos",
+     * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
      */
     public function diffsAction(Request $request, $institutionCode, $collectionCode, $selectedClassName = "all", $page = 1)
     {
