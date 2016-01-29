@@ -251,7 +251,6 @@ class ExportManager
         }
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $className, $specimensWithChoices, $choicesToRemove);
-        //$this->sessionManager->set('diffs', $diffs);
         return $diffs;
     }
 
@@ -259,7 +258,6 @@ class ExportManager
     {
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffs()->filterBySpecimensCode($allDiffs, $specimensCode);
-        //$this->sessionManager->set('diffs', $diffs);
         return $diffs;
     }
     

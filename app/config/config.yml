@@ -10,6 +10,11 @@ parameters:
     locale: fr
     export_path: "%kernel.root_dir%/../data"
     converter_path: "%kernel.root_dir%/../bin/talend_converter/converter/converter_run.sh"
+    maxitemperpage:
+        - 5
+        - 10
+        - 20
+        - 50
 
 framework:
     #esi:             ~

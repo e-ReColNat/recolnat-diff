@@ -121,15 +121,14 @@ class Diffs extends \SplFileObject
             }
             foreach ($tempChoices as $className => $choiceSpecimenCode) {
                 foreach ($choiceSpecimenCode as $specimenCode => $comptFieldChoice) {
-                    if (isset($returnDiffs['classes'][$className]) && isset($returnDiffs['classes'][$className][$specimenCode])) {
-                        $totalStatFields=0;
-                        foreach ($returnDiffs['classes'][$className][$specimenCode] as $diffsFields) {
-                            $totalStatFields+=count($diffsFields) ;
-                        }
-                        if ($totalStatFields == $comptFieldChoice) {
-                            unset($returnDiffs['classes'][$className][$specimenCode]) ;
-                            unset($returnDiffs['datas'][$specimenCode][$className]) ;
-                            if (isset($returnDiffs['datas'][$specimenCode]) && count($returnDiffs['datas'][$specimenCode]) == 0) {
+                    if (isset($returnDiffs['classes'][$className]) && in_array($specimenCode, $returnDiffs['classes'][$className])) {
+                        $totalDiffFields = count($returnDiffs['datas'][$specimenCode]['classes'][$className]['fields']);
+                        if ($totalDiffFields == $comptFieldChoice) {
+                            if(($key = array_search($specimenCode, $returnDiffs['classes'][$className])) !== false) {
+                                unset($returnDiffs['classes'][$className][$key]);
+                            }
+                            unset($returnDiffs['datas'][$specimenCode]['classes'][$className]) ;
+                            if (isset($returnDiffs['datas'][$specimenCode]) && count($returnDiffs['datas'][$specimenCode]['classes']) == 0) {
                                 unset($returnDiffs['datas'][$specimenCode]);
                             }
                         }
