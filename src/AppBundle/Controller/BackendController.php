@@ -55,10 +55,24 @@ class BackendController extends Controller
     }
 
     /**
+     * @Route("/setmaxitem/{maxItem}", name="setmaxitem", options={"expose"=true})
+     */
+    public function setMaxItemAction($maxItem)
+    {
+        if (is_int((int) $maxItem) && in_array((int) $maxItem, $this->container->getParameter('maxitemperpage'))) {
+            $this->get('session')->set('maxItemPerPage', $maxItem);
+        }
+        else {
+            $this->get('session')->set('maxItemPerPage', $this->container->getParameter('maxitemperpage')[0]);
+        }
+        return new JsonResponse($this->get('session')->get('maxItemPerPage'));
+    }
+    /**
      * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
      * @param Request $request
      * @param string $institutionCode
      * @param array choices
+     * @return JsonResponse
      */
     public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
     {

@@ -142,7 +142,7 @@ class FrontController extends Controller
         if ($request->get('_route') == 'choices') {
             $specimensWithChoices = array_keys($exportManager->getChoicesBySpecimenCode());
         }
-        if ($request->get('_route') == 'todo') {
+        if ($request->get('_route') == 'todos') {
             $specimensWithoutChoices = $exportManager->getChoices();
         }
 

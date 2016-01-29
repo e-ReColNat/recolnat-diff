@@ -5,60 +5,62 @@
     {% if diffs is not empty %}
         <div id="wrapper" class="toggled">
 
-            <div id="sidebar-wrapper" >
-                {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
-            </div>
-            <div id="page-content-wrapper">
-                {% include 'default/partial/buttonHamburger.html.twig' %}
-                {% include 'default/partial/breadcrumb.html.twig' %}
-                    
-                    <div class="text-center">
-                        <div style="display: inline-block; vertical-align: middle;">
-                            {{ knp_pagination_render(pagination) }}
-                        </div>
-                        <div style="display: inline-block;vertical-align: middle;">
-                            <label for="maxItemPerPage" style="font-size: 0.85em; font-weight: 500;">{{'label.maxItemPerPage' | trans }}</label>
-                            <select name="maxItemPerPage" id="maxItemPerPage">
-                                <option value="5" {{maxItemPerPage == 5 ? 'selected="true"':''}}>5</option>
-                                <option value="10" {{maxItemPerPage == 10 ? 'selected="true"':''}}>10</option>
-                                <option value="20" {{maxItemPerPage == 20 ? 'selected="true"':''}}>20</option>
-                                <option value="50" {{maxItemPerPage == 50 ? 'selected="true"':''}}>50</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="diffs" data-collectionCode="{{collectionCode}}" data-institutioncode="{{institutionCode}}" data-selectedclassname="{{selectedClassName}}">
+        <div id="sidebar-wrapper">
+            {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
+        </div>
+        <div id="page-content-wrapper">
+        {% include 'default/partial/buttonHamburger.html.twig' %}
+        {% include 'default/partial/breadcrumb.html.twig' %}
 
-                        {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
-                        {% for specimenCode, classWithDiff in datas %}
-                            {% include 'default/partial/specimen/fullSpecimen.html.twig' %}
-                        {% endfor %}
-                    {% endif %}
-                    <div class="text-center">
-                        <div style="display: inline-block; vertical-align: middle;">
-                            {{ knp_pagination_render(pagination) }}
-                        </div>
-                    </div>
-                </div>
+        <div class="text-center">
+            <div style="display: inline-block; vertical-align: middle;">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+            <div style="display: inline-block;vertical-align: middle;">
+                <label for="maxItemPerPage"
+                                           style="font-size: 0.85em; font-weight: 500;">{{ 'label.maxItemPerPage' | trans }}</label>
+                <select name="maxItemPerPage" id="maxItemPerPage">
+                    <option value="5" {{ maxItemPerPage == 5 ? 'selected="true"':'' }}>5</option>
+                    <option value="10" {{ maxItemPerPage == 10 ? 'selected="true"':'' }}>10</option>
+                    <option value="20" {{ maxItemPerPage == 20 ? 'selected="true"':'' }}>20</option>
+                    <option value="50" {{ maxItemPerPage == 50 ? 'selected="true"':'' }}>50</option>
+                </select>
             </div>
         </div>
-        {% include 'default/partial/smallModal.html.twig' %}
-    {% endblock %}
+        <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
+
+        {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
+        {% for specimenCode, classWithDiff in datas %}
+            {% include 'default/partial/specimen/fullSpecimen.html.twig' %}
+        {% endfor %}
+    {% endif %}
+    <div class="text-center">
+        <div style="display: inline-block; vertical-align: middle;">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    {% include 'default/partial/smallModal.html.twig' %}
+{% endblock %}
 
     {% block javascripts %}
         <script src="{{ asset('AppBundle/js/viewDiffs.js') }}"></script>
         <script type="text/javascript">
-            $(document).ready(function(){
-            if (localStorage.getItem('maxItemPerPage')) {
-            $('#maxItemPerPage').val(localStorage.getItem('maxItemPerPage'));
-            }
-            $('#maxItemPerPage').change(function(){
-            {% if selectedClassName is not defined %}
-                {% set selectedClassName = "all" %}
-            {% endif %}
-                var url = "{{path(app.request.attributes.get('_route'),{'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName})}}";
-                        maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
-                        localStorage.setItem('maxItemPerPage', maxItemPerPage);
-                        jQuery(location).attr('href', url.replace('_itemNum', maxItemPerPage));
+            $(document).ready(function () {
+                if (localStorage.getItem('maxItemPerPage')) {
+                    $('#maxItemPerPage').val(localStorage.getItem('maxItemPerPage'));
+                    $.get(Routing.generate('setmaxitem', {'maxItem' : localStorage.getItem('maxItemPerPage')}));
+                }
+                $('#maxItemPerPage').change(function () {
+                    {% if selectedClassName is not defined %}
+                    {% set selectedClassName = "all" %}
+                    {% endif %}
+                    var url = "{{ path(app.request.attributes.get('_route'),{'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
+                    maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
+                    localStorage.setItem('maxItemPerPage', maxItemPerPage);
+                    jQuery(location).attr('href', url.replace('_itemNum', maxItemPerPage));
                 });
             });
         </script>
