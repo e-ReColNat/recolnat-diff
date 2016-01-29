@@ -60,7 +60,7 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 .nb-gradle/
-nbproject/
+nbproject/*
 
 ### PHPSTORM ###
 .idea/
