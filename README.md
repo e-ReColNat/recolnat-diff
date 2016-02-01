@@ -35,6 +35,7 @@ voir http://php.net/manual/en/oci8.installation.php section Installing OCI8 from
 ## Déploiement
 ### Virtual host (Nginx)
 `
+
 server {
         listen 80;
         root /path/to/recolnat-diff/web;
@@ -81,6 +82,7 @@ server {
         internal;
     }
 }
+
 `
 ### Droits sur les répertoires
 Le serveur doit avoir des droits de lecture et écriture dans le répertoire data/
