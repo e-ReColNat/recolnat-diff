@@ -1,6 +1,8 @@
 $(document).ready(function () {
+    var boolScrollToHash = true;
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 
+        boolScrollToHash = false;
         currTabTarget = $(e.target).attr('href');
 
         var remoteUrl = $(this).attr('data-tab-remote');
@@ -9,21 +11,21 @@ $(document).ready(function () {
             $(currTabTarget).load(remoteUrl);
             $(this).data('loaded', true);
         }
+        boolScrollToHash = true;
     });
 
     function maybeScrollToHash() {
         // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
-        if (window.location.hash && $(window.location.hash).length) {
+        if (window.location.hash && $(window.location.hash).length && boolScrollToHash) {
             var newTop = $(window.location.hash).offset().top + parseInt($(window.location.hash).css('padding-top'), 10) - $('.navbar-fixed-top').height() - parseInt($('body').css('padding-top'), 10) + parseInt($('.navbar-fixed-top').css('margin-bottom'), 10);
             $(window).scrollTop(newTop);
         }
     }
 
-    $(window).bind('hashchange', function(e) {
-     e.preventDefault();
-     maybeScrollToHash();
-     });
-
+    $(window).bind('hashchange', function (e) {
+        e.preventDefault();
+        maybeScrollToHash();
+    });
 
 
     maybeScrollToHash();

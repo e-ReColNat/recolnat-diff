@@ -258,6 +258,14 @@
                 <source>tab.stratigraphy</source>
                 <target>Stratigraphie</target>
             </trans-unit>
+            <trans-unit id="65">
+                <source>viewSelectedSpecimen</source>
+                <target>Voir le spécimen sélectionné</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>viewSelectedSpecimens</source>
+                <target>Voir les %count% spécimens sélectionnés</target>
+            </trans-unit>
             </body>
     </file>
 </xliff>

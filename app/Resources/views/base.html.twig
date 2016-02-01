@@ -1,51 +1,58 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Recolnat Diff{% endblock %}</title>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Recolnat Diff{% endblock %}</title>
     {% block stylesheets %}{% endblock %}
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
     <link rel="stylesheet" href="{{ asset('AppBundle/css/bootstrap.and.theme.css') }}">
     <link rel="stylesheet" href="{{ asset('AppBundle/css/dashboard.css') }}">
     {#<link rel="stylesheet" href="{{ asset('AppBundle/css/custom.css') }}">#}
     <link rel="stylesheet" href="{{ asset('AppBundle/css/simple-sidebar.css') }}">
-    {% stylesheets '@AppBundle/Resources/less/custom.less'%}
-    <link rel="stylesheet" href="{{ asset_url}}">
+    {% stylesheets '@AppBundle/Resources/less/custom.less' %}
+    <link rel="stylesheet" href="{{ asset_url }}">
     {% endstylesheets %}
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="{{path("index")}}" class="navbar-brand">Recolnat - Diffs</a>
-            </div>
-            <div class="navbar-collapse collapse" id="navbar">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">{{'nav.accueil' | trans }}</a></li>
-                    <li><a href="{{path('viewPrefsUser', {'institutionCode':'MHNAIX'})}}">{{'nav.parametres' | trans }}</a></li>
-                    <li><a href="#">{{'nav.profil' | trans }}</a></li>
-                    <li><a href="#">{{'nav.aide' | trans }}</a></li>
-                </ul>
-                <form class="navbar-form navbar-right">
-                    <input type="text" placeholder="Search..." class="form-control">
-                </form>
-            </div>
+<div id="parameters" class="hidden" data-institutioncode="{{ institutionCode is defined ? institutionCode:'' }}"
+     data-collectioncode="{{ collectionCode is defined ? collectionCode:'' }}"></div>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse"
+                    class="navbar-toggle collapsed" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="{{ path("index") }}" class="navbar-brand">Recolnat - Diffs</a>
         </div>
-    </nav>
-    {% block body %}{% endblock %}
+        <div class="navbar-collapse collapse" id="navbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">{{ 'nav.accueil' | trans }}</a></li>
+                <li>
+                    <a href="{{ path('viewPrefsUser', {'institutionCode':'MHNAIX'}) }}">{{ 'nav.parametres' | trans }}</a>
+                </li>
+                <li><a href="#">{{ 'nav.profil' | trans }}</a></li>
+                <li><a href="#">{{ 'nav.aide' | trans }}</a></li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input type="text" placeholder="Search..." class="form-control">
+            </form>
+        </div>
+    </div>
+</nav>
+{% block body %}{% endblock %}
 <div class="modal fade" id="spinnerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-body" >
+            <div class="modal-body">
                 <div style="height:200px">
-                    <span id="searching_spinner_center" style="position: absolute;display: block;top: 50%;left: 50%;"><img src="{{ asset('AppBundle/images/load.gif') }}" alt="" /></span>
+                    <span id="searching_spinner_center"
+                          style="position: absolute;display: block;top: 50%;left: 50%;"><img
+                                src="{{ asset('AppBundle/images/load.gif') }}" alt=""/></span>
                 </div>
             </div>
         </div>
@@ -58,91 +65,110 @@
 <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
 <script src="{{ asset('AppBundle/js/string.js') }}"></script>
 <script src="{{ asset('AppBundle/js/jquery.toaster.js') }}"></script>
+<script src="{{ asset('AppBundle/js/default.js') }}"></script>
 <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
 {% block javascripts %}
 
 {% endblock %}
 <script type="text/javascript">
+    var textSelectSpecimen = "{{ 'viewSelectedSpecimen' | trans }}" ;
+    var textSelectSpecimens = "{{ 'viewSelectedSpecimens' | trans }}" ;
     $(document).ready(function () {
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-            $(this).toggleClass("collapsed");
-        });
+
         var modalSpinner = $("#spinnerModal");
 
-        $.toaster({settings: {
+        $.toaster({
+            settings: {
                 'timeout': 5000,
-                'toaster':
-                        {
-                            'css':
-                                    {
-                                        'position': 'fixed',
-                                        'top': '10px',
-                                        'right': '10px',
-                                        'width': '350px',
-                                        'zIndex': 50000
-                                    }
-                        }
-            }});
+                'toaster': {
+                    'css': {
+                        'position': 'fixed',
+                        'top': '10px',
+                        'right': '10px',
+                        'width': '350px',
+                        'zIndex': 50000
+                    }
+                }
+            }
+        });
 
         // Toast Messages
         var flashMessages = [];
 
-    {% for flash_type, flashes in app.session.flashbag.all %}
-        {% for flash_message in flashes %}
-                $.toaster({message: '{{flash_message}}', priority: '{{flash_type}}', title: '{{ ('label.' ~ flash_type) | trans}}'});
+        {% for flash_type, flashes in app.session.flashbag.all %}
+            {% for flash_message in flashes %}
+            $.toaster({
+                message: '{{ flash_message }}',
+                priority: '{{ flash_type }}',
+                title: '{{ ('label.' ~ flash_type) | trans }}'
+            });
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
 
-            if (flashMessages.length > 0) {
-                for (i = 0; i < flashMessages.length; i++) {
-                }
+        if (flashMessages.length > 0) {
+            for (i = 0; i < flashMessages.length; i++) {
             }
-            $(document).ajaxStart(function () {
-                modalSpinner.modal('show');
-            })
-                    .ajaxStop(function () {
-                        modalSpinner.modal('hide');
-                    })
-                    .ajaxComplete(function (event, xhr, settings) {
-                        try {
-                            var data = $.parseJSON(xhr.responseText);
+        }
+        $(document).ajaxStart(function () {
+                    modalSpinner.modal('show');
+                })
+                .ajaxStop(function () {
+                    modalSpinner.modal('hide');
+                })
+                .ajaxComplete(function (event, xhr, settings) {
+                    try {
+                        var data = $.parseJSON(xhr.responseText);
 
-                            if (data.messages) {
-                                var messages = data.messages;
+                        if (data.messages) {
+                            var messages = data.messages;
 
-                                var i;
+                            var i;
 
-                                if (messages.warning) {
-                                    for (i = 0; i < messages.warning.length; i++) {
-                                        $.toaster({message: messages.warning[i], priority: 'warning', title: '{{ 'label.warning' | trans}}'});
-                                    }
-                                }
-
-                                if (messages.error) {
-                                    for (i = 0; i < messages.error.length; i++) {
-                                        $.toaster({message: messages.error[i], priority: 'danger', title: '{{ 'label.danger' | trans}}'});
-                                    }
-                                }
-
-                                if (messages.success) {
-                                    for (i = 0; i < messages.success.length; i++) {
-                                        $.toaster({message: messages.success[i], priority: 'success', title: '{{ 'label.success' | trans}}'});
-                                    }
-                                }
-
-                                if (messages.info) {
-                                    for (i = 0; i < messages.info.length; i++) {
-                                        $.toaster({message: messages.info[i], priority: 'info', title: '{{ 'label.info' | trans}}'});
-                                    }
+                            if (messages.warning) {
+                                for (i = 0; i < messages.warning.length; i++) {
+                                    $.toaster({
+                                        message: messages.warning[i],
+                                        priority: 'warning',
+                                        title: '{{ 'label.warning' | trans }}'
+                                    });
                                 }
                             }
-                        } catch (e) {
 
+                            if (messages.error) {
+                                for (i = 0; i < messages.error.length; i++) {
+                                    $.toaster({
+                                        message: messages.error[i],
+                                        priority: 'danger',
+                                        title: '{{ 'label.danger' | trans }}'
+                                    });
+                                }
+                            }
+
+                            if (messages.success) {
+                                for (i = 0; i < messages.success.length; i++) {
+                                    $.toaster({
+                                        message: messages.success[i],
+                                        priority: 'success',
+                                        title: '{{ 'label.success' | trans }}'
+                                    });
+                                }
+                            }
+
+                            if (messages.info) {
+                                for (i = 0; i < messages.info.length; i++) {
+                                    $.toaster({
+                                        message: messages.info[i],
+                                        priority: 'info',
+                                        title: '{{ 'label.info' | trans }}'
+                                    });
+                                }
+                            }
                         }
-                    });
-        });
+                    } catch (e) {
+
+                    }
+                });
+    });
 
 </script>
 </html>
