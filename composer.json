@@ -29,7 +29,7 @@
         "knplabs/knp-paginator-bundle" : "dev-master",
         "friendsofsymfony/jsrouting-bundle": "dev-master",
         "symfony/assetic-bundle": "~2.7-dev",
-        "leafo/lessphp": "^0.5.0"
+        "oyejorge/less.php": "v1.7.0.10"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

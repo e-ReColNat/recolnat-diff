@@ -36,6 +36,7 @@ $(document).ready(function () {
     var selectedClassName = $('#diffs').data('selectedclassname');
     var smallModal = $('#smallModal');
     var selectedSpecimens = new Array();
+    var highlightClass = 'bg-success';
     if (localStorage.getItem('selectedSpecimens')) {
         selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
     }
@@ -135,34 +136,86 @@ $(document).ready(function () {
 
     // Sélection bouton radio par specimen
     $('table.diff').find(":radio").change(function () {
-        var choices = new Array();
-        var tableContext = $(this).parents('table.diff');
-        var relationId = $(this).attr('name');
-        var choice = $(this).attr('value');
-        var specimenCode = $(this).parents('section').data('specimencode');
-        if ($(this).data('type') === 'diff-entity') {
-            tableContext.find(":radio")
-                .filter("[name^='" + relationId + "']")
-                .filter('[data-type="diff-field"]')
-                .filter('[value = "' + choice + '"]')
-                .map(
-                    function () {
-                        $(this).prop('checked', true);
-                        setChoice(choices, $(this), specimenCode);
-                    });
+            var choices = new Array();
+            var tableContext = $(this).parents('table.diff');
+            var relationId = $(this).attr('name');
+            var choice = $(this).attr('value');
+            var specimenCode = $(this).parents('section').data('specimencode');
+            if ($(this).data('type') === 'diff-entity') {
+                tableContext.find(":radio")
+                    .filter("[name^='" + relationId + "']")
+                    .filter('[data-type="diff-field"]')
+                    .filter('[value = "' + choice + '"]')
+                    .map(
+                        function () {
+                            $(this).prop('checked', true);
+                            setChoice(choices, $(this), specimenCode);
+                        });
+            }
+            else {
+                setChoice(choices, $(this), specimenCode);
+            }
+            $.ajax({
+                    url: Routing.generate('setChoice', {institutionCode: institutionCode, collectionCode: collectionCode}),
+                    data: {'choices': choices},
+                    method: "POST"
+                })
+                .done(function (data) {
+                    updateDisplay(data);
+                });
+        })
+        // Mise en exergue des valeurs concernés par le bouton radio
+        .hover(function () {
+            if ($(this).data('type') == 'diff-field') {
+                higlightCells($(this), highlightClass);
+            }
+            if ($(this).data('type') == 'diff-entity') {
+                var tableContext = $(this).parents('table.diff');
+                var relationId = $(this).attr('name');
+                var choice = $(this).attr('value');
+                tableContext.find(":radio")
+                    .filter("[name^='" + relationId + "']")
+                    .filter('[data-type="diff-field"]')
+                    .filter('[value = "' + choice + '"]')
+                    .map(
+                        function () {
+                            higlightCells($(this), highlightClass);
+                        });
+            }
+
+        }, function () {
+            if ($(this).data('type') == 'diff-field') {
+                unHiglightCells($(this), highlightClass);
+            }
+            if ($(this).data('type') == 'diff-entity') {
+                var tableContext = $(this).parents('table.diff');
+                var relationId = $(this).attr('name');
+                var choice = $(this).attr('value');
+                tableContext.find(":radio")
+                    .filter("[name^='" + relationId + "']")
+                    .filter('[data-type="diff-field"]')
+                    .filter('[value = "' + choice + '"]')
+                    .map(
+                        function () {
+                            unHiglightCells($(this), highlightClass);
+                        });
+            }
+
+        });
+
+    function higlightCells(radioElement, highlightClass) {
+        if (radioElement.length > 0) {
+            radioElement.parent().addClass(highlightClass);
+            radioElement.parent().prev().addClass(highlightClass);
         }
-        else {
-            setChoice(choices, $(this), specimenCode);
+    }
+
+    function unHiglightCells(radioElement, highlightClass) {
+        if (radioElement.length > 0) {
+            radioElement.parent().removeClass(highlightClass);
+            radioElement.parent().prev().removeClass(highlightClass);
         }
-        $.ajax({
-                url: Routing.generate('setChoice', {institutionCode: institutionCode, collectionCode: collectionCode}),
-                data: {'choices': choices},
-                method: "POST"
-            })
-            .done(function (data) {
-                updateDisplay(data);
-            });
-    });
+    }
 
     // Filtres  généraux
     $("#form-filters").submit(function (event) {

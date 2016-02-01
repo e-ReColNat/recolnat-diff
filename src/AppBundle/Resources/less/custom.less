@@ -1,3 +1,6 @@
+@import "../bootstrap-3.3.6/less/variables.less";
+@import "../bootstrap-3.3.6/less/mixins.less";
+
 @specimen: #c0504d;
 @bibliography: #4f81bd;
 @determination: #9bbb59;
@@ -25,10 +28,12 @@
   tr.@{color} td, li.@{color}{ background-color: fade(@@color,@fadeTdBackground)}
   tr.@{color}.light td, li.@{color}.light{ background-color: fade(@@color,@fadeTdBackground-light)}
   tr.@{color}.lighter td, li.@{color}.lighter{ background-color: fade(@@color,@fadeTdBackground-lighter)}
-    .chart rect.@{color} {
-      fill: @@color;
-    }
+  tr.@{color}.lighter td, li.@{color}.lighter{ background-color: fade(@@color,@fadeTdBackground-lighter)}
+  tr.@{color} td.bg-success{ .bg-variant(@state-success-bg);}
   .tab-pane.@{color} {background-color: fade(@@color,@fadeTdBackground-lighter)}
+
+  .chart rect.@{color} {fill: @@color;}
+
 }
 .setColor(specimen);
 .setColor(bibliography);
