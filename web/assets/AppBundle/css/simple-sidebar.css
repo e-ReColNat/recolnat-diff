@@ -8,10 +8,10 @@
 
 #wrapper {
     padding-left: 0;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+    -webkit-transition: all 1.0s ease;
+    -moz-transition: all 1.0s ease;
+    -o-transition: all 1.0s ease;
+    transition: all 1.0s ease;
 }
 
 #wrapper.toggled {
@@ -19,17 +19,17 @@
 }
 
 #sidebar-wrapper {
-    z-index: 1000;
+    z-index: 990;
     position: fixed;
     left: 200px;
     width: 0;
     height: 100%;
     margin-left: -200px;
     overflow-y: auto;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+    -webkit-transition: all 1.0s ease;
+    -moz-transition: all 1.0s ease;
+    -o-transition: all 1.0s ease;
+    transition: all 1.0s ease;
 }
 
 #wrapper.toggled #sidebar-wrapper {
@@ -47,53 +47,7 @@
     margin-right: -250px;
 }
 
-/* Sidebar Styles */
-/*
-.sidebar-nav {
-    position: absolute;
-    top: 0;
-    width: 200px;
-    margin: 0;
-    padding-left: 25px;
-    list-style: none;
-}
 
-.sidebar-nav li {
-    text-indent: 20px;
-    line-height: 40px;
-}
-
-.sidebar-nav li a {
-    display: block;
-    text-decoration: none;
-    color: #999999;
-}
-
-.sidebar-nav li a:hover {
-    text-decoration: none;
-    color: #fff;
-    background: rgba(255,255,255,0.2);
-}
-
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus {
-    text-decoration: none;
-}
-
-.sidebar-nav > .sidebar-brand {
-    height: 65px;
-    font-size: 18px;
-    line-height: 60px;
-}
-
-.sidebar-nav > .sidebar-brand a {
-    color: #999999;
-}
-
-.sidebar-nav > .sidebar-brand a:hover {
-    color: #fff;
-    background: none;
-}*/
 #sidebar-wrapper.collapsing {
     max-height: none;
       overflow-y: hidden;
@@ -159,13 +113,13 @@
     transform-origin: 10% 90%;
   }
    .navbar-toggle.collapsed .top-bar {
-    transform: rotate(0);
+    transform: rotate(0deg);
   }
   .navbar-toggle.collapsed .middle-bar {
     opacity: 1;
   }
   .navbar-toggle.collapsed .bottom-bar {
-    transform: rotate(0);
+    transform: rotate(0deg);
   }
   
 *::after, *::before {
@@ -184,7 +138,7 @@
     position : fixed ;
     top : 50px;
     transition: all 1s;
-    z-index : 2000;
+    z-index : 990;
 }
 #menu-toggle.collapsed {
     left :10px;

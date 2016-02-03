@@ -1,14 +1,19 @@
 {% if attribute(diffs.datas, specimenCode) is not empty %}
-<table class="diff table table-striped table-bordered table-condensed">
-    <caption class="bg-primary">Différences</caption>
+<table class="diff table table-striped table-condensed">
+    <colgroup>
+        <col class="xsmall">
+        <col class="col-md-1">
+        <col class="col-md-5">
+        <col class="xsmall">
+        <col class="col-md-5">
+        <col class="xsmall">
+    </colgroup>
     <thead>
         <tr>
-            <th class="xsmall">&nbsp;</th>
-            <th class="col-md-1"></th>
-            <th class="col-md-5">Recolnat</th>
-            <th class="xsmall">&nbsp;</th>
-            <th class="col-md-5">Institution</th>
-            <th class="xsmall">&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th colspan="2">Recolnat</th>
+            <th colspan="2">Institution</th>
         </tr>
     </thead>
     <tbody>

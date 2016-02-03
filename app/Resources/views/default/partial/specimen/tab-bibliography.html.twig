@@ -1,6 +1,6 @@
 {% for bibliography in specimen.bibliographies%}
     {% if bibliography is not null %}
-    <div class="row">
+        <div class="row">
             <div class="col-sm-6">
                 {{printLabelAndField(bibliography, 'bibliography', 'title', true, '<br />')|raw}}
                 {{printLabelAndField(bibliography, 'bibliography', 'subject', true, '<br />')|raw}}

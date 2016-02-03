@@ -1,17 +1,69 @@
 @import "../bootstrap-3.3.6/less/variables.less";
 @import "../bootstrap-3.3.6/less/mixins.less";
 
-@specimen: #c0504d;
+/*@specimen: #c0504d;
 @bibliography: #4f81bd;
 @determination: #9bbb59;
 @localisation: #8064a2;
 @recolte: #4bacc6;
 @stratigraphy: #f79646;
 @taxon : #ffc000;
+@diffs : #C7664C;*/
 
-@fadeTdBackground: 30%;
-@fadeTdBackground-light: 20%;
-@fadeTdBackground-lighter: 10%;
+//@specimen: #5DA5DA;
+//@bibliography: #FAA43A;
+//@determination: #60BD68;
+//@localisation: #F17CB0;
+//@recolte: #B2912F;
+//@stratigraphy: #B276B2;
+//@taxon : #DECF3F;
+//@multimedia : #F15854;
+//@diffs : #4D4D4D;
+
+//@specimen: #8dd3c7;
+//@bibliography: #ffffb3;
+//@determination: #bebada;
+//@localisation: #fb8072;
+//@recolte: #80b1d3;
+//@stratigraphy: #fdb462;
+//@taxon : #b3de69;
+//@multimedia : #fccde5;
+//@diffs : #d9d9d9;
+
+@specimen: rgb(107, 94, 74);
+@bibliography: rgb(239, 190, 118);
+@determination: rgb(206, 165, 125);
+@localisation: rgb(255, 140, 121);
+@recolte: rgb(182, 93, 153);
+@stratigraphy: rgb(252, 186, 63);
+@taxon : rgb(146, 114, 74);
+@multimedia : rgb(135, 189, 106);
+@diffs : rgb(125, 155, 172);
+/*
+@specimen: #00A0B0;
+@bibliography:lighten(spin(@specimen, 5), 10%);
+@determination: #6A4A3C;
+@localisation: lighten(spin(@determination, 5), 10%);
+@recolte: #CC333F;
+@stratigraphy: lighten(spin(@recolte, 5), 10%);
+@taxon : #EDC951;
+@multimedia : lighten(spin(@taxon, 5), 10%);
+@diffs : rgb(125, 155, 172);
+*/
+/*@specimen: #663333;
+@bibliography: lighten(spin(@specimen, 5), 10%);
+@determination: lighten(spin(@specimen, 10), 20%);
+@localisation: darken(spin(@specimen, -5), 10%);
+@recolte: darken(spin(@specimen, -10), 20%);
+@stratigraphy : lighten(spin(@specimen, 10), 30%);
+@taxon : arken(spin(@specimen, -10), 30%);
+@determination: lighten(spin(@specimen, 10), 40%);
+@diffs : rgb(125, 155, 172);*/
+
+@fadeTdBackground: 50%;
+@fadeTdBackground-light: 40%;
+@fadeTdBackground-lighter: 30%;
+@fadeTdBackground-dark: 30%;
 
 /** CHARTS **/
 .chart rect {
@@ -25,14 +77,19 @@
 }
 
 .setColor(@color) {
-  tr.@{color} td, li.@{color}{ background-color: fade(@@color,@fadeTdBackground)}
+  tr.@{color} td{ background-color: fade(@@color,@fadeTdBackground);}
   tr.@{color}.light td, li.@{color}.light{ background-color: fade(@@color,@fadeTdBackground-light)}
   tr.@{color}.lighter td, li.@{color}.lighter{ background-color: fade(@@color,@fadeTdBackground-lighter)}
-  tr.@{color}.lighter td, li.@{color}.lighter{ background-color: fade(@@color,@fadeTdBackground-lighter)}
-  tr.@{color} td.bg-success{.bg-variant(@state-success-bg);}
+  tr.@{color} td.highlight{border: 1px double darken(@@color,@fadeTdBackground-dark);}
   .tab-pane.@{color} {background-color: fade(@@color,@fadeTdBackground-lighter)}
 
+  #sidebar-wrapper ul li.@{color} {
+    background-color: fade(@@color,@fadeTdBackground);
+  }
   .chart rect.@{color} {fill: @@color;}
+  .nav-tabs > li.active.@{color} > a, .nav-tabs > li.active.@{color} > a:hover, .nav-tabs > li.active.@{color} > a:focus {
+    background-color: fade(@@color,@fadeTdBackground-lighter)
+  }
 
 }
 .setColor(specimen);
@@ -41,64 +98,66 @@
 .setColor(localisation);
 .setColor(recolte);
 .setColor(stratigraphy);
+.setColor(multimedia);
 .setColor(taxon);
+.setColor(diffs);
 
 /** DIFF TABLE **/
-table.diff .diff-class {
-  vertical-align: middle;
-  font-size: 1.2em;
-  font-weight: bold;
-}
-table.diff .diff-class div{
-  transform: rotate(270deg);
-  transform-origin: center center ;
-}
-
 .well.odd {
   background-color: #e2dede ;
   background-image: linear-gradient(to bottom, #e8e8e8 0px, #fff 100%);
 }
-.table.diff , .table.diff td, .table.diff th{
-  border-color: #08C;
+table.diff {
+  //border-color: #08C;
+  > tbody > tr > td, > tbody > tr > th {
+    //border-color: #08C;
+    vertical-align: middle;
+  }
+  td:last-child, td:nth-child(3) { // Pour le bouton radio
+    text-align: center;
+  }
+  td >
+  th {
+    text-align : right;
+  }
+  .diff-class {
+    vertical-align: middle;
+    font-size: 1.2em;
+    font-weight: bold;
+    div {
+      transform: rotate(270deg);
+      transform-origin: center center ;
+    }
+  }
+  .diff-entity {
+    font-weight: bold;
+  }
+  .diff-entity small{
+    font-size: 0.9em;
+  }
+  .input {
+    text-align: center;
+  }
+  caption {
+    text-align : center;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
 }
-.table.diff caption {
-  text-align : center;
-  font-weight: bold;
-  font-size: 1.1em;
-}
-table.diff th {
-  text-align : right;
-}
-table.diff .xsmall {
-  width : 10px !important;
-}
-table.diff .diff-class {
-  vertical-align: middle;
-  font-size: 1.2em;
-  font-weight: bold;
-}
-table.diff .diff-class div{
-  transform: rotate(270deg);
-  transform-origin: center center ;
-}
-
-table.diff .diff-entity {
-  font-weight: bold;
-}
-table.diff .diff-entity small{
-  font-size: 0.9em;
-}
-
-table.diff .input {
-  text-align: center;
-}
-
+.table > tfoot > tr > td
 /** FILTERS **/
 #form-filters hr {
-  color: #e5e5e5;
-  background-color: #e5e5e5;
+  color: @legend-border-color;
+  background-color: @legend-border-color;
   height: 1px;
 }
+#form-filters legend {
+  margin-bottom: 0;
+}
+#form-filters .form-group {
+  margin-bottom: 5px;
+}
+
 .pagination {
   margin : 0;
 }
@@ -114,22 +173,32 @@ table.diff .input {
 }
 
 /** SPECIMEN TABS **/
-.nav-tabs>.disabled>a, .nav-pills>.disabled>a {
+#diffs .nav-tabs>.disabled>a, #diffs .nav-pills>.disabled>a {
   color: #999;
   cursor: default;
   border: none; /** add this for tabs/pills **/
 }
 
-.nav-tabs>.disabled>a:hover, .nav-pills>.disabled>a:hover {
+#diffs .nav-tabs>.disabled>a:hover, #diffs .nav-pills>.disabled>a:hover {
   background-color: transparent;
+}
+#diffs .nav-tabs > li {
+  margin-bottom:0px;
+}
+#diffs .nav-tabs {
+  border-bottom: none;
 }
 
 /** SIDEBAR **/
 #sidebar-wrapper ul.choices {
   font-size : 85%;
   list-style: outside none none;
-  padding-left : 10px;
+  padding-left : 0;
 }
+#sidebar-wrapper ul li div {
+  margin-left : 10px;
+}
+
 #sidebar-wrapper> li > a {
   padding : 5px 5px 3px 5px;
 }
@@ -140,14 +209,9 @@ table.diff .input {
   border-bottom: 1px solid #ddd;
 }
 #sidebar-wrapper .nav> li > a{
-  padding: 0 15px;
+  padding: 0 ;
 }
 #sidebar-wrapper> li:last-child {
   border-bottom: none;
 }
-#form-filters legend {
-  margin-bottom: 0;
-}
-#form-filters .form-group {
-  margin-bottom: 5px;
-}
+

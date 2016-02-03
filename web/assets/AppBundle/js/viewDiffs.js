@@ -36,7 +36,7 @@ $(document).ready(function () {
     var selectedClassName = $('#diffs').data('selectedclassname');
     var smallModal = $('#smallModal');
     var selectedSpecimens = new Array();
-    var highlightClass = 'bg-success';
+    var highlightClass = 'highlight';
     if (localStorage.getItem('selectedSpecimens')) {
         selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
     }
