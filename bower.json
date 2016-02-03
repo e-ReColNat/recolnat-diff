@@ -1,0 +1,24 @@
+{
+  "name": "recolnat-diff",
+  "description": "",
+  "main": "bower.json",
+  "authors": [
+    "Thomas Pateffoz <thomas.pateffoz@ird.fr>"
+  ],
+  "license": "Apache 2",
+  "homepage": "https://github.com/e-ReColNat/recolnat-diff",
+  "moduleType": [
+    "yui"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "web/assets/vendor/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "1.12.*"
+  }
+}

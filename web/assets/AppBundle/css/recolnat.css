@@ -1,0 +1,395 @@
+/*@specimen: #c0504d;
+@bibliography: #4f81bd;
+@determination: #9bbb59;
+@localisation: #8064a2;
+@recolte: #4bacc6;
+@stratigraphy: #f79646;
+@taxon : #ffc000;
+@diffs : #C7664C;*/
+/*
+@specimen: #00A0B0;
+@bibliography:lighten(spin(@specimen, 5), 10%);
+@determination: #6A4A3C;
+@localisation: lighten(spin(@determination, 5), 10%);
+@recolte: #CC333F;
+@stratigraphy: lighten(spin(@recolte, 5), 10%);
+@taxon : #EDC951;
+@multimedia : lighten(spin(@taxon, 5), 10%);
+@diffs : rgb(125, 155, 172);
+*/
+/*@specimen: #663333;
+@bibliography: lighten(spin(@specimen, 5), 10%);
+@determination: lighten(spin(@specimen, 10), 20%);
+@localisation: darken(spin(@specimen, -5), 10%);
+@recolte: darken(spin(@specimen, -10), 20%);
+@stratigraphy : lighten(spin(@specimen, 10), 30%);
+@taxon : arken(spin(@specimen, -10), 30%);
+@determination: lighten(spin(@specimen, 10), 40%);
+@diffs : rgb(125, 155, 172);*/
+/** CHARTS **/
+.chart rect {
+  fill: steelblue;
+  cursor: pointer;
+  stroke: black;
+  stroke-width: 0.5;
+}
+.chart rect.over {
+  stroke: steelblue;
+}
+tr.specimen td {
+  background-color: rgba(107, 94, 74, 0.5);
+}
+tr.specimen.light td,
+li.specimen.light {
+  background-color: rgba(107, 94, 74, 0.4);
+}
+tr.specimen.lighter td,
+li.specimen.lighter {
+  background-color: rgba(107, 94, 74, 0.3);
+}
+tr.specimen td.highlight {
+  border: 1px double #110f0b;
+}
+.tab-pane.specimen {
+  background-color: rgba(107, 94, 74, 0.3);
+}
+#sidebar-wrapper ul li.specimen {
+  background-color: rgba(107, 94, 74, 0.5);
+}
+.chart rect.specimen {
+  fill: #6b5e4a;
+}
+.nav-tabs > li.active.specimen > a,
+.nav-tabs > li.active.specimen > a:hover,
+.nav-tabs > li.active.specimen > a:focus {
+  background-color: rgba(107, 94, 74, 0.3);
+}
+tr.bibliography td {
+  background-color: rgba(239, 190, 118, 0.5);
+}
+tr.bibliography.light td,
+li.bibliography.light {
+  background-color: rgba(239, 190, 118, 0.4);
+}
+tr.bibliography.lighter td,
+li.bibliography.lighter {
+  background-color: rgba(239, 190, 118, 0.3);
+}
+tr.bibliography td.highlight {
+  border: 1px double #b77515;
+}
+.tab-pane.bibliography {
+  background-color: rgba(239, 190, 118, 0.3);
+}
+#sidebar-wrapper ul li.bibliography {
+  background-color: rgba(239, 190, 118, 0.5);
+}
+.chart rect.bibliography {
+  fill: #efbe76;
+}
+.nav-tabs > li.active.bibliography > a,
+.nav-tabs > li.active.bibliography > a:hover,
+.nav-tabs > li.active.bibliography > a:focus {
+  background-color: rgba(239, 190, 118, 0.3);
+}
+tr.determination td {
+  background-color: rgba(206, 165, 125, 0.5);
+}
+tr.determination.light td,
+li.determination.light {
+  background-color: rgba(206, 165, 125, 0.4);
+}
+tr.determination.lighter td,
+li.determination.lighter {
+  background-color: rgba(206, 165, 125, 0.3);
+}
+tr.determination td.highlight {
+  border: 1px double #815931;
+}
+.tab-pane.determination {
+  background-color: rgba(206, 165, 125, 0.3);
+}
+#sidebar-wrapper ul li.determination {
+  background-color: rgba(206, 165, 125, 0.5);
+}
+.chart rect.determination {
+  fill: #cea57d;
+}
+.nav-tabs > li.active.determination > a,
+.nav-tabs > li.active.determination > a:hover,
+.nav-tabs > li.active.determination > a:focus {
+  background-color: rgba(206, 165, 125, 0.3);
+}
+tr.localisation td {
+  background-color: rgba(255, 140, 121, 0.5);
+}
+tr.localisation.light td,
+li.localisation.light {
+  background-color: rgba(255, 140, 121, 0.4);
+}
+tr.localisation.lighter td,
+li.localisation.lighter {
+  background-color: rgba(255, 140, 121, 0.3);
+}
+tr.localisation td.highlight {
+  border: 1px double #df2000;
+}
+.tab-pane.localisation {
+  background-color: rgba(255, 140, 121, 0.3);
+}
+#sidebar-wrapper ul li.localisation {
+  background-color: rgba(255, 140, 121, 0.5);
+}
+.chart rect.localisation {
+  fill: #ff8c79;
+}
+.nav-tabs > li.active.localisation > a,
+.nav-tabs > li.active.localisation > a:hover,
+.nav-tabs > li.active.localisation > a:focus {
+  background-color: rgba(255, 140, 121, 0.3);
+}
+tr.recolte td {
+  background-color: rgba(182, 93, 153, 0.5);
+}
+tr.recolte.light td,
+li.recolte.light {
+  background-color: rgba(182, 93, 153, 0.4);
+}
+tr.recolte.lighter td,
+li.recolte.lighter {
+  background-color: rgba(182, 93, 153, 0.3);
+}
+tr.recolte td.highlight {
+  border: 1px double #542645;
+}
+.tab-pane.recolte {
+  background-color: rgba(182, 93, 153, 0.3);
+}
+#sidebar-wrapper ul li.recolte {
+  background-color: rgba(182, 93, 153, 0.5);
+}
+.chart rect.recolte {
+  fill: #b65d99;
+}
+.nav-tabs > li.active.recolte > a,
+.nav-tabs > li.active.recolte > a:hover,
+.nav-tabs > li.active.recolte > a:focus {
+  background-color: rgba(182, 93, 153, 0.3);
+}
+tr.stratigraphy td {
+  background-color: rgba(252, 186, 63, 0.5);
+}
+tr.stratigraphy.light td,
+li.stratigraphy.light {
+  background-color: rgba(252, 186, 63, 0.4);
+}
+tr.stratigraphy.lighter td,
+li.stratigraphy.lighter {
+  background-color: rgba(252, 186, 63, 0.3);
+}
+tr.stratigraphy td.highlight {
+  border: 1px double #a06902;
+}
+.tab-pane.stratigraphy {
+  background-color: rgba(252, 186, 63, 0.3);
+}
+#sidebar-wrapper ul li.stratigraphy {
+  background-color: rgba(252, 186, 63, 0.5);
+}
+.chart rect.stratigraphy {
+  fill: #fcba3f;
+}
+.nav-tabs > li.active.stratigraphy > a,
+.nav-tabs > li.active.stratigraphy > a:hover,
+.nav-tabs > li.active.stratigraphy > a:focus {
+  background-color: rgba(252, 186, 63, 0.3);
+}
+tr.multimedia td {
+  background-color: rgba(135, 189, 106, 0.5);
+}
+tr.multimedia.light td,
+li.multimedia.light {
+  background-color: rgba(135, 189, 106, 0.4);
+}
+tr.multimedia.lighter td,
+li.multimedia.lighter {
+  background-color: rgba(135, 189, 106, 0.3);
+}
+tr.multimedia td.highlight {
+  border: 1px double #3f622c;
+}
+.tab-pane.multimedia {
+  background-color: rgba(135, 189, 106, 0.3);
+}
+#sidebar-wrapper ul li.multimedia {
+  background-color: rgba(135, 189, 106, 0.5);
+}
+.chart rect.multimedia {
+  fill: #87bd6a;
+}
+.nav-tabs > li.active.multimedia > a,
+.nav-tabs > li.active.multimedia > a:hover,
+.nav-tabs > li.active.multimedia > a:focus {
+  background-color: rgba(135, 189, 106, 0.3);
+}
+tr.taxon td {
+  background-color: rgba(146, 114, 74, 0.5);
+}
+tr.taxon.light td,
+li.taxon.light {
+  background-color: rgba(146, 114, 74, 0.4);
+}
+tr.taxon.lighter td,
+li.taxon.lighter {
+  background-color: rgba(146, 114, 74, 0.3);
+}
+tr.taxon td.highlight {
+  border: 1px double #2c2317;
+}
+.tab-pane.taxon {
+  background-color: rgba(146, 114, 74, 0.3);
+}
+#sidebar-wrapper ul li.taxon {
+  background-color: rgba(146, 114, 74, 0.5);
+}
+.chart rect.taxon {
+  fill: #92724a;
+}
+.nav-tabs > li.active.taxon > a,
+.nav-tabs > li.active.taxon > a:hover,
+.nav-tabs > li.active.taxon > a:focus {
+  background-color: rgba(146, 114, 74, 0.3);
+}
+tr.diffs td {
+  background-color: rgba(125, 155, 172, 0.5);
+}
+tr.diffs.light td,
+li.diffs.light {
+  background-color: rgba(125, 155, 172, 0.4);
+}
+tr.diffs.lighter td,
+li.diffs.lighter {
+  background-color: rgba(125, 155, 172, 0.3);
+}
+tr.diffs td.highlight {
+  border: 1px double #384c58;
+}
+.tab-pane.diffs {
+  background-color: rgba(125, 155, 172, 0.3);
+}
+#sidebar-wrapper ul li.diffs {
+  background-color: rgba(125, 155, 172, 0.5);
+}
+.chart rect.diffs {
+  fill: #7d9bac;
+}
+.nav-tabs > li.active.diffs > a,
+.nav-tabs > li.active.diffs > a:hover,
+.nav-tabs > li.active.diffs > a:focus {
+  background-color: rgba(125, 155, 172, 0.3);
+}
+/** DIFF TABLE **/
+.well.odd {
+  background-color: #e2dede ;
+  background-image: linear-gradient(to bottom, #e8e8e8 0px, #fff 100%);
+}
+table.diff > tbody > tr > td,
+table.diff > tbody > tr > th {
+  vertical-align: middle;
+}
+table.diff td:last-child,
+table.diff td:nth-child(3) {
+  text-align: center;
+}
+table.diff td > th {
+  text-align: right;
+}
+table.diff .diff-class {
+  vertical-align: middle;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+table.diff .diff-class div {
+  transform: rotate(270deg);
+  transform-origin: center center ;
+}
+table.diff .diff-entity {
+  font-weight: bold;
+}
+table.diff .diff-entity small {
+  font-size: 0.9em;
+}
+table.diff .input {
+  text-align: center;
+}
+table.diff caption {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.table > tfoot > tr > td #form-filters hr {
+  color: #e5e5e5;
+  background-color: #e5e5e5;
+  height: 1px;
+}
+#form-filters legend {
+  margin-bottom: 0;
+}
+#form-filters .form-group {
+  margin-bottom: 5px;
+}
+.pagination {
+  margin: 0;
+}
+#diffs .tab-pane {
+  padding: 1em;
+}
+#diffs .tab-pane .row {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 1em;
+}
+#diffs .tab-pane .row:last-child {
+  border-bottom: none;
+}
+/** SPECIMEN TABS **/
+#diffs .nav-tabs > .disabled > a,
+#diffs .nav-pills > .disabled > a {
+  color: #999;
+  cursor: default;
+  border: none;
+  /** add this for tabs/pills **/
+}
+#diffs .nav-tabs > .disabled > a:hover,
+#diffs .nav-pills > .disabled > a:hover {
+  background-color: transparent;
+}
+#diffs .nav-tabs > li {
+  margin-bottom: 0px;
+}
+#diffs .nav-tabs {
+  border-bottom: none;
+}
+/** SIDEBAR **/
+#sidebar-wrapper ul.choices {
+  font-size: 85%;
+  list-style: outside none none;
+  padding-left: 0;
+}
+#sidebar-wrapper ul li div {
+  margin-left: 10px;
+}
+#sidebar-wrapper > li > a {
+  padding: 5px 5px 3px 5px;
+}
+#sidebar-wrapper > li:hover {
+  background-color: #eee;
+}
+#sidebar-wrapper .nav > li {
+  border-bottom: 1px solid #ddd;
+}
+#sidebar-wrapper .nav > li > a {
+  padding: 0 ;
+}
+#sidebar-wrapper > li:last-child {
+  border-bottom: none;
+}

@@ -16,7 +16,7 @@
             </trans-unit>
             <trans-unit id="4" approved="yes">
                 <source>label.specimen.fields.associatedtaxa</source> 
-                <target state="translated">Taxon assoc</target> 
+                <target state="translated">Taxon associé</target>
             </trans-unit>
             <trans-unit id="5">
                 <source>label.specimen.fields.basisofrecord</source> 
@@ -632,7 +632,7 @@
             </trans-unit>
             <trans-unit id="158" approved="yes">
                 <source>label.multimedia.fields.publisher</source> 
-                <target state="translated">Éditeur</target> 
+                <target state="translated">Éditeur</target>
             </trans-unit>
             <trans-unit id="159" approved="yes">
                 <source>label.multimedia.fields.references</source> 
