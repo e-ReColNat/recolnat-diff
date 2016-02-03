@@ -26,6 +26,7 @@ class DiffStatsManager
      */
     protected $emD;
     protected $diffs = array();
+    protected $lonesomeRecords = array();
     protected $classes = array();
     protected $stats = array();
 
@@ -37,23 +38,31 @@ class DiffStatsManager
         $this->diffs['classes'] = [];
     }
 
+    /**
+     * @param array $arrayIds
+     * @return $this
+     */
     public function init($arrayIds)
     {
         $this->arrayIds = $arrayIds;
-        $taxonRepository = $this->emR->getRepository('\AppBundle\entity\Specimen') ;
         if (count($this->arrayIds) > 0) {
             foreach ($this->arrayIds as $class => $specimensCode) {
                 $nameDiffClassManager = '\\AppBundle\\Manager\\Diff' . ucfirst(strtolower($class));
                 /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
                 $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
                 $diffClassManager->init($class, $specimensCode);
-                $this->addDiffs($class, $diffClassManager->getStats());
+                $this->setDiffs($class, $diffClassManager->getStats());
+                $this->setLonesomeRecords($class, $diffClassManager->getLonesomeRecords());
                 $this->computeDiffs($class);
             }
         }
         $this->diffs['classes'] = $this->classes ;
         return $this;
     }
+
+    /**
+     * @param string $specimenCode
+     */
     private function setTaxon($specimenCode) {
         if (!isset($this->diffs['datas'][$specimenCode]['display'])) {
             $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon') ;
@@ -61,6 +70,10 @@ class DiffStatsManager
             $this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof \AppBundle\Entity\Taxon ? $taxon->__toString() : '';
         }
     }
+
+    /**
+     * @param string $className
+     */
     private function computeDiffs($className)
     {
         $this->stats[$className]=[];
@@ -103,7 +116,25 @@ class DiffStatsManager
         return $this->diffs;
     }
 
-    public function addDiffs($class, $stats)
+    /**
+     * @return array
+     */
+    public function getLonesomeRecords()
+    {
+        return $this->lonesomeRecords;
+    }
+
+
+    /**
+     * Set les enregistrements orphelins
+     */
+    public function setLonesomeRecords($class, $lonesomeRecords)
+    {
+        $this->lonesomeRecords[$class] = $lonesomeRecords ;
+    }
+
+
+    public function setDiffs($class, $stats)
     {
         $this->diffs['classes'][$class] = $stats;
         $this->classes[$class] = array_keys($stats) ;

@@ -1,9 +1,11 @@
 <?php
 
-namespace AppBundle\Manager ;
+namespace AppBundle\Manager;
+
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\ObjectManager;
-use AppBundle\Manager\DiffStatsManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 /**
  * Description of DiffManager
  *
@@ -13,34 +15,34 @@ class DiffManager
 {
     /**
      * Holds the Doctrine entity manager for database interaction
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $em;
-    
+
     /** @var DiffStatsManager */
-    protected $statsManager ;
-    
+    protected $statsManager;
+
     protected $exportPath;
- 
+
     const LENGTH_TEXT = 4000;
     const RECOLNAT_DB = 'RECOLNAT';
     const RECOLNAT_DIFF_DB = 'RECOLNAT_DIFF';
-    const SPECIMEN_CLASSNAME =  'AppBundle:Specimen';
-    const RECOLTE_CLASSNAME =  'AppBundle:Recolte';
-    const DETERMINATION_CLASSNAME =  'AppBundle:Determination';
+    const SPECIMEN_CLASSNAME = 'AppBundle:Specimen';
+    const RECOLTE_CLASSNAME = 'AppBundle:Recolte';
+    const DETERMINATION_CLASSNAME = 'AppBundle:Determination';
     protected $class;
     protected $fullClassName;
     protected $institutionCode;
     protected $collectionCode;
-    protected $entitiesName=[
-            'Specimen',     
-            'Bibliography',
-            'Determination',
-            'Localisation',
-            'Recolte',
-            'Stratigraphy',
-            'Taxon'
-        ];
+    protected $entitiesName = [
+        'Specimen',
+        'Bibliography',
+        'Determination',
+        'Localisation',
+        'Recolte',
+        'Stratigraphy',
+        'Taxon'
+    ];
 
     public function __construct(ObjectManager $em, DiffStatsManager $statsManager, $exportPath)
     {
@@ -48,254 +50,317 @@ class DiffManager
         $this->statsManager = $statsManager;
         $this->exportPath = $exportPath;
     }
-    
-    public function init($institutionCode, $collectionCode, array $selectedClassesName = [], array $selectedSpecimensCode=[], array $choicesToRemove=[]) {
-        $this->institutionCode = $institutionCode ;
-        $this->collectionCode = $collectionCode ;
+
+    public function init($institutionCode, $collectionCode)
+    {
+        $this->institutionCode = $institutionCode;
+        $this->collectionCode = $collectionCode;
         $diffs = $this->getAllDiff();
         $diffStatsManager = $this->statsManager->init($diffs);
-        $data = array_merge($diffStatsManager->getDiffs(), ['stats' =>$diffStatsManager->getAllStats()]) ;
-        return $data ;
+        $data = array_merge($diffStatsManager->getDiffs(),
+            ['stats' => $diffStatsManager->getAllStats(), 'lonesomeRecords' => $diffStatsManager->getLonesomeRecords()]);
+        return $data;
     }
-    
-    public function getFilePath() 
+
+    public function getFilePath()
     {
-         return realpath($this->exportPath) . '/' . $this->institutionCode . '.json';
+        return realpath($this->exportPath) . '/' . $this->institutionCode . '.json';
     }
-    
-    private function getAllDiff() 
+
+    private function getAllDiff()
     {
+        $results = [];
         foreach ($this->entitiesName as $entityName) {
             $results[$entityName] = $this->getDiff($entityName);
         }
         return $results;
     }
-    
-    private function getGenericDiffQuery()
+
+    private function getGenericDiffQuery(
+        $db1=['name'=>self::RECOLNAT_DB, 'alias'=>'r'],
+        $db2=['name'=>self::RECOLNAT_DIFF_DB, 'alias'=> 'i'])
     {
-        /* @var $metada \Doctrine\ORM\Mapping\ClassMetadata */
-        $metadata = $this->em->getMetadataFactory()->getMetadataFor($this->fullClassName) ;
+        /* @var $metadata \Doctrine\ORM\Mapping\ClassMetadata */
+        $metadata = $this->em->getMetadataFactory()->getMetadataFor($this->fullClassName);
 
-        $aliasR = 'r';
-        $aliasI = 'i';
+        $aliasDb1 = $db1['alias'];
+        $aliasDb2 = $db2['alias'];
 
-        $identifier = 'specimenCode' ;
-        $strQuery='SELECT '.$identifier.' FROM (';
-        $arrayFields = $this->formatFieldsName($metadata, $aliasR, $aliasI) ;
-        $strFromClauseRecolnat = $this->getFromClause($aliasR, false);
-        $strFromClauseDiff = $this->getFromClause($aliasI, true);
-        $strUnionQuery = $strQuery.
-                'SELECT '.
-                implode(', ',$arrayFields['recolnat']).
-                sprintf($strFromClauseRecolnat, self::RECOLNAT_DB.'.'.$metadata->getTableName()).
-                ' MINUS '.
-                'SELECT '.
-                implode(', ', $arrayFields['institution']).
-                sprintf($strFromClauseDiff, self::RECOLNAT_DIFF_DB.'.'.$metadata->getTableName())
-                ;
-        $sqlGroupByCount = ')' ;
-        return sprintf($strUnionQuery.$sqlGroupByCount, $identifier, $identifier, $identifier) ;
+        $identifier = 'specimenCode';
+        $strQuery = 'SELECT ' . $identifier . ' FROM (';
+        $arrayFields = $this->formatFieldsName($metadata, $aliasDb1, $aliasDb2);
+        $strFromClauseDb1 = $this->getFromClause($aliasDb1, false);
+        $strFromClauseDb2 = $this->getFromClause($aliasDb2, true);
+        $strUnionQuery = $strQuery .
+            'SELECT ' .
+            implode(', ', $arrayFields['db1']) .
+            sprintf($strFromClauseDb1, $db1['name'] . '.' . $metadata->getTableName()) .
+            ' MINUS ' .
+            'SELECT ' .
+            implode(', ', $arrayFields['db2']) .
+            sprintf($strFromClauseDb2, $db2['name'] . '.' . $metadata->getTableName());
+        $sqlGroupByCount = ')';
+        return sprintf($strUnionQuery . $sqlGroupByCount, $identifier, $identifier, $identifier);
     }
 
     private function getSpecimenUniqueIdClause($alias)
     {
-        return sprintf(' %s.institutioncode||%s.collectioncode||%s.catalognumber as specimenCode ', $alias, $alias, $alias);
+        return sprintf(' %s.institutioncode||%s.collectioncode||%s.catalognumber as specimenCode ', $alias, $alias,
+            $alias);
     }
-    private function formatFieldsName(\Doctrine\ORM\Mapping\ClassMetadata $metadata, $aliasR, $aliasI)
-    {
-        $identifier = key(array_flip($metadata->getIdentifier())) ;
-        $fields = array_flip($metadata->getFieldNames() );
-        unset($fields[$identifier]) ;
-        $fields = array_flip($fields) ;
 
-        $fieldsName = $fields ;
-        $arrayFieldsTypeR=[] ;
-        $arrayFieldsTypeI=[] ;
-        foreach ($fieldsName as $key=>$fieldName) {
+    /**
+     * @param ClassMetadata $metadata
+     * @param string $aliasDb1
+     * @param string $aliasDb2
+     * @return array
+     */
+    private function formatFieldsName(ClassMetadata $metadata, $aliasDb1, $aliasDb2)
+    {
+        $identifier = key(array_flip($metadata->getIdentifier()));
+        $fields = array_flip($metadata->getFieldNames());
+        unset($fields[$identifier]);
+        $fields = array_flip($fields);
+
+        $fieldsName = $fields;
+        $arrayFieldsTypeDb1 = [];
+        $arrayFieldsTypeDb2 = [];
+        foreach ($fieldsName as $key => $fieldName) {
             if (strtolower($metadata->getTypeOfField($fieldName)) === 'text') {
-                $arrayFieldsTypeR[$key] =sprintf('dbms_lob.substr( %s.%s, %d, 1 )', $aliasR, $fieldName, self::LENGTH_TEXT) ;
-                $arrayFieldsTypeI[$key] =sprintf('dbms_lob.substr( %s.%s, %d, 1 )', $aliasI, $fieldName, self::LENGTH_TEXT) ;
-            }
-            else {
-                $arrayFieldsTypeR[$key] = sprintf('%s.%s',$aliasR, $fieldName) ;
-                $arrayFieldsTypeI[$key] = sprintf('%s.%s',$aliasI, $fieldName) ;
+                $arrayFieldsTypeDb1[$key] = sprintf('dbms_lob.substr( %s.%s, %d, 1 )', $aliasDb1, $fieldName,
+                    self::LENGTH_TEXT);
+                $arrayFieldsTypeDb2[$key] = sprintf('dbms_lob.substr( %s.%s, %d, 1 )', $aliasDb2, $fieldName,
+                    self::LENGTH_TEXT);
+            } else {
+                $arrayFieldsTypeDb1[$key] = sprintf('%s.%s', $aliasDb1, $fieldName);
+                $arrayFieldsTypeDb2[$key] = sprintf('%s.%s', $aliasDb2, $fieldName);
             }
             switch (strtolower($fieldName)) {
                 // Specimen
                 case 'datepublication':
-                    $arrayFieldsTypeR[$key] = sprintf('%s.%s',$aliasR, 'date_Publication') ;
-                    $arrayFieldsTypeI[$key] = sprintf('%s.%s',$aliasI, 'date_Publication') ;
+                    $arrayFieldsTypeDb1[$key] = sprintf('%s.%s', $aliasDb1, 'date_Publication');
+                    $arrayFieldsTypeDb2[$key] = sprintf('%s.%s', $aliasDb2, 'date_Publication');
                     break;
                 // Specimen
-                case 'multimediaid' :
-                    unset($arrayFieldsTypeR[$key]);
-                    unset($arrayFieldsTypeI[$key]);
+                case 'multimediaid':
+                    unset($arrayFieldsTypeDb1[$key]);
+                    unset($arrayFieldsTypeDb2[$key]);
                     break;
                 // Stratigraphy
                 case 'group':
-                    $arrayFieldsTypeR[$key] = sprintf('%s.%s',$aliasR, 'group_') ;
-                    $arrayFieldsTypeI[$key] = sprintf('%s.%s',$aliasI, 'group_') ;
+                    $arrayFieldsTypeDb1[$key] = sprintf('%s.%s', $aliasDb1, 'group_');
+                    $arrayFieldsTypeDb2[$key] = sprintf('%s.%s', $aliasDb2, 'group_');
                     break;
                 // Taxon
-                case 'class' :
-                    $arrayFieldsTypeR[$key] = sprintf('%s.%s',$aliasR, 'class_') ;
-                    $arrayFieldsTypeI[$key] = sprintf('%s.%s',$aliasI, 'class_') ;
+                case 'class':
+                    $arrayFieldsTypeDb1[$key] = sprintf('%s.%s', $aliasDb1, 'class_');
+                    $arrayFieldsTypeDb2[$key] = sprintf('%s.%s', $aliasDb2, 'class_');
                     break;
                 // Taxon
-                case 'order' :
-                    $arrayFieldsTypeR[$key] = sprintf('%s.%s',$aliasR, 'order_') ;
-                    $arrayFieldsTypeI[$key] = sprintf('%s.%s',$aliasI, 'order_') ;
+                case 'order':
+                    $arrayFieldsTypeDb1[$key] = sprintf('%s.%s', $aliasDb1, 'order_');
+                    $arrayFieldsTypeDb2[$key] = sprintf('%s.%s', $aliasDb2, 'order_');
                     break;
-                case 'determinations' : 
-                case 'sourcefileid' : 
-                case 'hascoordinates' : 
-                case 'dwcataxonid' : 
-                    unset($arrayFieldsTypeR[$key]);
-                    unset($arrayFieldsTypeI[$key]);
+                case 'determinations':
+                case 'sourcefileid':
+                case 'hascoordinates':
+                case 'dwcataxonid':
+                case 'dwcaid':
+                case 'hasmedia':
+                    unset($arrayFieldsTypeDb1[$key]);
+                    unset($arrayFieldsTypeDb2[$key]);
                     break;
             }
         }
-        $aliasSpecimenR = 's' ;
-        $aliasSpecimenI = 's' ;
+        $aliasSpecimenDb1 = 's';
+        $aliasSpecimenDb2 = 's';
         if ($this->class == 'Specimen') {
-            $aliasSpecimenR = $aliasR ;
-            $aliasSpecimenI = $aliasI ;
+            $aliasSpecimenDb1 = $aliasDb1;
+            $aliasSpecimenDb2 = $aliasDb2;
         }
-        $arrayFieldsTypeR[] = $this->getSpecimenUniqueIdClause($aliasSpecimenR) ;
-        $arrayFieldsTypeI[] = $this->getSpecimenUniqueIdClause($aliasSpecimenI) ;
-        return ['recolnat'=>$arrayFieldsTypeR, 'institution'=>$arrayFieldsTypeI] ;
-    }
-    private function getFromClause($alias, $diff=false)
-    { 
-        $metadataSpecimen = $this->em->getMetadataFactory()->getMetadataFor(self::SPECIMEN_CLASSNAME) ;
-        $specimenTableName = ($diff ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB).'.'.$metadataSpecimen->getTableName() ;
-        
-        switch ($this->fullClassName) {
-            case 'AppBundle:Specimen' : 
-                return ' FROM %s '.$alias .' WHERE '.$alias.'.INSTITUTIONCODE = :institutionCode AND '
-                    .$alias.'.COLLECTIONCODE = :collectionCode ';
-            case 'AppBundle:Bibliography' :
-            case 'AppBundle:Determination' :
-                return ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
-                    .$alias. '.OCCURRENCEID AND '
-                    . 's.INSTITUTIONCODE = :institutionCode AND '
-                    .'s.COLLECTIONCODE = :collectionCode ';
-            case 'AppBundle:Localisation' :
-                $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME) ;
-                $recolteTableName = ($diff ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB).'.'.$metadataRecolte->getTableName() ;
-                return ' FROM %s '.$alias
-                    . ' INNER JOIN '.$recolteTableName.' ON '.$recolteTableName.'.LOCATIONID = '.$alias.'.LOCATIONID'
-                    . ' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
-                    .$recolteTableName. '.EVENTID AND '
-                    . 's.INSTITUTIONCODE = :institutionCode AND '
-                    .'s.COLLECTIONCODE = :collectionCode ';
-            case 'AppBundle:Recolte' :
-                return ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
-                    .$alias. '.EVENTID AND '
-                    . 's.INSTITUTIONCODE = :institutionCode AND '
-                    .'s.COLLECTIONCODE = :collectionCode ';
-            case 'AppBundle:Stratigraphy' :
-                return ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.GEOLOGICALCONTEXTID = '
-                    .$alias. '.GEOLOGICALCONTEXTID AND '
-                    . 's.INSTITUTIONCODE = :institutionCode AND '
-                    .'s.COLLECTIONCODE = :collectionCode ';
-            case 'AppBundle:Taxon' :
-                $metadataDetermination = $this->em->getMetadataFactory()->getMetadataFor(self::DETERMINATION_CLASSNAME) ;
-                $determinationTableName = ($diff ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB).'.'.$metadataDetermination->getTableName() ;
-                return ' FROM %s '.$alias
-                    . ' INNER JOIN '.$determinationTableName.' ON '.$determinationTableName.'.TAXONID = '.$alias.'.TAXONID'
-                    . ' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
-                    .$determinationTableName. '.OCCURRENCEID AND '
-                    . 's.INSTITUTIONCODE = :institutionCode AND '
-                    .'s.COLLECTIONCODE = :collectionCode ';
-        }
+        $arrayFieldsTypeDb1[] = $this->getSpecimenUniqueIdClause($aliasSpecimenDb1);
+        $arrayFieldsTypeDb2[] = $this->getSpecimenUniqueIdClause($aliasSpecimenDb2);
+        return ['db1' => $arrayFieldsTypeDb1, 'db2' => $arrayFieldsTypeDb2];
     }
 
-    private function getDiff($className) 
+    /**
+     * @param string
+     * @param bool $institution
+     * @return string
+     */
+    private function getFromClause($alias, $institution = false)
     {
-        $this->class = ucfirst(strtolower($className)) ;
-        $this->fullClassName = $this->getFullClassName($this->class) ;
-        $sqlDiff = $this->getGenericDiffQuery() ;
-        
-        $this->em->getConnection()->setFetchMode(\PDO::FETCH_NUM);
-        $results = $this->em->getConnection()
-                ->executeQuery($sqlDiff, array('institutionCode'=>$this->institutionCode, 'collectionCode' => $this->collectionCode))
-                ->fetchAll() ;
-        
-        $ids = array();
-        if (count($results) >0) {
-            foreach($results as $item) {
-              $ids[] = $item[0];
-            }
+        $metadataSpecimen = $this->em->getMetadataFactory()->getMetadataFor(self::SPECIMEN_CLASSNAME);
+        $specimenTableName = ($institution ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB) . '.' . $metadataSpecimen->getTableName();
+
+        $fromClause='';
+        switch ($this->fullClassName) {
+            case 'AppBundle:Specimen':
+                $fromClause = ' FROM %s ' . $alias . ' WHERE ' . $alias . '.INSTITUTIONCODE = :institutionCode AND '
+                . $alias . '.COLLECTIONCODE = :collectionCode ';
+                break;
+            case 'AppBundle:Bibliography':
+            case 'AppBundle:Determination':
+                $fromClause = ' FROM %s ' . $alias . ' INNER JOIN ' . $specimenTableName . ' s ON s.OCCURRENCEID = '
+                . $alias . '.OCCURRENCEID AND '
+                . 's.INSTITUTIONCODE = :institutionCode AND '
+                . 's.COLLECTIONCODE = :collectionCode ';
+                break;
+            case 'AppBundle:Localisation':
+                $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME);
+                $recolteTableName = ($institution ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB) . '.' . $metadataRecolte->getTableName();
+                $fromClause = ' FROM %s ' . $alias
+                . ' INNER JOIN ' . $recolteTableName . ' ON ' . $recolteTableName . '.LOCATIONID = ' . $alias . '.LOCATIONID'
+                . ' INNER JOIN ' . $specimenTableName . ' s ON s.EVENTID = '
+                . $recolteTableName . '.EVENTID AND '
+                . 's.INSTITUTIONCODE = :institutionCode AND '
+                . 's.COLLECTIONCODE = :collectionCode ';
+                break;
+            case 'AppBundle:Recolte':
+                $fromClause = ' FROM %s ' . $alias . ' INNER JOIN ' . $specimenTableName . ' s ON s.EVENTID = '
+                . $alias . '.EVENTID AND '
+                . 's.INSTITUTIONCODE = :institutionCode AND '
+                . 's.COLLECTIONCODE = :collectionCode ';
+                break;
+            case 'AppBundle:Stratigraphy':
+                $fromClause = ' FROM %s ' . $alias . ' INNER JOIN ' . $specimenTableName . ' s ON s.GEOLOGICALCONTEXTID = '
+                . $alias . '.GEOLOGICALCONTEXTID AND '
+                . 's.INSTITUTIONCODE = :institutionCode AND '
+                . 's.COLLECTIONCODE = :collectionCode ';
+                break;
+            case 'AppBundle:Taxon':
+                $metadataDetermination = $this->em->getMetadataFactory()->getMetadataFor(self::DETERMINATION_CLASSNAME);
+                $determinationTableName = ($institution ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB) . '.' . $metadataDetermination->getTableName();
+                $fromClause = ' FROM %s ' . $alias
+                . ' INNER JOIN ' . $determinationTableName . ' ON ' . $determinationTableName . '.TAXONID = ' . $alias . '.TAXONID'
+                . ' INNER JOIN ' . $specimenTableName . ' s ON s.OCCURRENCEID = '
+                . $determinationTableName . '.OCCURRENCEID AND '
+                . 's.INSTITUTIONCODE = :institutionCode AND '
+                . 's.COLLECTIONCODE = :collectionCode ';
+                break;
         }
-        return $ids;
+        return $fromClause ;
     }
-    
-    private function getFullClassName($class) {
-        return 'AppBundle:'.$class;
+
+    private function searchNewRecords()
+    {
+
     }
-    
-    public function generateDiff($compt) {
-        $randomClassName= $this->getFullClassName($this->entitiesName[array_rand($this->entitiesName, 1)]) ;
-        $metadata = $this->em->getMetadataFactory()->getMetadataFor($randomClassName) ;
+
+    /**
+     * @param string $className
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    private function getDiff($className)
+    {
+        $this->class = ucfirst(strtolower($className));
+        $this->fullClassName = $this->getFullClassName($this->class);
+        $db1=['name'=>self::RECOLNAT_DB, 'alias'=>'r'];
+        $db2=['name'=>self::RECOLNAT_DIFF_DB, 'alias'=> 'i'];
+        $sqlDiff1 = $this->getGenericDiffQuery($db1, $db2);
+        $sqlDiff2 = $this->getGenericDiffQuery($db2, $db1);
+
+        $this->em->getConnection()->setFetchMode(\PDO::FETCH_COLUMN, 0);
+        $results1 = $this->em->getConnection()
+            ->executeQuery($sqlDiff1,
+                array('institutionCode' => $this->institutionCode, 'collectionCode' => $this->collectionCode))
+            ->fetchAll();
+
+        $results2 = $this->em->getConnection()
+            ->executeQuery($sqlDiff2,
+                array('institutionCode' => $this->institutionCode, 'collectionCode' => $this->collectionCode))
+            ->fetchAll();
+
+        return array_unique(array_merge($results1, $results2));
+    }
+
+    /**
+     * @param $class
+     * @return string
+     */
+    private function getFullClassName($class)
+    {
+        return 'AppBundle:' . $class;
+    }
+
+    /**
+     * @param int $compt
+     * @return array
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function generateDiff($compt)
+    {
+        $randomClassName = $this->getFullClassName($this->entitiesName[array_rand($this->entitiesName, 1)]);
+        $metadata = $this->em->getMetadataFactory()->getMetadataFor($randomClassName);
         $repository = $this->em->getRepository($randomClassName);
         $identifier = $metadata->getIdentifierFieldNames() [0];
 
         $entity = $repository->createQueryBuilder('e')
-                ->orderBy('RAND()')
-                ->setMaxResults(1)
-                ->getQuery()->getOneOrNullResult();
-        $fields = $metadata->getFieldNames() ;
+            ->orderBy('RAND()')
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult();
+        $fields = $metadata->getFieldNames();
 
         // On enleve le champ de l'indentifiant
-        unset($fields[array_search($identifier, $fields)]) ;
-        unset($fields[array_search('dwcaid', $fields)]) ;
-        unset($fields[array_search('hasmedia', $fields)]) ;
-        unset($fields[array_search('modified', $fields)]) ;
-        unset($fields[array_search('catalognumber', $fields)]) ;
-        unset($fields[array_search('institutioncode', $fields)]) ;
-        unset($fields[array_search('sourcefileid', $fields)]) ;
-        
-        shuffle($fields) ;
-        $randomFields = array_slice($fields, 0, $compt) ;
-        $fieldMappings = $this->em->getClassMetadata($randomClassName)->fieldMappings ;
+        unset($fields[array_search($identifier, $fields)]);
+        unset($fields[array_search('dwcaid', $fields)]);
+        unset($fields[array_search('hasmedia', $fields)]);
+        unset($fields[array_search('modified', $fields)]);
+        unset($fields[array_search('catalognumber', $fields)]);
+        unset($fields[array_search('institutioncode', $fields)]);
+        unset($fields[array_search('sourcefileid', $fields)]);
+
+        shuffle($fields);
+        $randomFields = array_slice($fields, 0, $compt);
+        $fieldMappings = $this->em->getClassMetadata($randomClassName)->fieldMappings;
         foreach ($randomFields as $fieldName) {
-            $setter = 'set'.$fieldName ;
-            if ($fieldName[strlen($fieldName)-1] == '_') {
-                $setter ='set'.substr($fieldName, 0, -1) ;
+            $setter = 'set' . $fieldName;
+            if ($fieldName[strlen($fieldName) - 1] == '_') {
+                $setter = 'set' . substr($fieldName, 0, -1);
             }
-            $entity->{$setter}($this->getFakeData($metadata->getTypeOfField($fieldName), $fieldMappings[$fieldName]['length'])) ;
-            
+            $entity->{$setter}($this->getFakeData($metadata->getTypeOfField($fieldName),
+                $fieldMappings[$fieldName]['length']));
+
         }
-        $this->em->flush($entity) ;
-        
-        
-        return $randomFields ;
+        $this->em->flush($entity);
+
+
+        return $randomFields;
     }
-    
-    private function getFakeData($type, $length = null) 
+
+    /**
+     * @param $type
+     * @param null $length
+     * @return \DateTime|mixed|string
+     */
+    private function getFakeData($type, $length = null)
     {
         switch ($type) {
-            case 'string' : 
-            case 'text' : 
-                $arrayString=['lorem', 'lorem ipsum', 'blabla', 'text sample'] ;
-                $returnString = $arrayString[array_rand($arrayString)] ;
+            case 'string':
+            case 'text':
+                $arrayString = ['lorem', 'lorem ipsum', 'blabla', 'text sample'];
+                $returnString = $arrayString[array_rand($arrayString)];
                 if (!is_null($length)) {
                     $returnString = substr($returnString, 0, $length);
                 }
                 return $returnString;
-            case 'integer' : 
-                if ($length === null) {$length = 2;}
-                $arrayInt = range(10,  (10 * $length)) ;
+            case 'integer':
+                if ($length === null) {
+                    $length = 2;
+                }
+                $arrayInt = range(10, (10 * $length));
                 return $arrayInt[array_rand($arrayInt)];
-            case 'float' : 
-                if ($length === null) {$length = 2;}
-                $arrayFloat = range(10, (10 * $length), 0.1) ;
+            case 'float':
+                if ($length === null) {
+                    $length = 2;
+                }
+                $arrayFloat = range(10, (10 * $length), 0.1);
                 return $arrayFloat[array_rand($arrayFloat)];
-            case 'datetime' : 
-                $arrayDate=['1976-11-08', '2005-12-25', '1953-01-31', '2006-12-13'] ;
+            case 'datetime':
+                $arrayDate = ['1976-11-08', '2005-12-25', '1953-01-31', '2006-12-13'];
                 return new \DateTime($arrayDate[array_rand($arrayDate)]);
-            case 'boolean' : 
+            case 'boolean':
                 return array_rand([true, false]);
         }
     }

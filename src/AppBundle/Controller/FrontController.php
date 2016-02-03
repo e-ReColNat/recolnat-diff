@@ -21,7 +21,7 @@ class FrontController extends Controller
     /**
      * @Route("/files", name="index")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $institutionCode = 'MHNAIX';
         $collectionCode = 'AIX';
@@ -54,7 +54,6 @@ class FrontController extends Controller
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $diffs = $exportManager->getDiffs();
         $statsBySimilarity = $exportManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $exportManager->getSumStats();
         return $this->render('default/stats.html.twig', array(
@@ -82,14 +81,13 @@ class FrontController extends Controller
 
         $choices = $exportManager->getChoicesForDisplay();
         $stats = $exportManager->getExpandedStats();
-        dump($stats);
         $totalChoices = [];
         $sumStats = $exportManager->getSumStats();
-
+        $statsLonesomeRecords = $exportManager->getStatsLonesomeRecords();
 
         $callbackCountChoices = function ($value, $className) use (&$totalChoices) {
             if (is_array($value)) {
-                if (!isset($total[$className])) {
+                if (!isset($totalChoices[$className])) {
                     $totalChoices[$className] = 0;
                 }
                 foreach ($value as $row) {
@@ -109,9 +107,13 @@ class FrontController extends Controller
         uasort($stats, $sortStats);
 
         array_walk($choices, $callbackCountChoices);
-        $totalDiffs = array_sum($stats);
         $totalChoices['sum'] = array_sum($totalChoices);
-        dump($stats);
+
+        $sumLonesomeRecords=['recolnat'=>0, 'institution'=>0];
+        foreach ($statsLonesomeRecords as $lonesomeRecords) {
+            $sumLonesomeRecords['recolnat']+=$lonesomeRecords['recolnat'];
+            $sumLonesomeRecords['institution']+=$lonesomeRecords['institution'];
+        }
 
         return $this->render('default/viewFile.html.twig', array(
             'diffHandler' => $exportManager->getDiffHandler(),
@@ -121,6 +123,8 @@ class FrontController extends Controller
             'sumStats' => $sumStats,
             'totalChoices' => $totalChoices,
             'institution' => $institution,
+            'statsLonesomeRecords' => $statsLonesomeRecords,
+            'sumLonesomeRecords'=>$sumLonesomeRecords,
         ));
     }
 
@@ -219,17 +223,17 @@ class FrontController extends Controller
     /**
      * @Route("/generateDiff/{institutionCode}/{compt}", name="generateDiff")
      */
-    public function generateDiff($compt)
-    {
-        /* @var $diffManager \AppBundle\Manager\DiffManager */
-        $em = $this->get('doctrine')->getManager('diff');
-        $diffManager = new \AppBundle\Manager\DiffManager($em);
-        //$diffManager = $this->get('diff.manager');
-        for ($i = 1; $i <= $compt; $i++) {
-            $diffManager->generateDiff(rand(1, 5));
-        }
-        $response = new Response();
-        return $response;
-    }
+//    public function generateDiff($compt)
+//    {
+//        /* @var $diffManager \AppBundle\Manager\DiffManager */
+//        $em = $this->get('doctrine')->getManager('diff');
+//        $diffManager = new \AppBundle\Manager\DiffManager($em);
+//        //$diffManager = $this->get('diff.manager');
+//        for ($i = 1; $i <= $compt; $i++) {
+//            $diffManager->generateDiff(rand(1, 5));
+//        }
+//        $response = new Response();
+//        return $response;
+//    }
 
 }

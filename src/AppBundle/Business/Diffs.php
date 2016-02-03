@@ -102,9 +102,9 @@ class Diffs extends \SplFileObject
     
     /**
      * filtre les résultats dont les choix ont été complétement faits
-     * @param type $diffs
+     * @param array $diffs
      * @param array $choicesToRemove
-     * @return type
+     * @return array
      */
     public function filterByChoicesDone($diffs, array $choicesToRemove=[]) {
         $returnDiffs=$diffs;

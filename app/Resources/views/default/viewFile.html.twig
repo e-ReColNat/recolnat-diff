@@ -16,6 +16,7 @@
                 <th>{{ 'header.nb.differences' | trans }}</th>
                 <th>{{ 'header.nb.reste' | trans }}</th>
                 <th>{{ 'header.nb.choix' | trans }}</th>
+                <th colspan="2">{{ 'header.nb.lonesomeRecords' | trans }}</th>
             </tr>
             {% for className, detailedStats in stats %}
                 <tr class="datas {{ className|lower }}">
@@ -56,6 +57,9 @@
                             0
                         {% endif %}
                     </td>
+                    {% set lonesomeRecordClass=attribute(statsLonesomeRecords, className) %}
+                    <td>{{ lonesomeRecordClass.recolnat }}</td>
+                    <td>{{ lonesomeRecordClass.institution }}</td>
                 </tr>
             {% endfor %}
             <tr>
@@ -72,6 +76,8 @@
                 <td>
                     <a href="{{ path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ totalChoices.sum }}</a>
                 </td>
+                <td>{{ sumLonesomeRecords.recolnat }}</td>
+                <td>{{ sumLonesomeRecords.institution }}</td>
             </tr>
         </table>
     {% endif %}

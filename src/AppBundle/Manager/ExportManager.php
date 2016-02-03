@@ -105,6 +105,29 @@ class ExportManager
         return $this;
     }
 
+    public function getLoneSomeRecords($className=null)
+    {
+        if (is_null($className)) {
+            return $this->diffHandler->getDiffs()->getData()['lonesomeRecords'] ;
+        }
+        else {
+            return $this->diffHandler->getDiffs()['lonesomeRecords'][$className] ;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getStatsLonesomeRecords() {
+        $lonesomeRecords = $this->getLoneSomeRecords() ;
+        $stats = [];
+        foreach ($lonesomeRecords as $className => $items) {
+            $stats[$className]['recolnat'] = count($items['recolnat']) ;
+            $stats[$className]['institution'] = count($items['institution']) ;
+        }
+        return $stats;
+    }
+
     public function getStats()
     {
         return $this->sessionManager->get('stats');
