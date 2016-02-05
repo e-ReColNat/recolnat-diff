@@ -54,6 +54,7 @@ class DiffStatsManager
                 $this->setDiffs($class, $diffClassManager->getStats());
                 $this->setLonesomeRecords($class, $diffClassManager->getLonesomeRecords());
                 $this->computeDiffs($class);
+                unset($diffClassManager);
             }
         }
         $this->diffs['classes'] = $this->classes ;

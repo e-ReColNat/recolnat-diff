@@ -30,8 +30,7 @@ class DiffManager
     const SPECIMEN_CLASSNAME = 'AppBundle:Specimen';
     const RECOLTE_CLASSNAME = 'AppBundle:Recolte';
     const DETERMINATION_CLASSNAME = 'AppBundle:Determination';
-    protected $class;
-    protected $fullClassName;
+
     protected $institutionCode;
     protected $collectionCode;
     protected $entitiesName = [
@@ -76,12 +75,10 @@ class DiffManager
         return $results;
     }
 
-    private function getGenericDiffQuery(
-        $db1=['name'=>self::RECOLNAT_DB, 'alias'=>'r'],
-        $db2=['name'=>self::RECOLNAT_DIFF_DB, 'alias'=> 'i'])
+    private function getGenericDiffQuery($fullClassName,$db1,$db2)
     {
         /* @var $metadata \Doctrine\ORM\Mapping\ClassMetadata */
-        $metadata = $this->em->getMetadataFactory()->getMetadataFor($this->fullClassName);
+        $metadata = $this->em->getMetadataFactory()->getMetadataFor($fullClassName);
 
         $aliasDb1 = $db1['alias'];
         $aliasDb2 = $db2['alias'];
@@ -89,8 +86,8 @@ class DiffManager
         $identifier = 'specimenCode';
         $strQuery = 'SELECT ' . $identifier . ' FROM (';
         $arrayFields = $this->formatFieldsName($metadata, $aliasDb1, $aliasDb2);
-        $strFromClauseDb1 = $this->getFromClause($aliasDb1, false);
-        $strFromClauseDb2 = $this->getFromClause($aliasDb2, true);
+        $strFromClauseDb1 = $this->getFromClause($fullClassName, $aliasDb1, false);
+        $strFromClauseDb2 = $this->getFromClause($fullClassName, $aliasDb2, true);
         $strUnionQuery = $strQuery .
             'SELECT ' .
             implode(', ', $arrayFields['db1']) .
@@ -174,7 +171,7 @@ class DiffManager
         }
         $aliasSpecimenDb1 = 's';
         $aliasSpecimenDb2 = 's';
-        if ($this->class == 'Specimen') {
+        if ($metadata->getName() == 'AppBundle\Entity\Specimen') {
             $aliasSpecimenDb1 = $aliasDb1;
             $aliasSpecimenDb2 = $aliasDb2;
         }
@@ -188,13 +185,13 @@ class DiffManager
      * @param bool $institution
      * @return string
      */
-    private function getFromClause($alias, $institution = false)
+    private function getFromClause($fullClassName, $alias, $institution = false)
     {
         $metadataSpecimen = $this->em->getMetadataFactory()->getMetadataFor(self::SPECIMEN_CLASSNAME);
         $specimenTableName = ($institution ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB) . '.' . $metadataSpecimen->getTableName();
 
         $fromClause='';
-        switch ($this->fullClassName) {
+        switch ($fullClassName) {
             case 'AppBundle:Specimen':
                 $fromClause = ' FROM %s ' . $alias . ' WHERE ' . $alias . '.INSTITUTIONCODE = :institutionCode AND '
                 . $alias . '.COLLECTIONCODE = :collectionCode ';
@@ -242,10 +239,6 @@ class DiffManager
         return $fromClause ;
     }
 
-    private function searchNewRecords()
-    {
-
-    }
 
     /**
      * @param string $className
@@ -254,12 +247,11 @@ class DiffManager
      */
     private function getDiff($className)
     {
-        $this->class = ucfirst(strtolower($className));
-        $this->fullClassName = $this->getFullClassName($this->class);
+        $fullClassName = $this->getFullClassName($className);
         $db1=['name'=>self::RECOLNAT_DB, 'alias'=>'r'];
         $db2=['name'=>self::RECOLNAT_DIFF_DB, 'alias'=> 'i'];
-        $sqlDiff1 = $this->getGenericDiffQuery($db1, $db2);
-        $sqlDiff2 = $this->getGenericDiffQuery($db2, $db1);
+        $sqlDiff1 = $this->getGenericDiffQuery($fullClassName, $db1, $db2);
+        $sqlDiff2 = $this->getGenericDiffQuery($fullClassName, $db2, $db1);
 
         $this->em->getConnection()->setFetchMode(\PDO::FETCH_COLUMN, 0);
         $results1 = $this->em->getConnection()

@@ -105,14 +105,63 @@ class ExportManager
         return $this;
     }
 
-    public function getLoneSomeRecords($className=null)
+    /**
+     * @param string $db
+     * @param mixed $selectedClassesNames
+     * @return array
+     */
+    public function getLonesomeRecords($db=null, $selectedClassesNames=null)
     {
-        if (is_null($className)) {
-            return $this->diffHandler->getDiffs()->getData()['lonesomeRecords'] ;
+        $classesName = [];
+        if (!is_null($selectedClassesNames) && is_string($selectedClassesNames) && $selectedClassesNames != 'all') {
+            $classesName = [$selectedClassesNames];
+        }
+        if (!empty($classesName)) {
+            array_walk($classesName, function (&$className) {
+                $className = ucfirst(strtolower($className));
+            });
+        }
+
+        $lonesomeRecords = $this->diffHandler->getDiffs()->getData()['lonesomeRecords'];
+        $returnLonesomes=[];
+        if (!is_null($db)) {
+            foreach ($lonesomeRecords as $className => $items) {
+                if (!empty($classesName)) {
+                    if (in_array($className, $classesName)) {
+                        $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
+                    }
+                }
+                else {
+                    $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
+                }
+            }
         }
         else {
-            return $this->diffHandler->getDiffs()['lonesomeRecords'][$className] ;
+            if (empty($classesName)) {
+                $returnLonesomes = $lonesomeRecords;
+            } else {
+                foreach ($classesName as $className) {
+                    $returnLonesomes[$className] = $lonesomeRecords[$className];
+                }
+            }
         }
+        return $returnLonesomes;
+    }
+
+    public function getLonesomeRecordsBySpecimenCode($db, $selectedClassesNames=null)
+    {
+        $lonesomeRecordsBySpecimenCodes=[] ;
+        $fullLonesomeRecords=$this->getLonesomeRecords($db, $selectedClassesNames) ;
+
+        if (!empty($fullLonesomeRecords)) {
+            foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
+                foreach ($lonesomeRecords[$db] as $item) {
+                    $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][]=['className' => $className, 'id'=>$item['id']];
+                }
+            }
+        }
+
+        return $lonesomeRecordsBySpecimenCodes;
     }
 
     /**
@@ -261,19 +310,19 @@ class ExportManager
 
     public function getDiffs(Request $request = null, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
     {
-        $className = [];
+        $classesName = [];
         if (is_string($selectedClassName) && $selectedClassName != 'all') {
-            $className = [$selectedClassName];
+            $classesName = [$selectedClassName];
         }
         if (is_array($selectedClassName)) {
-            $className = $selectedClassName;
+            $classesName = $selectedClassName;
         }
 
         if (!is_null($request) && !is_null($request->query->get('reset', null))) {
             $this->sessionManager->clear();
         }
         $allDiffs = $this->sessionManager->get('diffs');
-        $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $className, $specimensWithChoices, $choicesToRemove);
+        $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $classesName, $specimensWithChoices, $choicesToRemove);
         return $diffs;
     }
 

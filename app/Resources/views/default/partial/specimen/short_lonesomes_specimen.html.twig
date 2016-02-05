@@ -1,0 +1,7 @@
+{% for lonesomeSpecimenCode, items in datas %}
+    {% if lonesomeSpecimenCode == specimenCode %}
+        {% for item in items %}
+            {{ render(controller("AppBundle:Front:viewLonesomeTab", {'specimenCode':specimenCode,'type':item.className,'db':db,'id':item.id})) }}
+        {% endfor %}
+    {% endif %}
+{% endfor %}

@@ -266,6 +266,18 @@
                 <source>viewSelectedSpecimens</source>
                 <target>Voir les %count% spécimens sélectionnés</target>
             </trans-unit>
-            </body>
+            <trans-unit id="67">
+                <source>header.lonesomeRecords.recolnat</source>
+                <target>Enreg. exclusivement Recolnat</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>header.lonesomeRecords.institution</source>
+                <target>Enreg. exclusivement Institution</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>header.className</source>
+                <target>Objet</target>
+            </trans-unit>
+        </body>
     </file>
 </xliff>

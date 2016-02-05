@@ -1,42 +1,62 @@
 <section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenCode}}" data-specimencode="{{specimenCode}}">
-    {% set specimenRecolnat = attribute(specimensRecolnat, specimenCode) | first %}
-    {% set specimenInstitution = attribute(specimensInstitution, specimenCode) | first %}
+    {% if app.request.attributes.get('_route') != 'lonesomes' %}
+        {% set specimen = attribute(specimensRecolnat, specimenCode) | first %}
+        {% set specimenRecolnat = attribute(specimensRecolnat, specimenCode) | first %}
+        {% set specimenInstitution = attribute(specimensInstitution, specimenCode) | first %}
 
-    {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
+        {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
+    {% else %}
+        {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
+    {%  endif %}
 
+    {% if db is not defined %}
+        {% set db = 'recolnat' %}
+    {% endif %}
+    
     <ul class="nav nav-tabs"  id="tabs">
         <li role="presentation" class="diffs active">
             <a href="#{{loop.index}}-diffs" data-toggle="tab">
-                {{'tab.diffs'| trans}}
+                {% if app.request.attributes.get('_route') != 'lonesomes' %}
+                    {{'tab.diffs'| trans}}
+                {% else %}
+                    {{'tab.lonesomes'| trans}}
+                {%  endif %}
+
             </a>
         </li>
         <li class="specimen">
-            <a href="#{{loop.index}}-specimen" data-toggle="tab" data-tab-remote="{{path('tabSpecimen', {'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'specimen'})}}">
+            <a href="#{{loop.index}}-specimen" data-toggle="tab"
+               data-tab-remote="{{path('tabSpecimen', {'db':db, 'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'specimen'})}}">
                 {{'tab.specimen'| trans}}
             </a>
         </li>
-        <li  class="multimedia {{specimenRecolnat.multimedias | length == 0 ? 'disabled' : ''}}" >
-            <a href="#{{loop.index}}-multimedia" data-toggle="tab" data-tab-remote="{{path('tabSpecimen', {'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'multimedia'})}}">
-                {{'tab.multimedia'| trans}}{{' ('~specimenRecolnat.multimedias|length~')'}}
+        <li  class="multimedia {{specimen.multimedias | length == 0 ? 'disabled' : ''}}" >
+            <a href="#{{loop.index}}-multimedia" data-toggle="tab" d
+               ata-tab-remote="{{path('tabSpecimen', {'db':db, 'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'multimedia'})}}">
+                {{'tab.multimedia'| trans}}{{' ('~specimen.multimedias|length~')'}}
             </a>
         </li>
-        <li class="determination {{specimenRecolnat.determinations | length == 0 ? 'disabled' : ''}}">
-            <a href="#{{loop.index}}-deter" data-toggle="tab" data-tab-remote="{{path('tabSpecimen', {'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'determination'})}}">
-                {{'tab.determination'| trans}}{{' ('~specimenRecolnat.determinations|length~')'}}
+        <li class="determination {{specimen.determinations | length == 0 ? 'disabled' : ''}}">
+            <a href="#{{loop.index}}-deter" data-toggle="tab"
+               data-tab-remote="{{path('tabSpecimen', {'db':db, 'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'determination'})}}">
+                {{'tab.determination'| trans}}{{' ('~specimen.determinations|length~')'}}
             </a>
         </li>
         <li class="recolte">
-            <a href="#{{loop.index}}-recolte" data-toggle="tab" data-tab-remote="{{path('tabSpecimen', {'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'recolte'})}}">
+            <a href="#{{loop.index}}-recolte" data-toggle="tab"
+               data-tab-remote="{{path('tabSpecimen', {'db':db, 'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'recolte'})}}">
                 {{'tab.recolte'| trans}}
             </a>
         </li>
-        <li  class="bibliography {{specimenRecolnat.bibliographies | length == 0 ? 'disabled' : ''}}">
-            <a href="#{{loop.index}}-biblio" data-toggle="tab" data-tab-remote="{{path('tabSpecimen', {'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'bibliography'})}}">
-                {{'tab.bibliography'| trans}}{{' ('~specimenRecolnat.bibliographies|length~')'}}
+        <li  class="bibliography {{specimen.bibliographies | length == 0 ? 'disabled' : ''}}">
+            <a href="#{{loop.index}}-biblio" data-toggle="tab"
+               data-tab-remote="{{path('tabSpecimen', {'db':db, 'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'bibliography'})}}">
+                {{'tab.bibliography'| trans}}{{' ('~specimen.bibliographies|length~')'}}
             </a>
         </li>
         <li class="stratigraphy">
-            <a href="#{{loop.index}}-strati" data-toggle="tab" data-tab-remote="{{path('tabSpecimen', {'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'stratigraphy'})}}">
+            <a href="#{{loop.index}}-strati" data-toggle="tab"
+               data-tab-remote="{{path('tabSpecimen', {'db':db, 'institutionCode' : institutionCode, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'stratigraphy'})}}">
                 {{'tab.stratigraphy'| trans}}
             </a>
         </li>
@@ -44,7 +64,11 @@
 
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active diffs" id="{{loop.index}}-diffs">
-            {% include 'default/partial/short_diff_specimen.html.twig' %}
+            {% if app.request.attributes.get('_route') != 'lonesomes' %}
+                {% include 'default/partial/specimen/short_diff_specimen.html.twig' %}
+            {% else %}
+                {% include 'default/partial/specimen/short_lonesomes_specimen.html.twig' %}
+            {%  endif %}
         </div>
         <div role="tabpanel" class="tab-pane fade specimen" id="{{loop.index}}-specimen">
         </div>

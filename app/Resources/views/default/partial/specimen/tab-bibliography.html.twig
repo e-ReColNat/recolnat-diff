@@ -1,5 +1,13 @@
 {% for bibliography in specimen.bibliographies%}
     {% if bibliography is not null %}
+        {% set display = true %}
+        {% if id is defined %}
+            {% if bibliography.referenceid != id %}
+                {% set display = false %}
+            {% endif %}
+        {% endif %}
+
+        {% if display %}
         <div class="row">
             <div class="col-sm-6">
                 {{printLabelAndField(bibliography, 'bibliography', 'title', true, '<br />')|raw}}
@@ -16,6 +24,7 @@
                 {{printLabelAndField(bibliography, 'bibliography', 'source', true, '<br />')|raw}}
                 {{printLabelAndField(bibliography, 'bibliography', 'taxonremarks', true, '<br />')|raw}}
             </div>
-    </div>
+        </div>
+        {% endif %}
     {% endif %}
 {% endfor %}

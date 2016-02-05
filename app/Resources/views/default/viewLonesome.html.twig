@@ -2,15 +2,15 @@
 
 {% block body %}
     {% set datas = pagination.items %}
-    {% if diffs is not empty %}
+    {% if specimens is not empty %}
         <div id="wrapper" class="toggled">
 
-            <div id="sidebar-wrapper">
-                {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
-            </div>
+            {#<div id="sidebar-wrapper">#}
+                {#{% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}#}
+            {#</div>#}
 
             <div id="page-content-wrapper">
-                {% include 'default/partial/buttonHamburger.html.twig' %}
+                {#{% include 'default/partial/buttonHamburger.html.twig' %}#}
                 {% include 'default/partial/breadcrumb.html.twig' %}
 
                 <div class="text-center">
@@ -31,8 +31,10 @@
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
                     {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
-                    {% for specimenCode, classWithDiff in datas %}
-                        {% include 'default/partial/specimen/fullSpecimen.html.twig' %}
+                    {% for specimenCode, records in specimens %}
+                        {% for occurrenceid, specimen in records %}
+                            {% include 'default/partial/specimen/fullSpecimen.html.twig' %}
+                        {% endfor %}
                     {% endfor %}
 
                     <div class="text-center">

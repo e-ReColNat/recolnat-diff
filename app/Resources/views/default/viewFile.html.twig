@@ -11,12 +11,13 @@
     {% if stats is not empty %}
         <table class="table table-bordered">
             <tr>
-                <th>&nbsp;</th>
-                <th>{{ 'header.nb.specimens' | trans }}</th>
-                <th>{{ 'header.nb.differences' | trans }}</th>
-                <th>{{ 'header.nb.reste' | trans }}</th>
-                <th>{{ 'header.nb.choix' | trans }}</th>
-                <th colspan="2">{{ 'header.nb.lonesomeRecords' | trans }}</th>
+                <th style="width: 10%">{{ 'header.className' | trans}}</th>
+                <th style="width: 10%">{{ 'header.nb.specimens' | trans }}</th>
+                <th style="width: 10%">{{ 'header.nb.differences' | trans }}</th>
+                <th style="width: 10%">{{ 'header.nb.reste' | trans }}</th>
+                <th style="width: 10%">{{ 'header.nb.choix' | trans }}</th>
+                <th style="width: 10%">{{ 'header.lonesomeRecords.recolnat' | trans }}</th>
+                <th style="width: 10%">{{ 'header.lonesomeRecords.institution' | trans }}</th>
             </tr>
             {% for className, detailedStats in stats %}
                 <tr class="datas {{ className|lower }}">
@@ -49,7 +50,7 @@
                     <td class="nbChoices">
                         {% set nbChoices = attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 %}
                         {% if nbChoices > 0 %}
-                            <a href="{{ path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}"
+                            <a href="{{ path('choices', {'collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}"
                                title="">
                                 {{ nbChoices }}
                             </a>
@@ -58,26 +59,50 @@
                         {% endif %}
                     </td>
                     {% set lonesomeRecordClass=attribute(statsLonesomeRecords, className) %}
-                    <td>{{ lonesomeRecordClass.recolnat }}</td>
-                    <td>{{ lonesomeRecordClass.institution }}</td>
+                    <td>
+                        <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}">
+                            {{ lonesomeRecordClass.recolnat }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}">
+                            {{ lonesomeRecordClass.institution }}
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
             <tr>
                 <td>{{ 'label.total' | trans }}</td>
                 <td>
-                    <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ sumStats.specimens }}</a>
+                    <a href="{{ path('diffs', {'collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
+                        {{ sumStats.specimens }}
+                    </a>
                 </td>
                 <td>
-                    <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ sumStats.diffs }}</a>
+                    <a href="{{ path('diffs', {'collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
+                        {{ sumStats.diffs }}
+                    </a>
                 </td>
                 <td>
-                    <a href="{{ path('todos', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ sumStats.diffs - totalChoices.sum }}</a>
+                    <a href="{{ path('todos', {'collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
+                        {{ sumStats.diffs - totalChoices.sum }}
+                    </a>
                 </td>
                 <td>
-                    <a href="{{ path('choices', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ totalChoices.sum }}</a>
+                    <a href="{{ path('choices', {'collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
+                        {{ totalChoices.sum }}
+                    </a>
                 </td>
-                <td>{{ sumLonesomeRecords.recolnat }}</td>
-                <td>{{ sumLonesomeRecords.institution }}</td>
+                <td>
+                    <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
+                        {{ sumLonesomeRecords.recolnat }}
+                    </a>
+                </td>
+                <td>
+                    <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
+                        {{ sumLonesomeRecords.institution }}
+                    </a>
+                </td>
             </tr>
         </table>
     {% endif %}
