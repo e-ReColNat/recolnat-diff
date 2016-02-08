@@ -1,3 +1,11 @@
+{% set display = true %}
+{% if id is defined %}
+    {% if specimen.occurrenceid != id %}
+        {% set display = false %}
+    {% endif %}
+{% endif %}
+
+{% if display %}
 <div class="row">
     <div class="col-sm-6">
         {{ printLabelAndField(specimen, 'specimen', 'catalognumber', true, '<br />')|raw }}
@@ -28,3 +36,4 @@
         {{ printLabelAndField(specimen, 'specimen', 'sex', true, '<br />')|raw }}
     </div>
 </div>
+{% endif %}

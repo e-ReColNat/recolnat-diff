@@ -1,4 +1,13 @@
 {% for multimedia in specimen.multimedias %}
+    {% if multimedia is not null %}
+        {% set display = true %}
+        {% if id is defined %}
+            {% if multimedia.determination != id %}
+                {% set display = false %}
+            {% endif %}
+        {% endif %}
+
+        {% if display %}
     <div class="row">
         <div class="col-sm-3">
             <a href="{{ multimedia.identifier }}"><img src="{{ thumb(multimedia.identifier, 25) }}"

@@ -50,19 +50,59 @@ li.specimen.lighter {
 tr.specimen td.highlight {
   border: 1px double #110f0b;
 }
-.tab-pane.specimen {
-  background-color: rgba(107, 94, 74, 0.3);
-}
 #sidebar-wrapper ul li.specimen {
   background-color: rgba(107, 94, 74, 0.5);
 }
 .chart rect.specimen {
   fill: #6b5e4a;
 }
-.nav-tabs > li.active.specimen > a,
-.nav-tabs > li.active.specimen > a:hover,
-.nav-tabs > li.active.specimen > a:focus {
-  background-color: rgba(107, 94, 74, 0.3);
+.label.specimen {
+  background-color: #6b5e4a;
+}
+.label.specimen[href]:hover,
+.label.specimen[href]:focus {
+  background-color: #4d4435;
+}
+.tab-pane.specimen {
+  background-color: rgba(107, 94, 74, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.specimen {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.specimen > a {
+  background-color: rgba(107, 94, 74, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(107, 94, 74, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.specimen > a:hover {
+  border-color: rgba(107, 94, 74, 0.5);
+}
+.nav-tabs > li.specimen.active > a,
+.nav-tabs > li.specimen.active > a:hover,
+.nav-tabs > li.specimen.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(107, 94, 74, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.specimen.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.specimen.disabled > a:hover,
+.nav-tabs > li.specimen.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.bibliography td {
   background-color: rgba(239, 190, 118, 0.5);
@@ -78,19 +118,59 @@ li.bibliography.lighter {
 tr.bibliography td.highlight {
   border: 1px double #b77515;
 }
-.tab-pane.bibliography {
-  background-color: rgba(239, 190, 118, 0.3);
-}
 #sidebar-wrapper ul li.bibliography {
   background-color: rgba(239, 190, 118, 0.5);
 }
 .chart rect.bibliography {
   fill: #efbe76;
 }
-.nav-tabs > li.active.bibliography > a,
-.nav-tabs > li.active.bibliography > a:hover,
-.nav-tabs > li.active.bibliography > a:focus {
-  background-color: rgba(239, 190, 118, 0.3);
+.label.bibliography {
+  background-color: #efbe76;
+}
+.label.bibliography[href]:hover,
+.label.bibliography[href]:focus {
+  background-color: #eaa848;
+}
+.tab-pane.bibliography {
+  background-color: rgba(239, 190, 118, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.bibliography {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.bibliography > a {
+  background-color: rgba(239, 190, 118, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(239, 190, 118, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.bibliography > a:hover {
+  border-color: rgba(239, 190, 118, 0.5);
+}
+.nav-tabs > li.bibliography.active > a,
+.nav-tabs > li.bibliography.active > a:hover,
+.nav-tabs > li.bibliography.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(239, 190, 118, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.bibliography.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.bibliography.disabled > a:hover,
+.nav-tabs > li.bibliography.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.determination td {
   background-color: rgba(206, 165, 125, 0.5);
@@ -106,19 +186,59 @@ li.determination.lighter {
 tr.determination td.highlight {
   border: 1px double #815931;
 }
-.tab-pane.determination {
-  background-color: rgba(206, 165, 125, 0.3);
-}
 #sidebar-wrapper ul li.determination {
   background-color: rgba(206, 165, 125, 0.5);
 }
 .chart rect.determination {
   fill: #cea57d;
 }
-.nav-tabs > li.active.determination > a,
-.nav-tabs > li.active.determination > a:hover,
-.nav-tabs > li.active.determination > a:focus {
-  background-color: rgba(206, 165, 125, 0.3);
+.label.determination {
+  background-color: #cea57d;
+}
+.label.determination[href]:hover,
+.label.determination[href]:focus {
+  background-color: #c08b58;
+}
+.tab-pane.determination {
+  background-color: rgba(206, 165, 125, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.determination {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.determination > a {
+  background-color: rgba(206, 165, 125, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(206, 165, 125, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.determination > a:hover {
+  border-color: rgba(206, 165, 125, 0.5);
+}
+.nav-tabs > li.determination.active > a,
+.nav-tabs > li.determination.active > a:hover,
+.nav-tabs > li.determination.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(206, 165, 125, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.determination.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.determination.disabled > a:hover,
+.nav-tabs > li.determination.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.localisation td {
   background-color: rgba(255, 140, 121, 0.5);
@@ -134,19 +254,59 @@ li.localisation.lighter {
 tr.localisation td.highlight {
   border: 1px double #df2000;
 }
-.tab-pane.localisation {
-  background-color: rgba(255, 140, 121, 0.3);
-}
 #sidebar-wrapper ul li.localisation {
   background-color: rgba(255, 140, 121, 0.5);
 }
 .chart rect.localisation {
   fill: #ff8c79;
 }
-.nav-tabs > li.active.localisation > a,
-.nav-tabs > li.active.localisation > a:hover,
-.nav-tabs > li.active.localisation > a:focus {
-  background-color: rgba(255, 140, 121, 0.3);
+.label.localisation {
+  background-color: #ff8c79;
+}
+.label.localisation[href]:hover,
+.label.localisation[href]:focus {
+  background-color: #ff6046;
+}
+.tab-pane.localisation {
+  background-color: rgba(255, 140, 121, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.localisation {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.localisation > a {
+  background-color: rgba(255, 140, 121, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(255, 140, 121, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.localisation > a:hover {
+  border-color: rgba(255, 140, 121, 0.5);
+}
+.nav-tabs > li.localisation.active > a,
+.nav-tabs > li.localisation.active > a:hover,
+.nav-tabs > li.localisation.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(255, 140, 121, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.localisation.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.localisation.disabled > a:hover,
+.nav-tabs > li.localisation.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.recolte td {
   background-color: rgba(182, 93, 153, 0.5);
@@ -162,19 +322,59 @@ li.recolte.lighter {
 tr.recolte td.highlight {
   border: 1px double #542645;
 }
-.tab-pane.recolte {
-  background-color: rgba(182, 93, 153, 0.3);
-}
 #sidebar-wrapper ul li.recolte {
   background-color: rgba(182, 93, 153, 0.5);
 }
 .chart rect.recolte {
   fill: #b65d99;
 }
-.nav-tabs > li.active.recolte > a,
-.nav-tabs > li.active.recolte > a:hover,
-.nav-tabs > li.active.recolte > a:focus {
-  background-color: rgba(182, 93, 153, 0.3);
+.label.recolte {
+  background-color: #b65d99;
+}
+.label.recolte[href]:hover,
+.label.recolte[href]:focus {
+  background-color: #9a467f;
+}
+.tab-pane.recolte {
+  background-color: rgba(182, 93, 153, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.recolte {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.recolte > a {
+  background-color: rgba(182, 93, 153, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(182, 93, 153, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.recolte > a:hover {
+  border-color: rgba(182, 93, 153, 0.5);
+}
+.nav-tabs > li.recolte.active > a,
+.nav-tabs > li.recolte.active > a:hover,
+.nav-tabs > li.recolte.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(182, 93, 153, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.recolte.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.recolte.disabled > a:hover,
+.nav-tabs > li.recolte.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.stratigraphy td {
   background-color: rgba(252, 186, 63, 0.5);
@@ -190,19 +390,59 @@ li.stratigraphy.lighter {
 tr.stratigraphy td.highlight {
   border: 1px double #a06902;
 }
-.tab-pane.stratigraphy {
-  background-color: rgba(252, 186, 63, 0.3);
-}
 #sidebar-wrapper ul li.stratigraphy {
   background-color: rgba(252, 186, 63, 0.5);
 }
 .chart rect.stratigraphy {
   fill: #fcba3f;
 }
-.nav-tabs > li.active.stratigraphy > a,
-.nav-tabs > li.active.stratigraphy > a:hover,
-.nav-tabs > li.active.stratigraphy > a:focus {
-  background-color: rgba(252, 186, 63, 0.3);
+.label.stratigraphy {
+  background-color: #fcba3f;
+}
+.label.stratigraphy[href]:hover,
+.label.stratigraphy[href]:focus {
+  background-color: #fba80d;
+}
+.tab-pane.stratigraphy {
+  background-color: rgba(252, 186, 63, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.stratigraphy {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.stratigraphy > a {
+  background-color: rgba(252, 186, 63, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(252, 186, 63, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.stratigraphy > a:hover {
+  border-color: rgba(252, 186, 63, 0.5);
+}
+.nav-tabs > li.stratigraphy.active > a,
+.nav-tabs > li.stratigraphy.active > a:hover,
+.nav-tabs > li.stratigraphy.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(252, 186, 63, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.stratigraphy.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.stratigraphy.disabled > a:hover,
+.nav-tabs > li.stratigraphy.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.multimedia td {
   background-color: rgba(135, 189, 106, 0.5);
@@ -218,19 +458,59 @@ li.multimedia.lighter {
 tr.multimedia td.highlight {
   border: 1px double #3f622c;
 }
-.tab-pane.multimedia {
-  background-color: rgba(135, 189, 106, 0.3);
-}
 #sidebar-wrapper ul li.multimedia {
   background-color: rgba(135, 189, 106, 0.5);
 }
 .chart rect.multimedia {
   fill: #87bd6a;
 }
-.nav-tabs > li.active.multimedia > a,
-.nav-tabs > li.active.multimedia > a:hover,
-.nav-tabs > li.active.multimedia > a:focus {
-  background-color: rgba(135, 189, 106, 0.3);
+.label.multimedia {
+  background-color: #87bd6a;
+}
+.label.multimedia[href]:hover,
+.label.multimedia[href]:focus {
+  background-color: #6ca94b;
+}
+.tab-pane.multimedia {
+  background-color: rgba(135, 189, 106, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.multimedia {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.multimedia > a {
+  background-color: rgba(135, 189, 106, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(135, 189, 106, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.multimedia > a:hover {
+  border-color: rgba(135, 189, 106, 0.5);
+}
+.nav-tabs > li.multimedia.active > a,
+.nav-tabs > li.multimedia.active > a:hover,
+.nav-tabs > li.multimedia.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(135, 189, 106, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.multimedia.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.multimedia.disabled > a:hover,
+.nav-tabs > li.multimedia.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.taxon td {
   background-color: rgba(146, 114, 74, 0.5);
@@ -246,19 +526,59 @@ li.taxon.lighter {
 tr.taxon td.highlight {
   border: 1px double #2c2317;
 }
-.tab-pane.taxon {
-  background-color: rgba(146, 114, 74, 0.3);
-}
 #sidebar-wrapper ul li.taxon {
   background-color: rgba(146, 114, 74, 0.5);
 }
 .chart rect.taxon {
   fill: #92724a;
 }
-.nav-tabs > li.active.taxon > a,
-.nav-tabs > li.active.taxon > a:hover,
-.nav-tabs > li.active.taxon > a:focus {
-  background-color: rgba(146, 114, 74, 0.3);
+.label.taxon {
+  background-color: #92724a;
+}
+.label.taxon[href]:hover,
+.label.taxon[href]:focus {
+  background-color: #705839;
+}
+.tab-pane.taxon {
+  background-color: rgba(146, 114, 74, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.taxon {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.taxon > a {
+  background-color: rgba(146, 114, 74, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(146, 114, 74, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.taxon > a:hover {
+  border-color: rgba(146, 114, 74, 0.5);
+}
+.nav-tabs > li.taxon.active > a,
+.nav-tabs > li.taxon.active > a:hover,
+.nav-tabs > li.taxon.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(146, 114, 74, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.taxon.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.taxon.disabled > a:hover,
+.nav-tabs > li.taxon.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 tr.diffs td {
   background-color: rgba(125, 155, 172, 0.5);
@@ -274,19 +594,59 @@ li.diffs.lighter {
 tr.diffs td.highlight {
   border: 1px double #384c58;
 }
-.tab-pane.diffs {
-  background-color: rgba(125, 155, 172, 0.3);
-}
 #sidebar-wrapper ul li.diffs {
   background-color: rgba(125, 155, 172, 0.5);
 }
 .chart rect.diffs {
   fill: #7d9bac;
 }
-.nav-tabs > li.active.diffs > a,
-.nav-tabs > li.active.diffs > a:hover,
-.nav-tabs > li.active.diffs > a:focus {
-  background-color: rgba(125, 155, 172, 0.3);
+.label.diffs {
+  background-color: #7d9bac;
+}
+.label.diffs[href]:hover,
+.label.diffs[href]:focus {
+  background-color: #608396;
+}
+.tab-pane.diffs {
+  background-color: rgba(125, 155, 172, 0.4);
+}
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs > li.diffs {
+  float: left;
+  margin-bottom: -1px;
+}
+.nav-tabs > li.diffs > a {
+  background-color: rgba(125, 155, 172, 0.4);
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid rgba(125, 155, 172, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.diffs > a:hover {
+  border-color: rgba(125, 155, 172, 0.5);
+}
+.nav-tabs > li.diffs.active > a,
+.nav-tabs > li.diffs.active > a:hover,
+.nav-tabs > li.diffs.active > a:focus {
+  color: #555555;
+  /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+  background-color: rgba(125, 155, 172, 0.4);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li.diffs.disabled > a {
+  color: #777777;
+  background-color: transparent;
+}
+.nav-tabs > li.diffs.disabled > a:hover,
+.nav-tabs > li.diffs.disabled > a:focus {
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 /** DIFF TABLE **/
 .well.odd {
@@ -327,7 +687,8 @@ table.diff caption {
   font-weight: bold;
   font-size: 1.1em;
 }
-.table > tfoot > tr > td #form-filters hr {
+/** FILTERS **/
+#form-filters hr {
   color: #e5e5e5;
   background-color: #e5e5e5;
   height: 1px;
@@ -341,6 +702,7 @@ table.diff caption {
 .pagination {
   margin: 0;
 }
+/** Onglets */
 #diffs .tab-pane {
   padding: 1em;
 }
@@ -349,24 +711,6 @@ table.diff caption {
   margin-bottom: 1em;
 }
 #diffs .tab-pane .row:last-child {
-  border-bottom: none;
-}
-/** SPECIMEN TABS **/
-#diffs .nav-tabs > .disabled > a,
-#diffs .nav-pills > .disabled > a {
-  color: #999;
-  cursor: default;
-  border: none;
-  /** add this for tabs/pills **/
-}
-#diffs .nav-tabs > .disabled > a:hover,
-#diffs .nav-pills > .disabled > a:hover {
-  background-color: transparent;
-}
-#diffs .nav-tabs > li {
-  margin-bottom: 0px;
-}
-#diffs .nav-tabs {
   border-bottom: none;
 }
 /** SIDEBAR **/

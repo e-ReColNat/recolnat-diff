@@ -1,21 +1,32 @@
 {% set stratigraphy = specimen.stratigraphy %}
-<div class="row">
-        <div class="col-sm-6">
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'bed', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'earliestageorloweststage', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'earliesteonorlowesteonothem', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'earliestepochorlowestseries', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'earliesteraorlowesterathem', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'earliestperiodorlowestsystem', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'formation', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'group', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'highestbiostratigraphiczone', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'latestageorhigheststage', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'latesteonorhighesteonothem', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'latestepochorhighestseries', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'latesteraorhighesterathem', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'latestperiodorhighestsystem', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'lowestbiostratigraphiczone', true, '<br />')|raw}}
-            {{printLabelAndField(stratigraphy, 'stratigraphy', 'member', true, '<br />')|raw}}
+{% if stratigraphy is not null %}
+    {% set display = true %}
+    {% if id is defined %}
+        {% if stratigraphy.geologicalcontextid != id %}
+            {% set display = false %}
+        {% endif %}
+    {% endif %}
+
+    {% if display %}
+        <div class="row">
+            <div class="col-sm-6">
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'bed', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'earliestageorloweststage', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'earliesteonorlowesteonothem', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'earliestepochorlowestseries', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'earliesteraorlowesterathem', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'earliestperiodorlowestsystem', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'formation', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'group', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'highestbiostratigraphiczone', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'latestageorhigheststage', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'latesteonorhighesteonothem', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'latestepochorhighestseries', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'latesteraorhighesterathem', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'latestperiodorhighestsystem', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'lowestbiostratigraphiczone', true, '<br />')|raw }}
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'member', true, '<br />')|raw }}
+            </div>
         </div>
-</div>
+    {% endif %}
+{% endif %}

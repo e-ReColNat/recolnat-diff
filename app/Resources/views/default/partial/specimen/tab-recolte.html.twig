@@ -1,46 +1,55 @@
 {% set recolte = specimen.recolte %}
 {% if recolte is not null %}
-<div class="row">
-        <div class="col-sm-6">
-            {{printLabelAndField(recolte, 'recolte', 'decade', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'eday', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'emonth', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'eyear', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'eventdate', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'eventremarks', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'fieldnotes', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'fieldnumber', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'habitat', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'recordedby', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'sday', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'smonth', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'syear', true, '<br />')|raw}}
-            {{printLabelAndField(recolte, 'recolte', 'verbatimeventdate', true, '<br />')|raw}}
-        </div>
-        {% set localisation = recolte.localisation %}
-        {% if localisation is not null %}
-            <div class="col-sm-6">
-                {{printLabelAndField(localisation, 'localisation', 'averagealtituderounded', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'continent', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'country', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'countrycode', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'county', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'decimallatitude', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'decimallongitude', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'geodeticdatum', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'georeferencesources', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'locality', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'locationremarks', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'maximumdepthinmeters', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'maximumelevationinmeters', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'minimumdepthinmeters', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'minimumelevationinmeters', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'municipality', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'stateprovince', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'verbatimcountry', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'verbatimelevation', true, '<br />')|raw}}
-                {{printLabelAndField(localisation, 'localisation', 'verbatimlocality', true, '<br />')|raw}}
-            </div>
+    {% set display = true %}
+    {% if id is defined %}
+        {% if recolte.eventid != id %}
+            {% set display = false %}
         {% endif %}
-</div>
+    {% endif %}
+
+    {% if display %}
+        <div class="row">
+            <div class="col-sm-6">
+                {{ printLabelAndField(recolte, 'recolte', 'decade', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'eday', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'emonth', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'eyear', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'eventdate', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'eventremarks', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'fieldnotes', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'fieldnumber', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'habitat', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'recordedby', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'sday', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'smonth', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'syear', true, '<br />')|raw }}
+                {{ printLabelAndField(recolte, 'recolte', 'verbatimeventdate', true, '<br />')|raw }}
+            </div>
+            {% set localisation = recolte.localisation %}
+            {% if localisation is not null %}
+                <div class="col-sm-6">
+                    {{ printLabelAndField(localisation, 'localisation', 'averagealtituderounded', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'continent', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'country', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'countrycode', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'county', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'decimallatitude', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'decimallongitude', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'geodeticdatum', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'georeferencesources', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'locality', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'locationremarks', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'maximumdepthinmeters', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'maximumelevationinmeters', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'minimumdepthinmeters', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'minimumelevationinmeters', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'municipality', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'stateprovince', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'verbatimcountry', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'verbatimelevation', true, '<br />')|raw }}
+                    {{ printLabelAndField(localisation, 'localisation', 'verbatimlocality', true, '<br />')|raw }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endif %}

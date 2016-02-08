@@ -81,14 +81,70 @@
   tr.@{color}.light td, li.@{color}.light{ background-color: fade(@@color,@fadeTdBackground-light)}
   tr.@{color}.lighter td, li.@{color}.lighter{ background-color: fade(@@color,@fadeTdBackground-lighter)}
   tr.@{color} td.highlight{border: 1px double darken(@@color,@fadeTdBackground-dark);}
-  .tab-pane.@{color} {background-color: fade(@@color,@fadeTdBackground-lighter)}
+
 
   #sidebar-wrapper ul li.@{color} {
     background-color: fade(@@color,@fadeTdBackground);
   }
   .chart rect.@{color} {fill: @@color;}
-  .nav-tabs > li.active.@{color} > a, .nav-tabs > li.active.@{color} > a:hover, .nav-tabs > li.active.@{color} > a:focus {
-    background-color: fade(@@color,@fadeTdBackground-lighter)
+  .label.@{color} {
+    background-color: @@color;
+    &[href] {
+      &:hover,
+      &:focus {
+        background-color: darken(@@color, 10%);
+      }
+    }
+  }
+  .tab-pane.@{color} {background-color: fade(@@color,@fadeTdBackground-light)}
+  .nav-tabs {
+    border-bottom: 1px solid @nav-tabs-border-color;
+    > li.@{color} {
+      float: left;
+      // Make the list-items overlay the bottom border
+      margin-bottom: -1px;
+
+      // Actual tabs (as links)
+      > a {
+        background-color: fade(@@color,@fadeTdBackground-light);
+        margin-right: 2px;
+        line-height: @line-height-base;
+        //border: 1px solid transparent;
+        border : 1px solid fade(@@color,@fadeTdBackground);
+        border-radius: @border-radius-base @border-radius-base 0 0;
+        &:hover {
+          border-color: fade(@@color,@fadeTdBackground);
+        }
+      }
+
+      // Active state, and its :hover to override normal :hover
+      &.active > a {
+        &,
+        &:hover,
+        &:focus {
+          color: @nav-tabs-active-link-hover-color;
+          /*background-color: @nav-tabs-active-link-hover-bg;
+          border: 1px solid @nav-tabs-active-link-hover-border-color;*/
+          background-color: fade(@@color,@fadeTdBackground-light);
+
+          border-bottom-color: transparent;
+          cursor: default;
+        }
+      }
+      // Disabled state sets text to gray and nukes hover/tab effects
+      &.disabled > a {
+        color: @nav-disabled-link-color;
+        background-color: transparent;
+
+        &:hover,
+        &:focus {
+          color: @nav-disabled-link-hover-color;
+          text-decoration: none;
+          background-color: transparent;
+          cursor: @cursor-disabled;
+        }
+      }
+    }
   }
 
 }
@@ -144,49 +200,35 @@ table.diff {
     font-size: 1.1em;
   }
 }
-.table > tfoot > tr > td
 /** FILTERS **/
-#form-filters hr {
-  color: @legend-border-color;
-  background-color: @legend-border-color;
-  height: 1px;
-}
-#form-filters legend {
-  margin-bottom: 0;
-}
-#form-filters .form-group {
-  margin-bottom: 5px;
+#form-filters {
+  hr {
+    color: @legend-border-color;
+    background-color: @legend-border-color;
+    height: 1px;
+  }
+  legend {
+    margin-bottom: 0;
+  }
+  .form-group {
+    margin-bottom: 5px;
+  }
 }
 
 .pagination {
-  margin : 0;
+  margin: 0;
 }
+
+/** Onglets */
 #diffs .tab-pane {
-  padding : 1em;
-}
-#diffs .tab-pane .row{
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 1em;
-}
-#diffs .tab-pane .row:last-child{
-  border-bottom: none;
-}
-
-/** SPECIMEN TABS **/
-#diffs .nav-tabs>.disabled>a, #diffs .nav-pills>.disabled>a {
-  color: #999;
-  cursor: default;
-  border: none; /** add this for tabs/pills **/
-}
-
-#diffs .nav-tabs>.disabled>a:hover, #diffs .nav-pills>.disabled>a:hover {
-  background-color: transparent;
-}
-#diffs .nav-tabs > li {
-  margin-bottom:0px;
-}
-#diffs .nav-tabs {
-  border-bottom: none;
+  padding: 1em;
+  .row {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1em;
+  }
+  .row:last-child {
+    border-bottom: none;
+  }
 }
 
 /** SIDEBAR **/

@@ -151,12 +151,25 @@ class ExportManager
     public function getLonesomeRecordsBySpecimenCode($db, $selectedClassesNames=null)
     {
         $lonesomeRecordsBySpecimenCodes=[] ;
+        $specimenLonesomeRecords = $this->getLonesomeRecords($db, 'specimen');
+        $refRecolnatSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode') ;
         $fullLonesomeRecords=$this->getLonesomeRecords($db, $selectedClassesNames) ;
 
         if (!empty($fullLonesomeRecords)) {
             foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
                 foreach ($lonesomeRecords[$db] as $item) {
-                    $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][]=['className' => $className, 'id'=>$item['id']];
+                    if (!in_array($item['specimenCode'], $refRecolnatSpecimenCode) && $selectedClassesNames!='specimen') {
+                        $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
+                            'className' => $className,
+                            'id' => $item['id']
+                        ];
+                    }
+                    elseif($selectedClassesNames=='all') {
+                        $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
+                            'className' => $className,
+                            'id' => $item['id']
+                        ];
+                    }
                 }
             }
         }
@@ -169,10 +182,23 @@ class ExportManager
      */
     public function getStatsLonesomeRecords() {
         $lonesomeRecords = $this->getLoneSomeRecords() ;
+        dump($lonesomeRecords);
         $stats = [];
+        $refRecolnatSpecimenCode = array_column($lonesomeRecords['Specimen']['recolnat'], 'specimenCode') ;
+        $refInstitutionSpecimenCode = array_column($lonesomeRecords['Specimen']['institution'], 'specimenCode') ;
         foreach ($lonesomeRecords as $className => $items) {
-            $stats[$className]['recolnat'] = count($items['recolnat']) ;
-            $stats[$className]['institution'] = count($items['institution']) ;
+            // si la className n'est pas specimen et que l'enregistrement est déjà présent dans les
+            // spécimens alors on a affaire à un nouveau specimen donc on l'enlève du décompte
+            if ($className !== 'Specimen') {
+                $specimenCodes = array_column($items['recolnat'], 'specimenCode');
+                $stats[$className]['recolnat'] = count(array_diff($specimenCodes, $refRecolnatSpecimenCode));
+                $specimenCodes = array_column($items['institution'], 'specimenCode');
+                $stats[$className]['institution'] = count(array_diff($specimenCodes, $refInstitutionSpecimenCode));
+            }
+            else {
+                $stats[$className]['recolnat'] = count($items['recolnat']);
+                $stats[$className]['institution'] = count($items['institution']);
+            }
         }
         return $stats;
     }

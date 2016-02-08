@@ -33,7 +33,7 @@
                     {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
                     {% for specimenCode, records in specimens %}
                         {% for occurrenceid, specimen in records %}
-                            {% include 'default/partial/specimen/fullSpecimen.html.twig' %}
+                            {% include 'default/partial/specimen/fullSpecimen.html.twig' with {'loop' : loop.parent.loop} %}
                         {% endfor %}
                     {% endfor %}
 
@@ -59,15 +59,10 @@
             }
             $('#maxItemPerPage').change(function () {
                 {% if selectedClassName is not defined %}
-                {% set selectedClassName = "all" %}
-                {% endif %}
-                {% if app.request.attributes.get('_route') == 'lonesomes' %}
-                var url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
-                {% else %}
-                var url = "{{ path(app.request.attributes.get('_route'),
-                {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
+                    {% set selectedClassName = "all" %}
                 {% endif %}
 
+                var url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
                 maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
                 localStorage.setItem('maxItemPerPage', maxItemPerPage);
                 jQuery(location).attr('href', url.replace('_itemNum', maxItemPerPage));

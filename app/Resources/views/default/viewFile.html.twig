@@ -60,14 +60,22 @@
                     </td>
                     {% set lonesomeRecordClass=attribute(statsLonesomeRecords, className) %}
                     <td>
-                        <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}">
-                            {{ lonesomeRecordClass.recolnat }}
-                        </a>
+                        {% if lonesomeRecordClass.recolnat > 0 %}
+                            <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}">
+                                {{ lonesomeRecordClass.recolnat }}
+                            </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                     <td>
+                        {% if lonesomeRecordClass.institution > 0 %}
                         <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}">
                             {{ lonesomeRecordClass.institution }}
                         </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

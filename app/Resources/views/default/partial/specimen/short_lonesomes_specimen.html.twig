@@ -1,7 +1,11 @@
-{% for lonesomeSpecimenCode, items in datas %}
-    {% if lonesomeSpecimenCode == specimenCode %}
-        {% for item in items %}
-            {{ render(controller("AppBundle:Front:viewLonesomeTab", {'specimenCode':specimenCode,'type':item.className,'db':db,'id':item.id})) }}
-        {% endfor %}
+{% set lonesomeRecord = attribute(datas, specimenCode) %}
+{% set flag = '' %}
+{% for lonesomeSpecimenCode, item in lonesomeRecord %}
+    {% if item.className != flag and item.className|lower not in ['taxon', 'localisation'] %}
+        {% set flag = item.className %}
+        <span class="label label-primary {{ item.className|lower }}">
+            {{ ('label.'~item.className|lower) | transchoice(loop.length, {}, 'entity')}} - {{ db }}</span>
     {% endif %}
+    {% set templatePath = 'default/partial/specimen/tab-' ~ item.className|lower ~ '.html.twig' %}
+    {% include templatePath with {'specimenCode':specimenCode,'id':item.id} %}
 {% endfor %}

@@ -110,6 +110,7 @@ class FrontController extends Controller
         $totalChoices['sum'] = array_sum($totalChoices);
 
         $sumLonesomeRecords=['recolnat'=>0, 'institution'=>0];
+        dump($statsLonesomeRecords);
         foreach ($statsLonesomeRecords as $lonesomeRecords) {
             $sumLonesomeRecords['recolnat']+=$lonesomeRecords['recolnat'];
             $sumLonesomeRecords['institution']+=$lonesomeRecords['institution'];
@@ -204,15 +205,19 @@ class FrontController extends Controller
 
         $lonesomesSpecimensBySpecimenCodes=$exportManager->getLonesomeRecordsBySpecimenCode($db, $selectedClassName);
 
+        dump($lonesomesSpecimensBySpecimenCodes);
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomesSpecimensBySpecimenCodes, $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
 
+
         if ($db=='recolnat') {
             $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
+            //$lonesomesRecords = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findOneBySpecimenCode($specimenCode);
         }
         else {
             $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
+            //$lonesomesRecords = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findOneBySpecimenCode($specimenCode);
         }
 
         return $this->render('default/viewLonesome.html.twig', array(
@@ -224,6 +229,7 @@ class FrontController extends Controller
             'selectedClassName' => $selectedClassName,
             'collectionCode' => $collectionCode,
             'db' => $db,
+            //'lonesomesRecords' => $lonesomesRecords,
         ));
     }
 
@@ -275,28 +281,6 @@ class FrontController extends Controller
         return $this->render('default/partial/specimen/' . $template, array(
             'specimen' => $specimen,
             'specimenCode' => $specimenCode,
-        ));
-    }
-
-    /**
-     * @Route("{institutionCode}/{collectionCode}/specimen/tab/{specimenCode}/{type}/{db}",
-     *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
-     */
-    public function viewLonesomeTabAction($specimenCode, $type, $db, $id)
-    {
-        if ($db == 'recolnat') {
-            $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findOneBySpecimenCode($specimenCode);
-        }
-        else {
-            $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findOneBySpecimenCode($specimenCode);
-        }
-
-        $template = 'tab-' . strtolower($type) . '.html.twig';
-
-        return $this->render('default/partial/specimen/' . $template, array(
-            'specimen' => $specimen,
-            'specimenCode' => $specimenCode,
-            'id' => $id,
         ));
     }
 

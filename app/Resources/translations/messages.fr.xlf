@@ -278,6 +278,10 @@
                 <source>header.className</source>
                 <target>Objet</target>
             </trans-unit>
+            <trans-unit id="70">
+                <source>tab.lonesomes</source>
+                <target>Exclu</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
