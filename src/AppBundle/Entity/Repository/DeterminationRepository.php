@@ -46,7 +46,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         
         $query = $qb
                 ->select('d')
-                ->join('d.specimen', 's', Join::WITH);
+                ->join('d.specimen', 's');
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
@@ -63,7 +63,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $query = $qb
                 ->select('d')
                 ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
-                ->join('d.specimen', 's', Join::WITH);
+                ->join('d.specimen', 's');
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'identificationid') ;

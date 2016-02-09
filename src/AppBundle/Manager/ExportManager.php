@@ -152,13 +152,16 @@ class ExportManager
     {
         $lonesomeRecordsBySpecimenCodes=[] ;
         $specimenLonesomeRecords = $this->getLonesomeRecords($db, 'specimen');
-        $refRecolnatSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode') ;
+        $refSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode') ;
         $fullLonesomeRecords=$this->getLonesomeRecords($db, $selectedClassesNames) ;
 
         if (!empty($fullLonesomeRecords)) {
             foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
                 foreach ($lonesomeRecords[$db] as $item) {
-                    if (!in_array($item['specimenCode'], $refRecolnatSpecimenCode) && $selectedClassesNames!='specimen') {
+                    // Si le specimencode de l'enregistrement est dans la liste des specimens de ref c'est que tous les
+                    // enregistrements correspondant à ce specimen code sont nouveaux
+                    // puisque le specimen n'est pas dans l'autre base
+                    if (!in_array($item['specimenCode'], $refSpecimenCode) || $selectedClassesNames=='specimen') {
                         $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
                             'className' => $className,
                             'id' => $item['id']
@@ -170,6 +173,7 @@ class ExportManager
                             'id' => $item['id']
                         ];
                     }
+
                 }
             }
         }

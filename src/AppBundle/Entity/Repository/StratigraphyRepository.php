@@ -1,7 +1,9 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join ;
+
+use Doctrine\ORM\Query\Expr\Join;
+
 /**
  * StratigraphyRepository
  *
@@ -11,63 +13,64 @@ use Doctrine\ORM\Query\Expr\Join ;
 class StratigraphyRepository extends RecolnatRepositoryAbstract
 {
     /**
-     * 
+     *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('s')
-                ->from('AppBundle\Entity\Stratigraphy', 's', 's.geologicalcontextid')
-                ->where('s.geologicalcontextid IN (:ids)')
-                ->setParameter('ids', $ids)
-                ->getQuery() ;
-        return $query->getResult() ;
+            ->select('s')
+            ->from('AppBundle\Entity\Stratigraphy', 's', 's.geologicalcontextid')
+            ->where('s.geologicalcontextid IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery();
+        return $query->getResult();
     }
-    
+
     public function findOneById($id)
     {
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('s')
-                ->from('AppBundle\Entity\Stratigraphy', 's', 's.geologicalcontextid')
-                ->where('s.geologicalcontextid = :id')
-                ->setParameter('id', $id)
-                ->getQuery() ;
+            ->select('s')
+            ->from('AppBundle\Entity\Stratigraphy', 's', 's.geologicalcontextid')
+            ->where('s.geologicalcontextid = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
         return $query->getOneOrNullResult();
     }
 
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return \Doctrine\Common\Collections\Collection
      */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
         $qb = $this->createQueryBuilder('st');
-        
+
         $query = $qb
-                ->select('st')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
+            ->select('st')
+            ->join('st.specimen', 's');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
+
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)
     {
         $qb = $this->createQueryBuilder('st');
-        
+
         $query = $qb
-                ->select('st')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH);
+            ->select('st')
+            ->addSelect($this->getExprConcatSpecimenCode($qb) . ' as specimencode')
+            ->join('st.specimen', 's');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'geologicalcontextid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'geologicalcontextid');
     }
 }

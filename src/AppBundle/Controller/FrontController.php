@@ -205,7 +205,6 @@ class FrontController extends Controller
 
         $lonesomesSpecimensBySpecimenCodes=$exportManager->getLonesomeRecordsBySpecimenCode($db, $selectedClassName);
 
-        dump($lonesomesSpecimensBySpecimenCodes);
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomesSpecimensBySpecimenCodes, $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
@@ -213,11 +212,9 @@ class FrontController extends Controller
 
         if ($db=='recolnat') {
             $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
-            //$lonesomesRecords = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findOneBySpecimenCode($specimenCode);
         }
         else {
             $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
-            //$lonesomesRecords = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findOneBySpecimenCode($specimenCode);
         }
 
         return $this->render('default/viewLonesome.html.twig', array(
@@ -229,7 +226,6 @@ class FrontController extends Controller
             'selectedClassName' => $selectedClassName,
             'collectionCode' => $collectionCode,
             'db' => $db,
-            //'lonesomesRecords' => $lonesomesRecords,
         ));
     }
 
