@@ -10,10 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 */
 class Multimedia
 {
-     /** 
-     * @ORM\Id
-     * @ORM\Column(type="integer") 
-     */
+        /** 
+         * @ORM\Id
+         * @ORM\Column(type="integer") 
+         */
     private $multimediaid;
 
     /** 
@@ -69,7 +69,7 @@ class Multimedia
     /** 
      * @ORM\Column(type="string", length=50, nullable=true)
      */
-    private $publisher ;
+    private $publisher;
 
     /** 
      * @ORM\Column(type="string", length=200, nullable=true)
@@ -101,7 +101,7 @@ class Multimedia
      */
     private $type;
 
-   /**
+    /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Specimen", mappedBy="multimedias")
      **/
     private $specimens;
@@ -567,7 +567,7 @@ class Multimedia
     }
     
     public function __toString() {
-        return $this->getIdentifier() ;
+        return $this->getIdentifier();
     }
     
     public function toArray()

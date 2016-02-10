@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity\Repository;
 
-use Doctrine\ORM\Query\Expr\Join;
-
 /**
  * StratigraphyRepository
  *
@@ -67,7 +65,7 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
 
         $query = $qb
             ->select('st')
-            ->addSelect($this->getExprConcatSpecimenCode($qb) . ' as specimencode')
+            ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
             ->join('st.specimen', 's');
         $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);

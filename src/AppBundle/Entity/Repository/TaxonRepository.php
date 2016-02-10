@@ -1,7 +1,7 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join ;
+use Doctrine\ORM\Query\Expr\Join;
 /**
  * TaxonRepository
  *
@@ -21,8 +21,8 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->select('t')
                 ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
                 ->where('t.taxonid IN (\''.implode('\',\'', $ids).'\')')
-                ->getQuery() ;
-        return $query->getResult() ;
+                ->getQuery();
+        return $query->getResult();
     }
     public function findOneById($id)
     {
@@ -31,7 +31,7 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
                 ->where('t.taxonid = :id')
                 ->setParameter('id', $id)
-                ->getQuery() ;
+                ->getQuery();
         return $query->getOneOrNullResult();
     }
     /**
@@ -44,7 +44,7 @@ class TaxonRepository extends RecolnatRepositoryAbstract
         $qb = $this->createQueryBuilder('t');
         
         $query = $qb
-           ->select('t')
+            ->select('t')
             ->innerJoin('t.determination', 'd')
             ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, 
                     $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
@@ -61,12 +61,12 @@ class TaxonRepository extends RecolnatRepositoryAbstract
         $qb = $this->createQueryBuilder('t');
         
         $query = $qb
-           ->select('t')
+            ->select('t')
             ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
             ->innerJoin('t.determination', 'd')
             ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'taxonid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'taxonid');
     }
     
     public function findBestTaxon($occurrenceId) {
@@ -77,7 +77,7 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->where('d.specimen = :occurrenceid')
                 ->setParameter('occurrenceid', $occurrenceId)
                 ->setMaxResults(1)
-                ->orderBy('d.identificationverifstatus', 'DESC') ;
+                ->orderBy('d.identificationverifstatus', 'DESC');
         return $query->getQuery()->getOneOrNullResult();
     }
     
@@ -88,7 +88,7 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->innerJoin('t.determination', 'd')
                 ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCode'))
                 ->setMaxResults(1)
-                ->orderBy('d.identificationverifstatus', 'DESC') ;
+                ->orderBy('d.identificationverifstatus', 'DESC');
         $query->setParameter('specimenCode', $specimenCode);
         return $query->getQuery()->getOneOrNullResult();
     }

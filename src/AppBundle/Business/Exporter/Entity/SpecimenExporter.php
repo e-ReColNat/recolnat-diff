@@ -10,9 +10,9 @@ namespace AppBundle\Business\Exporter\Entity;
 class SpecimenExporter extends AbstractEntityExporter
 {
 
-     public function getExportProperties()
+        public function getExportProperties()
     {
-        $stratigraphyExporter = new StratigraphyExporter() ;
+        $stratigraphyExporter = new StratigraphyExporter();
         return array_merge($this->arrayExportTerm, $stratigraphyExporter->getExportProperties());
     }
     

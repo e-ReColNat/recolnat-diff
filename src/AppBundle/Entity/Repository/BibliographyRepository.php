@@ -1,7 +1,7 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join ;
+use Doctrine\ORM\Query\Expr\Join;
 /**
  * BibliographyRepository
  *
@@ -21,8 +21,8 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
                 ->select('b')
                 ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
                 ->where('b.referenceid IN (\''.implode('\',\'', $ids).'\')')
-                ->getQuery() ;
-        return $query->getResult() ;
+                ->getQuery();
+        return $query->getResult();
     }
     
     public function findOneById($id)
@@ -32,7 +32,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
                 ->where('b.referenceid = :id')
                 ->setParameter('id', $id)
-                ->getQuery() ;
+                ->getQuery();
         return $query->getOneOrNullResult();
     }
     /**
@@ -68,7 +68,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
                 ->join('b.specimen', 's');
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'referenceid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'referenceid');
     }
     
 }

@@ -61,7 +61,7 @@ abstract class DiffAbstract
     public function init($class, $ids)
     {
         $this->class = $class;
-        $this->classFullName = 'AppBundle:' . ucfirst($class);
+        $this->classFullName = 'AppBundle:'.ucfirst($class);
         $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
             ->findBySpecimenCodes($ids);
         $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
@@ -134,8 +134,8 @@ abstract class DiffAbstract
         $filteredRecords = $this->getFilteredRecords();
         // Traitement des enregistrements communs aux deux bases
         foreach ($filteredRecords['common'] as $specimenCode => $item) {
-            foreach($item as $id) {
-                $this->compareFields( $id, $fieldNames, $specimenCode);
+            foreach ($item as $id) {
+                $this->compareFields($id, $fieldNames, $specimenCode);
             }
         }
 
@@ -203,7 +203,7 @@ abstract class DiffAbstract
         $recordInstitution = $this->recordsInstitution[$specimenCode][$idRecord];
         foreach ($fieldNames as $fieldName) {
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
-                $getter = 'get' . $fieldName;
+                $getter = 'get'.$fieldName;
                 $dataR = $recordRecolnat->{$getter}();
                 $dataI = $recordInstitution->{$getter}();
                 if ($dataR !== $dataI) {
@@ -220,13 +220,13 @@ abstract class DiffAbstract
      */
     private function setLonesomeRecord($db, $record, $specimenCode)
     {
-        $id=null;
+        $id = null;
         if (is_array($record)) {
             $id = key($record);
         } elseif (is_object($record)) {
             $id = $record->{$this->getIdSetter()}();
         }
-        if(!is_null($id)) {
+        if (!is_null($id)) {
             $this->lonesomeRecords[$db][] = ['specimenCode' => $specimenCode, 'id' => $id];
         }
     }

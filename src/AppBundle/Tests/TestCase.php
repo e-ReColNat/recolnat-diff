@@ -61,7 +61,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         // Get the metadata of the application to create the schema.
         $metadata = $this->getMetadata();
 
-        if ( ! empty($metadata)) {
+        if (!empty($metadata)) {
             // Create SchemaTool
             $tool = new SchemaTool($this->entityManager);
             $tool->createSchema($metadata);

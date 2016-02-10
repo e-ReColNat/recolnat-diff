@@ -23,7 +23,7 @@ abstract class AbstractEntityExporter
         $fullClassName = explode('\\', get_called_class());
         $fullClassName = end($fullClassName);
         $this->className = str_replace('Exporter', '', $fullClassName);
-        $entityConstructor = '\\AppBundle\\Entity\\' . ucfirst($this->className);
+        $entityConstructor = '\\AppBundle\\Entity\\'.ucfirst($this->className);
         $this->entity = new $entityConstructor;
         $this->setExportTerm();
     }
