@@ -16,12 +16,12 @@ class DwcExporter extends AbstractExporter
     protected $dwc;
     protected $csvFiles;
     public $entitiesName = [
-            'Specimen',     
-            'Bibliography',
-            'Determination',
-            'Recolte',
-            'Multimedia'
-        ];
+        'Specimen',
+        'Bibliography',
+        'Determination',
+        'Recolte',
+        'Multimedia'
+    ];
     protected $formattedDatas = [];
     protected $dwcDelimiter = "\t";
     protected $dwcEnclosure = "\"";
@@ -35,42 +35,42 @@ class DwcExporter extends AbstractExporter
         $emptyStratigraphy = new \AppBundle\Entity\Stratigraphy();
         $arrayEmptyStratigraphy = $emptyStratigraphy->toArray();
         $emptyLocalisation = new \AppBundle\Entity\Localisation();
-        $arrayEmptyLocalisation = $emptyLocalisation->toArray();
-        foreach ($this->datas as $key=>$data) {
+        foreach ($this->datas as $key => $data) {
             $formatDatas[$key] = [];
             $occurrenceid = $data['Specimen']['occurrenceid'];
-             if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
-                 $data['Stratigraphy'] = $arrayEmptyStratigraphy;
-             }
+
+            if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
+                $data['Stratigraphy'] = $arrayEmptyStratigraphy;
+            }
+
             $formatDatas[$key]['Specimen'] = array_merge($data['Specimen'], $data['Stratigraphy']);
-            
-            if (isset($data['Determination']) && count($data['Determination'])>0) {
-                foreach ($data['Determination'] as $key2=>$determination) {
+
+            if (isset($data['Determination']) && count($data['Determination']) > 0) {
+                foreach ($data['Determination'] as $key2 => $determination) {
                     $taxon = $determination['Taxon'];
                     unset($determination['Taxon']);
                     if (is_array($taxon)) {
                         $formatDatas[$key]['Determination'][$key2] = array_merge($determination, $taxon);
-                    }
-                    else {
+                    } else {
                         $formatDatas[$key]['Determination'][$key2] = $determination;
                     }
                 }
             }
-            
-            if (isset($data['Bibliography']) && count($data['Bibliography'])>0) {
-                foreach ($data['Bibliography'] as $key2=>$bibliography) {
-                    $formatDatas[$key]['Bibliography'][$key2] = ['occurrenceid'=>$occurrenceid] + $bibliography;
+
+            if (isset($data['Bibliography']) && count($data['Bibliography']) > 0) {
+                foreach ($data['Bibliography'] as $key2 => $bibliography) {
+                    $formatDatas[$key]['Bibliography'][$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
                 }
             }
-            
-            if (isset($data['Multimedia']) && count($data['Multimedia'])>0) {
-                foreach ($data['Multimedia'] as $key2=>$multimedia) {
-                    $formatDatas[$key]['Multimedia'][$key2] = ['occurrenceid'=>$occurrenceid] + $multimedia;
+
+            if (isset($data['Multimedia']) && count($data['Multimedia']) > 0) {
+                foreach ($data['Multimedia'] as $key2 => $multimedia) {
+                    $formatDatas[$key]['Multimedia'][$key2] = ['occurrenceid' => $occurrenceid] + $multimedia;
                 }
             }
-            
-            if (isset($data['Recolte']) && count($data['Recolte'])>0) {
-                if (isset($data['Localisation']) && count($data['Localisation'])>0) {
+
+            if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
+                if (isset($data['Localisation']) && count($data['Localisation']) > 0) {
                     $formatDatas[$key]['Recolte'] = array_merge($data['Recolte'], $data['Localisation']);
                 }
                 $formatDatas[$key]['Recolte']['occurrenceid'] = $occurrenceid;
@@ -78,8 +78,8 @@ class DwcExporter extends AbstractExporter
         }
         return $formatDatas;
     }
-     
-    public function generate(Prefs $prefs, array $options = []) 
+
+    public function generate(Prefs $prefs, array $options = [])
     {
         $this->setDwcDelimiter($prefs->getDwcDelimiter());
         $this->setDwcEnclosure($prefs->getDwcEnclosure());
@@ -88,16 +88,16 @@ class DwcExporter extends AbstractExporter
         $this->formattedDatas = $this->formatDatas();
         $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath());
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]);
-        
+
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
-        $fileName = $this->getExportDirPath().'/meta.xml';
+        $fileName = $this->getExportDirPath() . '/meta.xml';
         $fileExport->touch($fileName);
         $fileExport->chmod($fileName, 0777);
         file_put_contents($fileName, $this->generateXmlMeta());
-        
+
         return $this->createZipFile();
     }
-    
+
     private function generateXmlMeta()
     {
         $this->dwc = new \DOMDocument('1.0', 'UTF-8');
@@ -112,26 +112,30 @@ class DwcExporter extends AbstractExporter
         return $this->dwc->saveXML($root);
     }
 
-    private function createZipFile() {
+    private function createZipFile()
+    {
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
-        $zipFilePath = $this->getExportDirPath().'/dwc.zip';
+        $zipFilePath = $this->getExportDirPath() . '/dwc.zip';
         $arrayFilesName = [];
-        $arrayFilesName[] = $this->getMetaFilepath().' ';
+        $arrayFilesName[] = $this->getMetaFilepath() . ' ';
         foreach ($this->csvFiles as $csvFile) {
-            $arrayFilesName[] = $csvFile->getPathName().' ';
+            $arrayFilesName[] = $csvFile->getPathName() . ' ';
         }
-        
+
         $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
         exec($zipCommand);
         $fileExport->chmod($zipFilePath, 0777);
-        
+
         return $zipFilePath;
     }
-    private function getMetaFilepath() {
-        return realpath($this->getExportDirPath().'/meta.xml');
+
+    private function getMetaFilepath()
+    {
+        return realpath($this->getExportDirPath() . '/meta.xml');
     }
+
     /**
-     * 
+     *
      * @param \DOMElement $node
      * @param type $rowType
      */
@@ -147,7 +151,7 @@ class DwcExporter extends AbstractExporter
     }
 
     /**
-     * 
+     *
      * @param \DOMElement $coreNode
      * @param string $filename
      */
@@ -160,11 +164,11 @@ class DwcExporter extends AbstractExporter
     }
 
     /**
-     * 
+     *
      * @param \DOMElement $root
      * @param type $extension
      */
-    private function setXmlGenericEntity(\DOMElement&$root, $extension) 
+    private function setXmlGenericEntity(\DOMElement&$root, $extension)
     {
         $entityExporter = $this->getEntityExporter($extension);
         $flagCore = false;
@@ -176,7 +180,7 @@ class DwcExporter extends AbstractExporter
         }
         $this->setCsvParameterNode($coreNode, $entityExporter->getNameSpace());
         $root->appendChild($coreNode);
-        $this->setNodeFile($coreNode, $extension.'.csv');
+        $this->setNodeFile($coreNode, $extension . '.csv');
         $compt = 0;
         $keys = $entityExporter->getKeysEntity();
         foreach ($keys as $key => $fieldName) {
@@ -189,10 +193,11 @@ class DwcExporter extends AbstractExporter
         }
     }
 
-    private function getCoreName() {
+    private function getCoreName()
+    {
         return 'Specimen';
     }
-    
+
     /**
      * @param boolean $flagCore
      */
@@ -207,6 +212,7 @@ class DwcExporter extends AbstractExporter
         $coreNode->appendChild($node);
         $compt++;
     }
+
     private function setFieldNode(\DOMElement&$coreNode, &$compt, $term = '')
     {
         if ($term != '') {
@@ -266,7 +272,7 @@ class DwcExporter extends AbstractExporter
     {
         $this->dwcIgnoreHeaderLines = $dwcIgnoreHeaderLines;
     }
-    
+
     public function getDwcDateFormat()
     {
         $search = ['d', 'm', 'Y', 'H', 'i', 's', '\T'];

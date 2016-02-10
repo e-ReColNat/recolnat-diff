@@ -53,6 +53,11 @@ abstract class DiffAbstract
         $this->emD = $emD;
     }
 
+    /**
+     * @param string $class
+     * @param array $ids
+     * @return $this
+     */
     public function init($class, $ids)
     {
         $this->class = $class;
@@ -65,6 +70,13 @@ abstract class DiffAbstract
         return $this;
     }
 
+    /**
+     * @param string $fieldName
+     * @param string $specimenCode
+     * @param string $id
+     * @param null|array $dataR
+     * @param null|array $dataI
+     */
     protected function addStat($fieldName, $specimenCode, $id, $dataR = null, $dataI = null)
     {
         if (!isset($this->fields)) {
@@ -85,11 +97,17 @@ abstract class DiffAbstract
         $this->fields[$fieldName]++;
     }
 
+    /**
+     * @return array
+     */
     public function getStats()
     {
         return $this->stats;
     }
 
+    /**
+     * @return array
+     */
     public function getFields()
     {
         return $this->fields;
@@ -137,6 +155,9 @@ abstract class DiffAbstract
         }
     }
 
+    /**
+     * @return array
+     */
     private function getFilteredRecords()
     {
         $arrayRecords=['common'=>[], 'recolnat'=>[], 'institution'=>[]];
@@ -145,8 +166,7 @@ abstract class DiffAbstract
                 foreach($item as $id => $record) {
                     if (isset($this->recordsInstitution[$specimenCode][$id])) {
                         $arrayRecords['common'][$specimenCode][]=$id;
-                    }
-                    else {
+                    } else {
                         $arrayRecords['recolnat'][$specimenCode][]=$id;
                     }
                 }
@@ -164,8 +184,7 @@ abstract class DiffAbstract
                         $arrayRecords['institution'][$specimenCode][]=$id;
                     }
                 }
-            }
-            else {
+            } else {
                 foreach($item as $id => $record) {
                     $arrayRecords['institution'][$specimenCode][]=$id;
                 }
@@ -174,10 +193,8 @@ abstract class DiffAbstract
         return $arrayRecords;
     }
     /**
-     * @param $diffRecordsdb2
-     * @param $idRecord
-     * @param $fieldNames
-     * @param $recordDb1
+     * @param string $idRecord
+     * @param string $fieldNames
      * @param $specimenCode
      */
     private function compareFields($idRecord, $fieldNames, $specimenCode)
@@ -197,9 +214,9 @@ abstract class DiffAbstract
     }
 
     /**
-     * @param $db
-     * @param $record
-     * @param $specimenCode
+     * @param string $db
+     * @param mixed $record
+     * @param string $specimenCode
      */
     private function setLonesomeRecord($db, $record, $specimenCode)
     {

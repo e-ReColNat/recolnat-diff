@@ -33,6 +33,12 @@ class GenericEntityManager
     protected $stats = array();
     protected $excludeFieldsName = [];
 
+    /**
+     * GenericEntityManager constructor.
+     * @param EntityManager $emR
+     * @param EntityManager $emI
+     * @param DataCollectorTranslator $translator
+     */
     public function __construct(EntityManager $emR, EntityManager $emI, DataCollectorTranslator $translator)
     {
         $this->emR = $emR;
@@ -40,6 +46,12 @@ class GenericEntityManager
         $this->translator = $translator;
     }
 
+    /**
+     * @param string $base
+     * @param string $className
+     * @param string $id
+     * @return null|object
+     */
     public function getEntity($base, $className, $id)
     {
         $em = $this->emI;
@@ -50,6 +62,12 @@ class GenericEntityManager
         return $entity;
     }
 
+    /**
+     * @param mixed $entity
+     * @return string
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     * @throws \Exception
+     */
     public function getIdentifierName($entity)
     {
         if (!is_object($entity)) {
@@ -65,6 +83,12 @@ class GenericEntityManager
         return $identifier;
     }
 
+    /**
+     * @param mixed $entity
+     * @return mixed
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     * @throws \Exception
+     */
     public function getIdentifierValue($entity)
     {
         if (!is_object($entity)) {
@@ -81,6 +105,12 @@ class GenericEntityManager
         return $entity->{$getter}();
     }
 
+    /**
+     * @param string $base
+     * @param string $className
+     * @param array $specimenCodes
+     * @return mixed
+     */
     public function getEntitiesBySpecimenCodes($base, $className, $specimenCodes)
     {
         $em = $this->emI;
@@ -91,11 +121,20 @@ class GenericEntityManager
         return $entities;
     }
 
+    /**
+     * @param string $classname
+     * @return string
+     */
     public function formatClassName($classname)
     {
         return ucfirst(strtolower($classname));
     }
 
+    /**
+     * @param string $base
+     * @param array $specimenCodes
+     * @return mixed
+     */
     public function getEntitiesLinkedToSpecimens($base, $specimenCodes)
     {
         return $this->getEntitiesBySpecimenCodes($base, 'Specimen', $specimenCodes);
@@ -136,6 +175,14 @@ class GenericEntityManager
         return $formattedSpecimen ;
     }
 
+    /**
+     * @param string $base
+     * @param string $className
+     * @param string $fieldName
+     * @param string $id
+     * @return bool|string
+     * @throws \Exception
+     */
     public function getData($base, $className, $fieldName, $id)
     {
         $fullClassName = $this->getFullClassName($className);
@@ -158,11 +205,22 @@ class GenericEntityManager
         }
     }
 
+    /**
+     * @param string $className
+     * @return string
+     */
     public function getFullClassName($className)
     {
         return '\\AppBundle\\Entity\\' . $this->formatClassName($className);
     }
 
+    /**
+     * @param string $entity
+     * @param string $className
+     * @param string $fieldName
+     * @param string $data
+     * @return mixed
+     */
     public function setData(&$entity, $className, $fieldName, $data)
     {
         $setter = 'set' . $fieldName;
@@ -176,6 +234,9 @@ class GenericEntityManager
         return $entity;
     }
 
+    /**
+     * @return \IntlDateFormatter|\Symfony\Component\Intl\DateFormatter\IntlDateFormatter
+     */
     private function getDateFormatter()
     {
         return \IntlDateFormatter::create(

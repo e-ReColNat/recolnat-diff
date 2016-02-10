@@ -43,6 +43,12 @@ class DiffManager
         'Taxon'
     ];
 
+    /**
+     * DiffManager constructor.
+     * @param ObjectManager $em
+     * @param DiffStatsManager $statsManager
+     * @param string $exportPath
+     */
     public function __construct(ObjectManager $em, DiffStatsManager $statsManager, $exportPath)
     {
         $this->em = $em;
@@ -50,6 +56,11 @@ class DiffManager
         $this->exportPath = $exportPath;
     }
 
+    /**
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @return array
+     */
     public function init($institutionCode, $collectionCode)
     {
         $this->institutionCode = $institutionCode;
@@ -61,11 +72,17 @@ class DiffManager
         return $data;
     }
 
+    /**
+     * @return string
+     */
     public function getFilePath()
     {
         return realpath($this->exportPath) . '/' . $this->institutionCode . '.json';
     }
 
+    /**
+     * @return array
+     */
     private function getAllDiff()
     {
         $results = [];
@@ -75,6 +92,12 @@ class DiffManager
         return $results;
     }
 
+    /**
+     * @param string $fullClassName
+     * @param string $db1
+     * @param string $db2
+     * @return string
+     */
     private function getGenericDiffQuery($fullClassName,$db1,$db2)
     {
         /* @var $metadata \Doctrine\ORM\Mapping\ClassMetadata */
@@ -100,6 +123,10 @@ class DiffManager
         return sprintf($strUnionQuery . $sqlGroupByCount, $identifier, $identifier, $identifier);
     }
 
+    /**
+     * @param string $alias
+     * @return string
+     */
     private function getSpecimenUniqueIdClause($alias)
     {
         return sprintf(' %s.institutioncode||%s.collectioncode||%s.catalognumber as specimenCode ', $alias, $alias,

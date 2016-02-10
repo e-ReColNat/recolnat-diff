@@ -26,6 +26,11 @@ class CsvExporter extends AbstractExporter
         
     }
 
+    /**
+     * @param Prefs $prefs
+     * @param array $options
+     * @return \ArrayObject|string
+     */
     public function generate(Prefs $prefs, array $options = [])
     {
         if (isset($options['dwc']) && $options['dwc'] == true) {
@@ -48,7 +53,7 @@ class CsvExporter extends AbstractExporter
         ];
         foreach ($this->datas as $key => $record) {
             foreach ($record as $className => $datasPerClass) {
-                /* @var $entityExporter AppBundle\Business\Exporter\Entity\AbstractEntityExporter */
+                /* @var $entityExporter \AppBundle\Business\Exporter\Entity\AbstractEntityExporter */
                 if (!isset($entityExporters[$className])) {
                     $entityExporters[$className] = $this->getEntityExporter($className);
                 }
@@ -90,7 +95,11 @@ class CsvExporter extends AbstractExporter
             return $this->createZipFile();
         }
     }
-    
+
+    /**
+     * @param string $zipFilename
+     * @return string
+     */
     private function createZipFile($zipFilename = 'csv.zip') {
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
         $zipFilePath = $this->getExportDirPath().'/'.$zipFilename;

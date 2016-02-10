@@ -1,7 +1,6 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join;
 /**
  * RecolteRepository
  *

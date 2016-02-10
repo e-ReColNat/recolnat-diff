@@ -1,127 +1,128 @@
 <?php
 
 namespace AppBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\SpecimenRepository")
-* @ORM\Table(name="Specimens")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\SpecimenRepository")
+ * @ORM\Table(name="Specimens")
+ */
 class Specimen
 {
-    
-    /** 
+
+    /**
      * @ORM\Id
-     * @ORM\Column(type="rawid") 
+     * @ORM\Column(type="rawid")
      */
     private $occurrenceid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $accessrights;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $associatedmedia;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $associatedreferences;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $associatedtaxa;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $basisofrecord;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=300, nullable=true)
      */
     private $bibliographiccitation;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=30, nullable=false)
      */
     private $catalognumber;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=60, nullable=false)
      */
     private $collectioncode;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $disposition;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=155, nullable=false)
      */
     private $dwcaid;
 
-    /** 
+    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $hascoordinates = '0';
 
-    /** 
+    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $hasmedia = '0';
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=false)
      */
     private $institutioncode;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $lifestage;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $modified;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $occurrenceremarks;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $ownerinstitutioncode;
 
-   /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $recordnumber;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $rights;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $rightsholder;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $sex;
@@ -154,15 +155,16 @@ class Specimen
     private $multimedias;
 
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EXTRA_LAZY")
-    * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
-    */
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EXTRA_LAZY")
+     * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
+     */
     protected $determinations;
 
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EXTRA_LAZY")
-    */
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EXTRA_LAZY")
+     */
     protected $bibliographies;
+
     /**
      * Constructor
      */
@@ -816,35 +818,36 @@ class Specimen
     {
         return $this->multimedias;
     }
+
     /**
-     * 
+     *
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getDeterminations()
     {
         return $this->determinations;
     }
-    
+
     /**
-     * 
+     *
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getBibliographies()
     {
         return $this->bibliographies;
     }
-    
+
     public function getSpecimenCode()
     {
-        return $this->getInstitutioncode().$this->getCollectioncode().$this->getCatalognumber() ;
+        return $this->getInstitutioncode() . $this->getCollectioncode() . $this->getCatalognumber();
     }
-    
+
     public function __toString()
     {
         return $this->catalognumber;
     }
-    
-    public function toArray() 
+
+    public function toArray()
     {
         return [
             'occurrenceid' => $this->getOccurrenceid(),
@@ -867,8 +870,8 @@ class Specimen
             'rights' => $this->getRights(),
             'rightsholder' => $this->getRightsholder(),
             'sex' => $this->getSex(),
-            'geologicalcontextid' => !is_null($this->getStratigraphy()) ? $this->getStratigraphy()->getGeologicalcontextid() : null, 
-            'eventid' => !is_null($this->getRecolte()) ? $this->getRecolte()->getEventid() : null, 
+            'geologicalcontextid' => !is_null($this->getStratigraphy()) ? $this->getStratigraphy()->getGeologicalcontextid() : null,
+            'eventid' => !is_null($this->getRecolte()) ? $this->getRecolte()->getEventid() : null,
         ];
     }
 }

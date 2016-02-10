@@ -97,11 +97,18 @@ class DiffStatsManager
         }
     }
 
+    /**
+     * @return array
+     */
     public function getAllStats() 
     {
         return $this->stats ;
     }
-    
+
+    /**
+     * @param string $className
+     * @param array $fields
+     */
     private function setStatsForClass($className, $fields) 
     {
         $fieldsName = array_keys($fields) ;
@@ -112,6 +119,10 @@ class DiffStatsManager
             $this->stats[$className][$fieldName]++ ;
         }
     }
+
+    /**
+     * @return array
+     */
     public function getDiffs()
     {
         return $this->diffs;
