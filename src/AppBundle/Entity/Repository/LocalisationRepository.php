@@ -1,7 +1,7 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join ;
+use Doctrine\ORM\Query\Expr\Join;
 /**
  * LocalisationRepository
  *
@@ -22,8 +22,8 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
                 ->where('l.locationid IN (:ids)')
                 ->setParameter('ids', $ids)
-                ->getQuery() ;
-        return $query->getResult() ;
+                ->getQuery();
+        return $query->getResult();
     }
     public function findOneById($id)
     {
@@ -32,7 +32,7 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
                 ->where('l.locationid = :id')
                 ->setParameter('id', $id)
-                ->getQuery() ;
+                ->getQuery();
         return $query->getOneOrNullResult();
     }
     /**
@@ -75,6 +75,6 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ;
 
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'locationid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'locationid');
     }
 }

@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use AppBundle\Business\User\Prefs ;
+use AppBundle\Business\User\Prefs;
 
 /**
  * Description of UserPrefs

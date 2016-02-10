@@ -27,7 +27,7 @@ class Prefs
         '2016-01-18' => 'Y-m-d',
         '20160118' => 'Ymd',
         '2016-01-16T15:19:21' => 'Y-m-d\TH:i:s',
-    ] ;
+    ];
     public function getDwcDelimiter()
     {
         return $this->dwcDelimiter;
@@ -125,7 +125,7 @@ class Prefs
      */
     public function load(array $prefs)
     {
-        foreach($prefs as $key=>$value) {
+        foreach ($prefs as $key=>$value) {
             if (method_exists($this, 'set'.$key)) {
                 $this->{'set'.$key}($value);
             }

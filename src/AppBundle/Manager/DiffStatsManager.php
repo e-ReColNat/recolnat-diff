@@ -45,9 +45,9 @@ class DiffStatsManager
     public function init($arrayIds)
     {
         $this->arrayIds = $arrayIds;
-        if (count($this->arrayIds) > 0) {
+        if (count($this->arrayIds)>0) {
             foreach ($this->arrayIds as $class => $specimensCode) {
-                $nameDiffClassManager = '\\AppBundle\\Manager\\Diff' . ucfirst(strtolower($class));
+                $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($class));
                 /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
                 $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
                 $diffClassManager->init($class, $specimensCode);
@@ -57,7 +57,7 @@ class DiffStatsManager
                 unset($diffClassManager);
             }
         }
-        $this->diffs['classes'] = $this->classes ;
+        $this->diffs['classes'] = $this->classes;
         return $this;
     }
 
@@ -66,7 +66,7 @@ class DiffStatsManager
      */
     private function setTaxon($specimenCode) {
         if (!isset($this->diffs['datas'][$specimenCode]['display'])) {
-            $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon') ;
+            $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
             $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
             $this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof \AppBundle\Entity\Taxon ? $taxon->__toString() : '';
         }
@@ -77,10 +77,10 @@ class DiffStatsManager
      */
     private function computeDiffs($className)
     {
-        $this->stats[$className]=[];
+        $this->stats[$className] = [];
         if (isset($this->diffs['classes'][$className])) {
             foreach ($this->diffs['classes'][$className] as $specimenCode => $rows) {
-                $this->setTaxon($specimenCode) ;
+                $this->setTaxon($specimenCode);
                 if (!isset($this->diffs['datas'][$specimenCode])) {
                     $this->diffs['datas'][$specimenCode] = [];
                     $this->diffs['datas'][$specimenCode]['classes'] = [];
@@ -142,14 +142,14 @@ class DiffStatsManager
      */
     public function setLonesomeRecords($class, $lonesomeRecords)
     {
-        $this->lonesomeRecords[$class] = $lonesomeRecords ;
+        $this->lonesomeRecords[$class] = $lonesomeRecords;
     }
 
 
     public function setDiffs($class, $stats)
     {
         $this->diffs['classes'][$class] = $stats;
-        $this->classes[$class] = array_keys($stats) ;
+        $this->classes[$class] = array_keys($stats);
     }
 
     public function getAllSpecimensId()

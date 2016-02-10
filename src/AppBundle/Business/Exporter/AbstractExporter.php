@@ -2,7 +2,7 @@
 
 namespace AppBundle\Business\Exporter;
 
-use AppBundle\Business\User\Prefs ;
+use AppBundle\Business\User\Prefs;
 /**
  * Description of Exporter
  *
@@ -12,7 +12,7 @@ abstract class AbstractExporter
 {
     public $exportPath;
     public $datas;
-    public $entitiesName=[
+    public $entitiesName = [
             'Specimen',     
             'Bibliography',
             'Determination',
@@ -23,7 +23,7 @@ abstract class AbstractExporter
             'Multimedia'
         ];
     
-    public $arrayEntityExport=[];
+    public $arrayEntityExport = [];
     /**
      * 
      * @param array $datas
@@ -70,7 +70,7 @@ abstract class AbstractExporter
         return $value;
     }
     
-    abstract public function generate(Prefs $prefs, array $options=[]);
+    abstract public function generate(Prefs $prefs, array $options = []);
     abstract public function formatDatas();
     
 }

@@ -9,10 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 */
 class Collection
 {
-     /** 
-     * @ORM\Id
-     * @ORM\Column(type="integer") 
-     */
+        /** 
+         * @ORM\Id
+         * @ORM\Column(type="integer") 
+         */
     private $collectionid;
 
     /** 
@@ -31,9 +31,9 @@ class Collection
     private $type;
 
     /**
-    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Institution", inversedBy="collections", fetch="LAZY")
-    * @ORM\JoinColumn(name="institutionid", referencedColumnName="institutionid")
-    */
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Institution", inversedBy="collections", fetch="LAZY")
+     * @ORM\JoinColumn(name="institutionid", referencedColumnName="institutionid")
+     */
     private $institution;
 
     /**

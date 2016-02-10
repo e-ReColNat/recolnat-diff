@@ -10,10 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 */
 class Localisation
 {
-     /** 
-     * @ORM\Id
-     * @ORM\Column(type="integer", length=10) 
-     */
+        /** 
+         * @ORM\Id
+         * @ORM\Column(type="integer", length=10) 
+         */
     private $locationid;
 
     /** 
@@ -122,8 +122,8 @@ class Localisation
     private $verbatimlocality;
     
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Recolte", mappedBy="localisation", fetch="LAZY")
-    */
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Recolte", mappedBy="localisation", fetch="LAZY")
+     */
     private $recoltes;
     
     public function __construct()

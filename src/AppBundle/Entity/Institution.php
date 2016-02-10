@@ -10,10 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 */
 class Institution
 {
-     /** 
-     * @ORM\Id
-     * @ORM\Column(type="integer") 
-     */
+        /** 
+         * @ORM\Id
+         * @ORM\Column(type="integer") 
+         */
     private $institutionid;
 
     /** 
@@ -27,8 +27,8 @@ class Institution
     private $sourcefileid;
 
     /**
-    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Collection", mappedBy="institution", fetch="LAZY")
-    */
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Collection", mappedBy="institution", fetch="LAZY")
+     */
     private $collections;
     /**
      * Get institutionid

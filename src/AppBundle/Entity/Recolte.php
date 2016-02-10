@@ -87,9 +87,9 @@ class Recolte
     private $verbatimeventdate;
 
     /**
-    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localisation", inversedBy="recoltes", fetch="EAGER")
-    * @ORM\JoinColumn(name="locationid", referencedColumnName="locationid")
-    */
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localisation", inversedBy="recoltes", fetch="EAGER")
+     * @ORM\JoinColumn(name="locationid", referencedColumnName="locationid")
+     */
     private $localisation;
 
     /**
@@ -507,6 +507,6 @@ class Recolte
             'syear' => $this->getSyear(),
             'verbatimeventdate' => $this->getVerbatimeventdate(),
             'locationid' => !is_null($this->getLocalisation()) ? $this->getLocalisation()->getLocationid() : null, 
-        ] ;
+        ];
     }
 }

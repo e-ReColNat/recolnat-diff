@@ -201,7 +201,7 @@ class DwcExporter extends AbstractExporter
     /**
      * @param boolean $flagCore
      */
-    private function setIndexNode(\DOMElement &$coreNode, $key, $flagCore, &$compt)
+    private function setIndexNode(\DOMElement&$coreNode, $key, $flagCore, &$compt)
     {
         if ($flagCore) {
             $node = $this->dwc->createElement('id');

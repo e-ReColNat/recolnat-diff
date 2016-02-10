@@ -83,16 +83,16 @@ class FrontController extends Controller
         $stats = $exportManager->getExpandedStats();
         $sumStats = $exportManager->getSumStats();
         $statsLonesomeRecords = $exportManager->getStatsLonesomeRecords();
-        $sortStats = function ($a, $b) {
+        $sortStats = function($a, $b) {
             if ($a['diffs'] == $b['diffs']) {
                 return 0;
             }
-            return ($a['diffs'] > $b['diffs']) ? -1 : 1;
+            return ($a['diffs']>$b['diffs']) ? -1 : 1;
         };
         uasort($stats, $sortStats);
 
         $statsChoices = $exportManager->getStatsChoices();
-        $sumLonesomeRecords=$exportManager->getSumLonesomeRecords();
+        $sumLonesomeRecords = $exportManager->getSumLonesomeRecords();
 
         return $this->render('@App/Front/viewFile.html.twig', array(
             'diffHandler' => $exportManager->getDiffHandler(),
@@ -190,8 +190,7 @@ class FrontController extends Controller
 
         if ($db=='recolnat') {
             $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
-        }
-        else {
+        } else {
             $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
         }
 
@@ -245,14 +244,13 @@ class FrontController extends Controller
     {
         if ($db == 'recolnat') {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findOneBySpecimenCode($specimenCode);
-        }
-        else {
+        } else {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findOneBySpecimenCode($specimenCode);
         }
 
-        $template = 'tab-' . strtolower($type) . '.html.twig';
+        $template = 'tab-'.strtolower($type).'.html.twig';
 
-        return $this->render('@App/Front/partial/specimen/' . $template, array(
+        return $this->render('@App/Front/partial/specimen/'.$template, array(
             'specimen' => $specimen,
             'specimenCode' => $specimenCode,
         ));

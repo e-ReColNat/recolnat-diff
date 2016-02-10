@@ -39,7 +39,7 @@ class ExportExtension extends \Twig_Extension
      */
     public function getCountChoices($choices, $specimenCode, $className)
     {
-        $countChoices = 0 ;
+        $countChoices = 0;
         if (is_array($choices) && count($choices)>0) {
             foreach ($choices as $choice) {
                 if ($choice['specimenCode'] == $specimenCode && $choice['className'] == $className) {

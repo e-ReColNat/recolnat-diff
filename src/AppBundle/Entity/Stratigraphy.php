@@ -96,9 +96,9 @@ class Stratigraphy
      */
     private $member;
     
-     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="stratigraphy")
-     **/
+        /**
+         * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="stratigraphy")
+         **/
     private $specimen;
 
     /**

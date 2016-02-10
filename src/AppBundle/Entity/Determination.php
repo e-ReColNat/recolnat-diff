@@ -9,9 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Determination
 {
     /**
-    * @ORM\Id
-    * @ORM\Column(type="rawid", length=16, name="identificationid", nullable=false)
-    */
+     * @ORM\Id
+     * @ORM\Column(type="rawid", length=16, name="identificationid", nullable=false)
+     */
     private $identificationid;
 
     /** 
@@ -54,9 +54,9 @@ class Determination
      */
     private $identifiedby;
 
-     /** 
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+        /** 
+         * @ORM\Column(type="datetime", nullable=true)
+         */
     private $modified;
 
     /** 
@@ -65,10 +65,10 @@ class Determination
     private $typestatus;
 
     /**
-    * @var \AppBundle\Entity\Specimen
-    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="determinations", fetch="EXTRA_LAZY")
-    * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
-    */
+     * @var \AppBundle\Entity\Specimen
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="determinations", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
+     */
     protected $specimen;
 
     /**
@@ -408,7 +408,7 @@ class Determination
     public function toArray() {
         return [
             'occurrenceid' => $this->getOccurrenceid(), 
-           'identificationid' => $this->getIdentificationid(),
+            'identificationid' => $this->getIdentificationid(),
             'created' => $this->getCreated(),
             'dateidentified' => $this->getDateidentified(),
             'identificationqualifier' => $this->getIdentificationqualifier(),
