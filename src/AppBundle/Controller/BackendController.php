@@ -56,6 +56,7 @@ class BackendController extends Controller
 
     /**
      * @Route("/setmaxitem/{maxItem}", name="setmaxitem", options={"expose"=true})
+     * @return JsonResponse
      */
     public function setMaxItemAction($maxItem)
     {
@@ -92,6 +93,7 @@ class BackendController extends Controller
     /**
      * @Route("/setChoices/{institutionCode}/{collectionCode}", name="setChoices", options={"expose"=true})
      * @param Request $request
+     * @return JsonResponse
      */
     public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
     {
@@ -127,7 +129,7 @@ class BackendController extends Controller
                     $items = $diffs['datas'];
                     break;
                 case 'selectedSpecimens' :
-                    if (!is_null($selectedSpecimens)) {
+                    if (!is_null($selectedSpecimens) && is_array($selectedSpecimens)) {
                         foreach ($selectedSpecimens as $specimenCode) {
                             if (isset($diffs['datas'][$specimenCode])) {
                                 $items[$specimenCode] = $diffs['datas'][$specimenCode];

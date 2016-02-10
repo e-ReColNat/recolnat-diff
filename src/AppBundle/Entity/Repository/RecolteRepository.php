@@ -41,32 +41,32 @@ class RecolteRepository extends RecolnatRepositoryAbstract
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
         $qb = $this->createQueryBuilder('r');
-        
-        $query = $this->getEntityManager()->createQueryBuilder('r')
+
+        $query = $this->getEntityManager()->createQueryBuilder()
                 ->select('r')
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
-                ->where($qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'))
+                ->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
                 ->andWhere('s.recolte = r.eventid')
                 ;
         $query->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
         /**
-         * 
+         *
          * @param array $specimenCodes
          * @return array
          */
     public function findBySpecimenCodes($specimenCodes)
     {
         $qb = $this->createQueryBuilder('r');
-        
-        $query = $this->getEntityManager()->createQueryBuilder('r')
+
+        $query = $this->getEntityManager()->createQueryBuilder()
                 ->select('r')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
+                ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
-                ->where($qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'))
+                ->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
                 ->andWhere('s.recolte = r.eventid')
                 ;
         $query->setParameter('specimenCodes', $specimenCodes);

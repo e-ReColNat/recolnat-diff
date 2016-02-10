@@ -17,7 +17,6 @@ class RawidType extends Type
 
     public function canRequireSQLConversion()
     {
-        //return true;
     }
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -26,8 +25,6 @@ class RawidType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-    //return ($value === null) ? null : base64_encode($value);
-        //return ($value === null) ? null : strtoupper(bin2hex($value));
         return $value;
     }
 

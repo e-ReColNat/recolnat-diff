@@ -18,6 +18,7 @@ class CsvExporter extends AbstractExporter
     protected $csvEnclosure;
     protected $csvLineBreak;
     protected $csvDateFormat;
+    protected $csvIgnoreHeaderLines;
 
     private $fieldsName = [];
     private $acceptedFieldsName = [];
@@ -57,20 +58,15 @@ class CsvExporter extends AbstractExporter
                 if (!isset($entityExporters[$className])) {
                     $entityExporters[$className] = $this->getEntityExporter($className);
                 }
-                $writeHeaders = false;
 
                 // Creation des fichiers
                 if (!isset($filesHandler[$className])) {
                     $this->createFile($className);
                     $filesHandler[$className] = fopen($this->files[$className]->getPathname(), 'w');
-                    $writeHeaders = true;
-                }
 
-                // Ecrit les entêtes en première ligne de csv
-                if ($writeHeaders) {
+                    // Ecrit les entêtes en première ligne de csv
                     $this->fieldsName[$className] = $entityExporters[$className]->getKeysEntity();
                     $this->writeToFile($filesHandler[$className], $this->fieldsName[$className]);
-                    $writeHeaders = false;
                 }
 
                 if (in_array($className, $entitiesNameWithArray)) {
@@ -122,7 +118,7 @@ class CsvExporter extends AbstractExporter
      */
     private function writeToFile($fileHandler, $datas)
     {
-        $line = $this->arrayToCsv($datas, $this->getCsvDelimiter(), $this->getCsvEnclosure(), $this->getCsvLineBreak());
+        $line = $this->arrayToCsv($datas, $this->getCsvDelimiter(), $this->getCsvEnclosure(), true);
         fwrite($fileHandler, $line);
         fwrite($fileHandler, $this->getCsvLineBreak());
     }
@@ -182,6 +178,14 @@ class CsvExporter extends AbstractExporter
      * http://stackoverflow.com/questions/3933668/convert-array-into-csv
      * Formats a line (passed as a fields  array) as CSV and returns the CSV as a string.
      * Adapted from http://us3.php.net/manual/en/function.fputcsv.php#87120
+     */
+    /**
+     * @param array $fields
+     * @param string $delimiter
+     * @param string $enclosure
+     * @param bool $encloseAll
+     * @param bool $nullToMysqlNull
+     * @return string
      */
     private function arrayToCsv(array &$fields, $delimiter = ';', $enclosure = '"', $encloseAll = false, $nullToMysqlNull = false)
     {
@@ -266,6 +270,9 @@ class CsvExporter extends AbstractExporter
         $this->csvDateFormat = stripcslashes($csvDateFormat);
     }
 
+    /**
+     * @param string $csvIgnoreHeaderLines
+     */
     public function setCsvIgnoreHeaderLines($csvIgnoreHeaderLines)
     {
         $this->csvIgnoreHeaderLines = $csvIgnoreHeaderLines;

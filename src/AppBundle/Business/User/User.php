@@ -19,15 +19,17 @@ class User
     /**
      * 
      * @param string $export_path
-     * @return \AppBundle\Business\User\User
      */
     public function __construct($export_path, $maxItemPerPage)
     {
         $this->exportPath = $export_path;
         $this->maxItemPerPage = $maxItemPerPage;
-        return $this;
     }
 
+    /**
+     * @param string $institutionCode
+     * @return $this
+     */
     public function init($institutionCode)
     {
         $this->institutionCode = $institutionCode;
@@ -36,6 +38,9 @@ class User
         return $this;
     }
 
+    /**
+     * @return void
+     */
     private function createDir()
     {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
@@ -44,6 +49,9 @@ class User
         }
     }
 
+    /**
+     * @return Prefs
+     */
     public function getPrefs()
     {
         $this->prefs = new Prefs();
@@ -58,6 +66,9 @@ class User
         return $this->prefs;
     }
 
+    /**
+     * @return void
+     */
     private function createPrefsFile()
     {
         $handle = fopen($this->getPrefsFileName(), "w");
@@ -66,6 +77,9 @@ class User
         chmod($this->getPrefsFileName(), 0755);
     }
 
+    /**
+     * @param Prefs $prefs
+     */
     public function savePrefs(Prefs $prefs)
     {
         $handle = fopen($this->getPrefsFileName(), "w");
@@ -74,18 +88,13 @@ class User
         chmod($this->getPrefsFileName(), 0755);
     }
 
+    /**
+     * @return string
+     */
     public function getPrefsFileName() {
         return $this->getDataDirPath().'prefs.json';
     }
-    public function getPrefsFile() {
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
-        
-        if (!$fs->exists($this->getPrefsFileName())) {
-            $this->createPrefsFile($this->getPrefsFileName());
-        }
-        return $prefsFile;
-        
-    }
+
     /**
      * 
      * @param String $institutionCode
@@ -95,15 +104,4 @@ class User
     {
         return realpath($this->exportPath).'/'.$this->institutionCode.'/';
     }
-
-    /**
-     * 
-     * @param String $institutionCode
-     * @return String
-     */
-    public function getExportDirPath()
-    {
-        return $this->getDataDirPath().$this->filename.'/export/';
-    }
-
 }

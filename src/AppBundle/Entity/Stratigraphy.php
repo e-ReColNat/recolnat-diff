@@ -288,7 +288,7 @@ class Stratigraphy
      */
     public function setGroup($group)
     {
-        $this->group = $group;
+        $this->group_ = $group;
 
         return $this;
     }

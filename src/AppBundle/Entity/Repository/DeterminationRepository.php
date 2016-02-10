@@ -43,34 +43,34 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
         $qb = $this->createQueryBuilder('d');
-        
+
         $query = $qb
                 ->select('d')
                 ->join('d.specimen', 's');
-        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)
     {
         $qb = $this->createQueryBuilder('d');
-        
+
         $query = $qb
                 ->select('d')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
+                ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
                 ->join('d.specimen', 's');
-        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'identificationid') ;
     }
-    
+
     /**
-     * 
+     *
      * @param rawid $occurrenceId
      * @return \AppBundle\Entity\Determination | null
      */
@@ -82,6 +82,6 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
                 ->select('d')
                 ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
         $query->setParameter('occurrenceid', $occurrenceId);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getOneOrNullResult()) ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getOneOrNullResult(), 'identificationid') ;
     }
 }

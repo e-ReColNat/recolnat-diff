@@ -578,7 +578,7 @@ class ExportManager
     private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2 = null)
     {
         $choices = $this->getChoicesForEntity($className, $arrayEntity);
-        if (count($choices) > 0) {
+        if (is_array($choices) && count($choices) > 0) {
             foreach ($choices as $choice) {
                 if (!is_null($key2)) {
                     $datasWithChoices[$key][$className][$key2][$choice['fieldName']] = $choice['data'];
@@ -643,7 +643,6 @@ class ExportManager
             $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
         } else {
             echo $className . ' ' . $this->genericEntityManager->getIdentifierName($className) . "<br/>";
-            die();
         }
 
         if (!is_null($relationId)) {

@@ -94,8 +94,8 @@ class DiffManager
 
     /**
      * @param string $fullClassName
-     * @param string $db1
-     * @param string $db2
+     * @param array $db1
+     * @param array $db2
      * @return string
      */
     private function getGenericDiffQuery($fullClassName,$db1,$db2)
@@ -208,7 +208,8 @@ class DiffManager
     }
 
     /**
-     * @param string
+     * @param string $fullClassName
+     * @param string $alias
      * @param bool $institution
      * @return string
      */
@@ -280,7 +281,7 @@ class DiffManager
         $sqlDiff1 = $this->getGenericDiffQuery($fullClassName, $db1, $db2);
         $sqlDiff2 = $this->getGenericDiffQuery($fullClassName, $db2, $db1);
 
-        $this->em->getConnection()->setFetchMode(\PDO::FETCH_COLUMN, 0);
+        $this->em->getConnection()->setFetchMode(\PDO::FETCH_COLUMN);
         $results1 = $this->em->getConnection()
             ->executeQuery($sqlDiff1,
                 array('institutionCode' => $this->institutionCode, 'collectionCode' => $this->collectionCode))
@@ -349,7 +350,7 @@ class DiffManager
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @param null $length
      * @return \DateTime|mixed|string
      */

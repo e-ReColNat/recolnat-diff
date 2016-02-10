@@ -32,7 +32,12 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
      */
     abstract public function findOneById($id);
 
-    public static function getExprConcatSpecimenCode(\Doctrine\ORM\QueryBuilder $qb, $alias = 's')
+    /**
+     * @param \Doctrine\ORM\QueryBuilder $qb
+     * @param string $alias
+     * @return Expr\Func
+     */
+    public static function getExprConcatSpecimenCode($alias = 's')
     {
         $concatFields = array(
             sprintf('%s.institutioncode', $alias),

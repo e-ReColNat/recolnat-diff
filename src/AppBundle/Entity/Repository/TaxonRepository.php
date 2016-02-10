@@ -42,33 +42,33 @@ class TaxonRepository extends RecolnatRepositoryAbstract
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
         $qb = $this->createQueryBuilder('t');
-        
+
         $query = $qb
             ->select('t')
             ->innerJoin('t.determination', 'd')
-            ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, 
-                    $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+            ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH,
+                    $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)
     {
         $qb = $this->createQueryBuilder('t');
-        
+
         $query = $qb
             ->select('t')
-            ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
+            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->innerJoin('t.determination', 'd')
-            ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'));
+            ->innerJoin('d.specimen', 's', Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'taxonid');
     }
-    
+
     public function findBestTaxon($occurrenceId) {
         $qb = $this->createQueryBuilder('t');
         $query = $qb
@@ -80,13 +80,13 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->orderBy('d.identificationverifstatus', 'DESC');
         return $query->getQuery()->getOneOrNullResult();
     }
-    
+
     public function findBestTaxonsBySpecimenCode($specimenCode) {
         $qb = $this->createQueryBuilder('t');
         $query = $qb
                 ->select('t')
                 ->innerJoin('t.determination', 'd')
-                ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCode'))
+                ->innerJoin('d.specimen', 's', Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCode'))
                 ->setMaxResults(1)
                 ->orderBy('d.identificationverifstatus', 'DESC');
         $query->setParameter('specimenCode', $specimenCode);

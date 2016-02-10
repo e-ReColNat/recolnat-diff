@@ -1,7 +1,6 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join;
 /**
  * LocalisationRepository
  *
@@ -43,12 +42,12 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
         $qb = $this->createQueryBuilder('l');
-        $query = $this->getEntityManager()->createQueryBuilder('l')
+        $query = $this->getEntityManager()->createQueryBuilder()
                 ->select('l')
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
                 ->from('AppBundle\Entity\Localisation', 'l')
-                ->where($qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'))
+                ->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
                 ->andWhere('s.recolte = r.eventid')
                 ->andWhere('r.localisation = l.locationid');
 
@@ -56,20 +55,20 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
         return $query->getQuery()->getResult();
     }
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)
     {
         $qb = $this->createQueryBuilder('l');
-        $query = $this->getEntityManager()->createQueryBuilder('l')
+        $query = $this->getEntityManager()->createQueryBuilder()
                 ->select('l')
-                ->addSelect($this->getExprConcatSpecimenCode($qb).' as specimencode')
+                ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
                 ->from('AppBundle\Entity\Localisation', 'l')
-                ->where($qb->expr()->in($this->getExprConcatSpecimenCode($qb), ':specimenCodes'))
+                ->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
                 ->andWhere('s.recolte = r.eventid')
                 ->andWhere('r.localisation = l.locationid')
                 ;

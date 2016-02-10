@@ -34,7 +34,6 @@ class DwcExporter extends AbstractExporter
         $formatDatas = [];
         $emptyStratigraphy = new \AppBundle\Entity\Stratigraphy();
         $arrayEmptyStratigraphy = $emptyStratigraphy->toArray();
-        $emptyLocalisation = new \AppBundle\Entity\Localisation();
         foreach ($this->datas as $key => $data) {
             $formatDatas[$key] = [];
             $occurrenceid = $data['Specimen']['occurrenceid'];
@@ -45,7 +44,7 @@ class DwcExporter extends AbstractExporter
 
             $formatDatas[$key]['Specimen'] = array_merge($data['Specimen'], $data['Stratigraphy']);
 
-            if (isset($data['Determination']) && count($data['Determination']) > 0) {
+            if (isset($data['Determination']) && count($data['Determination'])>0) {
                 foreach ($data['Determination'] as $key2 => $determination) {
                     $taxon = $determination['Taxon'];
                     unset($determination['Taxon']);
@@ -98,6 +97,9 @@ class DwcExporter extends AbstractExporter
         return $this->createZipFile();
     }
 
+    /**
+     * @return string
+     */
     private function generateXmlMeta()
     {
         $this->dwc = new \DOMDocument('1.0', 'UTF-8');
@@ -112,6 +114,9 @@ class DwcExporter extends AbstractExporter
         return $this->dwc->saveXML($root);
     }
 
+    /**
+     * @return string
+     */
     private function createZipFile()
     {
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
@@ -129,6 +134,9 @@ class DwcExporter extends AbstractExporter
         return $zipFilePath;
     }
 
+    /**
+     * @return string
+     */
     private function getMetaFilepath()
     {
         return realpath($this->getExportDirPath() . '/meta.xml');
@@ -199,7 +207,10 @@ class DwcExporter extends AbstractExporter
     }
 
     /**
-     * @param boolean $flagCore
+     * @param \DOMElement $coreNode
+     * @param string $key
+     * @param $bool flagCore
+     * @param int $compt
      */
     private function setIndexNode(\DOMElement&$coreNode, $key, $flagCore, &$compt)
     {
@@ -213,6 +224,11 @@ class DwcExporter extends AbstractExporter
         $compt++;
     }
 
+    /**
+     * @param \DOMElement $coreNode
+     * @param int $compt
+     * @param string $term
+     */
     private function setFieldNode(\DOMElement&$coreNode, &$compt, $term = '')
     {
         if ($term != '') {

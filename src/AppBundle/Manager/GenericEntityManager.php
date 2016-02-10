@@ -7,10 +7,6 @@ use AppBundle\Entity\Repository\RecolnatRepositoryAbstract;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Intl\Locale;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
  * Description of EntityManager
@@ -215,7 +211,7 @@ class GenericEntityManager
     }
 
     /**
-     * @param string $entity
+     * @param object $entity
      * @param string $className
      * @param string $fieldName
      * @param string $data

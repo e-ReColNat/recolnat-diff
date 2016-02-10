@@ -194,7 +194,7 @@ abstract class DiffAbstract
     }
     /**
      * @param string $idRecord
-     * @param string $fieldNames
+     * @param array $fieldNames
      * @param $specimenCode
      */
     private function compareFields($idRecord, $fieldNames, $specimenCode)
