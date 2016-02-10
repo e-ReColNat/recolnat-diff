@@ -79,25 +79,10 @@ class FrontController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
 
-        $choices = $exportManager->getChoicesForDisplay();
+
         $stats = $exportManager->getExpandedStats();
-        $totalChoices = [];
         $sumStats = $exportManager->getSumStats();
         $statsLonesomeRecords = $exportManager->getStatsLonesomeRecords();
-
-        $callbackCountChoices = function ($value, $className) use (&$totalChoices) {
-            if (is_array($value)) {
-                if (!isset($totalChoices[$className])) {
-                    $totalChoices[$className] = 0;
-                }
-                foreach ($value as $row) {
-                    foreach ($row as $fields) {
-                        $totalChoices[$className] += count($fields);
-                    }
-                }
-            }
-        };
-
         $sortStats = function ($a, $b) {
             if ($a['diffs'] == $b['diffs']) {
                 return 0;
@@ -106,15 +91,8 @@ class FrontController extends Controller
         };
         uasort($stats, $sortStats);
 
-        array_walk($choices, $callbackCountChoices);
-        $totalChoices['sum'] = array_sum($totalChoices);
-
-        $sumLonesomeRecords=['recolnat'=>0, 'institution'=>0];
-        dump($statsLonesomeRecords);
-        foreach ($statsLonesomeRecords as $lonesomeRecords) {
-            $sumLonesomeRecords['recolnat']+=$lonesomeRecords['recolnat'];
-            $sumLonesomeRecords['institution']+=$lonesomeRecords['institution'];
-        }
+        $statsChoices = $exportManager->getStatsChoices();
+        $sumLonesomeRecords=$exportManager->getSumLonesomeRecords();
 
         return $this->render('@App/Front/viewFile.html.twig', array(
             'diffHandler' => $exportManager->getDiffHandler(),
@@ -122,7 +100,7 @@ class FrontController extends Controller
             'collectionCode' => $collectionCode,
             'stats' => $stats,
             'sumStats' => $sumStats,
-            'totalChoices' => $totalChoices,
+            'statsChoices' => $statsChoices,
             'institution' => $institution,
             'statsLonesomeRecords' => $statsLonesomeRecords,
             'sumLonesomeRecords'=>$sumLonesomeRecords,

@@ -203,11 +203,14 @@ abstract class DiffAbstract
      */
     private function setLonesomeRecord($db, $record, $specimenCode)
     {
+        $id=null;
         if (is_array($record)) {
             $id = key($record);
         } elseif (is_object($record)) {
             $id = $record->{$this->getIdSetter()}();
         }
-        $this->lonesomeRecords[$db][] = ['specimenCode' => $specimenCode, 'id' => $id];
+        if(!is_null($id)) {
+            $this->lonesomeRecords[$db][] = ['specimenCode' => $specimenCode, 'id' => $id];
+        }
     }
 }

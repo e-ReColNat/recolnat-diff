@@ -49,7 +49,7 @@ class UserController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             /* @var $translator \Symfony\Bundle\FrameworkBundle\Translation\Translator */
             $translator = $this->get('translator');
-            $message = $translator->trans('prefs.save', [], 'prefs') ;
+            $message = $translator->trans('prefs.saved', [], 'prefs') ;
             $user->savePrefs($prefs) ;
             $this->addFlash('success',$message) ;
             return $this->redirectToRoute('viewPrefsUser', ['institutionCode'=>$institutionCode]) ;

@@ -7,6 +7,8 @@ use AppBundle\Manager\GenericEntityManager;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Business\User\User;
+use AppBundle\Business\Exporter\DwcExporter;
+use AppBundle\Business\Exporter\CsvExporter;
 
 /**
  * Description of ExportManager
@@ -28,12 +30,11 @@ class ExportManager
     protected $diffManager;
     protected $maxItemPerPage;
 
-    /** @var $user AppBundle\Business\User\User */
+    /** @var $user \AppBundle\Business\User\User */
     protected $user;
 
     /** @var \AppBundle\Business\DiffHandler */
     private $diffHandler;
-    private $prefs;
 
     /**
      * 
@@ -41,7 +42,6 @@ class ExportManager
      * @param Session $sessionManager
      * @param GenericEntityManager $genericEntityManager
      * @param \AppBundle\Manager\DiffManager
-     * @return \AppBundle\Manager\ExportManager
      */
     public function __construct($export_path, Session $sessionManager, GenericEntityManager $genericEntityManager, DiffManager $diffManager, $maxItemPerPage)
     {
@@ -50,7 +50,6 @@ class ExportManager
         $this->genericEntityManager = $genericEntityManager;
         $this->diffManager = $diffManager;
         $this->maxItemPerPage = $maxItemPerPage;
-        return $this;
     }
 
     /**
@@ -115,8 +114,6 @@ class ExportManager
         $classesName = [];
         if (!is_null($selectedClassesNames) && is_string($selectedClassesNames) && $selectedClassesNames != 'all') {
             $classesName = [$selectedClassesNames];
-        }
-        if (!empty($classesName)) {
             array_walk($classesName, function (&$className) {
                 $className = ucfirst(strtolower($className));
             });
@@ -207,6 +204,15 @@ class ExportManager
         return $stats;
     }
 
+    public function getSumLonesomeRecords() {
+        $statsLonesomeRecords=$this->getStatsLonesomeRecords();
+        $sumLonesomeRecords=['recolnat'=>0, 'institution'=>0];
+        foreach ($statsLonesomeRecords as $lonesomeRecords) {
+            $sumLonesomeRecords['recolnat']+=$lonesomeRecords['recolnat'];
+            $sumLonesomeRecords['institution']+=$lonesomeRecords['institution'];
+        }
+        return $sumLonesomeRecords;
+    }
     public function getStats()
     {
         return $this->sessionManager->get('stats');
@@ -237,10 +243,10 @@ class ExportManager
             $stats[$className]['diffs'] = array_sum($fields);
             $tempFields = $fields;
             switch ($order) {
-                case 'desc' :
+                case 'desc':
                     arsort($tempFields);
                     break;
-                case 'asc' :
+                case 'asc':
                     asort($tempFields);
                     break;
             }
@@ -287,15 +293,15 @@ class ExportManager
                             // Création d'une clé unique
                             $concatDatas = md5(implode($dataSeparator, [$className, $fieldName, $datas['recolnat'], $datas['institution']])) ;
 
-                            !isset($stats[$concatDatas]) ? $stats[$concatDatas] = [] : false;
-                            !isset($stats[$concatDatas]['taxons']) ? $stats[$concatDatas]['taxons'] = [] : false;
-                            !isset($stats[$concatDatas]['specimensCode']) ? $stats[$concatDatas]['specimensCode'] = [] : false;
+                            if (!isset($stats[$concatDatas])) {
+                                $stats[$concatDatas] = ['taxons'=>[], 'specimensCode'=>[]];
+                            }
+
                             $stats[$concatDatas]['specimensCode'][$specimenCode] = $details['id'];
                             $stats[$concatDatas]['taxons'][$specimenCode] = $taxon;
-
-                            !isset($stats[$concatDatas]['datas']) ? $stats[$concatDatas]['datas'] = $datas : false;
-                            !isset($stats[$concatDatas]['className']) ? $stats[$concatDatas]['className'] = $className : false;
-                            !isset($stats[$concatDatas]['fieldName']) ? $stats[$concatDatas]['fieldName'] = $fieldName : false;
+                            $stats[$concatDatas]['datas'] = $datas;
+                            $stats[$concatDatas]['className'] = $className;
+                            $stats[$concatDatas]['fieldName'] = $fieldName;
                         }
                     }
                 }
@@ -399,7 +405,6 @@ class ExportManager
 
     /**
      * 
-     * @param String $institutionCode
      * @return String
      */
     public function getExportDirPath()
@@ -409,7 +414,6 @@ class ExportManager
 
     /**
      * 
-     * @param String $institutionCode
      * @return String
      */
     public function getChoicesFileName()
@@ -433,7 +437,6 @@ class ExportManager
 
     /**
      * 
-     * @param array $sessionChoices
      * @param array $row
      */
     public function setChoice($row)
@@ -444,7 +447,7 @@ class ExportManager
         }
         $flag = false;
         $row['data'] = $this->genericEntityManager->getData($row['choice'], $row['className'], $row['fieldName'], $row['relationId']);
-        if (count($sessionChoices) > 0) {
+        if (is_array($sessionChoices) && count($sessionChoices) > 0) {
             foreach ($sessionChoices as $key => $choice) {
                 if (
                         $choice['className'] == $row['className'] &&
@@ -464,6 +467,28 @@ class ExportManager
         $this->diffHandler->getChoices()->save($sessionChoices);
     }
 
+    public function getStatsChoices()
+    {
+        $choices = $this->getChoicesForDisplay();
+
+        $statsChoices = [];
+        $callbackCountChoices = function ($value, $className) use (&$statsChoices) {
+            if (is_array($value)) {
+                if (!isset($statsChoices[$className])) {
+                    $statsChoices[$className] = 0;
+                }
+                foreach ($value as $row) {
+                    foreach ($row as $fields) {
+                        $statsChoices[$className] += count($fields);
+                    }
+                }
+            }
+        };
+
+        array_walk($choices, $callbackCountChoices);
+        $statsChoices['sum'] = array_sum($statsChoices);
+        return $statsChoices;
+    }
     /**
      * 
      * @return array
@@ -567,11 +592,10 @@ class ExportManager
     public function getCsv()
     {
         $specimenCodes = $this->sessionManager->get('specimensCode');
-        $genericEntityManager = $this->genericEntityManager;
-        $datas = $genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
+        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
-        $csvExporter = new \AppBundle\Business\Exporter\CsvExporter(
-                $datasWithChoices, $this->getExportDirPath(), $this->genericEntityManager);
+        $csvExporter = new CsvExporter(
+                $datasWithChoices, $this->getExportDirPath());
 
         return $csvExporter->generate($this->user->getPrefs());
     }
@@ -579,12 +603,10 @@ class ExportManager
     public function getDwc()
     {
         $specimenCodes = $this->sessionManager->get('specimensCode');
-        $genericEntityManager = $this->genericEntityManager;
-
-        $datas = $genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
+        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
-        $dwcExporter = new \AppBundle\Business\Exporter\DwcExporter(
-                $datasWithChoices, $this->getExportDirPath(), $this->genericEntityManager);
+        $dwcExporter = new DwcExporter(
+                $datasWithChoices, $this->getExportDirPath());
 
         return $dwcExporter->generate($this->user->getPrefs());
     }

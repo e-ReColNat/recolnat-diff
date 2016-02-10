@@ -50,6 +50,10 @@
                 <source>prefs.csvDateFormat</source>
                 <target>Format de date csv</target>
             </trans-unit>
+            <trans-unit id="13">
+                <source>prefs.saved</source>
+                <target>Les préférences ont été enregistrées</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

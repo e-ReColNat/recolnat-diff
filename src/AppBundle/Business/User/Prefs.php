@@ -120,35 +120,15 @@ class Prefs
         $this->csvDateFormat = $csvDateFormat;
     }
 
+    /**
+     * @param array $prefs
+     */
     public function load(array $prefs)
     {
-        if (isset($prefs['dwcDelimiter'])) {
-            $this->setDwcDelimiter($prefs['dwcDelimiter']);
-        }
-        if (isset($prefs['dwcEnclosure'])) {
-            $this->setDwcEnclosure($prefs['dwcEnclosure']);
-        }
-        if (isset($prefs['dwcLineBreak'])) {
-            $this->setDwcLineBreak($prefs['dwcLineBreak']);
-        }
-        if (isset($prefs['dwcDateFormat'])) {
-            $this->setDwcDateFormat($prefs['dwcDateFormat']);
-        }
-
-        if (isset($prefs['csvDelimiter'])) {
-            $this->setCsvDelimiter($prefs['csvDelimiter']);
-        }
-        if (isset($prefs['csvEnclosure'])) {
-            $this->setCsvEnclosure($prefs['csvEnclosure']);
-        }
-        if (isset($prefs['csvLineBreak'])) {
-            $this->setCsvLineBreak($prefs['csvLineBreak']);
-        }
-        if (isset($prefs['csvLineBreak'])) {
-            $this->setCsvLineBreak($prefs['csvLineBreak']);
-        }
-        if (isset($prefs['csvDateFormat'])) {
-            $this->setCsvDateFormat($prefs['csvDateFormat']);
+        foreach($prefs as $key=>$value) {
+            if (method_exists($this, 'set'.$key)) {
+                $this->{'set'.$key}($value);
+            }
         }
     }
 

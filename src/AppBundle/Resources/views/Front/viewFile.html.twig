@@ -38,7 +38,7 @@
                         </a>
                     </td>
                     <td class="nbTodos">
-                        {% set nbTodos = attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs %}
+                        {% set nbTodos = attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs %}
                         {% if nbTodos > 0 %}
                             <a href="{{ path('todos', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}">
                                 {{ nbTodos }}
@@ -48,7 +48,7 @@
                         {% endif %}
                     </td>
                     <td class="nbChoices">
-                        {% set nbChoices = attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 %}
+                        {% set nbChoices = attribute(statsChoices, className) is defined ? attribute(statsChoices, className) : 0 %}
                         {% if nbChoices > 0 %}
                             <a href="{{ path('choices', {'collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}"
                                title="">
@@ -92,12 +92,12 @@
                 </td>
                 <td>
                     <a href="{{ path('todos', {'collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
-                        {{ sumStats.diffs - totalChoices.sum }}
+                        {{ sumStats.diffs - statsChoices.sum }}
                     </a>
                 </td>
                 <td>
                     <a href="{{ path('choices', {'collectionCode':collectionCode,'institutionCode':institutionCode}) }}">
-                        {{ totalChoices.sum }}
+                        {{ statsChoices.sum }}
                     </a>
                 </td>
                 <td>
@@ -153,8 +153,8 @@
                 name: '{{ className|lower }}',
                 specimens: {{ detailedStats.specimens }},
                 differences: {{ detailedStats.diffs }},
-                todos: {{ attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs }},
-                choices: {{ attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 }},
+                todos: {{ attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs }},
+                choices: {{ attribute(statsChoices, className) is defined ? attribute(statsChoices, className) : 0 }},
                 excluRecolnat: {{ attribute(statsLonesomeRecords, className)['recolnat'] }},
                 excluInstitution: {{ attribute(statsLonesomeRecords, className)['institution'] }}
             }
