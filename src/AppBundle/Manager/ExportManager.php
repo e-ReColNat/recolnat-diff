@@ -467,6 +467,9 @@ class ExportManager
         $this->diffHandler->getChoices()->save($sessionChoices);
     }
 
+    /**
+     * @return array
+     */
     public function getStatsChoices()
     {
         $choices = $this->getChoicesForDisplay();
@@ -501,6 +504,9 @@ class ExportManager
         return [];
     }
 
+    /**
+     * @return array
+     */
     public function getChoicesForDisplay()
     {
         $choices = $this->getChoices();
@@ -519,6 +525,9 @@ class ExportManager
         return $returnChoices;
     }
 
+    /**
+     * @return array
+     */
     public function getChoicesBySpecimenCode()
     {
         $choices = $this->getChoices();
@@ -540,6 +549,10 @@ class ExportManager
         $this->diffHandler->getChoices()->save($this->getChoices());
     }
 
+    /**
+     * @param array $datas
+     * @return array
+     */
     private function getArrayDatasWithChoices($datas)
     {
         $genericEntityManager = $this->genericEntityManager;
@@ -575,6 +588,13 @@ class ExportManager
         return $datasWithChoices;
     }
 
+    /**
+     * @param array $datasWithChoices
+     * @param $string $key
+     * @param $string $className
+     * @param array $arrayEntity
+     * @param null|$string $key2
+     */
     private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2 = null)
     {
         $choices = $this->getChoicesForEntity($className, $arrayEntity);
@@ -589,6 +609,9 @@ class ExportManager
         }
     }
 
+    /**
+     * @return \ArrayObject|string
+     */
     public function getCsv()
     {
         $specimenCodes = $this->sessionManager->get('specimensCode');
@@ -600,6 +623,9 @@ class ExportManager
         return $csvExporter->generate($this->user->getPrefs());
     }
 
+    /**
+     * @return string
+     */
     public function getDwc()
     {
         $specimenCodes = $this->sessionManager->get('specimensCode');
