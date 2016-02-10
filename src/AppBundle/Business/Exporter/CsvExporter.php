@@ -2,7 +2,7 @@
 
 namespace AppBundle\Business\Exporter;
 
-use AppBundle\Business\User\Prefs ;
+use AppBundle\Business\User\Prefs;
 
 /**
  * Description of CsvExporter
@@ -19,29 +19,28 @@ class CsvExporter extends AbstractExporter
     protected $csvLineBreak;
     protected $csvDateFormat;
 
-    private $fieldsName=[] ;
+    private $fieldsName = [];
     private $acceptedFieldsName = [];
     public function formatDatas()
     {
         
     }
 
-    public function generate(Prefs $prefs, array $options=[])
+    public function generate(Prefs $prefs, array $options = [])
     {
         if (isset($options['dwc']) && $options['dwc'] == true) {
             $this->setCsvDelimiter($prefs->getDwcDelimiter());
             $this->setCsvEnclosure($prefs->getDwcEnclosure());
             $this->setCsvLineBreak($prefs->getDwcLineBreak());
             $this->setCsvDateFormat($prefs->getDwcDateFormat());
-        }
-        else {
+        } else {
             $this->setCsvDelimiter($prefs->getCsvDelimiter());
             $this->setCsvEnclosure($prefs->getCsvEnclosure());
             $this->setCsvLineBreak($prefs->getCsvLineBreak());
             $this->setCsvDateFormat($prefs->getCsvDateFormat());
         }
         $filesHandler = [];
-        $entityExporters = [] ;
+        $entityExporters = [];
         $entitiesNameWithArray = [
             'Determination',
             'Multimedia',
@@ -87,24 +86,23 @@ class CsvExporter extends AbstractExporter
         }
         if (isset($options['dwc']) && $options['dwc'] == true) {
             return $this->getFiles();
-        }
-        else {
+        } else {
             return $this->createZipFile();
         }
     }
     
     private function createZipFile($zipFilename = 'csv.zip') {
-        $fileExport = new \Symfony\Component\Filesystem\Filesystem() ;
-        $zipFilePath = $this->getExportDirPath().'/'.$zipFilename ;
-        $arrayFilesName=[];
+        $fileExport = new \Symfony\Component\Filesystem\Filesystem();
+        $zipFilePath = $this->getExportDirPath().'/'.$zipFilename;
+        $arrayFilesName = [];
         foreach ($this->getFiles() as $csvFile) {
-            $arrayFilesName[]=$csvFile->getPathName();
+            $arrayFilesName[] = $csvFile->getPathName();
         }
-        $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName)) ;
-        exec($zipCommand) ;
+        $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
+        exec($zipCommand);
         $fileExport->chmod($zipFilePath, 0777);
         
-        return $zipFilePath ;
+        return $zipFilePath;
     }
 
 
@@ -112,7 +110,6 @@ class CsvExporter extends AbstractExporter
      * Ecrit une ligne dans le fichier et ajoute un retour à la ligne
      * @param resource $fileHandler
      * @param array $datas
-     * @param string $lineBreak
      */
     private function writeToFile($fileHandler, $datas)
     {
@@ -129,7 +126,7 @@ class CsvExporter extends AbstractExporter
     private function createFile($className, $extension = 'csv')
     {
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
-        $fileName = $this->exportPath . '/' . strtolower($className) . '.' . $extension;
+        $fileName = $this->exportPath.'/'.strtolower($className).'.'.$extension;
         $fileExport->touch($fileName);
         $fileExport->chmod($fileName, 0777);
         $this->files[$className] = new \SplFileObject($fileName);
@@ -150,7 +147,7 @@ class CsvExporter extends AbstractExporter
     public function filterDatas($datas, $entityExporter, $className)
     {
         $filteredDatas = [];
-        if (count($datas) > 0) {
+        if (count($datas)>0) {
             if (!isset($this->acceptedFieldsName[$className])) {
                 foreach ($this->fieldsName[$className] as $fieldName) {
                     if ($entityExporter->exportToCsv($fieldName)) {
@@ -159,10 +156,10 @@ class CsvExporter extends AbstractExporter
                 }
             }
 
-            if (count($this->acceptedFieldsName[$className]) > 0) {
+            if (count($this->acceptedFieldsName[$className])>0) {
                 foreach ($this->acceptedFieldsName[$className] as $acceptedFieldName) {
                     if (isset($datas[$acceptedFieldName])) {
-                        $filteredDatas[$acceptedFieldName] = $datas[$acceptedFieldName] ;
+                        $filteredDatas[$acceptedFieldName] = $datas[$acceptedFieldName];
                     }
                     else {
                         $filteredDatas[$acceptedFieldName] = null;
@@ -191,10 +188,10 @@ class CsvExporter extends AbstractExporter
 
             // Enclose fields containing $delimiter, $enclosure or whitespace
             if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc})/", $field)) {
-                $output[] = $enclosure . str_replace(
-                        $enclosure, $enclosure . $enclosure, 
+                $output[] = $enclosure.str_replace(
+                        $enclosure, $enclosure.$enclosure, 
                         $this->convertField($field, $this->getCsvDateFormat())
-                        ) . $enclosure;
+                        ).$enclosure;
             } else {
                 $output[] = $field;
             }
@@ -228,21 +225,33 @@ class CsvExporter extends AbstractExporter
         return $this->csvIgnoreHeaderLines;
     }
 
+    /**
+     * @param string $csvDelimiter
+     */
     public function setCsvDelimiter($csvDelimiter)
     {
         $this->csvDelimiter = stripcslashes($csvDelimiter);
     }
 
+    /**
+     * @param string $csvEnclosure
+     */
     public function setCsvEnclosure($csvEnclosure)
     {
         $this->csvEnclosure = stripcslashes($csvEnclosure);
     }
 
+    /**
+     * @param string $csvLineBreak
+     */
     public function setCsvLineBreak($csvLineBreak)
     {
         $this->csvLineBreak = stripcslashes($csvLineBreak);
     }
 
+    /**
+     * @param string $csvDateFormat
+     */
     public function setCsvDateFormat($csvDateFormat)
     {
         $this->csvDateFormat = stripcslashes($csvDateFormat);

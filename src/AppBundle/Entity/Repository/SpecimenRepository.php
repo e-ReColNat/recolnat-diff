@@ -1,7 +1,6 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\From;
 /**
  * SpecimenRepository
  *
@@ -21,8 +20,8 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->select('s')
                 ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
                 ->where('s.occurrenceid IN (\''.implode('\',\'', $ids).'\')')
-                ->getQuery() ;
-        return $query->getResult() ;
+                ->getQuery();
+        return $query->getResult();
     }
     public function findOneById($id)
     {
@@ -31,7 +30,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
                 ->where('s.occurrenceid = :id')
                 ->setParameter('id', $id)
-                ->getQuery() ;
+                ->getQuery();
         return $query->getOneOrNullResult();
     }
     public function findOneBySpecimenCode($specimenCode)
@@ -115,7 +114,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         $qb->setParameter('specimenCodes', $specimenCodes);
         $query = $qb->getQuery();
         $query->useResultCache('cache_key', 300);
-        return $this->orderResultSetBySpecimenCode($query->getResult(), 'occurrenceid') ;
+        return $this->orderResultSetBySpecimenCode($query->getResult(), 'occurrenceid');
     }
 
     /**

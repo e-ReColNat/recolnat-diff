@@ -1,7 +1,7 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join ;
+use Doctrine\ORM\Query\Expr\Join;
 /**
  * RecolteRepository
  *
@@ -21,8 +21,8 @@ class RecolteRepository extends RecolnatRepositoryAbstract
                 ->select('r')
                 ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
                 ->where('r.eventid IN (\''.implode('\',\'', $ids).'\')')
-                ->getQuery() ;
-        return $query->getResult() ;
+                ->getQuery();
+        return $query->getResult();
     }
     public function findOneById($id)
     {
@@ -31,14 +31,14 @@ class RecolteRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
                 ->where('r.eventid = :id')
                 ->setParameter('id', $id)
-                ->getQuery() ;
+                ->getQuery();
         return $query->getOneOrNullResult();
     }
-     /**
-     * 
-     * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
-     */
+        /**
+         * 
+         * @param array $specimenCodes
+         * @return \Doctrine\Common\Collections\Collection
+         */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
         $qb = $this->createQueryBuilder('r');
@@ -53,11 +53,11 @@ class RecolteRepository extends RecolnatRepositoryAbstract
         $query->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
-     /**
-     * 
-     * @param array $specimenCodes
-     * @return array
-     */
+        /**
+         * 
+         * @param array $specimenCodes
+         * @return array
+         */
     public function findBySpecimenCodes($specimenCodes)
     {
         $qb = $this->createQueryBuilder('r');
@@ -71,6 +71,6 @@ class RecolteRepository extends RecolnatRepositoryAbstract
                 ->andWhere('s.recolte = r.eventid')
                 ;
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'eventid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'eventid');
     }
 }

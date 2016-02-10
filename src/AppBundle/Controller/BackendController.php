@@ -48,7 +48,7 @@ class BackendController extends Controller
             $path = urldecode($path);
             $response->setContent(file_get_contents($path));
             $response->headers->set('Content-Type', 'application/zip');
-            $response->headers->set('Content-Disposition', 'attachment; collectionCode="' . basename($path) . '"');
+            $response->headers->set('Content-Disposition', 'attachment; collectionCode="'.basename($path).'"');
         }
 
         return $response;
@@ -136,7 +136,7 @@ class BackendController extends Controller
                     }
                     break;
             }
-            if (count($items) > 0) {
+            if (count($items)>0) {
                 foreach ($items as $specimenCode => $row) {
                     foreach ($row['classes'] as $className => $data) {
                         $rowClass = $diffs['datas'][$specimenCode]['classes'][$className];
@@ -183,7 +183,6 @@ class BackendController extends Controller
 
     /**
      * @Route("/deleteChoices/{institutionCode}/{collectionCode}", name="deleteChoices", options={"expose"=true})
-     * @param Request $request
      */
     public function deleteChoicesAction($institutionCode, $collectionCode)
     {
@@ -200,7 +199,6 @@ class BackendController extends Controller
 
     /**
      * @Route("/deleteDiffs/{institutionCode}/{collectionCode}", name="deleteDiffs", options={"expose"=true})
-     * @param Request $request
      */
     public function deleteDiffsAction($institutionCode, $collectionCode)
     {

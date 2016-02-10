@@ -75,7 +75,7 @@ class User
     }
 
     public function getPrefsFileName() {
-        return $this->getDataDirPath() . 'prefs.json';
+        return $this->getDataDirPath().'prefs.json';
     }
     public function getPrefsFile() {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
@@ -83,7 +83,7 @@ class User
         if (!$fs->exists($this->getPrefsFileName())) {
             $this->createPrefsFile($this->getPrefsFileName());
         }
-        return $prefsFile ;
+        return $prefsFile;
         
     }
     /**
@@ -93,7 +93,7 @@ class User
      */
     public function getDataDirPath()
     {
-        return realpath($this->exportPath) . '/' . $this->institutionCode . '/';
+        return realpath($this->exportPath).'/'.$this->institutionCode.'/';
     }
 
     /**
@@ -103,7 +103,7 @@ class User
      */
     public function getExportDirPath()
     {
-        return $this->getDataDirPath() . $this->filename . '/export/';
+        return $this->getDataDirPath().$this->filename.'/export/';
     }
 
 }

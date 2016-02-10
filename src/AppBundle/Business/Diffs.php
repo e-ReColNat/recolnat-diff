@@ -10,6 +10,10 @@ namespace AppBundle\Business;
 class Diffs extends \SplFileObject
 {
     public $generateDiff ;
+
+    /**
+     * @param string $dirPath
+     */
     public function __construct($dirPath)
     {
         $this->generateDiff=false;
@@ -34,11 +38,11 @@ class Diffs extends \SplFileObject
     public function getData() {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         if ($fs->exists($this->getPathname())) {
-            $fileContent=json_decode(file_get_contents($this->getPathname()),true);
-            return $fileContent ;
+            $fileContent = json_decode(file_get_contents($this->getPathname()), true);
+            return $fileContent;
         }
         return array(
-            ) ;
+            );
     }
     /**
      * renvoie les résultats dont au moins une différence fait partie de $classesName
@@ -46,32 +50,32 @@ class Diffs extends \SplFileObject
      * @param array $classesName
      * @return array
      */
-    public function filterByClassesName($diffs, array $classesName=[]) {
-        $returnDiffs=$diffs;
+    public function filterByClassesName($diffs, array $classesName = []) {
+        $returnDiffs = $diffs;
         if (count($classesName)>0) {
-            $returnDiffs['classes']=[] ;
+            $returnDiffs['classes'] = [];
             $returnDiffs['datas'] = [];
             foreach ($classesName as $className) {
                 $className = ucfirst(strtolower($className));
                 if (isset($diffs['classes'][$className])) {
-                    $returnDiffs['classes'][$className] = $diffs['classes'][$className] ;
+                    $returnDiffs['classes'][$className] = $diffs['classes'][$className];
                 }
             }
             foreach ($returnDiffs['classes'] as $className => $specimensCode) {
                 foreach ($specimensCode as $specimenCode) {
                     if (isset($diffs['datas'][$specimenCode])) {
-                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
+                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode];
                         // Rajout dans les classes si un specimen a des modifications dans des classes non sélectionnées
                         foreach (array_keys($returnDiffs['datas'][$specimenCode]['classes']) as $className) {
                             if (!isset($returnDiffs['classes'][$className][$specimenCode])) {
-                                $returnDiffs['classes'][$className][] = $specimenCode ;
+                                $returnDiffs['classes'][$className][] = $specimenCode;
                             }
                         }
                     }
                 }
             }
         }
-        return $returnDiffs ;
+        return $returnDiffs;
     }
     
     /**
@@ -80,16 +84,16 @@ class Diffs extends \SplFileObject
      * @param array $selectedSpecimensCode
      * @return array
      */
-    public function filterBySpecimensCode($diffs,array $selectedSpecimensCode=[]) {
-        $returnDiffs=$diffs;
+    public function filterBySpecimensCode($diffs, array $selectedSpecimensCode = []) {
+        $returnDiffs = $diffs;
         if (count($selectedSpecimensCode)>0) {
             // Remise du datas à zero
-            $returnDiffs['datas']=[];
-            $returnDiffs['classes']=$diffs['classes'];
+            $returnDiffs['datas'] = [];
+            $returnDiffs['classes'] = $diffs['classes'];
             foreach ($diffs['classes'] as $className => $specimensCode) {
                 foreach ($specimensCode as $specimenCode) {
                     if (in_array($specimenCode, $selectedSpecimensCode)) {
-                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode] ;
+                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode];
                     }
                     else {
                         unset($returnDiffs['classes'][$className][$specimenCode]);
@@ -106,16 +110,16 @@ class Diffs extends \SplFileObject
      * @param array $choicesToRemove
      * @return array
      */
-    public function filterByChoicesDone($diffs, array $choicesToRemove=[]) {
-        $returnDiffs=$diffs;
-        if (count($choicesToRemove) >0) {
-            $tempChoices=[] ;
+    public function filterByChoicesDone($diffs, array $choicesToRemove = []) {
+        $returnDiffs = $diffs;
+        if (count($choicesToRemove)>0) {
+            $tempChoices = [];
             foreach ($choicesToRemove as $choice) {
                 if (!isset($tempChoices[$choice['className']])) {
-                    $tempChoices[$choice['className']]=[];
+                    $tempChoices[$choice['className']] = [];
                 }
                 if (!isset($tempChoices[$choice['className']][$choice['specimenCode']])) {
-                    $tempChoices[$choice['className']][$choice['specimenCode']]=0;
+                    $tempChoices[$choice['className']][$choice['specimenCode']] = 0;
                 }
                 $tempChoices[$choice['className']][$choice['specimenCode']]++;
             }
@@ -124,10 +128,10 @@ class Diffs extends \SplFileObject
                     if (isset($returnDiffs['classes'][$className]) && in_array($specimenCode, $returnDiffs['classes'][$className])) {
                         $totalDiffFields = count($returnDiffs['datas'][$specimenCode]['classes'][$className]['fields']);
                         if ($totalDiffFields == $comptFieldChoice) {
-                            if(($key = array_search($specimenCode, $returnDiffs['classes'][$className])) !== false) {
+                            if (($key = array_search($specimenCode, $returnDiffs['classes'][$className])) !== false) {
                                 unset($returnDiffs['classes'][$className][$key]);
                             }
-                            unset($returnDiffs['datas'][$specimenCode]['classes'][$className]) ;
+                            unset($returnDiffs['datas'][$specimenCode]['classes'][$className]);
                             if (isset($returnDiffs['datas'][$specimenCode]) && count($returnDiffs['datas'][$specimenCode]['classes']) == 0) {
                                 unset($returnDiffs['datas'][$specimenCode]);
                             }
@@ -136,7 +140,7 @@ class Diffs extends \SplFileObject
                 }
             }
         }
-        return $returnDiffs ;
+        return $returnDiffs;
     }
     
     /**
@@ -147,8 +151,8 @@ class Diffs extends \SplFileObject
      * @param array $choicesToRemove
      * @return array
      */
-    public function filterResults($diffs, array $classesName=[], array $selectedSpecimensCode=[], array $choicesToRemove=[]) {
-        $returnDiffs = $this->filterByClassesName($diffs, $classesName) ;
+    public function filterResults($diffs, array $classesName = [], array $selectedSpecimensCode = [], array $choicesToRemove = []) {
+        $returnDiffs = $this->filterByClassesName($diffs, $classesName);
         $returnDiffs = $this->filterBySpecimensCode($returnDiffs, $selectedSpecimensCode);
         $returnDiffs = $this->filterByChoicesDone($returnDiffs, $choicesToRemove);
         return $returnDiffs;
@@ -159,6 +163,6 @@ class Diffs extends \SplFileObject
     {
         parent::__construct($this->getPathname(), 'w+');
         parent::__construct($this->getPathname(), 'c+');
-        $this->generateDiff=true;
+        $this->generateDiff = true;
     }
 }
