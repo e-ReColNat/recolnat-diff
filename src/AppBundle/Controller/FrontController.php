@@ -31,7 +31,7 @@ class FrontController extends Controller
         /* @var $institution \AppBundle\Entity\Institution */
         $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
             ->findOneBy(['institutioncode' => $institutionCode]);
-        return $this->render('default/index.html.twig', array(
+        return $this->render('@App/Front/index.html.twig', array(
             'institutionCode' => $institutionCode,
             'files' => $files,
             'institution' => $institution,
@@ -56,7 +56,7 @@ class FrontController extends Controller
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $statsBySimilarity = $exportManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $exportManager->getSumStats();
-        return $this->render('default/stats.html.twig', array(
+        return $this->render('@App/Front/stats.html.twig', array(
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
             'stats' => $statsBySimilarity,
@@ -116,7 +116,7 @@ class FrontController extends Controller
             $sumLonesomeRecords['institution']+=$lonesomeRecords['institution'];
         }
 
-        return $this->render('default/viewFile.html.twig', array(
+        return $this->render('@App/Front/viewFile.html.twig', array(
             'diffHandler' => $exportManager->getDiffHandler(),
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
@@ -170,7 +170,7 @@ class FrontController extends Controller
         $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
 
-        return $this->render('default/viewDiffs.html.twig', array(
+        return $this->render('@App/Front/viewDiffs.html.twig', array(
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
             'diffs' => $diffs,
@@ -217,7 +217,7 @@ class FrontController extends Controller
             $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
         }
 
-        return $this->render('default/viewLonesome.html.twig', array(
+        return $this->render('@App/Front/viewLonesome.html.twig', array(
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
             'specimens' => $specimens,
@@ -246,7 +246,7 @@ class FrontController extends Controller
         $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
 
-        return $this->render('default/viewSpecimens.html.twig', array(
+        return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
             'diffs' => $diffs,
@@ -274,7 +274,7 @@ class FrontController extends Controller
 
         $template = 'tab-' . strtolower($type) . '.html.twig';
 
-        return $this->render('default/partial/specimen/' . $template, array(
+        return $this->render('@App/Front/partial/specimen/' . $template, array(
             'specimen' => $specimen,
             'specimenCode' => $specimenCode,
         ));

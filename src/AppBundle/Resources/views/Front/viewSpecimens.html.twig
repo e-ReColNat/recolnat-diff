@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '@App/base.html.twig' %}
 
 {% block body %}
     {% set datas = diffs.datas %}
@@ -6,23 +6,23 @@
         <div id="wrapper" class="toggled">
 
             <div id="sidebar-wrapper" >
-                {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : specimensCode | length, 'currentPage' : 1, 'choices':choicesFacets} %}
+                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : specimensCode | length, 'currentPage' : 1, 'choices':choicesFacets} %}
             </div>
             <div id="page-content-wrapper">
-                {% include 'default/partial/buttonHamburger.html.twig' %}
-                {% include 'default/partial/breadcrumb.html.twig' %}
+                {% include '@App/Front/partial/buttonHamburger.html.twig' %}
+                {% include '@App/Front/partial/breadcrumb.html.twig' %}
                 <div  id="diffs" data-collectionCode="{{collectionCode}}" data-institutioncode="{{institutionCode}}" data-selectedclassname="{{selectedClassName is defined ? selectedClassName : ''}}">
 
 
-                    {% include 'default/partial/filters.html.twig' with { 'currentPage':1} %}
+                    {% include '@App/Front/partial/filters.html.twig' with { 'currentPage':1} %}
                     {% for specimenCode, classWithDiff in datas %}
-                        {% include 'default/partial/specimen/fullSpecimen.html.twig' %}
+                        {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' %}
                     {% endfor %}
                 {% endif %}
             </div>
         </div>
     </div>
-    {% include 'default/partial/smallModal.html.twig' %}
+    {% include '@App/Front/partial/smallModal.html.twig' %}
 {% endblock %}
 
 {% block javascripts %}

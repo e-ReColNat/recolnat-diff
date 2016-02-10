@@ -6,6 +6,6 @@
         <span class="label label-primary {{ item.className|lower }}">
             {{ ('label.'~item.className|lower) | transchoice(loop.length, {}, 'entity')}} - {{ db }}</span>
     {% endif %}
-    {% set templatePath = 'default/partial/specimen/tab-' ~ item.className|lower ~ '.html.twig' %}
+    {% set templatePath = '@App/Front/partial/specimen/tab-' ~ item.className|lower ~ '.html.twig' %}
     {% include templatePath with {'specimenCode':specimenCode,'id':item.id} %}
 {% endfor %}

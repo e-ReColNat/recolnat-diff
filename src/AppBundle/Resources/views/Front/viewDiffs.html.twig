@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '@App/base.html.twig' %}
 
 {% block body %}
     {% set datas = pagination.items %}
@@ -6,12 +6,12 @@
         <div id="wrapper" class="toggled">
 
             <div id="sidebar-wrapper">
-                {% include 'default/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
+                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
             </div>
 
             <div id="page-content-wrapper">
-                {% include 'default/partial/buttonHamburger.html.twig' %}
-                {% include 'default/partial/breadcrumb.html.twig' %}
+                {% include '@App/Front/partial/buttonHamburger.html.twig' %}
+                {% include '@App/Front/partial/breadcrumb.html.twig' %}
 
                 <div class="text-center">
                     <div style="display: inline-block; vertical-align: middle;">
@@ -30,9 +30,9 @@
                 </div>
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
-                    {% include 'default/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
+                    {% include '@App/Front/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
                     {% for specimenCode, classWithDiff in datas %}
-                        {% include 'default/partial/specimen/fullSpecimen.html.twig' %}
+                        {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' %}
                     {% endfor %}
 
                     <div class="text-center">
@@ -44,7 +44,7 @@
             </div>
         </div>
     {% endif %}
-    {% include 'default/partial/smallModal.html.twig' %}
+    {% include '@App/Front/partial/smallModal.html.twig' %}
 {% endblock %}
 
 {% block javascripts %}

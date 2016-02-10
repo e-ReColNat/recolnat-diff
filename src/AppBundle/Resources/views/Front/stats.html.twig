@@ -1,7 +1,7 @@
-{% extends 'base.html.twig' %}
+{% extends '@App/base.html.twig' %}
 
 {% block body %}
-    {% include 'default/partial/breadcrumb.html.twig' %}
+    {% include '@App/Front/partial/breadcrumb.html.twig' %}
      <h1 class="page-header">{{'stats.details' | trans }}</h1>
 
     {% if stats is not empty %}

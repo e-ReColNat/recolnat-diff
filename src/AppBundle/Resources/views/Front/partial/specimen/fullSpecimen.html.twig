@@ -4,9 +4,9 @@
         {% set specimenRecolnat = attribute(specimensRecolnat, specimenCode) | first %}
         {% set specimenInstitution = attribute(specimensInstitution, specimenCode) | first %}
 
-        {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
+        {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
     {% else %}
-        {% include 'default/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
+        {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
     {%  endif %}
 
     {% if db is not defined %}
@@ -65,9 +65,9 @@
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade in active diffs" id="{{loop.index}}-diffs">
             {% if app.request.attributes.get('_route') != 'lonesomes' %}
-                {% include 'default/partial/specimen/short_diff_specimen.html.twig' %}
+                {% include '@App/Front/partial/specimen/short_diff_specimen.html.twig' %}
             {% else %}
-                {% include 'default/partial/specimen/short_lonesomes_specimen.html.twig' %}
+                {% include '@App/Front/partial/specimen/short_lonesomes_specimen.html.twig' %}
             {% endif %}
         </div>
         <div role="tabpanel" class="tab-pane fade specimen" id="{{loop.index}}-specimen">

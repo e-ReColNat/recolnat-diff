@@ -86,7 +86,15 @@
   #sidebar-wrapper ul li.@{color} {
     background-color: fade(@@color,@fadeTdBackground);
   }
-  .chart rect.@{color} {fill: @@color;}
+  .chart {
+    rect.@{color} {
+      fill: @@color;
+    }
+    text.title.@{color} {
+      fill: @@color;
+      text-transform: capitalize;
+    }
+  }
   .label.@{color} {
     background-color: @@color;
     &[href] {
@@ -103,6 +111,7 @@
       float: left;
       // Make the list-items overlay the bottom border
       margin-bottom: -1px;
+      background-color : transparent;
 
       // Actual tabs (as links)
       > a {

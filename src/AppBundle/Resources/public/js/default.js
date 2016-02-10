@@ -2,6 +2,82 @@
  * Fichier js commun à tout le site
  */
 $(document).ready(function () {
+    var modalSpinner = $("#spinnerModal");
+
+    $.toaster({
+        settings: {
+            'timeout': 5000,
+            'toaster': {
+                'css': {
+                    'position': 'fixed',
+                    'top': '10px',
+                    'right': '10px',
+                    'width': '350px',
+                    'zIndex': 50000
+                }
+            }
+        }
+    });
+    $(document)
+        .ajaxStart(function () {
+            modalSpinner.modal('show');
+        })
+        .ajaxStop(function () {
+            modalSpinner.modal('hide');
+        })
+        .ajaxComplete(function (event, xhr, settings) {
+            try {
+                var data = $.parseJSON(xhr.responseText);
+
+                if (data.messages) {
+                    var messages = data.messages;
+
+                    var i;
+
+                    if (messages.warning) {
+                        for (i = 0; i < messages.warning.length; i++) {
+                            $.toaster({
+                                message: messages.warning[i],
+                                priority: 'warning',
+                                title: Translator.trans('label.warning')
+                            });
+                        }
+                    }
+
+                    if (messages.error) {
+                        for (i = 0; i < messages.error.length; i++) {
+                            $.toaster({
+                                message: messages.error[i],
+                                priority: 'danger',
+                                title: Translator.trans('label.danger')
+                            });
+                        }
+                    }
+
+                    if (messages.success) {
+                        for (i = 0; i < messages.success.length; i++) {
+                            $.toaster({
+                                message: messages.success[i],
+                                priority: 'success',
+                                title: Translator.trans('label.success')
+                            });
+                        }
+                    }
+
+                    if (messages.info) {
+                        for (i = 0; i < messages.info.length; i++) {
+                            $.toaster({
+                                message: messages.info[i],
+                                priority: 'info',
+                                title: Translator.trans('label.info')
+                            });
+                        }
+                    }
+                }
+            } catch (e) {
+
+            }
+        });
     var institutionCode = $("#parameters").data("institutioncode") ;
     var collectionCode = $("#parameters").data("collectioncode") ;
     $("#menu-toggle").click(function (e) {

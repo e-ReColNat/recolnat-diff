@@ -56,6 +56,10 @@ tr.specimen td.highlight {
 .chart rect.specimen {
   fill: #6b5e4a;
 }
+.chart text.title.specimen {
+  fill: #6b5e4a;
+  text-transform: capitalize;
+}
 .label.specimen {
   background-color: #6b5e4a;
 }
@@ -72,6 +76,7 @@ tr.specimen td.highlight {
 .nav-tabs > li.specimen {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.specimen > a {
   background-color: rgba(107, 94, 74, 0.4);
@@ -124,6 +129,10 @@ tr.bibliography td.highlight {
 .chart rect.bibliography {
   fill: #efbe76;
 }
+.chart text.title.bibliography {
+  fill: #efbe76;
+  text-transform: capitalize;
+}
 .label.bibliography {
   background-color: #efbe76;
 }
@@ -140,6 +149,7 @@ tr.bibliography td.highlight {
 .nav-tabs > li.bibliography {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.bibliography > a {
   background-color: rgba(239, 190, 118, 0.4);
@@ -192,6 +202,10 @@ tr.determination td.highlight {
 .chart rect.determination {
   fill: #cea57d;
 }
+.chart text.title.determination {
+  fill: #cea57d;
+  text-transform: capitalize;
+}
 .label.determination {
   background-color: #cea57d;
 }
@@ -208,6 +222,7 @@ tr.determination td.highlight {
 .nav-tabs > li.determination {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.determination > a {
   background-color: rgba(206, 165, 125, 0.4);
@@ -260,6 +275,10 @@ tr.localisation td.highlight {
 .chart rect.localisation {
   fill: #ff8c79;
 }
+.chart text.title.localisation {
+  fill: #ff8c79;
+  text-transform: capitalize;
+}
 .label.localisation {
   background-color: #ff8c79;
 }
@@ -276,6 +295,7 @@ tr.localisation td.highlight {
 .nav-tabs > li.localisation {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.localisation > a {
   background-color: rgba(255, 140, 121, 0.4);
@@ -328,6 +348,10 @@ tr.recolte td.highlight {
 .chart rect.recolte {
   fill: #b65d99;
 }
+.chart text.title.recolte {
+  fill: #b65d99;
+  text-transform: capitalize;
+}
 .label.recolte {
   background-color: #b65d99;
 }
@@ -344,6 +368,7 @@ tr.recolte td.highlight {
 .nav-tabs > li.recolte {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.recolte > a {
   background-color: rgba(182, 93, 153, 0.4);
@@ -396,6 +421,10 @@ tr.stratigraphy td.highlight {
 .chart rect.stratigraphy {
   fill: #fcba3f;
 }
+.chart text.title.stratigraphy {
+  fill: #fcba3f;
+  text-transform: capitalize;
+}
 .label.stratigraphy {
   background-color: #fcba3f;
 }
@@ -412,6 +441,7 @@ tr.stratigraphy td.highlight {
 .nav-tabs > li.stratigraphy {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.stratigraphy > a {
   background-color: rgba(252, 186, 63, 0.4);
@@ -464,6 +494,10 @@ tr.multimedia td.highlight {
 .chart rect.multimedia {
   fill: #87bd6a;
 }
+.chart text.title.multimedia {
+  fill: #87bd6a;
+  text-transform: capitalize;
+}
 .label.multimedia {
   background-color: #87bd6a;
 }
@@ -480,6 +514,7 @@ tr.multimedia td.highlight {
 .nav-tabs > li.multimedia {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.multimedia > a {
   background-color: rgba(135, 189, 106, 0.4);
@@ -532,6 +567,10 @@ tr.taxon td.highlight {
 .chart rect.taxon {
   fill: #92724a;
 }
+.chart text.title.taxon {
+  fill: #92724a;
+  text-transform: capitalize;
+}
 .label.taxon {
   background-color: #92724a;
 }
@@ -548,6 +587,7 @@ tr.taxon td.highlight {
 .nav-tabs > li.taxon {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.taxon > a {
   background-color: rgba(146, 114, 74, 0.4);
@@ -600,6 +640,10 @@ tr.diffs td.highlight {
 .chart rect.diffs {
   fill: #7d9bac;
 }
+.chart text.title.diffs {
+  fill: #7d9bac;
+  text-transform: capitalize;
+}
 .label.diffs {
   background-color: #7d9bac;
 }
@@ -616,6 +660,7 @@ tr.diffs td.highlight {
 .nav-tabs > li.diffs {
   float: left;
   margin-bottom: -1px;
+  background-color: transparent;
 }
 .nav-tabs > li.diffs > a {
   background-color: rgba(125, 155, 172, 0.4);

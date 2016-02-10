@@ -1,8 +1,8 @@
-{% extends 'base.html.twig' %}
+{% extends '@App/base.html.twig' %}
 
 {% set sumSpecimens = 0 %}
 {% block body %}
-    {% include 'default/partial/breadcrumb.html.twig' %}
+    {% include '@App/Front/partial/breadcrumb.html.twig' %}
     <h1 class="page-header">{{ 'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ collectionCode},'user') }}
         <small>
             <a href="{{ path('stats', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ 'stats.details'| trans }}</a>
@@ -58,20 +58,19 @@
                             0
                         {% endif %}
                     </td>
-                    {% set lonesomeRecordClass=attribute(statsLonesomeRecords, className) %}
                     <td>
-                        {% if lonesomeRecordClass.recolnat > 0 %}
+                        {% if attribute(statsLonesomeRecords, className)['recolnat'] > 0 %}
                             <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}">
-                                {{ lonesomeRecordClass.recolnat }}
+                                {{ attribute(statsLonesomeRecords, className)['recolnat'] }}
                             </a>
                         {% else %}
                             0
                         {% endif %}
                     </td>
                     <td>
-                        {% if lonesomeRecordClass.institution > 0 %}
+                        {% if attribute(statsLonesomeRecords, className)['institution'] > 0 %}
                         <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode,'institutionCode':institutionCode,'selectedClassName':className|lower}) }}">
-                            {{ lonesomeRecordClass.institution }}
+                            {{ attribute(statsLonesomeRecords, className)['institution'] }}
                         </a>
                         {% else %}
                             0
@@ -136,7 +135,7 @@
             </a>
         </div>
     </div>
-    {% include 'default/partial/modal.html.twig' %}
+    {% include '@App/Front/partial/modal.html.twig' %}
 
 
     <svg class="chart"></svg>
@@ -153,10 +152,11 @@
             {
                 name: '{{ className|lower }}',
                 specimens: {{ detailedStats.specimens }},
-                diffs: {{ detailedStats.diffs }},
+                differences: {{ detailedStats.diffs }},
                 todos: {{ attribute(totalChoices, className) is defined ? detailedStats.diffs - attribute(totalChoices, className) : detailedStats.diffs }},
-                choices: {{ attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 }}
-
+                choices: {{ attribute(totalChoices, className) is defined ? attribute(totalChoices, className) : 0 }},
+                excluRecolnat: {{ attribute(statsLonesomeRecords, className)['recolnat'] }},
+                excluInstitution: {{ attribute(statsLonesomeRecords, className)['institution'] }}
             }
             {{ loop.last == false ? ',':'' }}
 

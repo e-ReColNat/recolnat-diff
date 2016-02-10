@@ -26,7 +26,7 @@ class UserController extends Controller
         $user = $this->get('userManager');
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
-        return $this->render('user/viewPrefs.html.twig', array(
+        return $this->render('@App/User/viewPrefs.html.twig', array(
                     'institutionCode' => $institutionCode,
                     'prefs' => $prefs,
         ));
@@ -55,7 +55,7 @@ class UserController extends Controller
             return $this->redirectToRoute('viewPrefsUser', ['institutionCode'=>$institutionCode]) ;
         }
     
-        return $this->render('user/editPrefs.html.twig', array(
+        return $this->render('@App/User/editPrefs.html.twig', array(
                     'institutionCode' => $institutionCode,
                     'form' => $form->createView(),
         ));

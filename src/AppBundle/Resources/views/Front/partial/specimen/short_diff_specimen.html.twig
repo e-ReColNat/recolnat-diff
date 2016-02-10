@@ -45,13 +45,13 @@
                             {{ fieldToString(relationRecolnat, fieldName)}}
                         </td>
                         <td>
-                            {% include 'default/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}
+                            {% include '@App/Front/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}
                         </td>
                         <td>
                             {{ fieldToString(relationInstitution, fieldName)}}
                         </td>
                         <td>
-                            {% include 'default/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}
+                            {% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}
                         </td>
                     </tr>
                 {% endfor %}

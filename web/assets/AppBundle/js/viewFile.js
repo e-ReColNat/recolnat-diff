@@ -2,12 +2,17 @@ var width = 900,
     barHeight = 20;
 
 var diffs = datas.map(function (obj) {
-    return obj.diffs;
+    return obj.differences;
 });
-var keys = ['name', 'specimens', 'diffs', 'todos', 'choices'];
-var classesName = datas.map(function(obj) {
-    return obj.name;
-});
+var keys = ['name', 'specimens', 'differences', 'todos', 'choices', 'excluRecolnat', 'excluInstitution'];
+var routes = {
+    specimens:{name : 'diffs', params:['selectedClassName']},
+    differences:{name : 'diffs', params:['selectedClassName']},
+    todos:{name : 'todos', params:['selectedClassName']},
+    choices:{name : 'choices', params:['selectedClassName']},
+    excluRecolnat:{name : 'lonesomes', params:['selectedClassName', 'db']},
+    excluInstitution:{name : 'lonesomes', params:['selectedClassName', 'db']},
+};
 
 var x = d3.scale.linear()
     .domain([0, d3.max(diffs)+30])
@@ -15,10 +20,18 @@ var x = d3.scale.linear()
 
 var chart = d3.select(".chart")
     .attr("width", width)
-    .attr("height", barHeight * datas.length * 5);
+    .attr("height", barHeight * datas.length * 7);
+
+var classesName = datas.map(function(obj) {
+    return obj.name;
+});
 
 var groupBar = chart.selectAll("g") ;
-
+var selectedClassName='';
+var optParams = {
+    'institutionCode': institutionCode,
+    'collectionCode' : collectionCode
+};
 
 for (var itkeys = 0; itkeys < keys.length; itkeys++) {
     var selectedDatas = datas.map(function (obj) {
@@ -29,13 +42,22 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {
-                decalY = 5 * i * barHeight + ((itkeys)*20);
+                decalY = 7 * i * barHeight + ((itkeys)*20);
                 return "translate(10," + decalY + ")";
             });
 
         bar.append("rect")
             .attr("data-url", function(d,i){
-                return Routing.generate(keys[itkeys]!='specimens' ? keys[itkeys] : 'todos', { 'institutionCode': institutionCode, 'collectionCode' : collectionCode}) ;
+                optParams['selectedClassName']=classesName[i];
+                if (routes[keys[itkeys]].name=='lonesomes') {
+                    if (keys[itkeys] == 'excluRecolnat') {
+                        optParams["db"] = 'recolnat';
+                    }
+                    else {
+                        optParams["db"] = 'institution';
+                    }
+                }
+                return Routing.generate(routes[keys[itkeys]].name, optParams) ;
             })
             .attr("class", function(d,i){
                 return datas[i].name;
@@ -45,7 +67,6 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .on('mouseover', function(data) {
                 d3.select(this).classed('over', true);
             })
-
             .on('mouseout', function(data) {
                 d3.select(this).classed('over', false);
             })
@@ -60,16 +81,17 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .attr("y", barHeight / 2)
             .attr("dy", ".35em")
             .text(function (d, i) {
-                title = d+' '+keys[itkeys] ;
+                title = Translator.transChoice('label.graph.'+keys[itkeys], d, { "count" : d });
                 return title;
             });
     }
     else {
+
         var bar = groupBar
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {
-                decalY = 5 * i * barHeight + ((itkeys)*20);
+                decalY = 7 * i * barHeight + ((itkeys)*20);
                 return "translate(10," + decalY + ")";
             });
 
@@ -83,7 +105,10 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .attr("y", barHeight / 2)
             .attr("dy", ".35em")
             .text(function (d, i) {
-                return datas[i].name;
+                return Translator.transChoice('label.'+datas[i].name, 2, {}, 'entity');
+            })
+            .attr("class", function(d,i){
+                return 'title ' +datas[i].name;
             });
     }
 }

@@ -20,8 +20,8 @@
                              id="facet-{{ specimenCode }}-{{ className }}" data-classname="{{ className }}"
                              data-comptchoices="{{ nbChoices }}" data-comptdiffs="{{ nbDiffs }}">
                             <span class="facet-className">{{ ('label.'~ (className|lower)~'.abbr') | trans({},'entity') | capitalize }}</span>&nbsp;:&nbsp;
-                            <span class="facet-choix">{{ 'label.choix' | transchoice(nbChoices, {'%nbChoices%': nbChoices}) }}</span>&nbsp;/&nbsp;
-                            <span class="facet-diffs">{{ 'label.differences.abbr' | transchoice(nbDiffs, {'%nbDiffs%': nbDiffs}) }}</span>
+                            <span class="facet-choix">{{ 'label.choices' | transchoice(nbChoices, {'%count%': nbChoices}) }}</span>&nbsp;/&nbsp;
+                            <span class="facet-diffs">{{ 'label.differences.abbr' | transchoice(nbDiffs, {'%count%': nbDiffs}) }}</span>
                         </div>
                     </li>
                 {% endfor %}
@@ -40,8 +40,8 @@
     <span class="facet-diffs">{2}</span>
 </div>
 <div class="hidden" id="template-facet-string">
-    <span class="template-facet-choices-single">{{ 'label.choix' | transchoice(1, {'%nbChoices%': '{0}'}) }}</span>&nbsp;/&nbsp;
-    <span class="template-facet-diffs-single">{{ 'label.differences.abbr' | transchoice(1, {'%nbDiffs%': '{0}'}) }}</span>
-    <span class="template-facet-choices-plural">{{ 'label.choix' | transchoice(2, {'%nbChoices%': '{0}'}) }}</span>&nbsp;/&nbsp;
-    <span class="template-facet-diffs-plural">{{ 'label.differences.abbr' | transchoice(2, {'%nbDiffs%': '{0}'}) }}</span>
+    <span class="template-facet-choices-single">{{ 'label.choices' | transchoice(1, {'%count%': '{0}'}) }}</span>&nbsp;/&nbsp;
+    <span class="template-facet-diffs-single">{{ 'label.differences.abbr' | transchoice(1, {'%count%': '{0}'}) }}</span>
+    <span class="template-facet-choices-plural">{{ 'label.choices' | transchoice(2, {'%count%': '{0}'}) }}</span>&nbsp;/&nbsp;
+    <span class="template-facet-diffs-plural">{{ 'label.differences.abbr' | transchoice(2, {'%count%': '{0}'}) }}</span>
 </div>

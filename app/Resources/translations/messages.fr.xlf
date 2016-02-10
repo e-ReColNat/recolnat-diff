@@ -20,11 +20,11 @@
             </trans-unit>
             <trans-unit id="5">
                 <source>label.differences</source>
-                <target>{1}%nbDiffs% différence|]1,Inf]%nbDiffs% différences</target>
+                <target>{1}%count% différence|]1,Inf]%count% différences</target>
             </trans-unit>
             <trans-unit id="6">
-                <source>label.choix</source>
-                <target>{0}0 choix|{1}%nbChoices% choix|]1,Inf]%nbChoices% choix</target>
+                <source>label.choices</source>
+                <target>{0}0 choix|{1}%count% choix|]1,Inf]%count% choix</target>
             </trans-unit>
             <trans-unit id="7">
                 <source>label.credits</source>
@@ -281,6 +281,30 @@
             <trans-unit id="70">
                 <source>tab.lonesomes</source>
                 <target>Exclu</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.graph.specimens</source>
+                <target>[0,1]%count% spécimen|]1,Inf]%count% spécimens</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>label.graph.differences</source>
+                <target>[0,1]%count% différence|]1,Inf]%count% différences</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>label.graph.todos</source>
+                <target>[0,1]%count% choix à faire|]1,Inf]%count% choix à faire</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>label.graph.choices</source>
+                <target>[0,1]%count% choix fait|]1,Inf]%count% choix faits</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.graph.excluRecolnat</source>
+                <target>[0,1]%count% enregistrement exclusivement e-Recolnat|]1,Inf]%count% enregistrements exclusivement e-Recolnat</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>label.graph.excluInstitution</source>
+                <target>[0,1]%count% enregistrement exclusivement Institution|]1,Inf]%count% enregistrements exclusivement Institution</target>
             </trans-unit>
         </body>
     </file>

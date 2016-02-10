@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale|split('_')[0] }}">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,6 +58,9 @@
 </div>
 
 </body>
+<script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
+<script src="{{ url('bazinga_jstranslation_js') }}"></script>
+<script src="{{ url('bazinga_jstranslation_js', { 'domain': 'entity' }) }}"></script>
 <script src="{{ asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
 
@@ -72,99 +75,19 @@
     var textSelectSpecimens = "{{ 'viewSelectedSpecimens' | trans }}";
     $(document).ready(function () {
 
-        var modalSpinner = $("#spinnerModal");
 
-        $.toaster({
-            settings: {
-                'timeout': 5000,
-                'toaster': {
-                    'css': {
-                        'position': 'fixed',
-                        'top': '10px',
-                        'right': '10px',
-                        'width': '350px',
-                        'zIndex': 50000
-                    }
-                }
-            }
-        });
 
         // Toast Messages
-        var flashMessages = [];
-
         {% for flash_type, flashes in app.session.flashbag.all %}
-        {% for flash_message in flashes %}
-        $.toaster({
-            message: '{{ flash_message }}',
-            priority: '{{ flash_type }}',
-            title: '{{ ('label.' ~ flash_type) | trans }}'
-        });
-        {% endfor %}
-        {% endfor %}
-
-        if (flashMessages.length > 0) {
-            for (i = 0; i < flashMessages.length; i++) {
-            }
-        }
-        $(document).ajaxStart(function () {
-                    modalSpinner.modal('show');
-                })
-                .ajaxStop(function () {
-                    modalSpinner.modal('hide');
-                })
-                .ajaxComplete(function (event, xhr, settings) {
-                    try {
-                        var data = $.parseJSON(xhr.responseText);
-
-                        if (data.messages) {
-                            var messages = data.messages;
-
-                            var i;
-
-                            if (messages.warning) {
-                                for (i = 0; i < messages.warning.length; i++) {
-                                    $.toaster({
-                                        message: messages.warning[i],
-                                        priority: 'warning',
-                                        title: '{{ 'label.warning' | trans }}'
-                                    });
-                                }
-                            }
-
-                            if (messages.error) {
-                                for (i = 0; i < messages.error.length; i++) {
-                                    $.toaster({
-                                        message: messages.error[i],
-                                        priority: 'danger',
-                                        title: '{{ 'label.danger' | trans }}'
-                                    });
-                                }
-                            }
-
-                            if (messages.success) {
-                                for (i = 0; i < messages.success.length; i++) {
-                                    $.toaster({
-                                        message: messages.success[i],
-                                        priority: 'success',
-                                        title: '{{ 'label.success' | trans }}'
-                                    });
-                                }
-                            }
-
-                            if (messages.info) {
-                                for (i = 0; i < messages.info.length; i++) {
-                                    $.toaster({
-                                        message: messages.info[i],
-                                        priority: 'info',
-                                        title: '{{ 'label.info' | trans }}'
-                                    });
-                                }
-                            }
-                        }
-                    } catch (e) {
-
-                    }
+            {% for flash_message in flashes %}
+                $.toaster({
+                    message: '{{ flash_message }}',
+                    priority: '{{ flash_type }}',
+                    title: '{{ ('label.' ~ flash_type) | trans }}'
                 });
+            {% endfor %}
+        {% endfor %}
+
     });
 
 </script>

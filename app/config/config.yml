@@ -122,4 +122,4 @@ doctrine:
 knp_paginator:
     page_range: 5
     template:
-         pagination: views/default/helpers/paginator-bootstrap.html.twig
+         pagination: "@App/Front/helpers/paginator-bootstrap.html.twig"
