@@ -10,9 +10,12 @@ namespace AppBundle\Business;
 class Choices extends \SplFileObject
 {
 
+    /**
+     * @param string $dirPath
+     */
     public function __construct($dirPath)
     {
-        parent::__construct($dirPath . '/choices.json', 'c+');
+        parent::__construct($dirPath.'/choices.json', 'c+');
         chmod($this->getPathname(), 0755);
     }
 
