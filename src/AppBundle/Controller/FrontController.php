@@ -52,7 +52,7 @@ class FrontController extends Controller
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
 
-        $statsManager = $this->get('statsManager');
+        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
 
         $statsBySimilarity = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $statsManager->getSumStats();
@@ -79,7 +79,7 @@ class FrontController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
 
-        $statsManager = $this->get('statsManager');
+        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
 
         $stats = $statsManager->getExpandedStats();
         $sumStats = $statsManager->getSumStats();
@@ -261,7 +261,7 @@ class FrontController extends Controller
      */
     public function setPrefsForExportAction($institutionCode, $collectionCode)
     {
-        $statsManager = $this->get('statsManager');
+        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
 
         $sumStats = $statsManager->getSumStats();
         $statsChoices = $statsManager->getStatsChoices();

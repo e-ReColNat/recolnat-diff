@@ -184,6 +184,9 @@ class ExportManager
     }
 
 
+    /**
+     * @return array
+     */
     public function launchDiffProcess()
     {
         $results = $this->diffManager->init($this->institutionCode, $this->collectionCode);
@@ -204,6 +207,13 @@ class ExportManager
         return null;
     }
 
+    /**
+     * @param Request|null $request
+     * @param array|null $selectedClassName
+     * @param array $specimensWithChoices
+     * @param array $choicesToRemove
+     * @return array
+     */
     public function getDiffs(Request $request = null, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
     {
         $classesName = [];
@@ -222,19 +232,30 @@ class ExportManager
         return $diffs;
     }
 
+    /**
+     * @param $specimensCode
+     * @return array
+     */
     public function getDiffsBySpecimensCode($specimensCode) 
     {
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffs()->filterBySpecimensCode($allDiffs, $specimensCode);
         return $diffs;
     }
-    
+
+    /**
+     * @return array
+     */
     public function getSpecimensCode()
     {
         $stats = $this->sessionManager->get('diffs');
         return array_keys($stats['datas']);
     }
 
+    /**
+     * @param Request $request
+     * @return int
+     */
     public function getMaxItemPerPage(Request $request)
     {
         $session = $this->sessionManager;
@@ -248,6 +269,9 @@ class ExportManager
         return $session->get('maxItemPerPage');
     }
 
+    /**
+     * @return array
+     */
     public function getFiles()
     {
         $returnDirs = [];
@@ -425,10 +449,10 @@ class ExportManager
 
     /**
      * @param array $datasWithChoices
-     * @param $string $key
-     * @param $string $className
+     * @param string $key
+     * @param string $className
      * @param array $arrayEntity
-     * @param null|$string $key2
+     * @param null|string $key2
      */
     private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2 = null)
     {

@@ -18,9 +18,25 @@ class StatsManager
      */
     public $exportManager;
 
+    private $institutionCode;
+    private $collectionCode;
+
     public function __construct(ExportManager $exportManager)
     {
         $this->exportManager = $exportManager;
+    }
+
+    /**
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @return $this
+     */
+    public function init($institutionCode, $collectionCode)
+    {
+        $this->institutionCode = $institutionCode;
+        $this->collectionCode = $collectionCode;
+        $this->exportManager = $this->exportManager->init($institutionCode, $collectionCode);
+        return $this;
     }
 
     /**
