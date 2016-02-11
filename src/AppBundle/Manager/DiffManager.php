@@ -19,8 +19,8 @@ class DiffManager
      */
     protected $em;
 
-    /** @var DiffStatsManager */
-    protected $statsManager;
+    /** @var DiffComputer */
+    protected $diffComputer;
 
     protected $exportPath;
 
@@ -46,13 +46,13 @@ class DiffManager
     /**
      * DiffManager constructor.
      * @param ObjectManager $em
-     * @param DiffStatsManager $statsManager
+     * @param DiffComputer $diffComputer
      * @param string $exportPath
      */
-    public function __construct(ObjectManager $em, DiffStatsManager $statsManager, $exportPath)
+    public function __construct(ObjectManager $em, DiffComputer $diffComputer, $exportPath)
     {
         $this->em = $em;
-        $this->statsManager = $statsManager;
+        $this->diffComputer = $diffComputer;
         $this->exportPath = $exportPath;
     }
 
@@ -66,7 +66,7 @@ class DiffManager
         $this->institutionCode = $institutionCode;
         $this->collectionCode = $collectionCode;
         $diffs = $this->getAllDiff();
-        $diffStatsManager = $this->statsManager->init($diffs);
+        $diffStatsManager = $this->diffComputer->init($diffs);
         $data = array_merge($diffStatsManager->getDiffs(),
             ['stats' => $diffStatsManager->getAllStats(), 'lonesomeRecords' => $diffStatsManager->getLonesomeRecords()]);
         return $data;

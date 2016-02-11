@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
  *
  * @author tpateffoz
  */
-class DiffStatsManager
+class DiffComputer
 {
 
     private $arrayIds;
@@ -46,14 +46,14 @@ class DiffStatsManager
     {
         $this->arrayIds = $arrayIds;
         if (count($this->arrayIds)>0) {
-            foreach ($this->arrayIds as $class => $specimensCode) {
-                $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($class));
+            foreach ($this->arrayIds as $className => $specimensCode) {
+                $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
                 /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
                 $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
-                $diffClassManager->init($class, $specimensCode);
-                $this->setDiffs($class, $diffClassManager->getStats());
-                $this->setLonesomeRecords($class, $diffClassManager->getLonesomeRecords());
-                $this->computeDiffs($class);
+                $diffClassManager->init($className, $specimensCode);
+                $this->setDiffs($className, $diffClassManager->getStats());
+                $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
+                $this->computeDiffs($className);
                 unset($diffClassManager);
             }
         }

@@ -114,7 +114,7 @@
         </table>
     {% endif %}
     <div class="row">
-        <div class="col-sm-4 col-md-4">
+        <div class="col-sm-6 col-md-6">
             <a href="{{ path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
                class="exportLink btn btn-default" role="button">
                 {{ 'downloadDwc'|trans }}
@@ -124,7 +124,7 @@
                 {{ 'downloadCsv'|trans }}
             </a>
         </div>
-        <div class="col-sm-6 col-md-6 col-md-offset-2 col-sm-offset-2">
+        <div class="col-sm-6 col-md-6">
             <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
                class="delete deleteChoices btn btn-default" role="button">
                 {{ 'delete.choices'|trans }}
@@ -132,6 +132,12 @@
             <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
                class="delete deleteDiffs btn btn-default" role="button">
                 {{ 'delete.diffs'|trans }}
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-6">
+            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
+                {{ 'checkprefs'|trans }}
             </a>
         </div>
     </div>
@@ -167,6 +173,18 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var modalSpinner = $("#spinnerModal");
+            $(".checkprefs").on('click', function (event) {
+                var url = $(this).attr('href');
+                var modalPrefs = $("#modal");
+                $.get(url, function(data) {
+                    console.log(data);
+                    modalPrefs.find('.modal-body').html(data);
+                    modalPrefs.modal('show');
+                });
+
+                event.preventDefault();
+            });
+
             $(".exportLink").on('click', function (event) {
                 var url = $(this).attr('href');
                 $.ajax({
@@ -200,7 +218,6 @@
                 }
                 modalDelete.modal('show');
                 modalDelete.find('.confirm').on('click', function (event) {
-
                     event.preventDefault();
                     $.ajax({
                                 url: urlDeleteChoices,

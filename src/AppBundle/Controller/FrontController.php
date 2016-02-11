@@ -52,10 +52,10 @@ class FrontController extends Controller
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
 
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $statsBySimilarity = $exportManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
-        $sumStats = $exportManager->getSumStats();
+        $statsManager = $this->get('statsManager');
+
+        $statsBySimilarity = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
+        $sumStats = $statsManager->getSumStats();
         return $this->render('@App/Front/stats.html.twig', array(
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
@@ -79,10 +79,11 @@ class FrontController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
 
+        $statsManager = $this->get('statsManager');
 
-        $stats = $exportManager->getExpandedStats();
-        $sumStats = $exportManager->getSumStats();
-        $statsLonesomeRecords = $exportManager->getStatsLonesomeRecords();
+        $stats = $statsManager->getExpandedStats();
+        $sumStats = $statsManager->getSumStats();
+        $statsLonesomeRecords = $statsManager->getStatsLonesomeRecords();
         $sortStats = function($a, $b) {
             if ($a['diffs'] == $b['diffs']) {
                 return 0;
@@ -91,8 +92,8 @@ class FrontController extends Controller
         };
         uasort($stats, $sortStats);
 
-        $statsChoices = $exportManager->getStatsChoices();
-        $sumLonesomeRecords = $exportManager->getSumLonesomeRecords();
+        $statsChoices = $statsManager->getStatsChoices();
+        $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
 
         return $this->render('@App/Front/viewFile.html.twig', array(
             'diffHandler' => $exportManager->getDiffHandler(),
@@ -137,10 +138,8 @@ class FrontController extends Controller
             $specimensWithoutChoices = $exportManager->getChoices();
         }
 
-
         $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
 
-        dump($diffs);
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
@@ -160,7 +159,6 @@ class FrontController extends Controller
             'maxItemPerPage' => $maxItemPerPage,
             'selectedClassName' => $selectedClassName,
             'type' => $request->get('_route'),
-            'collectionCode' => $collectionCode,
         ));
     }
     /**
@@ -201,7 +199,6 @@ class FrontController extends Controller
             'pagination' => $pagination,
             'maxItemPerPage' => $maxItemPerPage,
             'selectedClassName' => $selectedClassName,
-            'collectionCode' => $collectionCode,
             'db' => $db,
         ));
     }
@@ -232,7 +229,6 @@ class FrontController extends Controller
             'choicesFacets' => $exportManager->getChoices(),
             'choices' => $exportManager->getChoicesForDisplay(),
             'specimensCode' => $specimensCode,
-            'collectionCode' => $collectionCode
         ));
     }
 
@@ -253,6 +249,31 @@ class FrontController extends Controller
         return $this->render('@App/Front/partial/specimen/'.$template, array(
             'specimen' => $specimen,
             'specimenCode' => $specimenCode,
+        ));
+    }
+
+
+    /**
+     * @Route("{institutionCode}/{collectionCode}/export/setPrefs", name="setPrefsForExport")
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @return Response
+     */
+    public function setPrefsForExportAction($institutionCode, $collectionCode)
+    {
+        $statsManager = $this->get('statsManager');
+
+        $sumStats = $statsManager->getSumStats();
+        $statsChoices = $statsManager->getStatsChoices();
+        $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
+        dump($sumLonesomeRecords);
+
+        return $this->render('@App/Front/setPrefsForExport.html.twig', array(
+            'institutionCode' => $institutionCode,
+            'collectionCode' => $collectionCode,
+            'sumStats' => $sumStats,
+            'statsChoices' => $statsChoices,
+            'sumLonesomeRecords'=>$sumLonesomeRecords,
         ));
     }
 

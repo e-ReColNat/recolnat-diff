@@ -1,6 +1,6 @@
 services:
-    diff.stats:
-        class: AppBundle\Manager\DiffStatsManager
+    diff.computer:
+        class: AppBundle\Manager\DiffComputer
         arguments:
             emR: "@doctrine.orm.entity_manager"
             emD: "@doctrine.orm.diff_entity_manager"
@@ -8,45 +8,9 @@ services:
         class: AppBundle\Manager\DiffManager
         arguments:
             em: "@doctrine.orm.entity_manager"
-            statsManager: "@diff.stats"
+            statsManager: "@diff.computer"
             exportPath: "%export_path%"
-            
-            
-    diff.specimens:
-        class: AppBundle\Manager\DiffSpecimens
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
-    diff.bibliographies:
-        class: AppBundle\Manager\DiffBibliographies
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
-    diff.determinations:
-        class: AppBundle\Manager\DiffDeterminations
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
-    diff.localisations:
-        class: AppBundle\Manager\DiffLocalisations
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
-    diff.recoltes:
-        class: AppBundle\Manager\DiffRecoltes
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
-    diff.stratigraphies:
-        class: AppBundle\Manager\DiffStratigraphies
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
-    diff.taxons:
-        class: AppBundle\Manager\DiffTaxons
-        arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
+
             
     genericEntityManager:
         class: AppBundle\Manager\GenericEntityManager
@@ -67,6 +31,11 @@ services:
         arguments:
             export_path: "%export_path%"
             maxItemPerPage: "%knp_paginator.page_range%"
+
+    statsManager:
+        class: AppBundle\Business\StatsManager
+        arguments:
+            exportManager: "@exportmanager"
             
     # TWIG EXTENSIONS
     app.twig_multimedia_extension:
