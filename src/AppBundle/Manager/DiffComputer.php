@@ -16,13 +16,13 @@ class DiffComputer
 
     /**
      * Holds the Doctrine entity manager for eRecolnat database interaction
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $emR;
 
     /**
      * Holds the Doctrine entity manager for Institution database interaction
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $emD;
     protected $diffs = array();
@@ -45,7 +45,7 @@ class DiffComputer
     public function init($arrayIds)
     {
         $this->arrayIds = $arrayIds;
-        if (count($this->arrayIds)>0) {
+        if (count($this->arrayIds) > 0) {
             foreach ($this->arrayIds as $className => $specimensCode) {
                 $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
                 /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
@@ -64,7 +64,8 @@ class DiffComputer
     /**
      * @param string $specimenCode
      */
-    private function setTaxon($specimenCode) {
+    private function setTaxon($specimenCode)
+    {
         if (!isset($this->diffs['datas'][$specimenCode]['display'])) {
             $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
             $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
@@ -100,23 +101,23 @@ class DiffComputer
     /**
      * @return array
      */
-    public function getAllStats() 
+    public function getAllStats()
     {
-        return $this->stats ;
+        return $this->stats;
     }
 
     /**
      * @param string $className
      * @param array $fields
      */
-    private function setStatsForClass($className, $fields) 
+    private function setStatsForClass($className, $fields)
     {
-        $fieldsName = array_keys($fields) ;
+        $fieldsName = array_keys($fields);
         foreach ($fieldsName as $fieldName) {
             if (!isset($this->stats[$className][$fieldName])) {
                 $this->stats[$className][$fieldName] = 0;
             }
-            $this->stats[$className][$fieldName]++ ;
+            $this->stats[$className][$fieldName]++;
         }
     }
 

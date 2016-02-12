@@ -23,6 +23,7 @@ class BackendController extends Controller
      * @param string $institutionCode
      * @param string $collectionCode
      * @return JsonResponse
+     * @throws \Exception
      */
     public function exportDwcAction($institutionCode, $collectionCode, Request $request)
     {
@@ -64,7 +65,7 @@ class BackendController extends Controller
             $path = urldecode($path);
             $response->setContent(file_get_contents($path));
             $response->headers->set('Content-Type', 'application/zip');
-            $response->headers->set('Content-Disposition', 'attachment; collectionCode="' . basename($path) . '"');
+            $response->headers->set('Content-Disposition', 'attachment; collectionCode="'.basename($path).'"');
         }
 
         return $response;

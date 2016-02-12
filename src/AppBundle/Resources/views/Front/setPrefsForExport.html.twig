@@ -19,12 +19,12 @@
     <label>Avec la priorité Insttitution en cas de conflit</label><input type="radio" name="newRecords" value="BothInstitution">
 </p>!-->
 
-<h1 class="page-header">{{'prefs.save.title' | trans({}, 'prefs') }}</h1>
+<h1 class="page-header">{{ 'prefs.save.title' | trans({}, 'prefs') }}</h1>
 
 <p>Il y a {{ sumStats.diffs - statsChoices.sum }} choix non effectués</p>
 <p>Il y a {{ sumLonesomeRecords.recolnat }} nouveaux enregistrements du côté de recolnat</p>
 <p>Il y a {{ sumLonesomeRecords.institution }} nouveaux enregistrements du côté de l'institution</p>
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    {{ form_end(form) }}
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}

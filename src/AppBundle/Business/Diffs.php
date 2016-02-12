@@ -2,11 +2,7 @@
 
 namespace AppBundle\Business;
 
-/**
- * Description of Diff
- *
- * @author tpateffoz
- */
+
 class Diffs extends \SplFileObject
 {
     public $generateDiff;
@@ -17,7 +13,7 @@ class Diffs extends \SplFileObject
     public function __construct($dirPath)
     {
         $this->generateDiff = false;
-        $path = $dirPath . '/diffs.json';
+        $path = $dirPath.'/diffs.json';
         if (!is_file($path)) {
             $this->generateDiff = true;
         }
@@ -25,6 +21,9 @@ class Diffs extends \SplFileObject
         chmod($this->getPathname(), 0755);
     }
 
+    /**
+     * @param array $diffs
+     */
     public function save(array $diffs)
     {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
@@ -36,6 +35,9 @@ class Diffs extends \SplFileObject
         }
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getData()
     {
         $fs = new \Symfony\Component\Filesystem\Filesystem();

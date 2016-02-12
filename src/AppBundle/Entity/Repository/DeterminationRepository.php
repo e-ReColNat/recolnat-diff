@@ -1,7 +1,9 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
-use Doctrine\ORM\Query\Expr\Join ;
+
+use Doctrine\ORM\Query\Expr\Join;
+
 /**
  * DeterminationRepository
  *
@@ -11,32 +13,33 @@ use Doctrine\ORM\Query\Expr\Join ;
 class DeterminationRepository extends RecolnatRepositoryAbstract
 {
     /**
-     * 
+     *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('d')
-                ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
-                ->where('d.identificationid IN (\''.implode('\',\'', $ids).'\')')
-                ->getQuery() ;
-        return $query->getResult() ;
+            ->select('d')
+            ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
+            ->where('d.identificationid IN (\''.implode('\',\'', $ids).'\')')
+            ->getQuery();
+        return $query->getResult();
     }
-    
+
     public function findOneById($id)
     {
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('d')
-                ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
-                ->where('d.identificationid = :id')
-                ->setParameter('id', $id)
-                ->getQuery() ;
+            ->select('d')
+            ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
+            ->where('d.identificationid = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
         return $query->getOneOrNullResult();
     }
+
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -45,12 +48,13 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $qb = $this->createQueryBuilder('d');
 
         $query = $qb
-                ->select('d')
-                ->join('d.specimen', 's');
+            ->select('d')
+            ->join('d.specimen', 's');
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
+
     /**
      *
      * @param array $specimenCodes
@@ -61,12 +65,12 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $qb = $this->createQueryBuilder('d');
 
         $query = $qb
-                ->select('d')
-                ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
-                ->join('d.specimen', 's');
+            ->select('d')
+            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->join('d.specimen', 's');
         $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'identificationid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'identificationid');
     }
 
     /**
@@ -77,11 +81,11 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
     public function findBestDetermination($occurrenceId)
     {
         $qb = $this->createQueryBuilder('d');
-        
+
         $query = $qb
-                ->select('d')
-                ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
+            ->select('d')
+            ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
         $query->setParameter('occurrenceid', $occurrenceId);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getOneOrNullResult(), 'identificationid') ;
+        return $this->orderResultSetBySpecimenCode($query->getQuery()->getOneOrNullResult(), 'identificationid');
     }
 }

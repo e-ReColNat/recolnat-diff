@@ -40,14 +40,19 @@ class ExportManager
     protected $exportPrefs;
 
     /**
-     * 
+     *
      * @param string $export_path
      * @param Session $sessionManager
      * @param GenericEntityManager $genericEntityManager
      * @param \AppBundle\Manager\DiffManager
      */
-    public function __construct($export_path, Session $sessionManager, GenericEntityManager $genericEntityManager, DiffManager $diffManager, $maxItemPerPage)
-    {
+    public function __construct(
+        $export_path,
+        Session $sessionManager,
+        GenericEntityManager $genericEntityManager,
+        DiffManager $diffManager,
+        $maxItemPerPage
+    ) {
         $this->exportPath = $export_path;
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
@@ -95,7 +100,7 @@ class ExportManager
             if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $this->collectionCode)) {
                 $doReload = true;
             }
-            if (!($this->sessionManager->has('choices') ) || empty($this->sessionManager->get('choices'))) {
+            if (!($this->sessionManager->has('choices')) || empty($this->sessionManager->get('choices'))) {
                 $doReload = true;
             }
             if ($doReload && $fs->exists($path)) {
@@ -112,7 +117,7 @@ class ExportManager
      * @param mixed $selectedClassesNames
      * @return array
      */
-    public function getLonesomeRecords($db=null, $selectedClassesNames=null)
+    public function getLonesomeRecords($db = null, $selectedClassesNames = null)
     {
         $classesName = [];
         if (!is_null($selectedClassesNames) && is_string($selectedClassesNames) && $selectedClassesNames != 'all') {
@@ -123,20 +128,18 @@ class ExportManager
         }
 
         $lonesomeRecords = $this->diffHandler->getDiffs()->getData()['lonesomeRecords'];
-        $returnLonesomes=[];
+        $returnLonesomes = [];
         if (!is_null($db)) {
             foreach ($lonesomeRecords as $className => $items) {
                 if (!empty($classesName)) {
                     if (in_array($className, $classesName)) {
                         $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
                     }
-                }
-                else {
+                } else {
                     $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
                 }
             }
-        }
-        else {
+        } else {
             if (empty($classesName)) {
                 $returnLonesomes = $lonesomeRecords;
             } else {
@@ -153,12 +156,12 @@ class ExportManager
      * @param null $selectedClassesNames
      * @return array
      */
-    public function getLonesomeRecordsBySpecimenCode($db, $selectedClassesNames=null)
+    public function getLonesomeRecordsBySpecimenCode($db, $selectedClassesNames = null)
     {
-        $lonesomeRecordsBySpecimenCodes=[] ;
+        $lonesomeRecordsBySpecimenCodes = [];
         $specimenLonesomeRecords = $this->getLonesomeRecords($db, 'specimen');
-        $refSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode') ;
-        $fullLonesomeRecords=$this->getLonesomeRecords($db, $selectedClassesNames) ;
+        $refSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode');
+        $fullLonesomeRecords = $this->getLonesomeRecords($db, $selectedClassesNames);
 
         if (!empty($fullLonesomeRecords)) {
             foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
@@ -166,13 +169,12 @@ class ExportManager
                     // Si le specimencode de l'enregistrement est dans la liste des specimens de ref c'est que tous les
                     // enregistrements correspondant à ce specimen code sont nouveaux
                     // puisque le specimen n'est pas dans l'autre base
-                    if (!in_array($item['specimenCode'], $refSpecimenCode) || $selectedClassesNames=='specimen') {
+                    if (!in_array($item['specimenCode'], $refSpecimenCode) || $selectedClassesNames == 'specimen') {
                         $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
                             'className' => $className,
                             'id' => $item['id']
                         ];
-                    }
-                    elseif($selectedClassesNames=='all') {
+                    } elseif ($selectedClassesNames == 'all') {
                         $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
                             'className' => $className,
                             'id' => $item['id']
@@ -199,7 +201,7 @@ class ExportManager
     }
 
     /**
-     * 
+     *
      * @return DiffHandler
      */
     public function getDiffHandler()
@@ -217,8 +219,12 @@ class ExportManager
      * @param array $choicesToRemove
      * @return array
      */
-    public function getDiffs(Request $request = null, $selectedClassName = null, $specimensWithChoices = [], $choicesToRemove = [])
-    {
+    public function getDiffs(
+        Request $request = null,
+        $selectedClassName = null,
+        $specimensWithChoices = [],
+        $choicesToRemove = []
+    ) {
         $classesName = [];
         if (is_string($selectedClassName) && $selectedClassName != 'all') {
             $classesName = [$selectedClassName];
@@ -231,7 +237,8 @@ class ExportManager
             $this->sessionManager->clear();
         }
         $allDiffs = $this->sessionManager->get('diffs');
-        $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $classesName, $specimensWithChoices, $choicesToRemove);
+        $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $classesName, $specimensWithChoices,
+            $choicesToRemove);
         return $diffs;
     }
 
@@ -239,7 +246,7 @@ class ExportManager
      * @param $specimensCode
      * @return array
      */
-    public function getDiffsBySpecimensCode($specimensCode) 
+    public function getDiffsBySpecimensCode($specimensCode)
     {
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffs()->filterBySpecimensCode($allDiffs, $specimensCode);
@@ -265,7 +272,7 @@ class ExportManager
 
         $requestMaxItem = $request->get('maxItemPerPage', null);
         if (!is_null($requestMaxItem)) {
-            $session->set('maxItemPerPage', (int) $requestMaxItem);
+            $session->set('maxItemPerPage', (int)$requestMaxItem);
         } elseif (!$session->has('maxItemPerPage')) {
             $session->set('maxItemPerPage', $this->maxItemPerPage);
         }
@@ -281,7 +288,7 @@ class ExportManager
         $institutionDir = $this->user->getDataDirPath();
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && is_dir($institutionDir . $entry)) {
+                if ($entry != "." && $entry != ".." && is_dir($institutionDir.$entry)) {
                     $returnDirs[] = new \AppBundle\Business\DiffHandler($institutionDir, $entry);
                 }
             }
@@ -291,16 +298,16 @@ class ExportManager
     }
 
     /**
-     * 
+     *
      * @return String
      */
     public function getExportDirPath()
     {
-        return $this->user->getDataDirPath() . $this->collectionCode . '/export/';
+        return $this->user->getDataDirPath().$this->collectionCode.'/export/';
     }
 
     /**
-     * 
+     *
      * @return String
      */
     public function getChoicesFileName()
@@ -312,7 +319,7 @@ class ExportManager
     }
 
     /**
-     * 
+     *
      * @param array $choices
      */
     public function setChoices($choices)
@@ -323,7 +330,7 @@ class ExportManager
     }
 
     /**
-     * 
+     *
      * @param array $row
      */
     public function setChoice($row)
@@ -333,13 +340,14 @@ class ExportManager
             $sessionChoices = $this->sessionManager->get('choices');
         }
         $flag = false;
-        $row['data'] = $this->genericEntityManager->getData($row['choice'], $row['className'], $row['fieldName'], $row['relationId']);
+        $row['data'] = $this->genericEntityManager->getData($row['choice'], $row['className'], $row['fieldName'],
+            $row['relationId']);
         if (is_array($sessionChoices) && count($sessionChoices) > 0) {
             foreach ($sessionChoices as $key => $choice) {
                 if (
-                        $choice['className'] == $row['className'] &&
-                        $choice['fieldName'] == $row['fieldName'] &&
-                        $choice['relationId'] == $row['relationId']
+                    $choice['className'] == $row['className'] &&
+                    $choice['fieldName'] == $row['fieldName'] &&
+                    $choice['relationId'] == $row['relationId']
                 ) {
                     $sessionChoices[$key] = $row;
                     $flag = true;
@@ -355,7 +363,7 @@ class ExportManager
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getChoices()
@@ -502,10 +510,11 @@ class ExportManager
     {
         $this->exportPrefs = $exportPrefs;
         $specimenCodes = $this->sessionManager->get('specimensCode');
-        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($exportPrefs->getSideForChoicesNotSet(), $specimenCodes);
+        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($exportPrefs->getSideForChoicesNotSet(),
+            $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
         $csvExporter = new CsvExporter(
-                $datasWithChoices, $this->getExportDirPath(), $exportPrefs);
+            $datasWithChoices, $this->getExportDirPath(), $exportPrefs);
 
         return $csvExporter->generate($this->user->getPrefs());
     }
@@ -518,16 +527,17 @@ class ExportManager
     {
         $this->exportPrefs = $exportPrefs;
         $specimenCodes = $this->sessionManager->get('specimensCode');
-        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($exportPrefs->getSideForChoicesNotSet(), $specimenCodes);
+        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($exportPrefs->getSideForChoicesNotSet(),
+            $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
         $dwcExporter = new DwcExporter(
-                $datasWithChoices, $this->getExportDirPath(), $exportPrefs);
+            $datasWithChoices, $this->getExportDirPath(), $exportPrefs);
 
         return $dwcExporter->generate($this->user->getPrefs());
     }
 
     /**
-     * 
+     *
      * @param string $className
      * @param string $relationId
      * @param string $fieldName

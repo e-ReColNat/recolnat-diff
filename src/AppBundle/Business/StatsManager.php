@@ -42,11 +42,12 @@ class StatsManager
     /**
      * @return array
      */
-    public function getStatsLonesomeRecords() {
-        $lonesomeRecords = $this->exportManager->getLoneSomeRecords() ;
+    public function getStatsLonesomeRecords()
+    {
+        $lonesomeRecords = $this->exportManager->getLoneSomeRecords();
         $stats = [];
-        $refRecolnatSpecimenCode = array_column($lonesomeRecords['Specimen']['recolnat'], 'specimenCode') ;
-        $refInstitutionSpecimenCode = array_column($lonesomeRecords['Specimen']['institution'], 'specimenCode') ;
+        $refRecolnatSpecimenCode = array_column($lonesomeRecords['Specimen']['recolnat'], 'specimenCode');
+        $refInstitutionSpecimenCode = array_column($lonesomeRecords['Specimen']['institution'], 'specimenCode');
         foreach ($lonesomeRecords as $className => $items) {
             // si la className n'est pas specimen et que l'enregistrement est déjà présent dans les
             // spécimens alors on a affaire à un nouveau specimen donc on l'enlève du décompte
@@ -55,8 +56,7 @@ class StatsManager
                 $stats[$className]['recolnat'] = count(array_diff($specimenCodes, $refRecolnatSpecimenCode));
                 $specimenCodes = array_column($items['institution'], 'specimenCode');
                 $stats[$className]['institution'] = count(array_diff($specimenCodes, $refInstitutionSpecimenCode));
-            }
-            else {
+            } else {
                 $stats[$className]['recolnat'] = count($items['recolnat']);
                 $stats[$className]['institution'] = count($items['institution']);
             }
@@ -68,12 +68,13 @@ class StatsManager
     /**
      * @return array
      */
-    public function getSumLonesomeRecords() {
-        $statsLonesomeRecords=$this->getStatsLonesomeRecords();
-        $sumLonesomeRecords=['recolnat'=>0, 'institution'=>0];
+    public function getSumLonesomeRecords()
+    {
+        $statsLonesomeRecords = $this->getStatsLonesomeRecords();
+        $sumLonesomeRecords = ['recolnat' => 0, 'institution' => 0];
         foreach ($statsLonesomeRecords as $lonesomeRecords) {
-            $sumLonesomeRecords['recolnat']+=$lonesomeRecords['recolnat'];
-            $sumLonesomeRecords['institution']+=$lonesomeRecords['institution'];
+            $sumLonesomeRecords['recolnat'] += $lonesomeRecords['recolnat'];
+            $sumLonesomeRecords['institution'] += $lonesomeRecords['institution'];
         }
         return $sumLonesomeRecords;
     }
@@ -121,9 +122,9 @@ class StatsManager
         $stats = $this->getExpandedStats();
         $sumStats = ['specimens' => 0, 'diffs' => 0, 'fields' => 0];
         foreach ($stats as $datas) {
-            $sumStats['specimens']+=$datas['specimens'];
-            $sumStats['diffs']+=$datas['diffs'];
-            $sumStats['fields']+=count($datas['fields']);
+            $sumStats['specimens'] += $datas['specimens'];
+            $sumStats['diffs'] += $datas['diffs'];
+            $sumStats['fields'] += count($datas['fields']);
         }
         return $sumStats;
     }
@@ -160,15 +161,15 @@ class StatsManager
      * @param string $dateFormat
      * @return array
      */
-    public function getStatsBySimilarity($classesName = [], $dateFormat ='d/M/Y')
+    public function getStatsBySimilarity($classesName = [], $dateFormat = 'd/M/Y')
     {
         $diffs = $this->exportManager->sessionManager->get('diffs');
         if (empty($classesName)) {
-            $classesName = array_keys($diffs['classes']) ;
+            $classesName = array_keys($diffs['classes']);
         }
-        array_map(function($value) {
-            return ucfirst(strtolower($value)) ;
-        }, $classesName) ;
+        array_map(function ($value) {
+            return ucfirst(strtolower($value));
+        }, $classesName);
 
         $dataSeparator = '\#|#/';
         $stats = [];
@@ -176,23 +177,24 @@ class StatsManager
             if (isset($diffs['classes'][$className]) && !empty($diffs['classes'][$className])) {
                 foreach ($diffs['classes'][$className] as $specimenCode) {
                     if (isset($diffs['datas'][$specimenCode])) {
-                        $details = $diffs['datas'][$specimenCode]['classes'][$className] ;
-                        $taxon = $diffs['datas'][$specimenCode]['taxon'] ;
+                        $details = $diffs['datas'][$specimenCode]['classes'][$className];
+                        $taxon = $diffs['datas'][$specimenCode]['taxon'];
                         foreach ($details['fields'] as $fieldName => $datas) {
                             // Traitement des dates
                             if (is_array($datas['recolnat']) && isset($datas['recolnat']['date'])) {
-                                $date = new \DateTime($datas['recolnat']['date']) ;
-                                $datas['recolnat'] = $date->format($dateFormat)  ;
+                                $date = new \DateTime($datas['recolnat']['date']);
+                                $datas['recolnat'] = $date->format($dateFormat);
                             }
                             if (is_array($datas['institution']) && isset($datas['institution']['date'])) {
-                                $date = new \DateTime($datas['institution']['date']) ;
-                                $datas['institution'] = $date->format($dateFormat)  ;
+                                $date = new \DateTime($datas['institution']['date']);
+                                $datas['institution'] = $date->format($dateFormat);
                             }
                             // Création d'une clé unique
-                            $concatDatas = md5(implode($dataSeparator, [$className, $fieldName, $datas['recolnat'], $datas['institution']])) ;
+                            $concatDatas = md5(implode($dataSeparator,
+                                [$className, $fieldName, $datas['recolnat'], $datas['institution']]));
 
                             if (!isset($stats[$concatDatas])) {
-                                $stats[$concatDatas] = ['taxons'=>[], 'specimensCode'=>[]];
+                                $stats[$concatDatas] = ['taxons' => [], 'specimensCode' => []];
                             }
 
                             $stats[$concatDatas]['specimensCode'][$specimenCode] = $details['id'];

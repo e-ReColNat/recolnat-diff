@@ -15,7 +15,7 @@ class ExportExtension extends \Twig_Extension
             new \Twig_SimpleFunction('countDiffs', array($this, 'getCountDiffs')),
         );
     }
-    
+
     /**
      * Retourne le nombre de différence trouvées entre les deux bases pour un couple Spécimen / Class
      * @param array $stats
@@ -30,6 +30,7 @@ class ExportExtension extends \Twig_Extension
         }
         return 0;
     }
+
     /**
      * Retourne le nombre des choix par l'utilisateur dans les diffs
      * @param array $choices
@@ -40,7 +41,7 @@ class ExportExtension extends \Twig_Extension
     public function getCountChoices($choices, $specimenCode, $className)
     {
         $countChoices = 0;
-        if (is_array($choices) && count($choices)>0) {
+        if (is_array($choices) && count($choices) > 0) {
             foreach ($choices as $choice) {
                 if ($choice['specimenCode'] == $specimenCode && $choice['className'] == $className) {
                     $countChoices++;
@@ -49,6 +50,7 @@ class ExportExtension extends \Twig_Extension
         }
         return $countChoices;
     }
+
     public function getName()
     {
         return 'export_extension';

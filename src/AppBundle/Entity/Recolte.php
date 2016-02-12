@@ -5,83 +5,83 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\RecolteRepository")
-* @ORM\Table(name="Recoltes")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\RecolteRepository")
+ * @ORM\Table(name="Recoltes")
+ */
 class Recolte
 {
-    /** 
+    /**
      * @ORM\Id
-     * @ORM\Column(type="rawid") 
+     * @ORM\Column(type="rawid")
      */
     private $eventid;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true, length=4)
      */
     private $decade;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $eday;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $emonth;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $eventdate;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $eventremarks;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true, length=4)
      */
     private $eyear;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $fieldnotes;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $fieldnumber;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=500, nullable=true)
      */
     private $habitat;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=300, nullable=true)
      */
     private $recordedby;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $sday;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
     private $smonth;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true, length=4)
      */
     private $syear;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $verbatimeventdate;
@@ -466,7 +466,7 @@ class Recolte
     {
         return $this->localisation;
     }
-    
+
     /**
      * Get specimen
      *
@@ -476,16 +476,16 @@ class Recolte
     {
         return $this->specimen;
     }
-    
-    public function __toString() {
+
+    public function __toString()
+    {
         if (!is_null($this->getEventdate())) {
             return sprintf('%s %s', $this->getEventdate()->format('d/m/Y'), $this->getRecordedby());
-        }
-        else {
+        } else {
             return sprintf('%s', $this->getRecordedby());
         }
     }
-    
+
     public function toArray()
     {
         $specimen = $this->getSpecimen();
@@ -506,7 +506,7 @@ class Recolte
             'smonth' => $this->getSmonth(),
             'syear' => $this->getSyear(),
             'verbatimeventdate' => $this->getVerbatimeventdate(),
-            'locationid' => !is_null($this->getLocalisation()) ? $this->getLocalisation()->getLocationid() : null, 
+            'locationid' => !is_null($this->getLocalisation()) ? $this->getLocalisation()->getLocationid() : null,
         ];
     }
 }

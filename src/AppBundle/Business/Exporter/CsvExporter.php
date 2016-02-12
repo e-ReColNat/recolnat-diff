@@ -22,9 +22,10 @@ class CsvExporter extends AbstractExporter
 
     private $fieldsName = [];
     private $acceptedFieldsName = [];
+
     public function formatDatas()
     {
-        
+
     }
 
     /**
@@ -96,7 +97,8 @@ class CsvExporter extends AbstractExporter
      * @param string $zipFilename
      * @return string
      */
-    private function createZipFile($zipFilename = 'csv.zip') {
+    private function createZipFile($zipFilename = 'csv.zip')
+    {
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
         $zipFilePath = $this->getExportDirPath().'/'.$zipFilename;
         $arrayFilesName = [];
@@ -106,7 +108,7 @@ class CsvExporter extends AbstractExporter
         $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
         exec($zipCommand);
         $fileExport->chmod($zipFilePath, 0777);
-        
+
         return $zipFilePath;
     }
 
@@ -152,7 +154,7 @@ class CsvExporter extends AbstractExporter
     public function filterDatas($datas, $entityExporter, $className)
     {
         $filteredDatas = [];
-        if (count($datas)>0) {
+        if (count($datas) > 0) {
             if (!isset($this->acceptedFieldsName[$className])) {
                 foreach ($this->fieldsName[$className] as $fieldName) {
                     if ($entityExporter->exportToCsv($fieldName)) {
@@ -161,12 +163,11 @@ class CsvExporter extends AbstractExporter
                 }
             }
 
-            if (count($this->acceptedFieldsName[$className])>0) {
+            if (count($this->acceptedFieldsName[$className]) > 0) {
                 foreach ($this->acceptedFieldsName[$className] as $acceptedFieldName) {
                     if (isset($datas[$acceptedFieldName])) {
                         $filteredDatas[$acceptedFieldName] = $datas[$acceptedFieldName];
-                    }
-                    else {
+                    } else {
                         $filteredDatas[$acceptedFieldName] = null;
                     }
                 }
@@ -187,8 +188,13 @@ class CsvExporter extends AbstractExporter
      * @param bool $nullToMysqlNull
      * @return string
      */
-    private function arrayToCsv(array &$fields, $delimiter = ';', $enclosure = '"', $encloseAll = false, $nullToMysqlNull = false)
-    {
+    private function arrayToCsv(
+        array &$fields,
+        $delimiter = ';',
+        $enclosure = '"',
+        $encloseAll = false,
+        $nullToMysqlNull = false
+    ) {
         $delimiter_esc = preg_quote($delimiter, '/');
         $enclosure_esc = preg_quote($enclosure, '/');
 
@@ -202,9 +208,9 @@ class CsvExporter extends AbstractExporter
             // Enclose fields containing $delimiter, $enclosure or whitespace
             if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc})/", $field)) {
                 $output[] = $enclosure.str_replace(
-                        $enclosure, $enclosure.$enclosure, 
+                        $enclosure, $enclosure.$enclosure,
                         $this->convertField($field, $this->getCsvDateFormat())
-                        ).$enclosure;
+                    ).$enclosure;
             } else {
                 $output[] = $field;
             }

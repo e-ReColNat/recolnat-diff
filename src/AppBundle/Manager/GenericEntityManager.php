@@ -3,8 +3,6 @@
 namespace AppBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
-use AppBundle\Entity\Repository\RecolnatRepositoryAbstract;
-use Doctrine\ORM\Query\Expr;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Intl\Locale;
 
@@ -17,12 +15,12 @@ class GenericEntityManager
 {
 
     /**
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $emR;
 
     /**
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $emI;
     protected $translator;
@@ -97,7 +95,7 @@ class GenericEntityManager
         }
         $meta = $this->emR->getClassMetadata(get_class($entity));
         $identifier = $meta->getSingleIdentifierFieldName();
-        $getter = 'get' . $identifier;
+        $getter = 'get'.$identifier;
         return $entity->{$getter}();
     }
 
@@ -138,37 +136,38 @@ class GenericEntityManager
 
 
     /**
-     * Reformat le tableau généré par doctrine 
+     * Reformat le tableau généré par doctrine
      * @param array $specimen
      * @return array
      */
-    public function formatArraySpecimen(array $specimen) {
-        $formattedSpecimen = [] ;
-        $formattedSpecimen['Bibliography'] = $specimen['bibliographies'] ;
+    public function formatArraySpecimen(array $specimen)
+    {
+        $formattedSpecimen = [];
+        $formattedSpecimen['Bibliography'] = $specimen['bibliographies'];
         unset($specimen['bibliographies']);
-        
-        $formattedSpecimen['Determination'] = $specimen['determinations'] ;
-        foreach($formattedSpecimen['Determination'] as $key => $determination) {
-            $formattedSpecimen['Determination'][$key]['Taxon'] = $formattedSpecimen['Determination'][$key]['taxon'] ;
+
+        $formattedSpecimen['Determination'] = $specimen['determinations'];
+        foreach ($formattedSpecimen['Determination'] as $key => $determination) {
+            $formattedSpecimen['Determination'][$key]['Taxon'] = $formattedSpecimen['Determination'][$key]['taxon'];
             unset($formattedSpecimen['Determination'][$key]['taxon']);
         }
         unset($specimen['determinations']);
-        
-        $formattedSpecimen['Multimedia'] = $specimen['multimedias'] ;
+
+        $formattedSpecimen['Multimedia'] = $specimen['multimedias'];
         unset($specimen['multimedias']);
-        
-        $formattedSpecimen['Stratigraphy'] = $specimen['stratigraphy'] ;
+
+        $formattedSpecimen['Stratigraphy'] = $specimen['stratigraphy'];
         unset($specimen['stratigraphy']);
-        
-        $formattedSpecimen['Recolte'] = $specimen['recolte'] ;
+
+        $formattedSpecimen['Recolte'] = $specimen['recolte'];
         unset($specimen['recolte']);
-        $formattedSpecimen['Localisation'] = $formattedSpecimen['Recolte']['localisation'] ;
+        $formattedSpecimen['Localisation'] = $formattedSpecimen['Recolte']['localisation'];
         unset($formattedSpecimen['Recolte']['localisation']);
         unset($specimen['Recolte']['localisation']);
-        
-        $formattedSpecimen['Specimen'] = $specimen ;
-        
-        return $formattedSpecimen ;
+
+        $formattedSpecimen['Specimen'] = $specimen;
+
+        return $formattedSpecimen;
     }
 
     /**
@@ -182,7 +181,7 @@ class GenericEntityManager
     public function getData($base, $className, $fieldName, $id)
     {
         $fullClassName = $this->getFullClassName($className);
-        $getter = 'get' . $fieldName;
+        $getter = 'get'.$fieldName;
         if (method_exists($fullClassName, $getter)) {
             $em = $this->emI;
             if (strtolower($base) == 'recolnat') {
@@ -197,7 +196,7 @@ class GenericEntityManager
             }
             return $data;
         } else {
-            throw new \Exception('\AppBundle\Entity\\' . $className. ' get' . $fieldName . ' doesn\'t exists.');
+            throw new \Exception('\AppBundle\Entity\\'.$className.' get'.$fieldName.' doesn\'t exists.');
         }
     }
 
@@ -207,7 +206,7 @@ class GenericEntityManager
      */
     public function getFullClassName($className)
     {
-        return '\\AppBundle\\Entity\\' . $this->formatClassName($className);
+        return '\\AppBundle\\Entity\\'.$this->formatClassName($className);
     }
 
     /**
@@ -219,7 +218,7 @@ class GenericEntityManager
      */
     public function setData(&$entity, $className, $fieldName, $data)
     {
-        $setter = 'set' . $fieldName;
+        $setter = 'set'.$fieldName;
         if (method_exists($this->getFullClassName($className), $setter)) {
             if ($data instanceof \DateTime) {
                 $dateFormater = $this->getDateFormatter();
@@ -236,6 +235,6 @@ class GenericEntityManager
     private function getDateFormatter()
     {
         return \IntlDateFormatter::create(
-                        Locale::getDefault(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
+            Locale::getDefault(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
     }
 }
