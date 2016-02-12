@@ -58,23 +58,12 @@ class User
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         
         if (!$fs->exists($this->getPrefsFileName())) {
-            $this->createPrefsFile();
+            $this->savePrefs($this->prefs);
         }
         
         $handle = fopen($this->getPrefsFileName(), "r");
         $this->prefs->load(json_decode(fread($handle, filesize($this->getPrefsFileName())), true));
         return $this->prefs;
-    }
-
-    /**
-     * @return void
-     */
-    private function createPrefsFile()
-    {
-        $handle = fopen($this->getPrefsFileName(), "w");
-        fwrite($handle, $this->prefs->toJson());
-        fclose($handle);
-        chmod($this->getPrefsFileName(), 0755);
     }
 
     /**
@@ -96,8 +85,6 @@ class User
     }
 
     /**
-     * 
-     * @param String $institutionCode
      * @return String
      */
     public function getDataDirPath()

@@ -115,14 +115,14 @@
     {% endif %}
     <div class="row">
         <div class="col-sm-6 col-md-6">
-            <a href="{{ path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
-               class="exportLink btn btn-default" role="button">
-                {{ 'downloadDwc'|trans }}
-            </a>
-            <a href="{{ path('exportCsv', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
-               class="exportLink btn btn-default" role="button">
-                {{ 'downloadCsv'|trans }}
-            </a>
+            {#<a href="{{ path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"#}
+               {#class="exportLink btn btn-default" role="button">#}
+                {#{{ 'downloadDwc'|trans }}#}
+            {#</a>#}
+            {#<a href="{{ path('exportCsv', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"#}
+               {#class="exportLink btn btn-default" role="button">#}
+                {#{{ 'downloadCsv'|trans }}#}
+            {#</a>#}
         </div>
         <div class="col-sm-6 col-md-6">
             <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
@@ -135,9 +135,9 @@
             </a>
         </div>
         <div class="col-sm-6 col-md-6">
-            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
                class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
-                {{ 'checkprefs'|trans }}
+                {{ 'downloadDwc'|trans }}Prefs
             </a>
         </div>
     </div>
@@ -177,10 +177,32 @@
                 var url = $(this).attr('href');
                 var modalPrefs = $("#modal");
                 $.get(url, function(data) {
-                    console.log(data);
                     modalPrefs.find('.modal-body').html(data);
                     modalPrefs.modal('show');
+                })
+                .success(function() {
+                    var urlDownload = modalPrefs.find('form').attr('action') ;
+                    modalPrefs.find('.confirm').on('click', function (event) {
+                        $.ajax({
+                            url: urlDownload,
+                            method: "POST",
+                            data:modalPrefs.find('form').serialize(),
+                            beforeSend: function () {
+                                modalSpinner.find('.modal-body h4').remove();
+                                modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
+                            }
+                        })
+                        .done(function (data) {
+                            console.log(data);
+                        })
+                        .success(function (data) {
+                            //path = Routing.generate('download', {path: data.file});
+                            //window.location = path;
+                            console.log(data);
+                        });
+                    });
                 });
+
 
                 event.preventDefault();
             });

@@ -54,6 +54,38 @@
                 <source>prefs.saved</source>
                 <target>Les préférences ont été enregistrées</target>
             </trans-unit>
+            <trans-unit id="14">
+                <source>export.sideForChoicesNotSet</source>
+                <target>Pour les choix non effectués, vous préférez :</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>export.sideForNewRecords</source>
+                <target>Choix pour les nouveaux enregistrements</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>sidenotset.recolnat</source>
+                <target>Recolnat</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>sidenotset.institution</source>
+                <target>Institution</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>newrecords.recolnat</source>
+                <target>Recolnat</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>newrecords.institution</source>
+                <target>Institution</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>newrecords.priority.recolnat</source>
+                <target>En priorité Recolnat</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>newrecords.priority.institution</source>
+                <target>En priorité Institution</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

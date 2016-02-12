@@ -11,6 +11,7 @@ use AppBundle\Business\User\Prefs;
 abstract class AbstractExporter
 {
     public $exportPath;
+    public $exportPrefs;
     public $datas;
     public $entitiesName = [
             'Specimen',     
@@ -25,13 +26,14 @@ abstract class AbstractExporter
     
     public $arrayEntityExport = [];
     /**
-     * 
      * @param array $datas
      * @param string $exportPath
+     * @param ExportPrefs $exportPrefs
      */
-    public function __construct($datas, $exportPath) {
+    public function __construct($datas, $exportPath, ExportPrefs $exportPrefs) {
         $this->datas = $datas;
         $this->exportPath = $exportPath;
+        $this->exportPrefs = $exportPrefs;
         foreach ($this->entitiesName as $className) {
             $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\Entity\\'.ucfirst($className).'Exporter';
             /* @var $entityExporter \AppBundle\Business\Exporter\AbstractEntityExporter */

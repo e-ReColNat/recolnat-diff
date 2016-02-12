@@ -2,8 +2,8 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Business\Exporter\ExportPrefs;
 use Symfony\Component\HttpFoundation\Session\Session;
-use AppBundle\Manager\GenericEntityManager;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Business\User\User;
@@ -35,6 +35,9 @@ class ExportManager
 
     /** @var \AppBundle\Business\DiffHandler */
     private $diffHandler;
+
+    /** @var  ExportPrefs */
+    protected $exportPrefs;
 
     /**
      * 
@@ -209,7 +212,7 @@ class ExportManager
 
     /**
      * @param Request|null $request
-     * @param array|null $selectedClassName
+     * @param array|string|null $selectedClassName
      * @param array $specimensWithChoices
      * @param array $choicesToRemove
      * @return array
@@ -403,6 +406,9 @@ class ExportManager
         return $returnChoices;
     }
 
+    /**
+     * @return void
+     */
     public function saveChoices()
     {
         $this->diffHandler->getChoices()->save($this->getChoices());
@@ -422,24 +428,23 @@ class ExportManager
             'Multimedia',
             'Bibliography',
         ];
-        foreach ($datas as $key => $specimen) {
+        foreach ($datas as $index => $specimen) {
             $arraySpecimenWithEntities = $genericEntityManager->formatArraySpecimen($specimen);
-            $datasWithChoices[$key] = $arraySpecimenWithEntities;
+            $datasWithChoices[$index] = $arraySpecimenWithEntities;
             foreach ($arraySpecimenWithEntities as $className => $row) {
-                $key2 = null;
                 if (in_array($className, $entitiesNameWithArray)) {
-                    foreach ($row as $key2 => $record) {
+                    foreach ($row as $indexSubArray => $record) {
                         foreach ($record as $fieldName => $value) {
-                            $datasWithChoices[$key][$className][$key2][$fieldName] = $value;
+                            $datasWithChoices[$index][$className][$indexSubArray][$fieldName] = $value;
                         }
-                        $this->setChoiceForEntity($datasWithChoices, $key, $className, $record, $key2);
+                        $this->setChoiceForEntity($datasWithChoices, $index, $className, $record, $indexSubArray);
                     }
                 } else {
                     if (!empty($row)) {
                         foreach ($row as $fieldName => $value) {
-                            $datasWithChoices[$key][$className][$fieldName] = $value;
+                            $datasWithChoices[$index][$className][$fieldName] = $value;
                         }
-                        $this->setChoiceForEntity($datasWithChoices, $key, $className, $row);
+                        $this->setChoiceForEntity($datasWithChoices, $index, $className, $row);
                     }
                 }
             }
@@ -449,49 +454,75 @@ class ExportManager
 
     /**
      * @param array $datasWithChoices
-     * @param string $key
+     * @param string $index
      * @param string $className
      * @param array $arrayEntity
-     * @param null|string $key2
+     * @param null|string $indexSubArray
      */
-    private function setChoiceForEntity(&$datasWithChoices, $key, $className, $arrayEntity, $key2 = null)
+    private function setChoiceForEntity(&$datasWithChoices, $index, $className, $arrayEntity, $indexSubArray = null)
     {
         $choices = $this->getChoicesForEntity($className, $arrayEntity);
         if (is_array($choices) && count($choices) > 0) {
             foreach ($choices as $choice) {
-                if (!is_null($key2)) {
-                    $datasWithChoices[$key][$className][$key2][$choice['fieldName']] = $choice['data'];
+                if (!is_null($indexSubArray)) {
+                    $datasWithChoices[$index][$className][$indexSubArray][$choice['fieldName']] = $choice['data'];
                 } else {
-                    $datasWithChoices[$key][$className][$choice['fieldName']] = $choice['data'];
+                    $datasWithChoices[$index][$className][$choice['fieldName']] = $choice['data'];
                 }
             }
         }
     }
 
     /**
-     * @return \ArrayObject|string
+     *
+     * @param string $className
+     * @param array $arrayEntity
+     * @return array
      */
-    public function getCsv()
+    public function getChoicesForEntity($className, $arrayEntity)
     {
+        $returnChoices = null;
+        $relationId = null;
+        if (array_key_exists($this->genericEntityManager->getIdentifierName($className), $arrayEntity)) {
+            $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
+
+            foreach ($this->getChoices() as $row) {
+                if ($row['className'] == $className && $row['relationId'] == $relationId) {
+                    $returnChoices[] = $row;
+                }
+            }
+        }
+        return $returnChoices;
+    }
+
+    /**
+     * @param ExportPrefs $exportPrefs
+     * @return string
+     */
+    public function getCsv(ExportPrefs $exportPrefs)
+    {
+        $this->exportPrefs = $exportPrefs;
         $specimenCodes = $this->sessionManager->get('specimensCode');
-        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
+        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($exportPrefs->getSideForChoicesNotSet(), $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
         $csvExporter = new CsvExporter(
-                $datasWithChoices, $this->getExportDirPath());
+                $datasWithChoices, $this->getExportDirPath(), $exportPrefs);
 
         return $csvExporter->generate($this->user->getPrefs());
     }
 
     /**
+     * @param ExportPrefs $exportPrefs
      * @return string
      */
-    public function getDwc()
+    public function getDwc(ExportPrefs $exportPrefs)
     {
+        $this->exportPrefs = $exportPrefs;
         $specimenCodes = $this->sessionManager->get('specimensCode');
-        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $specimenCodes);
+        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($exportPrefs->getSideForChoicesNotSet(), $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
         $dwcExporter = new DwcExporter(
-                $datasWithChoices, $this->getExportDirPath());
+                $datasWithChoices, $this->getExportDirPath(), $exportPrefs);
 
         return $dwcExporter->generate($this->user->getPrefs());
     }
@@ -512,32 +543,6 @@ class ExportManager
             }
         }
         return $returnChoice;
-    }
-
-    /**
-     * 
-     * @param string $className
-     * @param array $arrayEntity
-     * @return array
-     */
-    public function getChoicesForEntity($className, $arrayEntity)
-    {
-        $returnChoices = null;
-        $relationId = null;
-        if (array_key_exists($this->genericEntityManager->getIdentifierName($className), $arrayEntity)) {
-            $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
-        } else {
-            echo $className . ' ' . $this->genericEntityManager->getIdentifierName($className) . "<br/>";
-        }
-
-        if (!is_null($relationId)) {
-            foreach ($this->getChoices() as $row) {
-                if ($row['className'] == $className && $row['relationId'] == $relationId) {
-                    $returnChoices[] = $row;
-                }
-            }
-        }
-        return $returnChoices;
     }
 
 }

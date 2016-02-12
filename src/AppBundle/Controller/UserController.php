@@ -19,6 +19,8 @@ class UserController extends Controller
 
     /**
      * @Route("/user/{institutionCode}/prefs/view", name="viewPrefsUser")
+     * @param string $institutionCode
+     * @return Response
      */
     public function indexAction($institutionCode)
     {
@@ -34,6 +36,9 @@ class UserController extends Controller
 
     /**
      * @Route("/user/{institutionCode}/prefs/edit", name="editPrefsUser")
+     * @param Request $request
+     * @param string $institutionCode
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function editAction(Request $request, $institutionCode)
     {

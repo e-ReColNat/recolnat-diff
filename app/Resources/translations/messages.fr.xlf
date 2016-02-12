@@ -72,7 +72,7 @@
             </trans-unit>
             <trans-unit id="18">
                 <source>modification.effectuee</source>
-                <target>{0,1}%nbModif% modification effectuée|]1,Inf]%nbModif% modifications effectuées</target>
+                <target>{0,1}%count% modification effectuée|]1,Inf]%count% modifications effectuées</target>
             </trans-unit>
             <trans-unit id="19">
                 <source>label.warning</source>
@@ -108,7 +108,7 @@
             </trans-unit>
             <trans-unit id="27">
                 <source>label.differences.abbr</source>
-                <target>{1}%nbDiffs% diff.|]1,Inf]%nbDiffs% diffs.</target>
+                <target>{1}%count% diff.|]1,Inf]%count% diffs.</target>
             </trans-unit>
             <trans-unit id="28">
                 <source>label.legend.origin</source>

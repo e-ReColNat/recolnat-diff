@@ -4,6 +4,7 @@ namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\Exporter\AbstractExporter;
 use AppBundle\Business\User\Prefs;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Description of DwcExporter
@@ -85,7 +86,7 @@ class DwcExporter extends AbstractExporter
         $this->setDwcLineBreak($prefs->getDwcLineBreak());
         $this->setDwcDateFormat($prefs->getDwcDateFormat());
         $this->formattedDatas = $this->formatDatas();
-        $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath());
+        $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath(), $this->exportPrefs);
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]);
 
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
@@ -123,13 +124,18 @@ class DwcExporter extends AbstractExporter
         $zipFilePath = $this->getExportDirPath() . '/dwc.zip';
         $arrayFilesName = [];
         $arrayFilesName[] = $this->getMetaFilepath() . ' ';
-        foreach ($this->csvFiles as $csvFile) {
-            $arrayFilesName[] = $csvFile->getPathName() . ' ';
-        }
+        if (is_array($this->csvFiles) && count($this->csvFiles)>0) {
+            foreach ($this->csvFiles as $csvFile) {
+                $arrayFilesName[] = $csvFile->getPathName() . ' ';
+            }
 
-        $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
-        exec($zipCommand);
-        $fileExport->chmod($zipFilePath, 0777);
+            $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
+            exec($zipCommand);
+            $fileExport->chmod($zipFilePath, 0777);
+        }
+        else {
+            throw new Exception('DWC-a can\'t be created !');
+        }
 
         return $zipFilePath;
     }

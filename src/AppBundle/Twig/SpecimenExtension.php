@@ -8,6 +8,7 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Entity\Taxon;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Intl\Locale;
@@ -36,6 +37,15 @@ class SpecimenExtension extends \Twig_Extension
         );
     }
 
+    /**
+     * @param Object $entity
+     * @param string $typeEntity
+     * @param string $fieldName
+     * @param bool $printIfNull
+     * @param string $endString
+     * @param array $transParams
+     * @return string
+     */
     public function printLabelAndField($entity, $typeEntity, $fieldName, $printIfNull=true, $endString='', $transParams =[])
     {
         $value = $this->getFieldToString($entity, $fieldName);
@@ -46,22 +56,27 @@ class SpecimenExtension extends \Twig_Extension
         return '';
     }
 
+    /**
+     * @param \AppBundle\Entity\Specimen $specimen
+     * @param $class
+     * @return \AppBundle\Entity\Localisation|\AppBundle\Entity\Recolte|\AppBundle\Entity\Specimen|\AppBundle\Entity\Stratigraphy|array|\Doctrine\Common\Collections\ArrayCollection
+     */
     public function getRelation(\AppBundle\Entity\Specimen $specimen, $class)
     {
         switch (strtolower($class)) {
-            case 'specimen' :
+            case 'specimen':
                 return $specimen;
-            case 'bibliography' :
+            case 'bibliography':
                 return $specimen->getBibliographies();
-            case 'determination' :
+            case 'determination':
                 return $specimen->getDeterminations();
-            case 'localisation' :
+            case 'localisation':
                 return $specimen->getRecolte()->getLocalisation();
-            case 'recolte' :
+            case 'recolte':
                 return $specimen->getRecolte();
-            case 'stratigraphy' :
+            case 'stratigraphy':
                 return $specimen->getStratigraphy();
-            case 'taxon' :
+            case 'taxon':
                 $determinations = $specimen->getDeterminations();
                 $taxons = [];
                 foreach ($determinations as $determination) {
@@ -71,6 +86,12 @@ class SpecimenExtension extends \Twig_Extension
         }
     }
 
+    /**
+     * @param \AppBundle\Entity\Specimen $specimen
+     * @param string $class
+     * @param string $id
+     * @return \AppBundle\Entity\Localisation|\AppBundle\Entity\Recolte|\AppBundle\Entity\Stratigraphy|array|mixed|null|object
+     */
     public function getRelationById(\AppBundle\Entity\Specimen $specimen, $class, $id)
     {
         $relations = $this->getRelation($specimen, $class);
@@ -111,19 +132,23 @@ class SpecimenExtension extends \Twig_Extension
         $toString = '';
         if (!is_null($relation)) {
             switch (get_class($relation)) {
-                case '\AppBundle\Entity\Determination' :
+                case '\AppBundle\Entity\Determination':
                     $toString = $this->getToStringDetermination($relation);
                     break;
-                case '\AppBundle\Entity\Recolte' :
+                case '\AppBundle\Entity\Recolte':
                     $toString = $this->getToStringRecolte($relation);
                     break;
-                default :
+                default:
                     $toString = $relation->__toString();
             }
         }
         return $toString;
     }
 
+    /**
+     * @param \AppBundle\Entity\Recolte $recolte
+     * @return string
+     */
     private function getToStringRecolte(\AppBundle\Entity\Recolte $recolte)
     {
         $dateFormater = $this->getDateFormatter();
@@ -134,6 +159,10 @@ class SpecimenExtension extends \Twig_Extension
         }
     }
 
+    /**
+     * @param \AppBundle\Entity\Determination $determination
+     * @return string
+     */
     private function getToStringDetermination(\AppBundle\Entity\Determination $determination)
     {
         $dateFormater = $this->getDateFormatter();
@@ -144,6 +173,11 @@ class SpecimenExtension extends \Twig_Extension
         }
     }
 
+    /**
+     * @param $entity
+     * @param $fieldName
+     * @return bool|null|string
+     */
     public function getFieldToString($entity, $fieldName)
     {
         $returnString = null;
@@ -160,10 +194,12 @@ class SpecimenExtension extends \Twig_Extension
         return $returnString;
     }
 
+    /**
+     * @param \AppBundle\Entity\Specimen $specimen
+     * @return Taxon|null
+     */
     public function getTaxon(\AppBundle\Entity\Specimen $specimen)
     {
-        /* return $this->doctrine->getManager()->getRepository('\AppBundle\Entity\Taxon')
-          ->findBestTaxon($specimen->getOccurrenceid()); */
         $determinations = $specimen->getDeterminations();
         if (count($determinations) > 0) {
             $taxon = $determinations[0]->getTaxon();
@@ -175,12 +211,18 @@ class SpecimenExtension extends \Twig_Extension
         }
     }
 
+    /**
+     * @return \IntlDateFormatter|\Symfony\Component\Intl\DateFormatter\IntlDateFormatter
+     */
     private function getDateFormatter()
     {
         return \IntlDateFormatter::create(
                         Locale::getDefault(), \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE);
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'specimen_extension';

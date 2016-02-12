@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Form\Type\ExportPrefsType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -254,19 +256,48 @@ class FrontController extends Controller
 
 
     /**
-     * @Route("{institutionCode}/{collectionCode}/export/setPrefs", name="setPrefsForExport")
+     * @Route("{institutionCode}/{collectionCode}/export/setPrefs/{type}", name="setPrefsForExport",
+     *     requirements={"type"="dwc|csv"})
+     * @param Request $request
      * @param string $institutionCode
      * @param string $collectionCode
-     * @return Response
+     * @param string $type
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function setPrefsForExportAction($institutionCode, $collectionCode)
+    public function setPrefsForExportAction(Request $request, $institutionCode, $collectionCode, $type)
     {
         $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
 
+        $exportPrefs = new ExportPrefs();
+
+        $form = $this->createForm(ExportPrefsType::class, $exportPrefs, [
+            'action'=>$this->generateUrl('setPrefsForExport', [
+                'institutionCode' => $institutionCode, 'collectionCode' => $collectionCode, 'type'=>$type
+            ])
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $paramsExport = ['institutionCode' => $institutionCode, 'collectionCode' => $collectionCode, 'exportPrefs'=>serialize($exportPrefs)];
+            dump($paramsExport);
+            //die();
+            switch ($type){
+                case 'dwc':
+                    var_dump($paramsExport);
+                    //$url = $this->generateUrl('exportDwc', $paramsExport) ;
+                    //return $this->redirect($url);
+                    return $this->redirectToRoute('exportDwc', $paramsExport);
+                    break;
+                case 'csv':
+                    return $this->redirectToRoute('exportCsv', $paramsExport);
+                    break;
+            }
+        }
         $sumStats = $statsManager->getSumStats();
         $statsChoices = $statsManager->getStatsChoices();
         $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
         dump($sumLonesomeRecords);
+
 
         return $this->render('@App/Front/setPrefsForExport.html.twig', array(
             'institutionCode' => $institutionCode,
@@ -274,7 +305,31 @@ class FrontController extends Controller
             'sumStats' => $sumStats,
             'statsChoices' => $statsChoices,
             'sumLonesomeRecords'=>$sumLonesomeRecords,
+            'form' => $form->createView(),
         ));
+
+        /**
+        $user = $this->get('userManager');
+        $user->init($institutionCode);
+
+        $prefs = $user->getPrefs();
+        $form = $this->createForm(UserPrefsType::class, $prefs);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $translator = $this->get('translator');
+            $message = $translator->trans('prefs.saved', [], 'prefs');
+            $user->savePrefs($prefs);
+            $this->addFlash('success', $message);
+            return $this->redirectToRoute('viewPrefsUser', ['institutionCode'=>$institutionCode]);
+        }
+
+        return $this->render('@App/User/editPrefs.html.twig', array(
+            'institutionCode' => $institutionCode,
+            'form' => $form->createView(),
+        ));
+         */
     }
 
     /**

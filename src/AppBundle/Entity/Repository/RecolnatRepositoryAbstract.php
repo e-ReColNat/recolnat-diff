@@ -33,7 +33,6 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
     abstract public function findOneById($id);
 
     /**
-     * @param \Doctrine\ORM\QueryBuilder $qb
      * @param string $alias
      * @return Expr\Func
      */
