@@ -482,7 +482,6 @@ class ExportManager
     public function getChoicesForEntity($className, $arrayEntity)
     {
         $returnChoices = null;
-        $relationId = null;
         if (array_key_exists($this->genericEntityManager->getIdentifierName($className), $arrayEntity)) {
             $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
 

@@ -26,7 +26,6 @@ class ExportPrefsType extends AbstractType
                 'choices_as_values' => true,
                 'label' => 'export.sideForNewRecords'
             ))
-            //->add('save', SubmitType::class, array('label' => 'prefs.save'))
         ;
     }
 

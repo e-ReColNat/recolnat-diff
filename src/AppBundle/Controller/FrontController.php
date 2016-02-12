@@ -279,13 +279,8 @@ class FrontController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $paramsExport = ['institutionCode' => $institutionCode, 'collectionCode' => $collectionCode, 'exportPrefs'=>serialize($exportPrefs)];
-            dump($paramsExport);
-            //die();
             switch ($type){
                 case 'dwc':
-                    var_dump($paramsExport);
-                    //$url = $this->generateUrl('exportDwc', $paramsExport) ;
-                    //return $this->redirect($url);
                     return $this->redirectToRoute('exportDwc', $paramsExport);
                     break;
                 case 'csv':
@@ -296,7 +291,6 @@ class FrontController extends Controller
         $sumStats = $statsManager->getSumStats();
         $statsChoices = $statsManager->getStatsChoices();
         $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
-        dump($sumLonesomeRecords);
 
 
         return $this->render('@App/Front/setPrefsForExport.html.twig', array(
