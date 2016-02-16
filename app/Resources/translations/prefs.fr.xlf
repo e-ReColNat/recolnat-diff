@@ -79,12 +79,8 @@
                 <target>Institution</target>
             </trans-unit>
             <trans-unit id="20">
-                <source>newrecords.priority.recolnat</source>
-                <target>En priorité Recolnat</target>
-            </trans-unit>
-            <trans-unit id="21">
-                <source>newrecords.priority.institution</source>
-                <target>En priorité Institution</target>
+                <source>newrecords.both</source>
+                <target>Les deux côtés</target>
             </trans-unit>
         </body>
     </file>
