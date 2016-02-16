@@ -123,7 +123,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
         $query = $qb->getQuery();
-        $query->useResultCache('cache_key', 300);
+        $query->useResultCache(true, 300);
         return $this->orderResultSetBySpecimenCode($query->getResult(), 'occurrenceid');
     }
 

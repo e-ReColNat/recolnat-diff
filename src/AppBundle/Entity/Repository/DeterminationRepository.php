@@ -36,7 +36,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
      */
     public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        return $this->getQueryFindOneById($id)->getOneOrNullResult();
+        return $this->getQueryFindOneById($id)->getOneOrNullResult($fetchMode);
     }
 
     /**
