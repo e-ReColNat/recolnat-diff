@@ -19,8 +19,8 @@ class DiffManager
      */
     protected $em;
 
-    /** @var DiffStatsManager */
-    protected $statsManager;
+    /** @var DiffComputer */
+    protected $diffComputer;
 
     protected $exportPath;
 
@@ -46,13 +46,13 @@ class DiffManager
     /**
      * DiffManager constructor.
      * @param ObjectManager $em
-     * @param DiffStatsManager $statsManager
+     * @param DiffComputer $diffComputer
      * @param string $exportPath
      */
-    public function __construct(ObjectManager $em, DiffStatsManager $statsManager, $exportPath)
+    public function __construct(ObjectManager $em, DiffComputer $diffComputer, $exportPath)
     {
         $this->em = $em;
-        $this->statsManager = $statsManager;
+        $this->diffComputer = $diffComputer;
         $this->exportPath = $exportPath;
     }
 
@@ -66,9 +66,13 @@ class DiffManager
         $this->institutionCode = $institutionCode;
         $this->collectionCode = $collectionCode;
         $diffs = $this->getAllDiff();
-        $diffStatsManager = $this->statsManager->init($diffs);
+        $diffStatsManager = $this->diffComputer->init($diffs);
         $data = array_merge($diffStatsManager->getDiffs(),
-            ['stats' => $diffStatsManager->getAllStats(), 'lonesomeRecords' => $diffStatsManager->getLonesomeRecords()]);
+            [
+                'stats' => $diffStatsManager->getAllStats(),
+                'lonesomeRecords' => $diffStatsManager->getLonesomeRecords(),
+                'statsLonesomeRecords' => $diffStatsManager->getStatsLonesomeRecords()
+            ]);
         return $data;
     }
 
@@ -98,7 +102,7 @@ class DiffManager
      * @param array $db2
      * @return string
      */
-    private function getGenericDiffQuery($fullClassName,$db1,$db2)
+    private function getGenericDiffQuery($fullClassName, $db1, $db2)
     {
         /* @var $metadata \Doctrine\ORM\Mapping\ClassMetadata */
         $metadata = $this->em->getMetadataFactory()->getMetadataFor($fullClassName);
@@ -222,46 +226,46 @@ class DiffManager
         switch ($fullClassName) {
             case 'AppBundle:Specimen':
                 $fromClause = ' FROM %s '.$alias.' WHERE '.$alias.'.INSTITUTIONCODE = :institutionCode AND '
-                . $alias.'.COLLECTIONCODE = :collectionCode ';
+                    .$alias.'.COLLECTIONCODE = :collectionCode ';
                 break;
             case 'AppBundle:Bibliography':
             case 'AppBundle:Determination':
                 $fromClause = ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
-                . $alias.'.OCCURRENCEID AND '
-                . 's.INSTITUTIONCODE = :institutionCode AND '
-                . 's.COLLECTIONCODE = :collectionCode ';
+                    .$alias.'.OCCURRENCEID AND '
+                    .'s.INSTITUTIONCODE = :institutionCode AND '
+                    .'s.COLLECTIONCODE = :collectionCode ';
                 break;
             case 'AppBundle:Localisation':
                 $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME);
                 $recolteTableName = ($institution ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB).'.'.$metadataRecolte->getTableName();
                 $fromClause = ' FROM %s '.$alias
-                . ' INNER JOIN '.$recolteTableName.' ON '.$recolteTableName.'.LOCATIONID = '.$alias.'.LOCATIONID'
-                . ' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
-                . $recolteTableName.'.EVENTID AND '
-                . 's.INSTITUTIONCODE = :institutionCode AND '
-                . 's.COLLECTIONCODE = :collectionCode ';
+                    .' INNER JOIN '.$recolteTableName.' ON '.$recolteTableName.'.LOCATIONID = '.$alias.'.LOCATIONID'
+                    .' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
+                    .$recolteTableName.'.EVENTID AND '
+                    .'s.INSTITUTIONCODE = :institutionCode AND '
+                    .'s.COLLECTIONCODE = :collectionCode ';
                 break;
             case 'AppBundle:Recolte':
                 $fromClause = ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
-                . $alias.'.EVENTID AND '
-                . 's.INSTITUTIONCODE = :institutionCode AND '
-                . 's.COLLECTIONCODE = :collectionCode ';
+                    .$alias.'.EVENTID AND '
+                    .'s.INSTITUTIONCODE = :institutionCode AND '
+                    .'s.COLLECTIONCODE = :collectionCode ';
                 break;
             case 'AppBundle:Stratigraphy':
                 $fromClause = ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.GEOLOGICALCONTEXTID = '
-                . $alias.'.GEOLOGICALCONTEXTID AND '
-                . 's.INSTITUTIONCODE = :institutionCode AND '
-                . 's.COLLECTIONCODE = :collectionCode ';
+                    .$alias.'.GEOLOGICALCONTEXTID AND '
+                    .'s.INSTITUTIONCODE = :institutionCode AND '
+                    .'s.COLLECTIONCODE = :collectionCode ';
                 break;
             case 'AppBundle:Taxon':
                 $metadataDetermination = $this->em->getMetadataFactory()->getMetadataFor(self::DETERMINATION_CLASSNAME);
                 $determinationTableName = ($institution ? self::RECOLNAT_DIFF_DB : self::RECOLNAT_DB).'.'.$metadataDetermination->getTableName();
                 $fromClause = ' FROM %s '.$alias
-                . ' INNER JOIN '.$determinationTableName.' ON '.$determinationTableName.'.TAXONID = '.$alias.'.TAXONID'
-                . ' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
-                . $determinationTableName.'.OCCURRENCEID AND '
-                . 's.INSTITUTIONCODE = :institutionCode AND '
-                . 's.COLLECTIONCODE = :collectionCode ';
+                    .' INNER JOIN '.$determinationTableName.' ON '.$determinationTableName.'.TAXONID = '.$alias.'.TAXONID'
+                    .' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
+                    .$determinationTableName.'.OCCURRENCEID AND '
+                    .'s.INSTITUTIONCODE = :institutionCode AND '
+                    .'s.COLLECTIONCODE = :collectionCode ';
                 break;
         }
         return $fromClause;
@@ -276,8 +280,8 @@ class DiffManager
     private function getDiff($className)
     {
         $fullClassName = $this->getFullClassName($className);
-        $db1 = ['name'=>self::RECOLNAT_DB, 'alias'=>'r'];
-        $db2 = ['name'=>self::RECOLNAT_DIFF_DB, 'alias'=> 'i'];
+        $db1 = ['name' => self::RECOLNAT_DB, 'alias' => 'r'];
+        $db2 = ['name' => self::RECOLNAT_DIFF_DB, 'alias' => 'i'];
         $sqlDiff1 = $this->getGenericDiffQuery($fullClassName, $db1, $db2);
         $sqlDiff2 = $this->getGenericDiffQuery($fullClassName, $db2, $db1);
 

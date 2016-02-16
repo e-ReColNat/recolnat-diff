@@ -9,26 +9,37 @@ use Doctrine\ORM\EntityManager;
  *
  * @author tpateffoz
  */
-class DiffStatsManager
+class DiffComputer
 {
 
     private $arrayIds;
 
     /**
      * Holds the Doctrine entity manager for eRecolnat database interaction
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $emR;
 
     /**
      * Holds the Doctrine entity manager for Institution database interaction
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $emD;
     protected $diffs = array();
     protected $lonesomeRecords = array();
     protected $classes = array();
     protected $stats = array();
+    protected $statsLonesomeRecords = array();
+
+    private $classOrder = [
+        'Specimen',
+        'Bibliography',
+        'Determination',
+        'Multimedia',
+        'Recolte',
+        'Stratigraphy',
+        'Taxon'
+    ];
 
     public function __construct(EntityManager $emR, EntityManager $emD)
     {
@@ -45,16 +56,20 @@ class DiffStatsManager
     public function init($arrayIds)
     {
         $this->arrayIds = $arrayIds;
-        if (count($this->arrayIds)>0) {
-            foreach ($this->arrayIds as $class => $specimensCode) {
-                $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($class));
-                /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
-                $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
-                $diffClassManager->init($class, $specimensCode);
-                $this->setDiffs($class, $diffClassManager->getStats());
-                $this->setLonesomeRecords($class, $diffClassManager->getLonesomeRecords());
-                $this->computeDiffs($class);
-                unset($diffClassManager);
+        if (count($this->arrayIds) > 0) {
+            //foreach ($this->arrayIds as $className => $specimensCode) {
+            foreach ($this->classOrder as $className) {
+                if (isset($this->arrayIds[$className])) {
+                    $specimensCode = $this->arrayIds[$className];
+                    $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
+                    /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
+                    $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
+                    $diffClassManager->init($className, $specimensCode);
+                    $this->setDiffs($className, $diffClassManager->getStats());
+                    $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
+                    $this->computeDiffs($className);
+                    unset($diffClassManager);
+                }
             }
         }
         $this->diffs['classes'] = $this->classes;
@@ -64,7 +79,8 @@ class DiffStatsManager
     /**
      * @param string $specimenCode
      */
-    private function setTaxon($specimenCode) {
+    private function setTaxon($specimenCode)
+    {
         if (!isset($this->diffs['datas'][$specimenCode]['display'])) {
             $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
             $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
@@ -100,23 +116,23 @@ class DiffStatsManager
     /**
      * @return array
      */
-    public function getAllStats() 
+    public function getAllStats()
     {
-        return $this->stats ;
+        return $this->stats;
     }
 
     /**
      * @param string $className
-     * @param array $fields
+     * @param array  $fields
      */
-    private function setStatsForClass($className, $fields) 
+    private function setStatsForClass($className, $fields)
     {
-        $fieldsName = array_keys($fields) ;
+        $fieldsName = array_keys($fields);
         foreach ($fieldsName as $fieldName) {
             if (!isset($this->stats[$className][$fieldName])) {
                 $this->stats[$className][$fieldName] = 0;
             }
-            $this->stats[$className][$fieldName]++ ;
+            $this->stats[$className][$fieldName]++;
         }
     }
 
@@ -136,22 +152,61 @@ class DiffStatsManager
         return $this->lonesomeRecords;
     }
 
+    /**
+     * @return array
+     */
+    public function getStatsLonesomeRecords()
+    {
+        return $this->statsLonesomeRecords;
+    }
 
     /**
      * Set les enregistrements orphelins
+     * @param string $className
+     * @param array  $lonesomeRecords
      */
-    public function setLonesomeRecords($class, $lonesomeRecords)
+    public function setLonesomeRecords($className, $lonesomeRecords)
     {
-        $this->lonesomeRecords[$class] = $lonesomeRecords;
+        $this->lonesomeRecords[$className] = [];
+        foreach ($lonesomeRecords as $db => $items) {
+            $specimenCodesNewSpecimenRecords = [];
+            if ($className != 'Specimen') {
+                $specimenCodesNewSpecimenRecords = array_column($this->lonesomeRecords['Specimen'][$db],
+                    'specimenCode');
+            }
+
+            foreach ($items as $lonesomeRecord) {
+                if ($className == 'Specimen' || !in_array($lonesomeRecord['specimenCode'],
+                        $specimenCodesNewSpecimenRecords)
+                ) {
+                    $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
+                    if (!isset($this->statsLonesomeRecords[$lonesomeRecord['specimenCode']])) {
+                        $this->statsLonesomeRecords[$lonesomeRecord['specimenCode']] = [];
+                    }
+                    $this->statsLonesomeRecords[$lonesomeRecord['specimenCode']][] = [
+                        'class' => $className,
+                        'id' => $lonesomeRecord['id'],
+                        'db' => $db
+                    ];
+                }
+            }
+        }
+
     }
 
-
-    public function setDiffs($class, $stats)
+    /**
+     * @param string $className
+     * @param array  $stats
+     */
+    public function setDiffs($className, $stats)
     {
-        $this->diffs['classes'][$class] = $stats;
-        $this->classes[$class] = array_keys($stats);
+        $this->diffs['classes'][$className] = $stats;
+        $this->classes[$className] = array_keys($stats);
     }
 
+    /**
+     * @return array
+     */
     public function getAllSpecimensId()
     {
         return array_keys($this->diffs['datas']);

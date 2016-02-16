@@ -11,11 +11,11 @@ class RecolteExporter extends AbstractEntityExporter
 {
     public function getExportProperties()
     {
-        $localisationExporter = new LocalisationExporter() ;
+        $localisationExporter = new LocalisationExporter();
         return array_merge($this->arrayExportTerm, $localisationExporter->getExportProperties());
     }
 
-    public function setExportTerm() 
+    public function setExportTerm()
     {
         $this->arrayExportTerm = [
             'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
@@ -29,7 +29,7 @@ class RecolteExporter extends AbstractEntityExporter
             'verbatimeventdate' => 'http://rs.tdwg.org/dwc/terms/verbatimEventDate',
         ];
     }
-    
+
     public function getNameSpace()
     {
         return 'http://rs.tdwg.org/dwc/terms/Event';
@@ -39,7 +39,7 @@ class RecolteExporter extends AbstractEntityExporter
     {
         return 'eventid';
     }
-    
+
     public function getCoreIdFieldName()
     {
         return 'occurrenceid';

@@ -2,11 +2,9 @@
 
 namespace AppBundle\Business;
 
-/**
- * Description of Diff
- *
- * @author tpateffoz
- */
+
+use Symfony\Component\Filesystem\Filesystem;
+
 class Diffs extends \SplFileObject
 {
     public $generateDiff;
@@ -17,7 +15,7 @@ class Diffs extends \SplFileObject
     public function __construct($dirPath)
     {
         $this->generateDiff = false;
-        $path = $dirPath . '/diffs.json';
+        $path = $dirPath.'/diffs.json';
         if (!is_file($path)) {
             $this->generateDiff = true;
         }
@@ -25,9 +23,12 @@ class Diffs extends \SplFileObject
         chmod($this->getPathname(), 0755);
     }
 
+    /**
+     * @param array $diffs
+     */
     public function save(array $diffs)
     {
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $fs = new Filesystem();
         if ($fs->exists($this->getPathname())) {
 
             $responseJson = json_encode($diffs, JSON_PRETTY_PRINT);
@@ -36,14 +37,142 @@ class Diffs extends \SplFileObject
         }
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getData()
     {
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $fs = new Filesystem();
         if ($fs->exists($this->getPathname())) {
             $fileContent = json_decode(file_get_contents($this->getPathname()), true);
             return $fileContent;
         }
         return array();
+    }
+
+    /**
+     * @param string $db
+     * @param mixed  $selectedClassesNames
+     * @return array
+     */
+    public function getLonesomeRecords($db = null, $selectedClassesNames = null)
+    {
+        $classesName = [];
+        if (!is_null($selectedClassesNames) && is_string($selectedClassesNames) && $selectedClassesNames != 'all') {
+            $classesName = [$selectedClassesNames];
+            array_walk($classesName, function(&$className) {
+                $className = ucfirst(strtolower($className));
+            });
+        }
+
+        $lonesomeRecords = $this->getData()['lonesomeRecords'];
+        $returnLonesomes = [];
+        if (!is_null($db)) {
+            foreach ($lonesomeRecords as $className => $items) {
+                if (!empty($classesName)) {
+                    if (in_array($className, $classesName)) {
+                        $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
+                    }
+                } else {
+                    $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
+                }
+            }
+        } else {
+            if (empty($classesName)) {
+                $returnLonesomes = $lonesomeRecords;
+            } else {
+                foreach ($classesName as $className) {
+                    $returnLonesomes[$className] = $lonesomeRecords[$className];
+                }
+            }
+        }
+        return $returnLonesomes;
+    }
+
+    /**
+     * @param            $db
+     * @param null|array $selectedClassesNames
+     * @return array
+     */
+    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames = null)
+    {
+        $lonesomeRecordsBySpecimenCodes = [];
+        $specimenLonesomeRecords = $this->getLonesomeRecords($db, 'specimen');
+        $refSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode');
+        $fullLonesomeRecords = $this->getLonesomeRecords($db, $selectedClassesNames);
+
+        if (!empty($fullLonesomeRecords)) {
+            foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
+                foreach ($lonesomeRecords[$db] as $item) {
+                    // Si le specimencode de l'enregistrement est dans la liste des specimens de ref c'est que tous les
+                    // enregistrements correspondant à ce specimen code sont nouveaux
+                    // puisque le specimen n'est pas dans l'autre base
+                    if (!in_array($item['specimenCode'], $refSpecimenCode) || $selectedClassesNames == 'specimen') {
+                        $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
+                            'className' => $className,
+                            'id' => $item['id']
+                        ];
+                    } elseif ($selectedClassesNames == 'all') {
+                        $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
+                            'className' => $className,
+                            'id' => $item['id']
+                        ];
+                    }
+
+                }
+            }
+        }
+
+        return $lonesomeRecordsBySpecimenCodes;
+    }
+
+
+    /**
+     * retourne les nouveaux enregistrements pour un specimen code et une base
+     * @param string      $specimenCode
+     * @param null|string $db
+     * @return array
+     */
+    public function getLonesomeRecordsForSpecimenCode($specimenCode, $db = null)
+    {
+        if (isset($this->getData()['statsLonesomeRecords'][$specimenCode])) {
+            if (is_null($db)) {
+                return $this->getData()['statsLonesomeRecords'][$specimenCode];
+            } else {
+                $lonesomeRecords = $this->getData()['statsLonesomeRecords'][$specimenCode];
+                return array_filter($lonesomeRecords, function($el) use ($db) {
+                    return $el['db'] == $db;
+                });
+            }
+
+        }
+        return [];
+    }
+
+    /**
+     * Retourne les nouveaux enregistrements pour une base
+     * @param null|string $className
+     * @param string      $db
+     * @return array
+     */
+    public function getLonesomeRecordsOrderedBySpecimenCodes($db, $className = null)
+    {
+        if (!is_null($className)) {
+            $className = ucfirst(strtolower($className));
+        }
+        return array_filter($this->getData()['statsLonesomeRecords'], function($items) use ($db, $className) {
+            $itemsFiltered = array_filter($items, function($item) use ($db, $className) {
+                if (is_null($className)) {
+                    return $item['db'] == $db;
+                } else {
+                    return $item['db'] == $db && $item['class'] == $className;
+                }
+            });
+            if (count($itemsFiltered) > 0) {
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
@@ -91,7 +220,7 @@ class Diffs extends \SplFileObject
     {
         $returnDiffs = $diffs;
         if (count($selectedSpecimensCode) > 0) {
-            // Remise du datas à zero
+            // Remise des datas à zero
             $returnDiffs['datas'] = [];
             $returnDiffs['classes'] = $diffs['classes'];
             foreach ($diffs['classes'] as $className => $specimensCode) {

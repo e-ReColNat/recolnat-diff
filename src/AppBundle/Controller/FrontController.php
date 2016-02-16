@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Form\Type\ExportPrefsType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,10 +54,10 @@ class FrontController extends Controller
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
 
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $statsBySimilarity = $exportManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
-        $sumStats = $exportManager->getSumStats();
+        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
+
+        $statsBySimilarity = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
+        $sumStats = $statsManager->getSumStats();
         return $this->render('@App/Front/stats.html.twig', array(
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
@@ -79,20 +81,21 @@ class FrontController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
 
+        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
 
-        $stats = $exportManager->getExpandedStats();
-        $sumStats = $exportManager->getSumStats();
-        $statsLonesomeRecords = $exportManager->getStatsLonesomeRecords();
+        $stats = $statsManager->getExpandedStats();
+        $sumStats = $statsManager->getSumStats();
+        $statsLonesomeRecords = $statsManager->getStatsLonesomeRecords();
         $sortStats = function($a, $b) {
             if ($a['diffs'] == $b['diffs']) {
                 return 0;
             }
-            return ($a['diffs']>$b['diffs']) ? -1 : 1;
+            return ($a['diffs'] > $b['diffs']) ? -1 : 1;
         };
         uasort($stats, $sortStats);
 
-        $statsChoices = $exportManager->getStatsChoices();
-        $sumLonesomeRecords = $exportManager->getSumLonesomeRecords();
+        $statsChoices = $statsManager->getStatsChoices();
+        $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
 
         return $this->render('@App/Front/viewFile.html.twig', array(
             'diffHandler' => $exportManager->getDiffHandler(),
@@ -103,7 +106,7 @@ class FrontController extends Controller
             'statsChoices' => $statsChoices,
             'institution' => $institution,
             'statsLonesomeRecords' => $statsLonesomeRecords,
-            'sumLonesomeRecords'=>$sumLonesomeRecords,
+            'sumLonesomeRecords' => $sumLonesomeRecords,
         ));
     }
 
@@ -117,14 +120,19 @@ class FrontController extends Controller
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
      *
      * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @param string $selectedClassName
-     * @param int $page
+     * @param string  $institutionCode
+     * @param string  $collectionCode
+     * @param string  $selectedClassName
+     * @param int     $page
      * @return Response
      */
-    public function diffsAction(Request $request, $institutionCode, $collectionCode, $selectedClassName = "all", $page = 1)
-    {
+    public function diffsAction(
+        Request $request,
+        $institutionCode,
+        $collectionCode,
+        $selectedClassName = "all",
+        $page = 1
+    ) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -137,16 +145,16 @@ class FrontController extends Controller
             $specimensWithoutChoices = $exportManager->getChoices();
         }
 
+        $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
+            $specimensWithoutChoices);
 
-        $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
-
-        dump($diffs);
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
 
         $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
-        $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
+        $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
+            'diff')->findBySpecimenCodes($specimensCode);
 
         return $this->render('@App/Front/viewDiffs.html.twig', array(
             'institutionCode' => $institutionCode,
@@ -160,38 +168,46 @@ class FrontController extends Controller
             'maxItemPerPage' => $maxItemPerPage,
             'selectedClassName' => $selectedClassName,
             'type' => $request->get('_route'),
-            'collectionCode' => $collectionCode,
         ));
     }
+
     /**
      * @Route("{institutionCode}/{collectionCode}/lonesomes/{db}/{selectedClassName}/{page}", name="lonesomes",
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+", "db"="recolnat|institution"},
      * options={"expose"=true})
      *
      * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @param string $selectedClassName
-     * @param int $page
+     * @param string  $institutionCode
+     * @param string  $collectionCode
+     * @param string  $selectedClassName
+     * @param int     $page
      * @return Response
      */
-    public function viewLoneSomeAction(Request $request, $institutionCode, $collectionCode, $selectedClassName = "all", $page = 1, $db)
-    {
+    public function viewLoneSomeAction(
+        Request $request,
+        $institutionCode,
+        $collectionCode,
+        $selectedClassName = "all",
+        $page = 1,
+        $db
+    ) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensBySpecimenCodes=$exportManager->getLonesomeRecordsBySpecimenCode($db, $selectedClassName);
+        $lonesomesSpecimensBySpecimenCodes = $exportManager->getLonesomeRecordsIndexedBySpecimenCode($db,
+            $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomesSpecimensBySpecimenCodes, $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
 
 
-        if ($db=='recolnat') {
-            $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
+        if ($db == 'recolnat') {
+            $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
         } else {
-            $specimens=$this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
+            $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
+                'diff')->findBySpecimenCodes($specimensCode);
         }
 
         return $this->render('@App/Front/viewLonesome.html.twig', array(
@@ -201,13 +217,13 @@ class FrontController extends Controller
             'pagination' => $pagination,
             'maxItemPerPage' => $maxItemPerPage,
             'selectedClassName' => $selectedClassName,
-            'collectionCode' => $collectionCode,
             'db' => $db,
         ));
     }
 
     /**
-     * @Route("{institutionCode}/{collectionCode}/specimens/view/{jsonSpecimensCode}", name="viewSpecimens", options={"expose"=true})
+     * @Route("{institutionCode}/{collectionCode}/specimens/view/{jsonSpecimensCode}", name="viewSpecimens",
+     *                                                                                 options={"expose"=true})
      * @param string $institutionCode
      * @param string $collectionCode
      * @param string $jsonSpecimensCode
@@ -221,7 +237,8 @@ class FrontController extends Controller
         $diffs = $exportManager->getDiffsBySpecimensCode($specimensCode);
 
         $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
-        $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findBySpecimenCodes($specimensCode);
+        $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
+            'diff')->findBySpecimenCodes($specimensCode);
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'institutionCode' => $institutionCode,
@@ -232,7 +249,6 @@ class FrontController extends Controller
             'choicesFacets' => $exportManager->getChoices(),
             'choices' => $exportManager->getChoicesForDisplay(),
             'specimensCode' => $specimensCode,
-            'collectionCode' => $collectionCode
         ));
     }
 
@@ -245,7 +261,8 @@ class FrontController extends Controller
         if ($db == 'recolnat') {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findOneBySpecimenCode($specimenCode);
         } else {
-            $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen', 'diff')->findOneBySpecimenCode($specimenCode);
+            $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
+                'diff')->findOneBySpecimenCode($specimenCode);
         }
 
         $template = 'tab-'.strtolower($type).'.html.twig';
@@ -253,6 +270,61 @@ class FrontController extends Controller
         return $this->render('@App/Front/partial/specimen/'.$template, array(
             'specimen' => $specimen,
             'specimenCode' => $specimenCode,
+        ));
+    }
+
+
+    /**
+     * @Route("{institutionCode}/{collectionCode}/export/setPrefs/{type}", name="setPrefsForExport",
+     *     requirements={"type"="dwc|csv"})
+     * @param Request $request
+     * @param string  $institutionCode
+     * @param string  $collectionCode
+     * @param string  $type
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function setPrefsForExportAction(Request $request, $institutionCode, $collectionCode, $type)
+    {
+        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
+
+        $exportPrefs = new ExportPrefs();
+
+        $form = $this->createForm(ExportPrefsType::class, $exportPrefs, [
+            'action' => $this->generateUrl('setPrefsForExport', [
+                'institutionCode' => $institutionCode,
+                'collectionCode' => $collectionCode,
+                'type' => $type
+            ])
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $paramsExport = [
+                'institutionCode' => $institutionCode,
+                'collectionCode' => $collectionCode,
+                'exportPrefs' => serialize($exportPrefs)
+            ];
+            switch ($type) {
+                case 'dwc':
+                    return $this->redirectToRoute('exportDwc', $paramsExport);
+                    break;
+                case 'csv':
+                    return $this->redirectToRoute('exportCsv', $paramsExport);
+                    break;
+            }
+        }
+        $sumStats = $statsManager->getSumStats();
+        $statsChoices = $statsManager->getStatsChoices();
+        $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
+
+
+        return $this->render('@App/Front/setPrefsForExport.html.twig', array(
+            'institutionCode' => $institutionCode,
+            'collectionCode' => $collectionCode,
+            'sumStats' => $sumStats,
+            'statsChoices' => $statsChoices,
+            'sumLonesomeRecords' => $sumLonesomeRecords,
+            'form' => $form->createView(),
         ));
     }
 

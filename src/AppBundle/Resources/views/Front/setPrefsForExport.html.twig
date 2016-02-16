@@ -1,0 +1,30 @@
+{#{% include '@App/base.html.twig' %}#}
+<!--<p>Il y a {{ sumStats.diffs - statsChoices.sum }} choix non effectués</p>
+<p>Il y a {{ sumLonesomeRecords.recolnat }} nouveaux enregistrements du côté de recolnat</p>
+<p>Il y a {{ sumLonesomeRecords.institution }} nouveaux enregistrements du côté de l'institution</p>
+
+<p>Pour les choix non effectués souhaitez :
+    <label>Récupérer les enregistrements de Recolnat</label><input type="radio" name="choicesNotSet" value="recolnat">
+    <label>Récupérer les enregistrements de l'institution</label><input type="radio" name="choicesNotSet"
+                                                                        value="institution">
+</p>
+
+<p>
+    Pour les nouveaux enregistrements souhaitez :
+    <label>Récupérer les enregistrements de Recolnat</label><input type="radio" name="newRecords" value="recolnat">
+    <label>Récupérer les enregistrements de l'institution</label><input type="radio" name="newRecords"
+                                                                        value="institution">
+    <p>Récupérer les enregistrements des deux côtés si possible</p>
+    <label>Avec la priorité Recolnat en cas de conflit</label><input type="radio" name="newRecords" value="bothRecolnat">
+    <label>Avec la priorité Insttitution en cas de conflit</label><input type="radio" name="newRecords" value="BothInstitution">
+</p>!-->
+
+<h1 class="page-header">{{ 'prefs.save.title' | trans({}, 'prefs') }}</h1>
+
+<p>Il y a {{ sumStats.diffs - statsChoices.sum }} choix non effectués</p>
+<p>Il y a {{ sumLonesomeRecords.recolnat }} nouveaux enregistrements du côté de recolnat</p>
+<p>Il y a {{ sumLonesomeRecords.institution }} nouveaux enregistrements du côté de l'institution</p>
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}

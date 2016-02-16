@@ -114,17 +114,17 @@
         </table>
     {% endif %}
     <div class="row">
-        <div class="col-sm-4 col-md-4">
-            <a href="{{ path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
-               class="exportLink btn btn-default" role="button">
+        <div class="col-sm-6 col-md-6">
+            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
                 {{ 'downloadDwc'|trans }}
             </a>
-            <a href="{{ path('exportCsv', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
-               class="exportLink btn btn-default" role="button">
+            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'type':'csv', 'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
                 {{ 'downloadCsv'|trans }}
             </a>
         </div>
-        <div class="col-sm-6 col-md-6 col-md-offset-2 col-sm-offset-2">
+        <div class="col-sm-6 col-md-6">
             <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
                class="delete deleteChoices btn btn-default" role="button">
                 {{ 'delete.choices'|trans }}
@@ -133,6 +133,9 @@
                class="delete deleteDiffs btn btn-default" role="button">
                 {{ 'delete.diffs'|trans }}
             </a>
+        </div>
+        <div class="col-sm-6 col-md-6">
+
         </div>
     </div>
     {% include '@App/Front/partial/modal.html.twig' %}
@@ -167,28 +170,36 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var modalSpinner = $("#spinnerModal");
-            $(".exportLink").on('click', function (event) {
+            $(".checkprefs").on('click', function (event) {
                 var url = $(this).attr('href');
-                $.ajax({
-                            url: url,
+                var modalPrefs = $("#modal").clone();
+                $.get(url, function(data) {
+                    modalPrefs.find('.modal-body').html(data);
+                    modalPrefs.modal('show');
+                })
+                .success(function() {
+                    var urlDownload = modalPrefs.find('form').attr('action') ;
+                    modalPrefs.find('.confirm').on('click', function (event) {
+                        $.ajax({
+                            url: urlDownload,
                             method: "POST",
+                            data:modalPrefs.find('form').serialize(),
                             beforeSend: function () {
                                 modalSpinner.find('.modal-body h4').remove();
                                 modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
                             }
                         })
-                        .done(function (data) {
-                            console.log(data);
-                        })
                         .success(function (data) {
                             path = Routing.generate('download', {path: data.file});
                             window.location = path;
                         });
+                    });
+                });
                 event.preventDefault();
             });
 
             $(".delete").on('click', function (event) {
-                var modalDelete = $("#modal");
+                var modalDelete = $("#modal").clone();
                 var urlDeleteChoices = $(this).attr('href');
                 if ($(this).hasClass('deleteChoices')) {
                     modalDelete.find('.modal-title').html('{{ 'deleteChoices.title' | trans }}');
@@ -200,7 +211,6 @@
                 }
                 modalDelete.modal('show');
                 modalDelete.find('.confirm').on('click', function (event) {
-
                     event.preventDefault();
                     $.ajax({
                                 url: urlDeleteChoices,

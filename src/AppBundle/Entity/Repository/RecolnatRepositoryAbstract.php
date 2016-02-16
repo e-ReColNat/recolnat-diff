@@ -33,7 +33,6 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
     abstract public function findOneById($id);
 
     /**
-     * @param \Doctrine\ORM\QueryBuilder $qb
      * @param string $alias
      * @return Expr\Func
      */
@@ -58,7 +57,7 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
         $orderResultSet = [];
         if (count($resultsSet) > 0) {
             foreach ($resultsSet as $resultRow) {
-                $orderResultSet[$resultRow['specimencode']][$resultRow[0]->{'get' . $identifierName}()] = $resultRow[0];
+                $orderResultSet[$resultRow['specimencode']][$resultRow[0]->{'get'.$identifierName}()] = $resultRow[0];
             }
         }
         return $orderResultSet;

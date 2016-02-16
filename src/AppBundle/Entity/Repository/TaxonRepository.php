@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 /**
  * TaxonRepository
@@ -33,6 +34,16 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->setParameter('id', $id)
                 ->getQuery();
         return $query->getOneOrNullResult();
+    }
+    public function findOneByIdToArray($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+            ->select('t')
+            ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
+            ->where('t.taxonid = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+        return $query->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
     }
     /**
      * 

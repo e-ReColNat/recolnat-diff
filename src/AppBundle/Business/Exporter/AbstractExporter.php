@@ -11,6 +11,7 @@ use AppBundle\Business\User\Prefs;
 abstract class AbstractExporter
 {
     public $exportPath;
+    public $exportPrefs;
     public $datas;
     public $entitiesName = [
             'Specimen',     
@@ -25,7 +26,6 @@ abstract class AbstractExporter
     
     public $arrayEntityExport = [];
     /**
-     * 
      * @param array $datas
      * @param string $exportPath
      */

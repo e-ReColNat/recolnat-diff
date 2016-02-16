@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\Exporter\ExportPrefs;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,29 +18,51 @@ class BackendController extends Controller
 {
 
     /**
-     * @Route("/{institutionCode}/{collectionCode}/export/dwc", name="exportDwc")
+     * @Route("/{institutionCode}/{collectionCode}/export/dwc/", name="exportDwc")
+     * @param Request $request
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @return JsonResponse
+     *
      */
-    public function exportDwcAction($institutionCode, $collectionCode)
+    public function exportDwcAction($institutionCode, $collectionCode, Request $request)
     {
+        /** @var ExportPrefs $exportPrefs */
+        $exportPrefs = unserialize($request->get('exportPrefs'));
+        if (!($exportPrefs instanceof ExportPrefs)) {
+            throw new \Exception('parameters must be an instance of ExportPrefs');
+        }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $dwc = $exportManager->getDwc();
+        $dwc = $exportManager->getDwc($exportPrefs);
         return new JsonResponse(['file' => urlencode($dwc)]);
     }
 
     /**
      * @Route("/{institutionCode}/{collectionCode}/export/csv", name="exportCsv")
+     * @param Request $request
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function exportCsvAction($institutionCode, $collectionCode)
+    public function exportCsvAction($institutionCode, $collectionCode, Request $request)
     {
+        /** @var ExportPrefs $exportPrefs */
+        $exportPrefs = unserialize($request->get('exportPrefs'));
+        if (!($exportPrefs instanceof ExportPrefs)) {
+            throw new \Exception('parameters must be an instance of ExportPrefs');
+        }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $csv = $exportManager->getCsv();
+        $csv = $exportManager->getCsv($exportPrefs);
         return new JsonResponse(['file' => urlencode($csv)]);
     }
 
     /**
      * @Route("/download/{path}", name="download", options={"expose"=true})
+     * @param string $path
+     * @return Response
      */
     public function downloadAction($path = "")
     {
@@ -56,18 +79,19 @@ class BackendController extends Controller
 
     /**
      * @Route("/setmaxitem/{maxItem}", name="setmaxitem", options={"expose"=true})
+     * @param int $maxItem
      * @return JsonResponse
      */
     public function setMaxItemAction($maxItem)
     {
         if (is_int((int) $maxItem) && in_array((int) $maxItem, $this->container->getParameter('maxitemperpage'))) {
             $this->get('session')->set('maxItemPerPage', $maxItem);
-        }
-        else {
+        } else {
             $this->get('session')->set('maxItemPerPage', $this->container->getParameter('maxitemperpage')[0]);
         }
         return new JsonResponse($this->get('session')->get('maxItemPerPage'));
     }
+
     /**
      * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
      * @param Request $request
@@ -93,6 +117,8 @@ class BackendController extends Controller
     /**
      * @Route("/setChoices/{institutionCode}/{collectionCode}", name="setChoices", options={"expose"=true})
      * @param Request $request
+     * @param string $institutionCode
+     * @param string $collectionCode
      * @return JsonResponse
      */
     public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
@@ -118,17 +144,18 @@ class BackendController extends Controller
             $specimensWithoutChoices = $exportManager->getChoices();
         }
         if (!is_null($institutionCode) && !is_null($inputOrigin) && !is_null($inputSpecimens)) {
-            $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
+            $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
+                $specimensWithoutChoices);
             switch ($inputSpecimens) {
-                case 'page' :
+                case 'page':
                     $paginator = $this->get('knp_paginator');
                     $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
                     $items = $pagination->getItems();
                     break;
-                case 'allDatas' :
+                case 'allDatas':
                     $items = $diffs['datas'];
                     break;
-                case 'selectedSpecimens' :
+                case 'selectedSpecimens':
                     if (!is_null($selectedSpecimens) && is_array($selectedSpecimens)) {
                         foreach ($selectedSpecimens as $specimenCode) {
                             if (isset($diffs['datas'][$specimenCode])) {
@@ -138,7 +165,7 @@ class BackendController extends Controller
                     }
                     break;
             }
-            if (count($items)>0) {
+            if (count($items) > 0) {
                 foreach ($items as $specimenCode => $row) {
                     foreach ($row['classes'] as $className => $data) {
                         $rowClass = $diffs['datas'][$specimenCode]['classes'][$className];
@@ -172,10 +199,14 @@ class BackendController extends Controller
         return $response;
     }
 
+    /**
+     * @param array $choices
+     */
     private function setFlashMessageForChoices(array $choices)
     {
         $translator = $this->get('translator');
-        $message = $translator->transChoice('modification.effectuee', count($choices), array('%nbModif%' => count($choices)));
+        $message = $translator->transChoice('modification.effectuee', count($choices),
+            array('%count%' => count($choices)));
         if (count($choices) == 0) {
             $this->addFlash('warning', $message);
         } else {
@@ -185,6 +216,8 @@ class BackendController extends Controller
 
     /**
      * @Route("/deleteChoices/{institutionCode}/{collectionCode}", name="deleteChoices", options={"expose"=true})
+     * @param string $institutionCode
+     * @param string $collectionCode
      */
     public function deleteChoicesAction($institutionCode, $collectionCode)
     {
@@ -201,6 +234,8 @@ class BackendController extends Controller
 
     /**
      * @Route("/deleteDiffs/{institutionCode}/{collectionCode}", name="deleteDiffs", options={"expose"=true})
+     * @param string $institutionCode
+     * @param string $collectionCode
      */
     public function deleteDiffsAction($institutionCode, $collectionCode)
     {

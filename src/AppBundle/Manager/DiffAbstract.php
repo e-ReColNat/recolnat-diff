@@ -160,38 +160,38 @@ abstract class DiffAbstract
      */
     private function getFilteredRecords()
     {
-        $arrayRecords=['common'=>[], 'recolnat'=>[], 'institution'=>[]];
+        $arrayRecords = ['common' => [], 'recolnat' => [], 'institution' => []];
         foreach ($this->recordsRecolnat as $specimenCode => $item) {
             if (isset($this->recordsInstitution[$specimenCode])) {
-                foreach($item as $id => $record) {
+                foreach ($item as $id => $record) {
                     if (isset($this->recordsInstitution[$specimenCode][$id])) {
-                        $arrayRecords['common'][$specimenCode][]=$id;
+                        $arrayRecords['common'][$specimenCode][] = $id;
                     } else {
-                        $arrayRecords['recolnat'][$specimenCode][]=$id;
+                        $arrayRecords['recolnat'][$specimenCode][] = $id;
                     }
                 }
-            }
-            else {
-                foreach($item as $id => $record) {
-                    $arrayRecords['recolnat'][$specimenCode][]=$id;
+            } else {
+                foreach ($item as $id => $record) {
+                    $arrayRecords['recolnat'][$specimenCode][] = $id;
                 }
             }
         }
         foreach ($this->recordsInstitution as $specimenCode => $item) {
             if (isset($this->recordsRecolnat[$specimenCode])) {
-                foreach($item as $id => $record) {
+                foreach ($item as $id => $record) {
                     if (!isset($this->recordsRecolnat[$specimenCode][$id])) {
-                        $arrayRecords['institution'][$specimenCode][]=$id;
+                        $arrayRecords['institution'][$specimenCode][] = $id;
                     }
                 }
             } else {
-                foreach($item as $id => $record) {
-                    $arrayRecords['institution'][$specimenCode][]=$id;
+                foreach ($item as $id => $record) {
+                    $arrayRecords['institution'][$specimenCode][] = $id;
                 }
             }
         }
         return $arrayRecords;
     }
+
     /**
      * @param string $idRecord
      * @param array $fieldNames
