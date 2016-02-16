@@ -192,7 +192,11 @@
                         .success(function (data) {
                             path = Routing.generate('download', {path: data.file});
                             window.location = path;
-                        });
+                        })
+                        .fail(function(data) {
+                          console.log(data);
+                        })
+                        ;
                     });
                 });
                 event.preventDefault();

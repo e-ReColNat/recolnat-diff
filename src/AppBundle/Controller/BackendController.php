@@ -19,12 +19,13 @@ class BackendController extends Controller
     /**
      * @Route("/{institutionCode}/{collectionCode}/export/{type}/", name="export")
      * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
+     * @param string  $institutionCode
+     * @param string  $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function exportAction($type, $institutionCode, $collectionCode, Request $request) {
+    public function exportAction($type, $institutionCode, $collectionCode, Request $request)
+    {
         /** @var ExportPrefs $exportPrefs */
         $exportPrefs = unserialize($request->get('exportPrefs'));
         if (!($exportPrefs instanceof ExportPrefs)) {
@@ -32,15 +33,27 @@ class BackendController extends Controller
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $file = null;
         switch ($type) {
-            case 'dwc' :
+            case 'dwc':
                 $file = $exportManager->getDwc($exportPrefs);
                 break;
-            case 'csv' :
+            case 'csv':
                 $file = $exportManager->getCsv($exportPrefs);
                 break;
         }
-        return new JsonResponse(['file' => urlencode($file)]);
+        if (!is_null($file)) {
+            return new JsonResponse(['file' => urlencode($file)]);
+        } else {
+            $response = new JsonResponse();
+            $translator = $this->get('translator');
+            $message = $translator->trans('export.probleme');
+            $response->setContent($message);
+
+            $this->addFlash('error', $message);
+            $response->setStatusCode(400);
+            return $response;
+        }
     }
 
     /**
@@ -79,8 +92,7 @@ class BackendController extends Controller
     /**
      * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
      * @param Request $request
-     * @param string $institutionCode
-     * @param array choices
+     * @param string  $institutionCode
      * @return JsonResponse
      */
     public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
@@ -101,8 +113,8 @@ class BackendController extends Controller
     /**
      * @Route("/setChoices/{institutionCode}/{collectionCode}", name="setChoices", options={"expose"=true})
      * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
+     * @param string  $institutionCode
+     * @param string  $collectionCode
      * @return JsonResponse
      */
     public function setChoicesAction(Request $request, $institutionCode, $collectionCode)

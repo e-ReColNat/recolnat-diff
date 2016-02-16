@@ -306,6 +306,10 @@
                 <source>label.graph.excluInstitution</source>
                 <target>[0,1]%count% enregistrement exclusivement Institution|]1,Inf]%count% enregistrements exclusivement Institution</target>
             </trans-unit>
+            <trans-unit id="77">
+                <source>export.probleme</source>
+                <target>Un problème est survenu lors de l'export</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
