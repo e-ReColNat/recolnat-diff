@@ -61,7 +61,7 @@ class GenericEntityManager
     }
 
     /**
-     * @param mixed $entity
+     * @param string|object $entity
      * @return string
      * @throws \Doctrine\ORM\Mapping\MappingException
      * @throws \Exception
@@ -240,7 +240,7 @@ class GenericEntityManager
     }
 
     /**
-     * @return \IntlDateFormatter|\Symfony\Component\Intl\DateFormatter\IntlDateFormatter
+     * @return \IntlDateFormatter
      */
     private function getDateFormatter()
     {
@@ -249,7 +249,7 @@ class GenericEntityManager
     }
 
     /**
-     * @param $base
+     * @param string $base
      * @return EntityManager
      */
     private function getEntityManager($base)

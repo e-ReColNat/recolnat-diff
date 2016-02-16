@@ -114,7 +114,7 @@ class ExportManager
 
     /**
      * @param string $db
-     * @param mixed  $selectedClassesNames
+     * @param string|array|null  $selectedClassesNames
      * @return array
      */
     public function getLonesomeRecords($db = null, $selectedClassesNames = null)
@@ -124,7 +124,7 @@ class ExportManager
 
     /**
      * @param string $db
-     * @param null   $selectedClassesNames
+     * @param null|array   $selectedClassesNames
      * @return array
      */
     public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames = null)

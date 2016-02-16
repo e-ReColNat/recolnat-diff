@@ -52,7 +52,7 @@ class Diffs extends \SplFileObject
 
     /**
      * @param string $db
-     * @param mixed  $selectedClassesNames
+     * @param string|array|null  $selectedClassesNames
      * @return array
      */
     public function getLonesomeRecords($db = null, $selectedClassesNames = null)
@@ -90,7 +90,7 @@ class Diffs extends \SplFileObject
     }
 
     /**
-     * @param            $db
+     * @param string $db
      * @param null|array $selectedClassesNames
      * @return array
      */
