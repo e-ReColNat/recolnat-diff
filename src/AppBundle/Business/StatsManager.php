@@ -40,20 +40,7 @@ class StatsManager
     {
         $lonesomeRecords = $this->exportManager->getLoneSomeRecords();
         $stats = [];
-        $refRecolnatSpecimenCode = array_column($lonesomeRecords['Specimen']['recolnat'], 'specimenCode');
-        $refInstitutionSpecimenCode = array_column($lonesomeRecords['Specimen']['institution'], 'specimenCode');
         foreach ($lonesomeRecords as $className => $items) {
-            // si la className n'est pas specimen et que l'enregistrement est déjà présent dans les
-            // spécimens alors on a affaire à un nouveau specimen donc on l'enlève du décompte
-            /*if ($className !== 'Specimen') {
-                $specimenCodes = array_column($items['recolnat'], 'specimenCode');
-                $stats[$className]['recolnat'] = count(array_diff($specimenCodes, $refRecolnatSpecimenCode));
-                $specimenCodes = array_column($items['institution'], 'specimenCode');
-                $stats[$className]['institution'] = count(array_diff($specimenCodes, $refInstitutionSpecimenCode));
-            } else {
-                $stats[$className]['recolnat'] = count($items['recolnat']);
-                $stats[$className]['institution'] = count($items['institution']);
-            }*/
             $stats[$className]['recolnat'] = isset($items['recolnat']) ? count($items['recolnat']) : 0;
             $stats[$className]['institution'] = isset($items['institution']) ? count($items['institution']) : 0;
         }

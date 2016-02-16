@@ -61,7 +61,6 @@ class DiffComputer
             foreach ($this->classOrder as $className) {
                 if (isset($this->arrayIds[$className])) {
                     $specimensCode = $this->arrayIds[$className];
-                    //foreach ($this->arrayIds[$className] as $specimensCode) {
                     $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
                     /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
                     $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
@@ -70,7 +69,6 @@ class DiffComputer
                     $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
                     $this->computeDiffs($className);
                     unset($diffClassManager);
-                    //}
                 }
             }
         }
@@ -171,14 +169,15 @@ class DiffComputer
     {
         $this->lonesomeRecords[$className] = [];
         foreach ($lonesomeRecords as $db => $items) {
-            $specimenCodesNewSpecimenRecords=[];
+            $specimenCodesNewSpecimenRecords = [];
             if ($className != 'Specimen') {
                 $specimenCodesNewSpecimenRecords = array_column($this->lonesomeRecords['Specimen'][$db],
                     'specimenCode');
             }
 
             foreach ($items as $lonesomeRecord) {
-                if ($className == 'Specimen' || !in_array($lonesomeRecord['specimenCode'], $specimenCodesNewSpecimenRecords)
+                if ($className == 'Specimen' || !in_array($lonesomeRecord['specimenCode'],
+                        $specimenCodesNewSpecimenRecords)
                 ) {
                     $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
                     if (!isset($this->statsLonesomeRecords[$lonesomeRecord['specimenCode']])) {

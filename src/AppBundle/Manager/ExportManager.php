@@ -510,7 +510,6 @@ class ExportManager
         $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForChoicesNotSet(),
             $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
-        //$newRecords = $this->diffHandler->getDiffs()->getLonesomeRecordsIndexedBySpecimenCode();
         $dwcExporter = new DwcExporter($datasWithChoices, $this->getExportDirPath());
 
         return $dwcExporter->generate($this->user->getPrefs());

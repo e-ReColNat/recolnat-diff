@@ -86,7 +86,7 @@ class DwcExporter extends AbstractExporter
         $this->setDwcLineBreak($prefs->getDwcLineBreak());
         $this->setDwcDateFormat($prefs->getDwcDateFormat());
         $this->formattedDatas = $this->formatDatas();
-        $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath(), $this->exportPrefs);
+        $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath());
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]);
 
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
