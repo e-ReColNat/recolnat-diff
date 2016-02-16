@@ -2,22 +2,20 @@ services:
     diff.computer:
         class: AppBundle\Manager\DiffComputer
         arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
+            managerRegistry: "@doctrine"
     diff.manager:
         class: AppBundle\Manager\DiffManager
         arguments:
-            em: "@doctrine.orm.entity_manager"
+            managerRegistry: "@doctrine"
             statsManager: "@diff.computer"
             exportPath: "%export_path%"
 
-            
     genericEntityManager:
         class: AppBundle\Manager\GenericEntityManager
         arguments:
-            emR: "@doctrine.orm.entity_manager"
-            emD: "@doctrine.orm.diff_entity_manager"
+            managerRegistry: "@doctrine"
             translator: "@translator"
+
     exportManager:
         class: AppBundle\Manager\ExportManager
         arguments:

@@ -2,12 +2,14 @@
 namespace AppBundle\Doctrine\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
- 
+
 use Doctrine\DBAL\Types\Type;
+
 /**
-* Type that maps an Raw id SQL to php objects
-* @author Jordan Samouh
-*/
+ * Type that maps an Raw id SQL to php objects
+ * @author Jordan Samouh
+ * See more at: http://symfony2.ylly.fr/add-new-data-type-in-doctrine-2-in-symfony-2-jordscream/#sthash.MvJMLVa4.dpuf
+ */
 class RawidType extends Type
 {
     public function getName()
@@ -18,6 +20,7 @@ class RawidType extends Type
     public function canRequireSQLConversion()
     {
     }
+
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return $platform->getDoctrineTypeMapping('RAWID');
@@ -33,4 +36,4 @@ class RawidType extends Type
         return ($value === null) ? null : strtoupper(bin2hex($value));
     }
 }
-//See more at: http://symfony2.ylly.fr/add-new-data-type-in-doctrine-2-in-symfony-2-jordscream/#sthash.MvJMLVa4.dpuf
+

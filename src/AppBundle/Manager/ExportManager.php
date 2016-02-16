@@ -489,11 +489,7 @@ class ExportManager
      */
     public function getCsv(ExportPrefs $exportPrefs)
     {
-        $this->exportPrefs = $exportPrefs;
-        $specimenCodes = $this->sessionManager->get('specimensCode');
-        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForChoicesNotSet(),
-            $specimenCodes);
-        $datasWithChoices = $this->getArrayDatasWithChoices($datas);
+        $datasWithChoices = $this->prepareExport($exportPrefs);
         $csvExporter = new CsvExporter($datasWithChoices, $this->getExportDirPath());
 
         return $csvExporter->generate($this->user->getPrefs());
@@ -505,14 +501,24 @@ class ExportManager
      */
     public function getDwc(ExportPrefs $exportPrefs)
     {
+        $datasWithChoices = $this->prepareExport($exportPrefs);
+        $dwcExporter = new DwcExporter($datasWithChoices, $this->getExportDirPath());
+
+        return $dwcExporter->generate($this->user->getPrefs());
+    }
+
+    /**
+     * @param ExportPrefs $exportPrefs
+     * @return array
+     */
+    private function prepareExport(ExportPrefs $exportPrefs)
+    {
         $this->exportPrefs = $exportPrefs;
         $specimenCodes = $this->sessionManager->get('specimensCode');
         $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForChoicesNotSet(),
             $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
-        $dwcExporter = new DwcExporter($datasWithChoices, $this->getExportDirPath());
-
-        return $dwcExporter->generate($this->user->getPrefs());
+        return $datasWithChoices;
     }
 
     /**
@@ -532,5 +538,6 @@ class ExportManager
         }
         return $returnChoice;
     }
+
 
 }

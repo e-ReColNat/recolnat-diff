@@ -2,8 +2,8 @@
 
 namespace AppBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
@@ -18,6 +18,11 @@ class DiffManager
      * @var EntityManager
      */
     protected $em;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $managerRegistry;
 
     /** @var DiffComputer */
     protected $diffComputer;
@@ -45,13 +50,14 @@ class DiffManager
 
     /**
      * DiffManager constructor.
-     * @param ObjectManager $em
+     * @param ManagerRegistry $managerRegistry
      * @param DiffComputer $diffComputer
      * @param string $exportPath
      */
-    public function __construct(ObjectManager $em, DiffComputer $diffComputer, $exportPath)
+    public function __construct(ManagerRegistry $managerRegistry, DiffComputer $diffComputer, $exportPath)
     {
-        $this->em = $em;
+        $this->managerRegistry = $managerRegistry;
+        $this->em = $managerRegistry->getManager('default');
         $this->diffComputer = $diffComputer;
         $this->exportPath = $exportPath;
     }

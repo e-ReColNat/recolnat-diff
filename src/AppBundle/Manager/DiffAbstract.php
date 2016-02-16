@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -41,16 +42,26 @@ abstract class DiffAbstract
      */
     protected $emD;
 
+    /**
+     * @var ManagerRegistry
+     */
+    protected $managerRegistry;
+
     protected $stats = array();
     protected $fields = array();
     public $excludeFieldsName = [];
 
     abstract protected function getIdSetter();
 
-    public function __construct(EntityManager $emR, EntityManager $emD)
+    /**
+     * DiffAbstract constructor.
+     * @param ManagerRegistry $managerRegistry
+     */
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->emR = $emR;
-        $this->emD = $emD;
+        $this->managerRegistry = $managerRegistry;
+        $this->emR = $managerRegistry->getManager('default');
+        $this->emD = $managerRegistry->getManager('diff');
     }
 
     /**

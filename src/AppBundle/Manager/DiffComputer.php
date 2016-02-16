@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -25,6 +26,13 @@ class DiffComputer
      * @var EntityManager
      */
     protected $emD;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $managerRegistry;
+
+
     protected $diffs = array();
     protected $lonesomeRecords = array();
     protected $classes = array();
@@ -41,10 +49,15 @@ class DiffComputer
         'Taxon'
     ];
 
-    public function __construct(EntityManager $emR, EntityManager $emD)
+    /**
+     * DiffComputer constructor.
+     * @param ManagerRegistry $managerRegistry
+     */
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->emR = $emR;
-        $this->emD = $emD;
+        $this->managerRegistry = $managerRegistry;
+        $this->emR = $managerRegistry->getManager('default');
+        $this->emD = $managerRegistry->getManager('diff');
         $this->diffs['datas'] = [];
         $this->diffs['classes'] = [];
     }
@@ -57,13 +70,12 @@ class DiffComputer
     {
         $this->arrayIds = $arrayIds;
         if (count($this->arrayIds) > 0) {
-            //foreach ($this->arrayIds as $className => $specimensCode) {
             foreach ($this->classOrder as $className) {
                 if (isset($this->arrayIds[$className])) {
                     $specimensCode = $this->arrayIds[$className];
                     $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
                     /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
-                    $diffClassManager = new $nameDiffClassManager($this->emR, $this->emD);
+                    $diffClassManager = new $nameDiffClassManager($this->managerRegistry);
                     $diffClassManager->init($className, $specimensCode);
                     $this->setDiffs($className, $diffClassManager->getStats());
                     $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());

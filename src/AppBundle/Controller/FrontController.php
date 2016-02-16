@@ -306,11 +306,9 @@ class FrontController extends Controller
             ];
             switch ($type) {
                 case 'dwc':
-                    return $this->redirectToRoute('exportDwc', $paramsExport);
-                    break;
+                    return $this->redirectToRoute('export', array_merge($paramsExport, ['type' => 'dwc']));
                 case 'csv':
-                    return $this->redirectToRoute('exportCsv', $paramsExport);
-                    break;
+                    return $this->redirectToRoute('export', array_merge($paramsExport, ['type' => 'csv']));
             }
         }
         $sumStats = $statsManager->getSumStats();

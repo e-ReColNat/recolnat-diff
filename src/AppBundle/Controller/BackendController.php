@@ -16,38 +16,15 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BackendController extends Controller
 {
-
     /**
-     * @Route("/{institutionCode}/{collectionCode}/export/dwc/", name="exportDwc")
-     * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @return JsonResponse
-     *
-     */
-    public function exportDwcAction($institutionCode, $collectionCode, Request $request)
-    {
-        /** @var ExportPrefs $exportPrefs */
-        $exportPrefs = unserialize($request->get('exportPrefs'));
-        if (!($exportPrefs instanceof ExportPrefs)) {
-            throw new \Exception('parameters must be an instance of ExportPrefs');
-        }
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $dwc = $exportManager->getDwc($exportPrefs);
-        return new JsonResponse(['file' => urlencode($dwc)]);
-    }
-
-    /**
-     * @Route("/{institutionCode}/{collectionCode}/export/csv", name="exportCsv")
+     * @Route("/{institutionCode}/{collectionCode}/export/{type}/", name="export")
      * @param Request $request
      * @param string $institutionCode
      * @param string $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function exportCsvAction($institutionCode, $collectionCode, Request $request)
-    {
+    public function exportAction($type, $institutionCode, $collectionCode, Request $request) {
         /** @var ExportPrefs $exportPrefs */
         $exportPrefs = unserialize($request->get('exportPrefs'));
         if (!($exportPrefs instanceof ExportPrefs)) {
@@ -55,8 +32,15 @@ class BackendController extends Controller
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $csv = $exportManager->getCsv($exportPrefs);
-        return new JsonResponse(['file' => urlencode($csv)]);
+        switch ($type) {
+            case 'dwc' :
+                $file = $exportManager->getDwc($exportPrefs);
+                break;
+            case 'csv' :
+                $file = $exportManager->getCsv($exportPrefs);
+                break;
+        }
+        return new JsonResponse(['file' => urlencode($file)]);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Intl\Locale;
@@ -23,20 +24,26 @@ class GenericEntityManager
      * @var EntityManager
      */
     protected $emI;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $managerRegistry;
     protected $translator;
     protected $stats = array();
     protected $excludeFieldsName = [];
 
     /**
      * GenericEntityManager constructor.
-     * @param EntityManager $emR
-     * @param EntityManager $emI
+     * @param ManagerRegistry $managerRegistry
      * @param DataCollectorTranslator $translator
      */
-    public function __construct(EntityManager $emR, EntityManager $emI, DataCollectorTranslator $translator)
+    public function __construct(ManagerRegistry $managerRegistry, DataCollectorTranslator $translator)
     {
-        $this->emR = $emR;
-        $this->emI = $emI;
+        $this->managerRegistry = $managerRegistry;
+        $this->emR = $managerRegistry->getManager('default');
+        $this->emI = $managerRegistry->getManager('diff');
+
         $this->translator = $translator;
     }
 
@@ -48,10 +55,7 @@ class GenericEntityManager
      */
     public function getEntity($base, $className, $id)
     {
-        $em = $this->emI;
-        if (strtolower($base) == 'recolnat') {
-            $em = $this->emR;
-        }
+        $em = $this->getEntityManager($base);
         $entity = $em->getRepository($this->getFullClassName($className))->find($id);
         return $entity;
     }
@@ -107,10 +111,7 @@ class GenericEntityManager
      */
     public function getEntitiesBySpecimenCodes($base, $className, $specimenCodes)
     {
-        $em = $this->emI;
-        if (strtolower($base) == 'recolnat') {
-            $em = $this->emR;
-        }
+        $em = $this->getEntityManager($base);
         $entities = $em->getRepository($this->getFullClassName($className))->findAllBySpecimenCodeUnordered($specimenCodes);
         return $entities;
     }
@@ -183,10 +184,7 @@ class GenericEntityManager
         $fullClassName = $this->getFullClassName($className);
         $getter = 'get'.$fieldName;
         if (method_exists($fullClassName, $getter)) {
-            $em = $this->emI;
-            if (strtolower($base) == 'recolnat') {
-                $em = $this->emR;
-            }
+            $em = $this->getEntityManager($base);
             $entity = $em->getRepository($fullClassName)->find($id);
 
             $data = $entity->{$getter}();
@@ -209,10 +207,7 @@ class GenericEntityManager
     public function getArrayOfDatas($base, $className, $id)
     {
         $fullClassName = $this->getFullClassName($className);
-        $em = $this->emI;
-        if (strtolower($base) == 'recolnat') {
-            $em = $this->emR;
-        }
+        $em = $this->getEntityManager($base);
         return $em->getRepository($fullClassName)->findOneByIdToArray($id);
     }
     /**
@@ -251,5 +246,19 @@ class GenericEntityManager
     {
         return \IntlDateFormatter::create(
             Locale::getDefault(), \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
+    }
+
+    /**
+     * @param $base
+     * @return EntityManager
+     */
+    private function getEntityManager($base)
+    {
+        $em = $this->emI;
+        if (strtolower($base) == 'recolnat') {
+            $em = $this->emR;
+            return $em;
+        }
+        return $em;
     }
 }

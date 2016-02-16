@@ -13,76 +13,86 @@ use Doctrine\ORM\AbstractQuery;
 class BibliographyRepository extends RecolnatRepositoryAbstract
 {
     /**
-     * 
+     *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('b')
-                ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
-                ->where('b.referenceid IN (\''.implode('\',\'', $ids).'\')')
-                ->getQuery();
+            ->select('b')
+            ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
+            ->where('b.referenceid IN (\''.implode('\',\'', $ids).'\')')
+            ->getQuery();
         return $query->getResult();
     }
-    
-    public function findOneById($id)
+
+    /**
+     * @param array $id
+     * @param int   $fetchMode
+     * @return array|object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('b')
-                ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
-                ->where('b.referenceid = :id')
-                ->setParameter('id', $id)
-                ->getQuery();
-        return $query->getOneOrNullResult();
+        return $this->getQueryFindOneById($id)->getOneOrNullResult();
     }
 
+    /**
+     * @param $id
+     * @return array|null
+     */
     public function findOneByIdToArray($id)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
+
+        return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
+    }
+
+    /**
+     * @param $id
+     * @return \Doctrine\ORM\Query
+     */
+    private function getQueryFindOneById($id)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
             ->where('b.referenceid = :id')
             ->setParameter('id', $id)
             ->getQuery();
-        return $query->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
     }
 
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return \Doctrine\Common\Collections\Collection
      */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
-        $qb = $this->createQueryBuilder('b');
-        
-        $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('b')
-                ->from('AppBundle\Entity\Bibliography', 'b')
-                ->join('b.specimen', 's');
-        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $query->setParameter('specimenCodes', $specimenCodes);
-        return $query->getQuery()->getOneOrNullResult();
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('b')
+            ->from('AppBundle\Entity\Bibliography', 'b')
+            ->join('b.specimen', 's');
+        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        $qb->setParameter('specimenCodes', $specimenCodes);
+        return $qb->getQuery()->getOneOrNullResult();
     }
+
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)
     {
-        $qb = $this->createQueryBuilder('b');
-        
-        $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('b')
-                ->from('AppBundle\Entity\Bibliography', 'b')
-                ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
-                ->join('b.specimen', 's');
-        $query->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $query->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'referenceid');
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('b')
+            ->from('AppBundle\Entity\Bibliography', 'b')
+            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->join('b.specimen', 's');
+        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        $qb->setParameter('specimenCodes', $specimenCodes);
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'referenceid');
     }
-    
+
 }

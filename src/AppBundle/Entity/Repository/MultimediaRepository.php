@@ -12,14 +12,39 @@ use Doctrine\ORM\AbstractQuery;
  */
 class MultimediaRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * @param array $id
+     * @param int   $fetchMode
+     * @return array|object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
+    {
+        return $this->getQueryFindOneById($id)->getOneOrNullResult();
+    }
+
+    /**
+     * @param $id
+     * @return array|null
+     */
     public function findOneByIdToArray($id)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
+
+        return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
+    }
+
+    /**
+     * @param $id
+     * @return \Doctrine\ORM\Query
+     */
+    private function getQueryFindOneById($id)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
             ->select('m')
             ->from('AppBundle\Entity\Multimedia', 'm', 'm.multimediaid')
             ->where('m.multimediaid = :id')
             ->setParameter('id', $id)
             ->getQuery();
-        return $query->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
     }
 }

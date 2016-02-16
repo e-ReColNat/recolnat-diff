@@ -25,26 +25,41 @@ class TaxonRepository extends RecolnatRepositoryAbstract
                 ->getQuery();
         return $query->getResult();
     }
-    public function findOneById($id)
+
+    /**
+     * @param array $id
+     * @param int   $fetchMode
+     * @return array|object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneById($id, $fetchMode=AbstractQuery::HYDRATE_OBJECT)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('t')
-                ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
-                ->where('t.taxonid = :id')
-                ->setParameter('id', $id)
-                ->getQuery();
-        return $query->getOneOrNullResult();
+        return $this->getQueryFindOneById($id)->getOneOrNullResult();
     }
+
+    /**
+     * @param $id
+     * @return array|null
+     */
     public function findOneByIdToArray($id)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
+
+        return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
+    }
+
+    /**
+     * @param $id
+     * @return \Doctrine\ORM\Query
+     */
+    private function getQueryFindOneById($id) {
+        return $this->getEntityManager()->createQueryBuilder()
             ->select('t')
             ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
             ->where('t.taxonid = :id')
             ->setParameter('id', $id)
             ->getQuery();
-        return $query->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
     }
+
     /**
      * 
      * @param array $specimenCodes
@@ -80,6 +95,11 @@ class TaxonRepository extends RecolnatRepositoryAbstract
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'taxonid');
     }
 
+    /**
+     * @param $occurrenceId
+     * @return object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findBestTaxon($occurrenceId) {
         $qb = $this->createQueryBuilder('t');
         $query = $qb
@@ -92,6 +112,11 @@ class TaxonRepository extends RecolnatRepositoryAbstract
         return $query->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param $specimenCode
+     * @return object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findBestTaxonsBySpecimenCode($specimenCode) {
         $qb = $this->createQueryBuilder('t');
         $query = $qb

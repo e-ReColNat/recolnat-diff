@@ -46,12 +46,12 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
     {
         $qb = $this->createQueryBuilder('st');
 
-        $query = $qb
+        $qb
             ->select('st')
             ->join('st.specimen', 's');
-        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
-        return $query->getQuery()->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -63,12 +63,12 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
     {
         $qb = $this->createQueryBuilder('st');
 
-        $query = $qb
+        $qb
             ->select('st')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('st.specimen', 's');
-        $qb->add('where', $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
         $qb->setParameter('specimenCodes', $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'geologicalcontextid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'geologicalcontextid');
     }
 }
