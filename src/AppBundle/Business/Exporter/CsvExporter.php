@@ -221,26 +221,41 @@ class CsvExporter extends AbstractExporter
         return implode($delimiter, $output);
     }
 
+    /**
+     * @return string
+     */
     public function getCsvDelimiter()
     {
         return $this->csvDelimiter;
     }
 
+    /**
+     * @return string
+     */
     public function getCsvEnclosure()
     {
         return $this->csvEnclosure;
     }
 
+    /**
+     * @return string
+     */
     public function getCsvLineBreak()
     {
         return $this->csvLineBreak;
     }
 
+    /**
+     * @return string
+     */
     public function getCsvDateFormat()
     {
         return $this->csvDateFormat;
     }
 
+    /**
+     * @return boolean
+     */
     public function getCsvIgnoreHeaderLines()
     {
         return $this->csvIgnoreHeaderLines;
@@ -279,7 +294,7 @@ class CsvExporter extends AbstractExporter
     }
 
     /**
-     * @param string $csvIgnoreHeaderLines
+     * @param boolean $csvIgnoreHeaderLines
      */
     public function setCsvIgnoreHeaderLines($csvIgnoreHeaderLines)
     {

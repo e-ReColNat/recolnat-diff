@@ -152,7 +152,7 @@ class Diffs extends \SplFileObject
     /**
      * Retourne les nouveaux enregistrements pour une base
      * @param null|string $className
-     * @param string $db
+     * @param string      $db
      * @return array
      */
     public function getLonesomeRecordsOrderedBySpecimenCodes($db, $className = null)
@@ -164,8 +164,7 @@ class Diffs extends \SplFileObject
             $itemsFiltered = array_filter($items, function($item) use ($db, $className) {
                 if (is_null($className)) {
                     return $item['db'] == $db;
-                }
-                else {
+                } else {
                     return $item['db'] == $db && $item['class'] == $className;
                 }
             });

@@ -94,7 +94,6 @@ class FrontController extends Controller
         };
         uasort($stats, $sortStats);
 
-        dump($exportManager->getLonesomeRecords()) ;
         $statsChoices = $statsManager->getStatsChoices();
         $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
 
@@ -196,7 +195,8 @@ class FrontController extends Controller
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensBySpecimenCodes = $exportManager->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
+        $lonesomesSpecimensBySpecimenCodes = $exportManager->getLonesomeRecordsIndexedBySpecimenCode($db,
+            $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomesSpecimensBySpecimenCodes, $page, $maxItemPerPage);

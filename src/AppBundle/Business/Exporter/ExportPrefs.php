@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tpateffoz
- * Date: 11/02/16
- * Time: 16:56
- */
 
 namespace AppBundle\Business\Exporter;
 
@@ -27,6 +21,7 @@ class ExportPrefs
      * @var string
      */
     protected $sideForChoicesNotSet;
+
     /**
      * @var string
      */

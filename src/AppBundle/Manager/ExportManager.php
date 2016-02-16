@@ -3,7 +3,6 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Business\Exporter\ExportPrefs;
-use AppBundle\Entity\Specimen;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -124,8 +123,8 @@ class ExportManager
     }
 
     /**
-     * @param      $db
-     * @param null $selectedClassesNames
+     * @param string $db
+     * @param null   $selectedClassesNames
      * @return array
      */
     public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames = null)
@@ -399,6 +398,7 @@ class ExportManager
             return $datas;
         }
     }
+
     /**
      * @param array $datas
      * @return array

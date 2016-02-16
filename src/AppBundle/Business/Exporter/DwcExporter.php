@@ -27,9 +27,12 @@ class DwcExporter extends AbstractExporter
     protected $dwcDelimiter = "\t";
     protected $dwcEnclosure = "\"";
     protected $dwcLineBreak = "\t";
-    protected $dwcIgnoreHeaderLines = 1;
+    protected $dwcIgnoreHeaderLines = true;
     protected $dwcDateFormat = 'Y-m-d';
 
+    /**
+     * @return array
+     */
     public function formatDatas()
     {
         $formatDatas = [];
@@ -79,6 +82,11 @@ class DwcExporter extends AbstractExporter
         return $formatDatas;
     }
 
+    /**
+     * @param Prefs $prefs
+     * @param array $options
+     * @return string
+     */
     public function generate(Prefs $prefs, array $options = [])
     {
         $this->setDwcDelimiter($prefs->getDwcDelimiter());
@@ -150,7 +158,7 @@ class DwcExporter extends AbstractExporter
     /**
      *
      * @param \DOMElement $node
-     * @param type $rowType
+     * @param type        $rowType
      */
     private function setCsvParameterNode(\DOMElement&$node, $rowType)
     {
@@ -166,7 +174,7 @@ class DwcExporter extends AbstractExporter
     /**
      *
      * @param \DOMElement $coreNode
-     * @param string $filename
+     * @param string      $filename
      */
     private function setNodeFile(\DOMElement&$coreNode, $filename)
     {
@@ -179,7 +187,7 @@ class DwcExporter extends AbstractExporter
     /**
      *
      * @param \DOMElement $root
-     * @param type $extension
+     * @param type        $extension
      */
     private function setXmlGenericEntity(\DOMElement&$root, $extension)
     {
@@ -206,6 +214,9 @@ class DwcExporter extends AbstractExporter
         }
     }
 
+    /**
+     * @return string
+     */
     private function getCoreName()
     {
         return 'Specimen';
@@ -213,9 +224,9 @@ class DwcExporter extends AbstractExporter
 
     /**
      * @param \DOMElement $coreNode
-     * @param string $key
-     * @param boolean flagCore
-     * @param int $compt
+     * @param string      $key
+     * @param boolean     $flagCore
+     * @param int         $compt
      */
     private function setIndexNode(\DOMElement&$coreNode, $key, $flagCore, &$compt)
     {
@@ -231,8 +242,8 @@ class DwcExporter extends AbstractExporter
 
     /**
      * @param \DOMElement $coreNode
-     * @param int $compt
-     * @param string $term
+     * @param int         $compt
+     * @param string      $term
      */
     private function setFieldNode(\DOMElement&$coreNode, &$compt, $term = '')
     {
@@ -245,21 +256,33 @@ class DwcExporter extends AbstractExporter
         }
     }
 
+    /**
+     * @return string
+     */
     public function getDwcDelimiter()
     {
         return $this->dwcDelimiter;
     }
 
+    /**
+     * @return string
+     */
     public function getDwcEnclosure()
     {
         return $this->dwcEnclosure;
     }
 
+    /**
+     * @return string
+     */
     public function getDwcLineBreak()
     {
         return $this->dwcLineBreak;
     }
 
+    /**
+     * @return boolean
+     */
     public function getDwcIgnoreHeaderLines()
     {
         return $this->dwcIgnoreHeaderLines;
@@ -289,11 +312,17 @@ class DwcExporter extends AbstractExporter
         $this->dwcLineBreak = $dwcLineBreak;
     }
 
+    /**
+     * @param boolean $dwcIgnoreHeaderLines
+     */
     public function setDwcIgnoreHeaderLines($dwcIgnoreHeaderLines)
     {
         $this->dwcIgnoreHeaderLines = $dwcIgnoreHeaderLines;
     }
 
+    /**
+     * @return string
+     */
     public function getDwcDateFormat()
     {
         $search = ['d', 'm', 'Y', 'H', 'i', 's', '\T'];
