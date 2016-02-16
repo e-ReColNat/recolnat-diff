@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tpateffoz
- * Date: 11/02/16
- * Time: 14:59
- */
 
 namespace AppBundle\Business;
 
@@ -51,7 +45,7 @@ class StatsManager
         foreach ($lonesomeRecords as $className => $items) {
             // si la className n'est pas specimen et que l'enregistrement est déjà présent dans les
             // spécimens alors on a affaire à un nouveau specimen donc on l'enlève du décompte
-            if ($className !== 'Specimen') {
+            /*if ($className !== 'Specimen') {
                 $specimenCodes = array_column($items['recolnat'], 'specimenCode');
                 $stats[$className]['recolnat'] = count(array_diff($specimenCodes, $refRecolnatSpecimenCode));
                 $specimenCodes = array_column($items['institution'], 'specimenCode');
@@ -59,7 +53,9 @@ class StatsManager
             } else {
                 $stats[$className]['recolnat'] = count($items['recolnat']);
                 $stats[$className]['institution'] = count($items['institution']);
-            }
+            }*/
+            $stats[$className]['recolnat'] = isset($items['recolnat']) ? count($items['recolnat']) : 0;
+            $stats[$className]['institution'] = isset($items['institution']) ? count($items['institution']) : 0;
         }
         return $stats;
     }
@@ -88,7 +84,7 @@ class StatsManager
         $choices = $this->exportManager->getChoicesForDisplay();
 
         $statsChoices = [];
-        $callbackCountChoices = function ($value, $className) use (&$statsChoices) {
+        $callbackCountChoices = function($value, $className) use (&$statsChoices) {
             if (is_array($value)) {
                 if (!isset($statsChoices[$className])) {
                     $statsChoices[$className] = 0;
@@ -157,7 +153,7 @@ class StatsManager
 
     /**
      * Renvoie les statistiques de diffs présentant les mêmes données modifiées pour des champs identiques
-     * @param array $classesName
+     * @param array  $classesName
      * @param string $dateFormat
      * @return array
      */
@@ -167,7 +163,7 @@ class StatsManager
         if (empty($classesName)) {
             $classesName = array_keys($diffs['classes']);
         }
-        array_map(function ($value) {
+        array_map(function($value) {
             return ucfirst(strtolower($value));
         }, $classesName);
 
@@ -207,7 +203,7 @@ class StatsManager
                 }
             }
         }
-        uasort($stats, function ($a, $b) {
+        uasort($stats, function($a, $b) {
             $a = count($a['specimensCode']);
             $b = count($b['specimensCode']);
             return ($a == $b) ? 0 : (($a > $b) ? -1 : 1);

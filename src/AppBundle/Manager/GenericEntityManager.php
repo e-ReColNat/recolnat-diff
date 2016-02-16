@@ -201,6 +201,21 @@ class GenericEntityManager
     }
 
     /**
+     * @param string $base
+     * @param string $className
+     * @param string $id
+     * @return array|null
+     */
+    public function getArrayOfDatas($base, $className, $id)
+    {
+        $fullClassName = $this->getFullClassName($className);
+        $em = $this->emI;
+        if (strtolower($base) == 'recolnat') {
+            $em = $this->emR;
+        }
+        return $em->getRepository($fullClassName)->findOneByIdToArray($id);
+    }
+    /**
      * @param string $className
      * @return string
      */

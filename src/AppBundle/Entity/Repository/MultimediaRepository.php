@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
+use Doctrine\ORM\AbstractQuery;
+
 /**
  * MultimediaRepository
  *
@@ -10,4 +12,14 @@ namespace AppBundle\Entity\Repository;
  */
 class MultimediaRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findOneByIdToArray($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+            ->select('m')
+            ->from('AppBundle\Entity\Multimedia', 'm', 'm.multimediaid')
+            ->where('m.multimediaid = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+        return $query->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
+    }
 }

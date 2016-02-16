@@ -46,12 +46,19 @@ class SpecimenExtension extends \Twig_Extension
      * @param array $transParams
      * @return string
      */
-    public function printLabelAndField($entity, $typeEntity, $fieldName, $printIfNull=true, $endString='', $transParams =[])
-    {
+    public function printLabelAndField(
+        $entity,
+        $typeEntity,
+        $fieldName,
+        $printIfNull = true,
+        $endString = '',
+        $transParams = []
+    ) {
         $value = $this->getFieldToString($entity, $fieldName);
         if ($printIfNull || !is_null($value)) {
-            $label = sprintf('label.%s.fields.%s', $typeEntity, $fieldName) ;
-            return sprintf('%s  : <span>%s</span>%s', $this->translator->trans($label, $transParams, 'entity'), $value, $endString);
+            $label = sprintf('label.%s.fields.%s', $typeEntity, $fieldName);
+            return sprintf('%s  : <span>%s</span>%s', $this->translator->trans($label, $transParams, 'entity'), $value,
+                $endString);
         }
         return '';
     }
@@ -98,13 +105,13 @@ class SpecimenExtension extends \Twig_Extension
         $return = null;
         if (!empty($relations)) {
             $metadataInfo = $this->doctrine->getManager()
-                    ->getClassMetadata(sprintf('AppBundle:%s', ucfirst($class)));
+                ->getClassMetadata(sprintf('AppBundle:%s', ucfirst($class)));
 
-            $getter = 'get' . current($metadataInfo->getIdentifier());
+            $getter = 'get'.current($metadataInfo->getIdentifier());
 
             if ($relations instanceof \Doctrine\Common\Collections\Collection ||
-                    $relations instanceof \Doctrine\ORM\PersistentCollection ||
-                    is_array($relations)
+                $relations instanceof \Doctrine\ORM\PersistentCollection ||
+                is_array($relations)
             ) {
                 foreach ($relations as $relation) {
                     if ($relation->{$getter}() == $id) {
@@ -167,7 +174,9 @@ class SpecimenExtension extends \Twig_Extension
     {
         $dateFormater = $this->getDateFormatter();
         if (!is_null($determination->getDateidentified())) {
-            return sprintf('%s %s %s', $determination->getIdentifiedby(), $dateFormater->format($determination->getDateidentified()), $determination->getIdentificationverifstatus());
+            return sprintf('%s %s %s', $determination->getIdentifiedby(),
+                $dateFormater->format($determination->getDateidentified()),
+                $determination->getIdentificationverifstatus());
         } else {
             return sprintf('%s %s', $determination->getIdentifiedby(), $determination->getIdentificationverifstatus());
         }
@@ -181,7 +190,7 @@ class SpecimenExtension extends \Twig_Extension
     public function getFieldToString($entity, $fieldName)
     {
         $returnString = null;
-        $getter = 'get' . $fieldName;
+        $getter = 'get'.$fieldName;
         if (!is_null($entity) && !is_null($fieldName) && method_exists($entity, $getter)) {
             $value = $entity->{$getter}();
             if ($value instanceof \DateTime) {
@@ -217,7 +226,7 @@ class SpecimenExtension extends \Twig_Extension
     private function getDateFormatter()
     {
         return \IntlDateFormatter::create(
-                        Locale::getDefault(), \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE);
+            Locale::getDefault(), \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE);
     }
 
     /**

@@ -115,14 +115,14 @@
     {% endif %}
     <div class="row">
         <div class="col-sm-6 col-md-6">
-            {#<a href="{{ path('exportDwc', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"#}
-               {#class="exportLink btn btn-default" role="button">#}
-                {#{{ 'downloadDwc'|trans }}#}
-            {#</a>#}
-            {#<a href="{{ path('exportCsv', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"#}
-               {#class="exportLink btn btn-default" role="button">#}
-                {#{{ 'downloadCsv'|trans }}#}
-            {#</a>#}
+            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
+                {{ 'downloadDwc'|trans }}
+            </a>
+            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'type':'csv', 'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
+               class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
+                {{ 'downloadCsv'|trans }}
+            </a>
         </div>
         <div class="col-sm-6 col-md-6">
             <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
@@ -135,10 +135,7 @@
             </a>
         </div>
         <div class="col-sm-6 col-md-6">
-            <a data-toggle="modal" href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode, 'institutionCode' : institutionCode}) }}"
-               class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
-                {{ 'downloadDwc'|trans }}Prefs
-            </a>
+
         </div>
     </div>
     {% include '@App/Front/partial/modal.html.twig' %}
@@ -175,7 +172,7 @@
             var modalSpinner = $("#spinnerModal");
             $(".checkprefs").on('click', function (event) {
                 var url = $(this).attr('href');
-                var modalPrefs = $("#modal");
+                var modalPrefs = $("#modal").clone();
                 $.get(url, function(data) {
                     modalPrefs.find('.modal-body').html(data);
                     modalPrefs.modal('show');
@@ -192,43 +189,17 @@
                                 modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
                             }
                         })
-                        .done(function (data) {
-                            console.log(data);
-                        })
-                        .success(function (data) {
-                            //path = Routing.generate('download', {path: data.file});
-                            //window.location = path;
-                            console.log(data);
-                        });
-                    });
-                });
-
-
-                event.preventDefault();
-            });
-
-            $(".exportLink").on('click', function (event) {
-                var url = $(this).attr('href');
-                $.ajax({
-                            url: url,
-                            method: "POST",
-                            beforeSend: function () {
-                                modalSpinner.find('.modal-body h4').remove();
-                                modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
-                            }
-                        })
-                        .done(function (data) {
-                            console.log(data);
-                        })
                         .success(function (data) {
                             path = Routing.generate('download', {path: data.file});
                             window.location = path;
                         });
+                    });
+                });
                 event.preventDefault();
             });
 
             $(".delete").on('click', function (event) {
-                var modalDelete = $("#modal");
+                var modalDelete = $("#modal").clone();
                 var urlDeleteChoices = $(this).attr('href');
                 if ($(this).hasClass('deleteChoices')) {
                     modalDelete.find('.modal-title').html('{{ 'deleteChoices.title' | trans }}');

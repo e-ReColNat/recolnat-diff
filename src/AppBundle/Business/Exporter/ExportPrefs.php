@@ -20,8 +20,7 @@ class ExportPrefs
     const OPTIONS_NEW_RECORDS = [
         'newrecords.recolnat' => 'recolnat',
         'newrecords.institution' => 'institution',
-        'newrecords.priority.recolnat' => 'bothRecolnat',
-        'newrecords.priority.institution' => 'bothInstitution',
+        'newrecords.both' => 'both'
     ];
     /**
      * Choix pour les enregistrements

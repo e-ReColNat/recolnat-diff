@@ -23,7 +23,7 @@ class BackendController extends Controller
      * @param string $institutionCode
      * @param string $collectionCode
      * @return JsonResponse
-     * @throws \Exception
+     *
      */
     public function exportDwcAction($institutionCode, $collectionCode, Request $request)
     {
@@ -40,13 +40,19 @@ class BackendController extends Controller
 
     /**
      * @Route("/{institutionCode}/{collectionCode}/export/csv", name="exportCsv")
+     * @param Request $request
      * @param string $institutionCode
      * @param string $collectionCode
-     * @param ExportPrefs $exportPrefs
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function exportCsvAction($institutionCode, $collectionCode, ExportPrefs $exportPrefs)
+    public function exportCsvAction($institutionCode, $collectionCode, Request $request)
     {
+        /** @var ExportPrefs $exportPrefs */
+        $exportPrefs = unserialize($request->get('exportPrefs'));
+        if (!($exportPrefs instanceof ExportPrefs)) {
+            throw new \Exception('parameters must be an instance of ExportPrefs');
+        }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $csv = $exportManager->getCsv($exportPrefs);
@@ -78,7 +84,7 @@ class BackendController extends Controller
      */
     public function setMaxItemAction($maxItem)
     {
-        if (is_int((int)$maxItem) && in_array((int)$maxItem, $this->container->getParameter('maxitemperpage'))) {
+        if (is_int((int) $maxItem) && in_array((int) $maxItem, $this->container->getParameter('maxitemperpage'))) {
             $this->get('session')->set('maxItemPerPage', $maxItem);
         } else {
             $this->get('session')->set('maxItemPerPage', $this->container->getParameter('maxitemperpage')[0]);

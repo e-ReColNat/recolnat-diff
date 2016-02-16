@@ -70,7 +70,8 @@ class DiffManager
         $data = array_merge($diffStatsManager->getDiffs(),
             [
                 'stats' => $diffStatsManager->getAllStats(),
-                'lonesomeRecords' => $diffStatsManager->getLonesomeRecords()
+                'lonesomeRecords' => $diffStatsManager->getLonesomeRecords(),
+                'statsLonesomeRecords' => $diffStatsManager->getStatsLonesomeRecords()
             ]);
         return $data;
     }

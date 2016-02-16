@@ -1,6 +1,9 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
+
+use Doctrine\ORM\AbstractQuery;
+
 /**
  * BibliographyRepository
  *
@@ -34,6 +37,18 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
                 ->getQuery();
         return $query->getOneOrNullResult();
     }
+
+    public function findOneByIdToArray($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+            ->select('b')
+            ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
+            ->where('b.referenceid = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+        return $query->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
+    }
+
     /**
      * 
      * @param array $specimenCodes

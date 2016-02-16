@@ -1,11 +1,13 @@
 <?php
 
 namespace AppBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\DeterminationRepository")
-* @ORM\Table(name="Determinations")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\DeterminationRepository")
+ * @ORM\Table(name="Determinations")
+ */
 class Determination
 {
     /**
@@ -14,52 +16,52 @@ class Determination
      */
     private $identificationid;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateidentified;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $dwcaidentificationid;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $identificationqualifier;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $identificationreferences;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $identificationremarks;
 
-    /** 
+    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $identificationverifstatus;
 
-    /** 
+    /**
      * @ORM\Column(type="string", nullable=true)
      */
     private $identifiedby;
 
-        /** 
-         * @ORM\Column(type="datetime", nullable=true)
-         */
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
     private $modified;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $typestatus;
@@ -76,9 +78,9 @@ class Determination
      * @ORM\JoinColumn(name="taxonid", referencedColumnName="taxonid")
      **/
     private $taxon;
-    
-    /** 
-     * @ORM\Column(type="rawid") 
+
+    /**
+     * @ORM\Column(type="rawid")
      */
     private $occurrenceid;
 
@@ -379,7 +381,7 @@ class Determination
     {
         return $this->taxon;
     }
-    
+
     /**
      * Get specimen
      *
@@ -393,21 +395,21 @@ class Determination
     public function __toString()
     {
         if (!is_null($this->getDateidentified())) {
-            return sprintf('%s %s %s', 
-                    $this->getIdentifiedby(), 
-                    $this->getDateidentified()->format('d/m/Y'), 
-                    $this->getIdentificationverifstatus());
-        }
-        else {
-            return sprintf('%s %s', 
-                    $this->getIdentifiedby(), 
-                    $this->getIdentificationverifstatus());
+            return sprintf('%s %s %s',
+                $this->getIdentifiedby(),
+                $this->getDateidentified()->format('d/m/Y'),
+                $this->getIdentificationverifstatus());
+        } else {
+            return sprintf('%s %s',
+                $this->getIdentifiedby(),
+                $this->getIdentificationverifstatus());
         }
     }
-    
-    public function toArray() {
+
+    public function toArray()
+    {
         return [
-            'occurrenceid' => $this->getOccurrenceid(), 
+            'occurrenceid' => $this->getOccurrenceid(),
             'identificationid' => $this->getIdentificationid(),
             'created' => $this->getCreated(),
             'dateidentified' => $this->getDateidentified(),
@@ -418,7 +420,7 @@ class Determination
             'identifiedby' => $this->getIdentifiedby(),
             'modified' => $this->getModified(),
             'typestatus' => $this->getTypestatus(),
-            'taxonid' => !is_null($this->getTaxon()) ? $this->getTaxon()->getTaxonid() : null, 
+            'taxonid' => !is_null($this->getTaxon()) ? $this->getTaxon()->getTaxonid() : null,
         ];
     }
 }

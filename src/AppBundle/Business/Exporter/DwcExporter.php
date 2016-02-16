@@ -45,7 +45,7 @@ class DwcExporter extends AbstractExporter
 
             $formatDatas[$key]['Specimen'] = array_merge($data['Specimen'], $data['Stratigraphy']);
 
-            if (isset($data['Determination']) && count($data['Determination'])>0) {
+            if (isset($data['Determination']) && count($data['Determination']) > 0) {
                 foreach ($data['Determination'] as $key2 => $determination) {
                     $taxon = $determination['Taxon'];
                     unset($determination['Taxon']);
@@ -90,7 +90,7 @@ class DwcExporter extends AbstractExporter
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]);
 
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
-        $fileName = $this->getExportDirPath() . '/meta.xml';
+        $fileName = $this->getExportDirPath().'/meta.xml';
         $fileExport->touch($fileName);
         $fileExport->chmod($fileName, 0777);
         file_put_contents($fileName, $this->generateXmlMeta());
@@ -121,19 +121,18 @@ class DwcExporter extends AbstractExporter
     private function createZipFile()
     {
         $fileExport = new \Symfony\Component\Filesystem\Filesystem();
-        $zipFilePath = $this->getExportDirPath() . '/dwc.zip';
+        $zipFilePath = $this->getExportDirPath().'/dwc.zip';
         $arrayFilesName = [];
-        $arrayFilesName[] = $this->getMetaFilepath() . ' ';
-        if (is_array($this->csvFiles) && count($this->csvFiles)>0) {
+        $arrayFilesName[] = $this->getMetaFilepath().' ';
+        if (is_array($this->csvFiles) && count($this->csvFiles) > 0) {
             foreach ($this->csvFiles as $csvFile) {
-                $arrayFilesName[] = $csvFile->getPathName() . ' ';
+                $arrayFilesName[] = $csvFile->getPathName().' ';
             }
 
             $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
             exec($zipCommand);
             $fileExport->chmod($zipFilePath, 0777);
-        }
-        else {
+        } else {
             throw new Exception('DWC-a can\'t be created !');
         }
 
@@ -145,7 +144,7 @@ class DwcExporter extends AbstractExporter
      */
     private function getMetaFilepath()
     {
-        return realpath($this->getExportDirPath() . '/meta.xml');
+        return realpath($this->getExportDirPath().'/meta.xml');
     }
 
     /**
@@ -194,7 +193,7 @@ class DwcExporter extends AbstractExporter
         }
         $this->setCsvParameterNode($coreNode, $entityExporter->getNameSpace());
         $root->appendChild($coreNode);
-        $this->setNodeFile($coreNode, $extension . '.csv');
+        $this->setNodeFile($coreNode, $extension.'.csv');
         $compt = 0;
         $keys = $entityExporter->getKeysEntity();
         foreach ($keys as $key => $fieldName) {
@@ -215,7 +214,7 @@ class DwcExporter extends AbstractExporter
     /**
      * @param \DOMElement $coreNode
      * @param string $key
-     * @param $bool flagCore
+     * @param boolean flagCore
      * @param int $compt
      */
     private function setIndexNode(\DOMElement&$coreNode, $key, $flagCore, &$compt)

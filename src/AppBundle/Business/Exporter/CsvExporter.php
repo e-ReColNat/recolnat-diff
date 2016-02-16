@@ -121,8 +121,10 @@ class CsvExporter extends AbstractExporter
     private function writeToFile($fileHandler, $datas)
     {
         $line = $this->arrayToCsv($datas, $this->getCsvDelimiter(), $this->getCsvEnclosure(), true);
-        fwrite($fileHandler, $line);
-        fwrite($fileHandler, $this->getCsvLineBreak());
+        if (strlen($line)) {
+            fwrite($fileHandler, $line);
+            fwrite($fileHandler, $this->getCsvLineBreak());
+        }
     }
 
     /**

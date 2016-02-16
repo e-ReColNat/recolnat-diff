@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Repository;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 
 /**
@@ -38,6 +39,16 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         return $query->getOneOrNullResult();
     }
 
+    public function findOneByIdToArray($id)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+            ->select('d')
+            ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
+            ->where('d.identificationid = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+        return $query->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
+    }
     /**
      *
      * @param array $specimenCodes

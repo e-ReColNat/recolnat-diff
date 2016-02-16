@@ -28,12 +28,10 @@ abstract class AbstractExporter
     /**
      * @param array $datas
      * @param string $exportPath
-     * @param ExportPrefs $exportPrefs
      */
-    public function __construct($datas, $exportPath, ExportPrefs $exportPrefs) {
+    public function __construct($datas, $exportPath) {
         $this->datas = $datas;
         $this->exportPath = $exportPath;
-        $this->exportPrefs = $exportPrefs;
         foreach ($this->entitiesName as $className) {
             $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\Entity\\'.ucfirst($className).'Exporter';
             /* @var $entityExporter \AppBundle\Business\Exporter\AbstractEntityExporter */

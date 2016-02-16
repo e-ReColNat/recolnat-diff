@@ -86,7 +86,7 @@ class FrontController extends Controller
         $stats = $statsManager->getExpandedStats();
         $sumStats = $statsManager->getSumStats();
         $statsLonesomeRecords = $statsManager->getStatsLonesomeRecords();
-        $sortStats = function ($a, $b) {
+        $sortStats = function($a, $b) {
             if ($a['diffs'] == $b['diffs']) {
                 return 0;
             }
@@ -94,6 +94,7 @@ class FrontController extends Controller
         };
         uasort($stats, $sortStats);
 
+        dump($exportManager->getLonesomeRecords()) ;
         $statsChoices = $statsManager->getStatsChoices();
         $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
 
@@ -120,10 +121,10 @@ class FrontController extends Controller
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
      *
      * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @param string $selectedClassName
-     * @param int $page
+     * @param string  $institutionCode
+     * @param string  $collectionCode
+     * @param string  $selectedClassName
+     * @param int     $page
      * @return Response
      */
     public function diffsAction(
@@ -177,10 +178,10 @@ class FrontController extends Controller
      * options={"expose"=true})
      *
      * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @param string $selectedClassName
-     * @param int $page
+     * @param string  $institutionCode
+     * @param string  $collectionCode
+     * @param string  $selectedClassName
+     * @param int     $page
      * @return Response
      */
     public function viewLoneSomeAction(
@@ -195,7 +196,7 @@ class FrontController extends Controller
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensBySpecimenCodes = $exportManager->getLonesomeRecordsBySpecimenCode($db, $selectedClassName);
+        $lonesomesSpecimensBySpecimenCodes = $exportManager->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomesSpecimensBySpecimenCodes, $page, $maxItemPerPage);
@@ -221,7 +222,8 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{institutionCode}/{collectionCode}/specimens/view/{jsonSpecimensCode}", name="viewSpecimens", options={"expose"=true})
+     * @Route("{institutionCode}/{collectionCode}/specimens/view/{jsonSpecimensCode}", name="viewSpecimens",
+     *                                                                                 options={"expose"=true})
      * @param string $institutionCode
      * @param string $collectionCode
      * @param string $jsonSpecimensCode
@@ -276,9 +278,9 @@ class FrontController extends Controller
      * @Route("{institutionCode}/{collectionCode}/export/setPrefs/{type}", name="setPrefsForExport",
      *     requirements={"type"="dwc|csv"})
      * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @param string $type
+     * @param string  $institutionCode
+     * @param string  $collectionCode
+     * @param string  $type
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function setPrefsForExportAction(Request $request, $institutionCode, $collectionCode, $type)
@@ -324,29 +326,6 @@ class FrontController extends Controller
             'sumLonesomeRecords' => $sumLonesomeRecords,
             'form' => $form->createView(),
         ));
-
-        /**
-         * $user = $this->get('userManager');
-         * $user->init($institutionCode);
-         *
-         * $prefs = $user->getPrefs();
-         * $form = $this->createForm(UserPrefsType::class, $prefs);
-         *
-         * $form->handleRequest($request);
-         *
-         * if ($form->isSubmitted() && $form->isValid()) {
-         * $translator = $this->get('translator');
-         * $message = $translator->trans('prefs.saved', [], 'prefs');
-         * $user->savePrefs($prefs);
-         * $this->addFlash('success', $message);
-         * return $this->redirectToRoute('viewPrefsUser', ['institutionCode'=>$institutionCode]);
-         * }
-         *
-         * return $this->render('@App/User/editPrefs.html.twig', array(
-         * 'institutionCode' => $institutionCode,
-         * 'form' => $form->createView(),
-         * ));
-         */
     }
 
     /**
