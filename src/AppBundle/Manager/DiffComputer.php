@@ -186,7 +186,7 @@ class DiffComputer
         $this->lonesomeRecords[$className] = [];
         foreach ($lonesomeRecords as $db => $items) {
             if (!isset($this->lonesomeRecords[$className][$db])) {
-                $this->lonesomeRecords[$className][$db]=[];
+                $this->lonesomeRecords[$className][$db] = [];
             }
             $specimenCodesNewSpecimenRecords = [];
             if ($className != 'Specimen') {

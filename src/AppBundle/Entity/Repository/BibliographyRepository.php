@@ -73,9 +73,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b')
             ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
-        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        //$qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -91,9 +89,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
             ->from('AppBundle\Entity\Bibliography', 'b')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
-        //$qb->setParameter('specimenCodes', $specimenCodes);
-        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'referenceid');
     }
 

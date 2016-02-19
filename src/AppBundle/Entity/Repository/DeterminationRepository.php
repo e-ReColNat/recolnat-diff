@@ -73,9 +73,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('d')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
-        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        //$qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $qb->getQuery()->getResult();
     }
 
@@ -92,9 +90,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
             ->select('d')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
-        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        //$qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'identificationid');
     }
 

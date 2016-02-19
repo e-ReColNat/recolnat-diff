@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity\Repository;
+
 /**
  * LocalisationRepository
  *
@@ -10,32 +11,34 @@ namespace AppBundle\Entity\Repository;
 class LocalisationRepository extends RecolnatRepositoryAbstract
 {
     /**
-     * 
+     *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('l')
-                ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
-                ->where('l.locationid IN (:ids)')
-                ->setParameter('ids', $ids)
-                ->getQuery();
+            ->select('l')
+            ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
+            ->where('l.locationid IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery();
         return $query->getResult();
     }
+
     public function findOneById($id)
     {
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('l')
-                ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
-                ->where('l.locationid = :id')
-                ->setParameter('id', $id)
-                ->getQuery();
+            ->select('l')
+            ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
+            ->where('l.locationid = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
         return $query->getOneOrNullResult();
     }
+
     /**
-     * 
+     *
      * @param array $specimenCodes
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -43,18 +46,17 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
     {
         $qb = $this->createQueryBuilder('l');
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('l')
-                ->from('AppBundle\Entity\Specimen', 's')
-                ->from('AppBundle\Entity\Recolte', 'r')
-                ->from('AppBundle\Entity\Localisation', 'l')
-                //->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
-                ->andWhere('s.recolte = r.eventid')
-                ->andWhere('r.localisation = l.locationid');
+            ->select('l')
+            ->from('AppBundle\Entity\Specimen', 's')
+            ->from('AppBundle\Entity\Recolte', 'r')
+            ->from('AppBundle\Entity\Localisation', 'l')
+            ->andWhere('s.recolte = r.eventid')
+            ->andWhere('r.localisation = l.locationid');
 
-        //$query->setParameter('specimenCodes', $specimenCodes);
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $query->getQuery()->getResult();
     }
+
     /**
      *
      * @param array $specimenCodes
@@ -64,18 +66,15 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
     {
         $qb = $this->createQueryBuilder('l');
         $query = $this->getEntityManager()->createQueryBuilder()
-                ->select('l')
-                ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
-                ->from('AppBundle\Entity\Specimen', 's')
-                ->from('AppBundle\Entity\Recolte', 'r')
-                ->from('AppBundle\Entity\Localisation', 'l')
-                //->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
-                ->andWhere('s.recolte = r.eventid')
-                ->andWhere('r.localisation = l.locationid')
-                ;
+            ->select('l')
+            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->from('AppBundle\Entity\Specimen', 's')
+            ->from('AppBundle\Entity\Recolte', 'r')
+            ->from('AppBundle\Entity\Localisation', 'l')
+            ->andWhere('s.recolte = r.eventid')
+            ->andWhere('r.localisation = l.locationid');
 
-        //$query->setParameter('specimenCodes', $specimenCodes);
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'locationid');
     }
 }

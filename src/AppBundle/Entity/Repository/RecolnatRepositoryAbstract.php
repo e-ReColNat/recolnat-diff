@@ -51,7 +51,7 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
 
 
     /**
-     * @param array $resultsSet
+     * @param array  $resultsSet
      * @param string $identifierName
      * @return array
      */
@@ -66,12 +66,13 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
         return $orderResultSet;
     }
 
-    protected function setSpecimenCodesWhereClause(QueryBuilder &$qb, $specimenCodes, $alias='s')
+    protected function setSpecimenCodesWhereClause(QueryBuilder &$qb, $specimenCodes, $alias = 's')
     {
 
-        list($institutionCode, $collectionCode, $catalogNumber) = explode('#', current($specimenCodes));
+        $catalogNumbers = [];
+        list($institutionCode, $collectionCode,) = explode('#', current($specimenCodes));
         foreach ($specimenCodes as $specimenCode) {
-            $temp = explode('#', $specimenCode) ;
+            $temp = explode('#', $specimenCode);
             $catalogNumbers[] = end($temp);
         }
 
@@ -79,9 +80,9 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
             ->andWhere(sprintf('%s.collectioncode = :collectionCode', $alias))
             ->andWhere($qb->expr()->in(sprintf('%s.catalognumber', $alias), ':catalogNumbers'))
             ->setParameters([
-                'institutionCode'=>$institutionCode,
-                'collectionCode'=>$collectionCode,
-                'catalogNumbers'=>$catalogNumbers,
+                'institutionCode' => $institutionCode,
+                'collectionCode' => $collectionCode,
+                'catalogNumbers' => $catalogNumbers,
             ]);
     }
 }

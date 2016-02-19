@@ -117,8 +117,9 @@ class DiffHandler
      * @param string|array|null $selectedClassesNames
      * @return array
      */
-    public function getLonesomeRecords($db = null, $selectedClassesNames = null) {
-        return $this->getDiffs()->getLonesomeRecords($db, $selectedClassesNames) ;
+    public function getLonesomeRecords($db = null, $selectedClassesNames = null)
+    {
+        return $this->getDiffs()->getLonesomeRecords($db, $selectedClassesNames);
     }
 
     /**

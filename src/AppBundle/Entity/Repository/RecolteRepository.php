@@ -20,8 +20,8 @@ class RecolteRepository extends RecolnatRepositoryAbstract
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('r')
             ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
-        ->where('r.eventid IN (\''.implode('\',\'', $ids).'\')')
-        ->getQuery();
+            ->where('r.eventid IN (\''.implode('\',\'', $ids).'\')')
+            ->getQuery();
         return $query->getResult();
     }
 
