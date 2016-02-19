@@ -2,6 +2,8 @@
 
 namespace AppBundle\Business\User;
 
+use Symfony\Component\Filesystem\Filesystem;
+
 /**
  * Description of User
  *
@@ -43,7 +45,7 @@ class User
      */
     private function createDir()
     {
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $fs = new Filesystem();
         if (!$fs->exists($this->getDataDirPath())) {
             $fs->mkdir($this->getDataDirPath(), 0755);
         }
@@ -55,7 +57,7 @@ class User
     public function getPrefs()
     {
         $this->prefs = new Prefs();
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $fs = new Filesystem();
         
         if (!$fs->exists($this->getPrefsFileName())) {
             $this->savePrefs($this->prefs);

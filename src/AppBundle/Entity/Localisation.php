@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -128,7 +129,7 @@ class Localisation
     
     public function __construct()
     {
-        $this->recoltes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->recoltes = new ArrayCollection();
     }
     /**
      * Get locationid

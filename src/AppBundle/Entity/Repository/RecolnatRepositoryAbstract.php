@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Entity\Repository;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
@@ -9,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
  *
  * @author tpateffoz
  */
-abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
+abstract class RecolnatRepositoryAbstract extends EntityRepository
 {
     /**
      *

@@ -8,7 +8,13 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Entity\Localisation;
+use AppBundle\Entity\Recolte;
+use AppBundle\Entity\Specimen;
+use AppBundle\Entity\Stratigraphy;
 use AppBundle\Entity\Taxon;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\PersistentCollection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Intl\Locale;
@@ -41,9 +47,9 @@ class SpecimenExtension extends \Twig_Extension
      * @param Object $entity
      * @param string $typeEntity
      * @param string $fieldName
-     * @param bool $printIfNull
+     * @param bool   $printIfNull
      * @param string $endString
-     * @param array $transParams
+     * @param array  $transParams
      * @return string
      */
     public function printLabelAndField(
@@ -64,11 +70,11 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param \AppBundle\Entity\Specimen $specimen
-     * @param $class
-     * @return \AppBundle\Entity\Localisation|\AppBundle\Entity\Recolte|\AppBundle\Entity\Specimen|\AppBundle\Entity\Stratigraphy|array|\Doctrine\Common\Collections\ArrayCollection
+     * @param Specimen $specimen
+     * @param          $class
+     * @return Localisation|Recolte|Specimen|Stratigraphy|array|ArrayCollection
      */
-    public function getRelation(\AppBundle\Entity\Specimen $specimen, $class)
+    public function getRelation(Specimen $specimen, $class)
     {
         switch (strtolower($class)) {
             case 'specimen':
@@ -94,12 +100,12 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param \AppBundle\Entity\Specimen $specimen
-     * @param string $class
-     * @param string $id
-     * @return \AppBundle\Entity\Localisation|\AppBundle\Entity\Recolte|\AppBundle\Entity\Stratigraphy|array|mixed|null|object
+     * @param Specimen $specimen
+     * @param string   $class
+     * @param string   $id
+     * @return Localisation|Recolte|Stratigraphy|array|mixed|null|object
      */
-    public function getRelationById(\AppBundle\Entity\Specimen $specimen, $class, $id)
+    public function getRelationById(Specimen $specimen, $class, $id)
     {
         $relations = $this->getRelation($specimen, $class);
         $return = null;
@@ -110,7 +116,7 @@ class SpecimenExtension extends \Twig_Extension
             $getter = 'get'.current($metadataInfo->getIdentifier());
 
             if ($relations instanceof \Doctrine\Common\Collections\Collection ||
-                $relations instanceof \Doctrine\ORM\PersistentCollection ||
+                $relations instanceof PersistentCollection ||
                 is_array($relations)
             ) {
                 foreach ($relations as $relation) {
@@ -128,12 +134,12 @@ class SpecimenExtension extends \Twig_Extension
     /**
      * Renvoie le nom minimum d'une extension d'un specimen
      * ex : pour la Récolte d'un specimen on aura la date et nom d'un récolteur
-     * @param \AppBundle\Entity\Specimen $specimen
-     * @param string $class
-     * @param string $id
+     * @param Specimen $specimen
+     * @param string   $class
+     * @param string   $id
      * @return string
      */
-    public function getRelationByIdToString(\AppBundle\Entity\Specimen $specimen, $class, $id)
+    public function getRelationByIdToString(Specimen $specimen, $class, $id)
     {
         $relation = $this->getRelationById($specimen, $class, $id);
         $toString = '';
@@ -153,10 +159,10 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param \AppBundle\Entity\Recolte $recolte
+     * @param Recolte $recolte
      * @return string
      */
-    private function getToStringRecolte(\AppBundle\Entity\Recolte $recolte)
+    private function getToStringRecolte(Recolte $recolte)
     {
         $dateFormater = $this->getDateFormatter();
         if (!is_null($recolte->getEventdate())) {
@@ -167,10 +173,10 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param \AppBundle\Entity\Determination $determination
+     * @param Determination $determination
      * @return string
      */
-    private function getToStringDetermination(\AppBundle\Entity\Determination $determination)
+    private function getToStringDetermination(Determination $determination)
     {
         $dateFormater = $this->getDateFormatter();
         if (!is_null($determination->getDateidentified())) {
@@ -204,10 +210,10 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param \AppBundle\Entity\Specimen $specimen
+     * @param Specimen $specimen
      * @return Taxon|null
      */
-    public function getTaxon(\AppBundle\Entity\Specimen $specimen)
+    public function getTaxon(Specimen $specimen)
     {
         $determinations = $specimen->getDeterminations();
         if (count($determinations) > 0) {

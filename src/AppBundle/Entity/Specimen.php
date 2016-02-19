@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -170,9 +171,9 @@ class Specimen
      */
     public function __construct()
     {
-        $this->multimedias = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->determinations = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->bibliographies = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->multimedias = new ArrayCollection();
+        $this->determinations = new ArrayCollection();
+        $this->bibliographies = new ArrayCollection();
     }
 
     /**
@@ -716,11 +717,11 @@ class Specimen
     /**
      * Set collectionid
      *
-     * @param \AppBundle\Entity\Collection $collection
+     * @param Collection $collection
      *
      * @return Specimen
      */
-    public function setCollection(\AppBundle\Entity\Collection $collection = null)
+    public function setCollection(Collection $collection = null)
     {
         $this->collection = $collection;
 
@@ -740,11 +741,11 @@ class Specimen
     /**
      * Set geologicalcontextid
      *
-     * @param \AppBundle\Entity\Stratigraphy $geologicalcontextid
+     * @param Stratigraphy $geologicalcontextid
      *
      * @return Specimen
      */
-    public function setGeologicalcontextid(\AppBundle\Entity\Stratigraphy $geologicalcontextid = null)
+    public function setGeologicalcontextid(Stratigraphy $geologicalcontextid = null)
     {
         $this->geologicalcontext = $geologicalcontextid;
 
@@ -764,11 +765,11 @@ class Specimen
     /**
      * Set eventid
      *
-     * @param \AppBundle\Entity\Recolte $eventid
+     * @param Recolte $eventid
      *
      * @return Specimen
      */
-    public function setRecolte(\AppBundle\Entity\Recolte $eventid = null)
+    public function setRecolte(Recolte $eventid = null)
     {
         $this->eventid = $eventid;
 
@@ -778,7 +779,7 @@ class Specimen
     /**
      * Get recolte
      *
-     * @return \AppBundle\Entity\Recolte
+     * @return Recolte
      */
     public function getRecolte()
     {
@@ -788,11 +789,11 @@ class Specimen
     /**
      * Add multimediaid
      *
-     * @param \AppBundle\Entity\Multimedia $multimedia
+     * @param Multimedia $multimedia
      *
      * @return Specimen
      */
-    public function addMultimediaid(\AppBundle\Entity\Multimedia $multimedia)
+    public function addMultimediaid(Multimedia $multimedia)
     {
         $this->multimedias[] = $multimedia;
 
@@ -802,9 +803,9 @@ class Specimen
     /**
      * Remove multimedia
      *
-     * @param \AppBundle\Entity\Multimedia $multimedia
+     * @param Multimedia $multimedia
      */
-    public function removeMultimedia(\AppBundle\Entity\Multimedia $multimedia)
+    public function removeMultimedia(Multimedia $multimedia)
     {
         $this->multimedias->removeElement($multimedia);
     }
@@ -812,7 +813,7 @@ class Specimen
     /**
      * Get multimedias
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getMultimedias()
     {

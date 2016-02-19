@@ -337,11 +337,11 @@ class Determination
     /**
      * Set occurrenceid
      *
-     * @param \AppBundle\Entity\Specimen $occurrenceid
+     * @param Specimen $occurrenceid
      *
      * @return Determination
      */
-    public function setOccurrenceid(\AppBundle\Entity\Specimen $occurrenceid = null)
+    public function setOccurrenceid(Specimen $occurrenceid = null)
     {
         $this->occurrenceid = $occurrenceid;
 
@@ -361,11 +361,11 @@ class Determination
     /**
      * Set taxonid
      *
-     * @param \AppBundle\Entity\Taxon $taxon
+     * @param Taxon $taxon
      *
      * @return Determination
      */
-    public function setTaxon(\AppBundle\Entity\Taxon $taxon = null)
+    public function setTaxon(Taxon $taxon = null)
     {
         $this->taxon = $taxon;
 

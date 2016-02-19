@@ -51,11 +51,12 @@
     <script src="{{ asset('assets/AppBundle/js/viewDiffs.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var $maxItemPerPage = $('#maxItemPerPage');
             if (localStorage.getItem('maxItemPerPage')) {
-                $('#maxItemPerPage').val(localStorage.getItem('maxItemPerPage'));
+                $maxItemPerPage.val(localStorage.getItem('maxItemPerPage'));
                 $.get(Routing.generate('setmaxitem', {'maxItem': localStorage.getItem('maxItemPerPage')}));
             }
-            $('#maxItemPerPage').change(function () {
+            $maxItemPerPage.change(function () {
                 {% if selectedClassName is not defined %}
                 {% set selectedClassName = "all" %}
                 {% endif %}
@@ -66,7 +67,7 @@
                 {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
                 {% endif %}
 
-                maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
+                var maxItemPerPage = $maxItemPerPage.find(":selected").text();
                 localStorage.setItem('maxItemPerPage', maxItemPerPage);
                 jQuery(location).attr('href', url.replace('_itemNum', maxItemPerPage));
             });

@@ -3,7 +3,7 @@ $(document).ready(function () {
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 
         boolScrollToHash = false;
-        currTabTarget = $(e.target).attr('href');
+        var currTabTarget = $(e.target).attr('href');
 
         var remoteUrl = $(this).attr('data-tab-remote');
         var loadedOnce = $(this).data('loaded');
@@ -16,8 +16,9 @@ $(document).ready(function () {
 
     function maybeScrollToHash() {
         // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
-        if (window.location.hash && $(window.location.hash).length && boolScrollToHash) {
-            var newTop = $(window.location.hash).offset().top + parseInt($(window.location.hash).css('padding-top'), 10) - $('.navbar-fixed-top').height() - parseInt($('body').css('padding-top'), 10) + parseInt($('.navbar-fixed-top').css('margin-bottom'), 10);
+        var $hash = $(window.location.hash);
+        if (window.location.hash && $hash.length && boolScrollToHash) {
+            var newTop = $hash.offset().top + parseInt($hash.css('padding-top'), 10) - $('.navbar-fixed-top').height() - parseInt($('body').css('padding-top'), 10) + parseInt($('.navbar-fixed-top').css('margin-bottom'), 10);
             $(window).scrollTop(newTop);
         }
     }
@@ -31,11 +32,12 @@ $(document).ready(function () {
     maybeScrollToHash();
 
 
-    var institutionCode = $('#diffs').data('institutioncode');
-    var collectionCode = $('#diffs').data('collectioncode');
-    var selectedClassName = $('#diffs').data('selectedclassname');
+    var $diffs = $('#diffs');
+    var institutionCode = $diffs.data('institutioncode');
+    var collectionCode = $diffs.data('collectioncode');
+    var selectedClassName = $diffs.data('selectedclassname');
     var smallModal = $('#smallModal');
-    var selectedSpecimens = new Array();
+    var selectedSpecimens = [];
     var highlightClass = 'highlight';
     if (localStorage.getItem('selectedSpecimens')) {
         selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
@@ -46,37 +48,38 @@ $(document).ready(function () {
     }
 
     // Checked selected Specimens
-    nbSelectedSpecimens = selectedSpecimens.length;
+    var nbSelectedSpecimens = selectedSpecimens.length;
+    var $specimen = $(".specimen");
     if (nbSelectedSpecimens > 0) {
-        checkboxSpecimen = $(".specimen").find("[name^='check-specimen']");
-        for (i = 0; i < nbSelectedSpecimens - 1; i++) {
+        var checkboxSpecimen = $specimen.find("[name^='check-specimen']");
+        for (var i = 0; i < nbSelectedSpecimens - 1; i++) {
             checkboxSpecimen.filter('[value="' + selectedSpecimens[i] + '"]').prop('checked', true);
         }
     }
 
     // Rajoute les choix effectués au tableau choices
     function setChoice(choices, element, specimenCode) {
-        fieldName = element.data('fieldname');
-        className = element.data('class');
-        choice = element.attr('value');
-        relationId = element.data('relationid');
-        choice = {
+        var fieldName = element.data('fieldname');
+        var className = element.data('class');
+        var choice = element.attr('value');
+        var relationId = element.data('relationid');
+        var choice = {
             'className': className,
             'fieldName': fieldName,
             'relationId': relationId,
             'choice': choice,
             'specimenCode': specimenCode
         };
-        flag = false;
+        var flag = false;
         if (choices.length > 0) {
             for (var i = 0; i < choices.length; i++) {
-                row = choices[i];
+                var row = choices[i];
                 if (
                     row.className === choice.className &&
                     row.fieldName === choice.fieldName &&
                     row.relationId === choice.relationId
                 ) {
-                    flag = true;
+                    var flag = true;
                     choices[i] = choice;
                 }
             }
@@ -88,9 +91,10 @@ $(document).ready(function () {
 
     // Met à jour l'affichage de la liste des specimens en fonction du retour du serveur
     function updateDisplay(data) {
-        $("[id^='facet-']").data('comptchoices', 0);
+        var $idFacet = $("[id^='facet-']");
+        $idFacet.data('comptchoices', 0);
         var comptchoices = [];
-        choices = data.choices;
+        var choices = data.choices;
         $.each(data.choices, function (i) {
             $("input[type=radio][data-relationid='" + choices[i]['relationId'] + "'][data-fieldname='" + choices[i]['fieldName'] + "'][value=" + choices[i]['choice'] + "]").prop('checked', true);
             if (typeof comptchoices[choices[i]['specimenCode']] === "undefined") {
@@ -104,8 +108,8 @@ $(document).ready(function () {
             }
             $("#facet-" + choices[i]['specimenCode'] + "-" + choices[i]['className']).data('comptchoices', comptchoices[choices[i]['specimenCode']][choices[i]['className']]);
         });
-        $("[id^='facet-']").each(function () {
-            formattedTemplate = formatTemplate($(this).find('.facet-className').html(), $(this).data('comptchoices'), $(this).data('comptdiffs'));
+        $idFacet.each(function () {
+            var formattedTemplate = formatTemplate($(this).find('.facet-className').html(), $(this).data('comptchoices'), $(this).data('comptdiffs'));
             $(this).html(formattedTemplate);
             if ($(this).data('comptchoices') === $(this).data('comptdiffs')) {
                 $(this).removeClass('text-warning').addClass('text-success');
@@ -115,6 +119,8 @@ $(document).ready(function () {
 
     // Renvoie le template mis à jour d'un specimen de la liste
     function formatTemplate(className, comptChoices, comptDiffs) {
+        var spanChoices;
+        var spanDiffs;
         if (comptChoices > 1) {
             spanChoices = $("#template-facet-string > .template-facet-choices-plural").html();
         }
@@ -127,16 +133,16 @@ $(document).ready(function () {
         else {
             spanDiffs = $("#template-facet-string > .template-facet-diffs-single").html();
         }
-        choicesFormatted = spanChoices.format(comptChoices);
-        diffsFormatted = spanDiffs.format(comptDiffs);
+        var choicesFormatted = spanChoices.format(comptChoices);
+        var diffsFormatted = spanDiffs.format(comptDiffs);
         var facetTemplate = $("#template-facet").html();
-        facet = facetTemplate.format(className, choicesFormatted, diffsFormatted);
+        var facet = facetTemplate.format(className, choicesFormatted, diffsFormatted);
         return facet;
     }
 
     // Sélection bouton radio par specimen
     $('table.diff').find(":radio").change(function () {
-            var choices = new Array();
+            var choices = [];
             var tableContext = $(this).parents('table.diff');
             var relationId = $(this).attr('name');
             var choice = $(this).attr('value');
@@ -245,7 +251,7 @@ $(document).ready(function () {
     });
 
     // Sélection d'un specimen manuellement
-    $(".specimen").find("[name^='check-specimen']").change(function () {
+    $specimen.find("[name^='check-specimen']").change(function () {
         if ($(this).prop('checked')) {
             selectedSpecimens.push($(this).val());
         }

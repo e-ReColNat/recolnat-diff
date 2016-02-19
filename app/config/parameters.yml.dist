@@ -14,7 +14,7 @@ parameters:
     database_user_diff:     root
     database_password_diff: 123456
 
-    max_nb_specimen_par_pass : 20
+    max_nb_specimen_par_pass : 200
 
     # You should uncomment this if you want use pdo_sqlite
     # database_path: "%kernel.root_dir%/data.db3"

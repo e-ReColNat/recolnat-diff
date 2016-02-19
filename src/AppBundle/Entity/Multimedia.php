@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -111,7 +112,7 @@ class Multimedia
      */
     public function __construct()
     {
-        $this->specimens = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->specimens = new ArrayCollection();
     }
 
     /**
@@ -535,11 +536,11 @@ class Multimedia
     /**
      * Add occurrenceid
      *
-     * @param \AppBundle\Entity\Specimen $occurrenceid
+     * @param Specimen $occurrenceid
      *
      * @return Multimedia
      */
-    public function addOccurrenceid(\AppBundle\Entity\Specimen $occurrenceid)
+    public function addOccurrenceid(Specimen $occurrenceid)
     {
         $this->occurrenceid[] = $occurrenceid;
 
@@ -549,9 +550,9 @@ class Multimedia
     /**
      * Remove occurrenceid
      *
-     * @param \AppBundle\Entity\Specimen $occurrenceid
+     * @param Specimen $occurrenceid
      */
-    public function removeOccurrenceid(\AppBundle\Entity\Specimen $occurrenceid)
+    public function removeOccurrenceid(Specimen $occurrenceid)
     {
         $this->occurrenceid->removeElement($occurrenceid);
     }

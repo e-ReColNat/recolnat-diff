@@ -5,6 +5,7 @@ namespace AppBundle\Manager;
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -102,7 +103,7 @@ class ExportManager
         $this->user->init($this->institutionCode);
 
         if (!is_null($collectionCode)) {
-            $fs = new \Symfony\Component\Filesystem\Filesystem();
+            $fs = new Filesystem();
 
             if (!$fs->exists($this->getExportDirPath())) {
                 $fs->mkdir($this->getExportDirPath(), 0755);
@@ -250,7 +251,7 @@ class ExportManager
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != ".." && is_dir($institutionDir.$entry)) {
-                    $returnDirs[] = new \AppBundle\Business\DiffHandler($institutionDir, $entry);
+                    $returnDirs[] = new DiffHandler($institutionDir, $entry);
                 }
             }
             closedir($handle);

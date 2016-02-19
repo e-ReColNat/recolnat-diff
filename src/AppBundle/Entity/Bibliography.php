@@ -384,11 +384,11 @@ class Bibliography
     /**
      * Set specimen
      *
-     * @param \AppBundle\Entity\Specimen $occurrence
+     * @param Specimen $occurrence
      *
      * @return Bibliography
      */
-    public function setSpecimen(\AppBundle\Entity\Specimen $occurrence = null)
+    public function setSpecimen(Specimen $occurrence = null)
     {
         $this->specimen = $occurrence;
 
