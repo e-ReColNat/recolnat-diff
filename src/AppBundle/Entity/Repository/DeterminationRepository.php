@@ -96,7 +96,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
 
     /**
      *
-     * @param rawid $occurrenceId
+     * @param string $occurrenceId
      * @return \AppBundle\Entity\Determination | null
      */
     public function findBestDetermination($occurrenceId)

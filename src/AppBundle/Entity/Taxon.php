@@ -163,7 +163,7 @@ class Taxon
     /**
      * Get taxonid
      *
-     * @return guid
+     * @return string
      */
     public function getTaxonid()
     {

@@ -62,7 +62,7 @@ class ExportManager
      * @param Session              $sessionManager
      * @param DiffComputer         $diffComputer
      * @param GenericEntityManager $genericEntityManager
-     * @param \AppBundle\Manager\DiffManager
+     * @param DiffManager          $diffManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -148,6 +148,7 @@ class ExportManager
     {
         $diffs = $this->diffManager->init($this->collection);
         $diffComputer = $this->diffComputer->init($diffs);
+        //$data = $diffs;
         $data = array_merge($diffComputer->getDiffs(),
             [
                 'stats' => $diffComputer->getAllStats(),

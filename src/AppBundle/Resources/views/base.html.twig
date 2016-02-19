@@ -71,12 +71,7 @@
 
 {% endblock %}
 <script type="text/javascript">
-    var textSelectSpecimen = "{{ 'viewSelectedSpecimen' | trans }}";
-    var textSelectSpecimens = "{{ 'viewSelectedSpecimens' | trans }}";
     $(document).ready(function () {
-
-
-
         // Toast Messages
         {% for flash_type, flashes in app.session.flashbag.all %}
             {% for flash_message in flashes %}

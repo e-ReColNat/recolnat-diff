@@ -90,7 +90,7 @@ $(document).ready(function () {
 
     var selectedSpecimens;
     if (localStorage.getItem('selectedSpecimens')) {
-        var selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
+        selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
     }
 
     // Checked selected Specimens
@@ -100,10 +100,10 @@ $(document).ready(function () {
         var url = Routing.generate('viewSpecimens', {institutionCode: institutionCode, collectionCode : collectionCode, jsonSpecimensCode : localStorage.getItem('selectedSpecimens')}) ;
         $linkSelectedSpecimen.attr("href", url).removeClass("hidden") ;
         if (nbSelectedSpecimens == 1) {
-            $linkSelectedSpecimen.html(textSelectSpecimen) ;
+            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimen')) ;
         }
         else {
-            $linkSelectedSpecimen.html(textSelectSpecimens.replace('%count%', nbSelectedSpecimens)) ;
+            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimens').replace('%count%', nbSelectedSpecimens)) ;
         }
     }
 });

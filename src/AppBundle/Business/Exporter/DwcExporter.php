@@ -2,7 +2,6 @@
 
 namespace AppBundle\Business\Exporter;
 
-use AppBundle\Business\Exporter\AbstractExporter;
 use AppBundle\Business\User\Prefs;
 use AppBundle\Entity\Stratigraphy;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -160,7 +159,7 @@ class DwcExporter extends AbstractExporter
     /**
      *
      * @param \DOMElement $node
-     * @param type        $rowType
+     * @param string      $rowType
      */
     private function setCsvParameterNode(\DOMElement&$node, $rowType)
     {
@@ -189,7 +188,7 @@ class DwcExporter extends AbstractExporter
     /**
      *
      * @param \DOMElement $root
-     * @param type        $extension
+     * @param string      $extension
      */
     private function setXmlGenericEntity(\DOMElement&$root, $extension)
     {

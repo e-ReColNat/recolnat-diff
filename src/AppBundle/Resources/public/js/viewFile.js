@@ -81,8 +81,7 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .attr("y", barHeight / 2)
             .attr("dy", ".35em")
             .text(function (d, i) {
-                var title = Translator.transChoice('label.graph.'+keys[itkeys], d, { "count" : d });
-                return title;
+                return Translator.transChoice('label.graph.'+keys[itkeys], d, { "count" : d });
             });
     }
     else {

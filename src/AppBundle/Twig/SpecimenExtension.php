@@ -8,6 +8,7 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Entity\Determination;
 use AppBundle\Entity\Localisation;
 use AppBundle\Entity\Recolte;
 use AppBundle\Entity\Specimen;

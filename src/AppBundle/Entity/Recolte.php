@@ -100,7 +100,7 @@ class Recolte
     /**
      * Get eventid
      *
-     * @return rawid
+     * @return string
      */
     public function getEventid()
     {

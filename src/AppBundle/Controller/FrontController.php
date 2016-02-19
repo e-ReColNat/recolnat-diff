@@ -42,6 +42,9 @@ class FrontController extends Controller
 
     /**
      * @Route("{institutionCode}/{collectionCode}/stats", name="stats")
+     * @param string $collectionCode
+     * @param string $institutionCode
+     * @return Response
      */
     public function statsAction($collectionCode, $institutionCode)
     {
@@ -69,6 +72,10 @@ class FrontController extends Controller
 
     /**
      * @Route("{institutionCode}/{collectionCode}/view", name="viewfile")
+     * @param Request $request
+     * @param string  $collectionCode
+     * @param string  $institutionCode
+     * @return Response
      */
     public function viewFileAction(Request $request, $collectionCode, $institutionCode)
     {
@@ -181,6 +188,7 @@ class FrontController extends Controller
      * @param string  $collectionCode
      * @param string  $selectedClassName
      * @param int     $page
+     * @param string  $db
      * @return Response
      */
     public function viewLoneSomeAction(
@@ -255,6 +263,10 @@ class FrontController extends Controller
     /**
      * @Route("{institutionCode}/{collectionCode}/specimen/tab/{specimenCode}/{type}/{db}",
      *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
+     * @param string $specimenCode
+     * @param string $type
+     * @param string $db
+     * @return Response
      */
     public function viewSpecimenTabAction($specimenCode, $type, $db)
     {

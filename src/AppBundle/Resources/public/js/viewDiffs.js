@@ -61,13 +61,12 @@ $(document).ready(function () {
     function setChoice(choices, element, specimenCode) {
         var fieldName = element.data('fieldname');
         var className = element.data('class');
-        var choice = element.attr('value');
         var relationId = element.data('relationid');
         var choice = {
             'className': className,
             'fieldName': fieldName,
             'relationId': relationId,
-            'choice': choice,
+            'choice': element.attr('value'),
             'specimenCode': specimenCode
         };
         var flag = false;
@@ -79,7 +78,7 @@ $(document).ready(function () {
                     row.fieldName === choice.fieldName &&
                     row.relationId === choice.relationId
                 ) {
-                    var flag = true;
+                    flag = true;
                     choices[i] = choice;
                 }
             }
@@ -136,8 +135,7 @@ $(document).ready(function () {
         var choicesFormatted = spanChoices.format(comptChoices);
         var diffsFormatted = spanDiffs.format(comptDiffs);
         var facetTemplate = $("#template-facet").html();
-        var facet = facetTemplate.format(className, choicesFormatted, diffsFormatted);
-        return facet;
+        return facetTemplate.format(className, choicesFormatted, diffsFormatted);
     }
 
     // Sélection bouton radio par specimen

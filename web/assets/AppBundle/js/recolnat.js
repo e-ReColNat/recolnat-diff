@@ -78,8 +78,9 @@ $(document).ready(function () {
 
             }
         });
-    var institutionCode = $("#parameters").data("institutioncode") ;
-    var collectionCode = $("#parameters").data("collectioncode") ;
+    var $parameters = $("#parameters");
+    var institutionCode = $parameters.data("institutioncode") ;
+    var collectionCode = $parameters.data("collectioncode") ;
     $("#menu-toggle").click(function (e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
@@ -87,20 +88,22 @@ $(document).ready(function () {
     });
 
 
+    var selectedSpecimens;
     if (localStorage.getItem('selectedSpecimens')) {
         selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
     }
 
     // Checked selected Specimens
-    nbSelectedSpecimens = selectedSpecimens.length;
-    if (nbSelectedSpecimens > 0 && $("#linkSelectedSpecimen").length == 1 && institutionCode !='' && collectionCode !='') {
-        url = Routing.generate('viewSpecimens', {institutionCode: institutionCode, collectionCode : collectionCode, jsonSpecimensCode : localStorage.getItem('selectedSpecimens')}) ;
-        $("#linkSelectedSpecimen").attr("href", url).removeClass("hidden") ;
+    var nbSelectedSpecimens = selectedSpecimens.length;
+    var $linkSelectedSpecimen = $("#linkSelectedSpecimen");
+    if (nbSelectedSpecimens > 0 && $linkSelectedSpecimen.length == 1 && institutionCode !='' && collectionCode !='') {
+        var url = Routing.generate('viewSpecimens', {institutionCode: institutionCode, collectionCode : collectionCode, jsonSpecimensCode : localStorage.getItem('selectedSpecimens')}) ;
+        $linkSelectedSpecimen.attr("href", url).removeClass("hidden") ;
         if (nbSelectedSpecimens == 1) {
-            $("#linkSelectedSpecimen").html(textSelectSpecimen) ;
+            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimen')) ;
         }
         else {
-            $("#linkSelectedSpecimen").html(textSelectSpecimens.replace('%count%', nbSelectedSpecimens)) ;
+            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimens').replace('%count%', nbSelectedSpecimens)) ;
         }
     }
 });

@@ -91,12 +91,13 @@ class DiffManager
     }
 
     /**
-     * @param string $fullClassName
-     * @param array  $db1
-     * @param array  $db2
+     * @param string  $fullClassName
+     * @param array   $db1
+     * @param array   $db2
+     * @param boolean $inversed
      * @return string
      */
-    private function getGenericDiffQuery($fullClassName, $db1, $db2)
+    private function getGenericDiffQuery($fullClassName, $db1, $db2, $inversed)
     {
         /* @var $metadata \Doctrine\ORM\Mapping\ClassMetadata */
         $metadata = $this->em->getMetadataFactory()->getMetadataFor($fullClassName);
@@ -104,16 +105,17 @@ class DiffManager
         $aliasDb1 = $db1['alias'];
         $aliasDb2 = $db2['alias'];
 
-        $forceIndex=[
+        $forceIndex = [
             'AppBundle:Localisation' => ' /*+ INDEX(RECOLTES RECOLTES_PK) */ ',
-            'AppBundle:Determination' => ' /*+ INDEX(DETERMINATIONS DETER_SPEC_IDX_FK) */ '
-        ] ;
-        isset ($forceIndex[$fullClassName]) ? $strForceIndex = $forceIndex[$fullClassName] : $strForceIndex='';
+            'AppBundle:Determination' => ' /*+ INDEX(DETERMINATIONS DETER_SPEC_IDX_FK) */ ',
+            //'AppBundle:Taxon' => ' /*+ INDEX(DETERMINATIONS DETER_TAX_IDX_FK) */ '
+        ];
+        isset ($forceIndex[$fullClassName]) ? $strForceIndex = $forceIndex[$fullClassName] : $strForceIndex = '';
         $identifier = 'specimenCode';
         $strQuery = 'SELECT '.$identifier.' FROM ';
         $arrayFields = $this->formatFieldsName($metadata, $aliasDb1, $aliasDb2);
-        $strFromClauseDb1 = $this->getFromClause($fullClassName, $aliasDb1, false);
-        $strFromClauseDb2 = $this->getFromClause($fullClassName, $aliasDb2, true);
+        $strFromClauseDb1 = $this->getFromClause($fullClassName, $aliasDb1, $inversed);
+        $strFromClauseDb2 = $this->getFromClause($fullClassName, $aliasDb2, !$inversed);
         $strUnionQuery =
             $strQuery.'('.
             'SELECT '.$strForceIndex.
@@ -123,8 +125,7 @@ class DiffManager
             'SELECT '.$strForceIndex.
             implode(', ', $arrayFields['db2']).
             sprintf($strFromClauseDb2, $db2['name'].'.'.$metadata->getTableName())
-        .')'
-        ;
+            .')';
         return sprintf($strUnionQuery, $identifier, $identifier, $identifier);
     }
 
@@ -134,7 +135,8 @@ class DiffManager
      */
     private function getSpecimenUniqueIdClause($alias)
     {
-        return sprintf(' %s.institutioncode||\'#\'||%s.collectioncode||\'#\'||%s.catalognumber as specimenCode ', $alias, $alias,
+        return sprintf(' %s.institutioncode||\'#\'||%s.collectioncode||\'#\'||%s.catalognumber as specimenCode ',
+            $alias, $alias,
             $alias);
     }
 
@@ -191,6 +193,7 @@ class DiffManager
                 case 'hasmedia':
                 case 'created':
                 case 'modified':
+                case 'eventdate':
                     unset($arrayFieldsTypeDb1[$key]);
                     unset($arrayFieldsTypeDb2[$key]);
                     break;
@@ -214,10 +217,10 @@ class DiffManager
      * @param bool   $institution
      * @return string
      */
-    private function getFromClause($fullClassName, $alias, $institution = false)
+    private function getFromClause($fullClassName, $alias, $institution)
     {
         $metadataSpecimen = $this->em->getMetadataFactory()->getMetadataFor(self::SPECIMEN_CLASSNAME);
-        $specimenTableName = ($institution ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataSpecimen->getTableName();
+        $specimenTableName = ($institution == true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataSpecimen->getTableName();
 
         $fromClause = '';
         switch ($fullClassName) {
@@ -232,7 +235,7 @@ class DiffManager
                 break;
             case 'AppBundle:Localisation':
                 $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME);
-                $recolteTableName = ($institution ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataRecolte->getTableName();
+                $recolteTableName = ($institution == true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataRecolte->getTableName();
                 $fromClause = ' FROM %s '.$alias
                     .' INNER JOIN '.$recolteTableName.' ON '.$recolteTableName.'.LOCATIONID = '.$alias.'.LOCATIONID'
                     .' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
@@ -251,7 +254,7 @@ class DiffManager
                 break;
             case 'AppBundle:Taxon':
                 $metadataDetermination = $this->em->getMetadataFactory()->getMetadataFor(self::DETERMINATION_CLASSNAME);
-                $determinationTableName = ($institution ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataDetermination->getTableName();
+                $determinationTableName = ($institution == true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataDetermination->getTableName();
                 $fromClause = ' FROM %s '.$alias
                     .' INNER JOIN '.$determinationTableName.' ON '.$determinationTableName.'.TAXONID = '.$alias.'.TAXONID'
                     .' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
@@ -262,7 +265,7 @@ class DiffManager
         return $fromClause;
     }
 
-    private function getJoinCodeSpecimen($alias='s')
+    private function getJoinCodeSpecimen($alias = 's')
     {
         return sprintf('%s.COLLECTIONID = :collectionId ', $alias);
     }
@@ -277,8 +280,8 @@ class DiffManager
         $fullClassName = $this->getFullClassName($className);
         $db1 = ['name' => $this->recolnat_alias, 'alias' => 'r'];
         $db2 = ['name' => $this->recolnat_diff_alias, 'alias' => 'i'];
-        $sqlDiff1 = $this->getGenericDiffQuery($fullClassName, $db1, $db2);
-        $sqlDiff2 = $this->getGenericDiffQuery($fullClassName, $db2, $db1);
+        $sqlDiff1 = $this->getGenericDiffQuery($fullClassName, $db1, $db2, false);
+        $sqlDiff2 = $this->getGenericDiffQuery($fullClassName, $db2, $db1, true);
 
         $this->em->getConnection()->setFetchMode(\PDO::FETCH_COLUMN);
         $results1 = $this->em->getConnection()

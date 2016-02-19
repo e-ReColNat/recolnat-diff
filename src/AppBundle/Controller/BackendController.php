@@ -18,6 +18,7 @@ class BackendController extends Controller
 {
     /**
      * @Route("/{institutionCode}/{collectionCode}/export/{type}/", name="export")
+     * @param string  $type
      * @param Request $request
      * @param string  $institutionCode
      * @param string  $collectionCode
@@ -93,6 +94,7 @@ class BackendController extends Controller
      * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
      * @param Request $request
      * @param string  $institutionCode
+     * @param string  $collectionCode
      * @return JsonResponse
      */
     public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
@@ -214,6 +216,8 @@ class BackendController extends Controller
      * @Route("/deleteChoices/{institutionCode}/{collectionCode}", name="deleteChoices", options={"expose"=true})
      * @param string $institutionCode
      * @param string $collectionCode
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function deleteChoicesAction($institutionCode, $collectionCode)
     {
@@ -232,6 +236,8 @@ class BackendController extends Controller
      * @Route("/deleteDiffs/{institutionCode}/{collectionCode}", name="deleteDiffs", options={"expose"=true})
      * @param string $institutionCode
      * @param string $collectionCode
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function deleteDiffsAction($institutionCode, $collectionCode)
     {

@@ -179,7 +179,7 @@ class Specimen
     /**
      * Get occurrenceid
      *
-     * @return guid
+     * @return string
      */
     public function getOccurrenceid()
     {

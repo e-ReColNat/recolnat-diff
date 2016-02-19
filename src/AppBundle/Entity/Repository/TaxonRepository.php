@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Repository;
 
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * TaxonRepository

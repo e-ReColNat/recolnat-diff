@@ -118,7 +118,7 @@ class Multimedia
     /**
      * Get multimediaid
      *
-     * @return guid
+     * @return string
      */
     public function getMultimediaid()
     {
