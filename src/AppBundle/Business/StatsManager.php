@@ -38,11 +38,13 @@ class StatsManager
      */
     public function getStatsLonesomeRecords()
     {
-        $lonesomeRecords = $this->exportManager->getLoneSomeRecords();
+        $lonesomeRecords = $this->exportManager->getDiffHandler()->getLoneSomeRecords();
         $stats = [];
-        foreach ($lonesomeRecords as $className => $items) {
-            $stats[$className]['recolnat'] = isset($items['recolnat']) ? count($items['recolnat']) : 0;
-            $stats[$className]['institution'] = isset($items['institution']) ? count($items['institution']) : 0;
+        if (is_array($lonesomeRecords)) {
+            foreach ($lonesomeRecords as $className => $items) {
+                $stats[$className]['recolnat'] = isset($items['recolnat']) ? count($items['recolnat']) : 0;
+                $stats[$className]['institution'] = isset($items['institution']) ? count($items['institution']) : 0;
+            }
         }
         return $stats;
     }
@@ -94,7 +96,10 @@ class StatsManager
      */
     public function getStats()
     {
-        return $this->exportManager->sessionManager->get('stats');
+        if (is_array($this->exportManager->sessionManager->get('stats'))) {
+            return $this->exportManager->sessionManager->get('stats');
+        }
+        return [];
     }
 
     /**
@@ -120,7 +125,7 @@ class StatsManager
     public function getExpandedStats($order = 'desc')
     {
         $stats = [];
-        $diffs = $this->exportManager->sessionManager->get('diffs');
+        $diffs = $this->exportManager->getDiffs();
         foreach ($this->getStats() as $className => $fields) {
             $stats[$className]['diffs'] = array_sum($fields);
             $tempFields = $fields;

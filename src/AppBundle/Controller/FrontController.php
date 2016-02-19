@@ -195,7 +195,7 @@ class FrontController extends Controller
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensBySpecimenCodes = $exportManager->getLonesomeRecordsIndexedBySpecimenCode($db,
+        $lonesomesSpecimensBySpecimenCodes = $exportManager->getDiffHandler()->getLonesomeRecordsIndexedBySpecimenCode($db,
             $selectedClassName);
 
         $paginator = $this->get('knp_paginator');

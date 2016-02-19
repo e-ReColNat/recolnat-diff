@@ -3,6 +3,8 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Entity\Collection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,40 +42,66 @@ class ExportManager
     protected $exportPrefs;
 
     /**
-     *
+     * @var ManagerRegistry
+     */
+    protected $managerRegistry;
+    /**
+     * @var DiffComputer
+     */
+    protected $diffComputer;
+
+    /**
+     * @var Collection
+     */
+    protected $collection;
+
+    /**
+     * @param ManagerRegistry      $managerRegistry
      * @param string               $export_path
      * @param Session              $sessionManager
+     * @param DiffComputer         $diffComputer
      * @param GenericEntityManager $genericEntityManager
      * @param \AppBundle\Manager\DiffManager
      */
     public function __construct(
+        ManagerRegistry $managerRegistry,
         $export_path,
         Session $sessionManager,
         GenericEntityManager $genericEntityManager,
         DiffManager $diffManager,
-        $maxItemPerPage
+        $maxItemPerPage,
+        DiffComputer $diffComputer
     ) {
+        $this->managerRegistry = $managerRegistry;
         $this->exportPath = $export_path;
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
         $this->diffManager = $diffManager;
         $this->maxItemPerPage = $maxItemPerPage;
+        $this->diffComputer = $diffComputer;
     }
 
     /**
      * @param string $institutionCode
      * @param string $collectionCode
      * @return $this
+     * @throws \Exception
      */
     public function init($institutionCode, $collectionCode)
     {
+        $em = $this->managerRegistry->getManager('default');
+        $this->collection = $em->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
+
+        if (is_null($this->collection)) {
+            throw new \Exception('Can\'t found the collection with collectionCode = '.$collectionCode);
+        }
+
         $this->institutionCode = $institutionCode;
         $this->collectionCode = $collectionCode;
         $this->user = new User($this->exportPath, $this->maxItemPerPage);
         $this->user->init($this->institutionCode);
 
         if (!is_null($collectionCode)) {
-            $this->collectionCode = $collectionCode;
             $fs = new \Symfony\Component\Filesystem\Filesystem();
 
             if (!$fs->exists($this->getExportDirPath())) {
@@ -113,34 +141,21 @@ class ExportManager
     }
 
     /**
-     * @param string $db
-     * @param string|array|null  $selectedClassesNames
-     * @return array
-     */
-    public function getLonesomeRecords($db = null, $selectedClassesNames = null)
-    {
-        return $this->diffHandler->getDiffs()->getLonesomeRecords($db, $selectedClassesNames);
-    }
-
-    /**
-     * @param string $db
-     * @param null|array   $selectedClassesNames
-     * @return array
-     */
-    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames = null)
-    {
-        return $this->diffHandler->getDiffs()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames);
-    }
-
-    /**
      * @return array
      */
     public function launchDiffProcess()
     {
-        $results = $this->diffManager->init($this->institutionCode, $this->collectionCode);
-        $this->diffHandler->getDiffs()->save($results);
+        $diffs = $this->diffManager->init($this->collection);
+        $diffComputer = $this->diffComputer->init($diffs);
+        $data = array_merge($diffComputer->getDiffs(),
+            [
+                'stats' => $diffComputer->getAllStats(),
+                'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
+                'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
+            ]);
+        $this->diffHandler->getDiffs()->save($data);
         $this->diffHandler->getDiffs()->generateDiff = false;
-        return $results;
+        return $data;
     }
 
     /**
@@ -202,7 +217,10 @@ class ExportManager
     public function getSpecimensCode()
     {
         $stats = $this->sessionManager->get('diffs');
-        return array_keys($stats['datas']);
+        if (is_array($stats['datas'])) {
+            return array_keys($stats['datas']);
+        }
+        return [];
     }
 
     /**
@@ -247,18 +265,6 @@ class ExportManager
     public function getExportDirPath()
     {
         return $this->user->getDataDirPath().$this->collectionCode.'/export/';
-    }
-
-    /**
-     *
-     * @return String
-     */
-    public function getChoicesFileName()
-    {
-        if (!is_null($this->collectionCode)) {
-            return $this->diffHandler->getChoices()->getPathname();
-        }
-        return null;
     }
 
     /**

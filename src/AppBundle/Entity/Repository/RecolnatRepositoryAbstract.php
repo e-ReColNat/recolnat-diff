@@ -2,6 +2,7 @@
 namespace AppBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Description of RecolnatRepository
@@ -40,7 +41,9 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
     {
         $concatFields = array(
             sprintf('%s.institutioncode', $alias),
+            "'#'",
             sprintf('%s.collectioncode', $alias),
+            "'#'",
             sprintf('%s.catalognumber', $alias),
         );
         return new Expr\Func('CONCAT', $concatFields);
@@ -61,5 +64,24 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
             }
         }
         return $orderResultSet;
+    }
+
+    protected function setSpecimenCodesWhereClause(QueryBuilder &$qb, $specimenCodes, $alias='s')
+    {
+
+        list($institutionCode, $collectionCode, $catalogNumber) = explode('#', current($specimenCodes));
+        foreach ($specimenCodes as $specimenCode) {
+            $temp = explode('#', $specimenCode) ;
+            $catalogNumbers[] = end($temp);
+        }
+
+        $qb->andWhere(sprintf('%s.institutioncode = :institutionCode', $alias))
+            ->andWhere(sprintf('%s.collectioncode = :collectionCode', $alias))
+            ->andWhere($qb->expr()->in(sprintf('%s.catalognumber', $alias), ':catalogNumbers'))
+            ->setParameters([
+                'institutionCode'=>$institutionCode,
+                'collectionCode'=>$collectionCode,
+                'catalogNumbers'=>$catalogNumbers,
+            ]);
     }
 }

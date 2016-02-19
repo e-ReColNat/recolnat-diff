@@ -57,8 +57,9 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
             ->leftJoin('s.stratigraphy', 'st')
             ->leftJoin('s.recolte', 'r')
             ->leftJoin('r.localisation', 'l');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCode', $specimenCode);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$qb->setParameter('specimenCode', $specimenCode);
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -72,9 +73,10 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
         $qb = $this->createQueryBuilder('s');
 
         $qb
-            ->select('s')
-            ->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+            ->select('s');
+            //->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
         return $qb->getQuery()->getResult();
     }
 
@@ -96,8 +98,9 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
             ->leftJoin('s.stratigraphy', 'st')
             ->leftJoin('s.recolte', 'r')
             ->leftJoin('r.localisation', 'l');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$qb->setParameter('specimenCodes', $specimenCodes);
         return $qb->getQuery()->getArrayResult();
     }
 
@@ -120,8 +123,9 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
             ->leftJoin('s.recolte', 'r')
             ->leftJoin('r.localisation', 'l')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
         $query = $qb->getQuery();
         $query->useResultCache(true, 300);
         return $this->orderResultSetBySpecimenCode($query->getResult(), 'occurrenceid');
@@ -138,8 +142,9 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
 
         $qb
             ->select('s');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$qb->setParameter('specimenCodes', $specimenCodes);
         return $qb->getQuery();
     }
 }

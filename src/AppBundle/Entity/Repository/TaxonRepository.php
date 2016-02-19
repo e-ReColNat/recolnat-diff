@@ -72,9 +72,11 @@ class TaxonRepository extends RecolnatRepositoryAbstract
         $query = $qb
             ->select('t')
             ->innerJoin('t.determination', 'd')
-            ->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH,
-                    $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $query->setParameter('specimenCodes', $specimenCodes);
+            ->join('d.specimen', 's');
+            /*->innerJoin('d.specimen', 's', \Doctrine\ORM\Query\Expr\Join::WITH,
+                    $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));*/
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        //$query->setParameter('specimenCodes', $specimenCodes);
         return $query->getQuery()->getResult();
     }
     /**
@@ -90,8 +92,10 @@ class TaxonRepository extends RecolnatRepositoryAbstract
             ->select('t')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->innerJoin('t.determination', 'd')
-            ->innerJoin('d.specimen', 's', Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $query->setParameter('specimenCodes', $specimenCodes);
+            ->join('d.specimen', 's');
+            //->innerJoin('d.specimen', 's', Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$query->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'taxonid');
     }
 
@@ -122,10 +126,12 @@ class TaxonRepository extends RecolnatRepositoryAbstract
         $query = $qb
                 ->select('t')
                 ->innerJoin('t.determination', 'd')
-                ->innerJoin('d.specimen', 's', Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCode'))
+                ->join('d.specimen', 's')
+                //->innerJoin('d.specimen', 's', Join::WITH, $qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCode'))
                 ->setMaxResults(1)
                 ->orderBy('d.identificationverifstatus', 'DESC');
-        $query->setParameter('specimenCode', $specimenCode);
+        //$query->setParameter('specimenCode', $specimenCode);
+        $this->setSpecimenCodesWhereClause($qb, [$specimenCode]) ;
         return $query->getQuery()->getOneOrNullResult();
     }
 }

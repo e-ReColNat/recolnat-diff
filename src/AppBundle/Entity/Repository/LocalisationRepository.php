@@ -47,11 +47,12 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
                 ->from('AppBundle\Entity\Localisation', 'l')
-                ->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
+                //->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
                 ->andWhere('s.recolte = r.eventid')
                 ->andWhere('r.localisation = l.locationid');
 
-        $query->setParameter('specimenCodes', $specimenCodes);
+        //$query->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
         return $query->getQuery()->getResult();
     }
     /**
@@ -68,12 +69,13 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
                 ->from('AppBundle\Entity\Specimen', 's')
                 ->from('AppBundle\Entity\Recolte', 'r')
                 ->from('AppBundle\Entity\Localisation', 'l')
-                ->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
+                //->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'))
                 ->andWhere('s.recolte = r.eventid')
                 ->andWhere('r.localisation = l.locationid')
                 ;
 
-        $query->setParameter('specimenCodes', $specimenCodes);
+        //$query->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'locationid');
     }
 }

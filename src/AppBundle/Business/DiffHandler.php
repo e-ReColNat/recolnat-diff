@@ -111,4 +111,23 @@ class DiffHandler
         $this->diffs = new Diffs($this->getPath());
         return $this;
     }
+
+    /**
+     * @param string            $db
+     * @param string|array|null $selectedClassesNames
+     * @return array
+     */
+    public function getLonesomeRecords($db = null, $selectedClassesNames = null) {
+        return $this->getDiffs()->getLonesomeRecords($db, $selectedClassesNames) ;
+    }
+
+    /**
+     * @param string     $db
+     * @param null|array $selectedClassesNames
+     * @return array
+     */
+    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames = null)
+    {
+        return $this->getDiffs()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames);
+    }
 }

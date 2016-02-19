@@ -3,12 +3,13 @@ services:
         class: AppBundle\Manager\DiffComputer
         arguments:
             managerRegistry: "@doctrine"
+            maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
     diff.manager:
         class: AppBundle\Manager\DiffManager
         arguments:
             managerRegistry: "@doctrine"
-            statsManager: "@diff.computer"
-            exportPath: "%export_path%"
+            recolnat_alias: "%database_user%"
+            recolnat_diff_alias: "%database_user_diff%"
 
     genericEntityManager:
         class: AppBundle\Manager\GenericEntityManager
@@ -19,11 +20,13 @@ services:
     exportManager:
         class: AppBundle\Manager\ExportManager
         arguments:
+            managerRegistry: "@doctrine"
             export_path: "%export_path%"
             sessionManager: "@session"
             genericEntityManager: "@genericEntityManager"
             diffManager: "@diff.manager"
             maxItemPerPage: "%knp_paginator.page_range%"
+            diffComputer: "@diff.computer"
     userManager:
         class: AppBundle\Business\User\User
         arguments:

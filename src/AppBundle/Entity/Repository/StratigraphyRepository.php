@@ -49,8 +49,9 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
         $qb
             ->select('st')
             ->join('st.specimen', 's');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$qb->setParameter('specimenCodes', $specimenCodes);
         return $qb->getQuery()->getResult();
     }
 
@@ -67,8 +68,9 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
             ->select('st')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('st.specimen', 's');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes) ;
+        //$qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
+        //$qb->setParameter('specimenCodes', $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'geologicalcontextid');
     }
 }
