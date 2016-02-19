@@ -91,15 +91,15 @@ class Diffs extends \SplFileObject
 
     /**
      * @param string $db
-     * @param null|array $selectedClassesNames
+     * @param string $selectedClassName
      * @return array
      */
-    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames = null)
+    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
     {
         $lonesomeRecordsBySpecimenCodes = [];
         $specimenLonesomeRecords = $this->getLonesomeRecords($db, 'specimen');
         $refSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode');
-        $fullLonesomeRecords = $this->getLonesomeRecords($db, $selectedClassesNames);
+        $fullLonesomeRecords = $this->getLonesomeRecords($db, $selectedClassName);
 
         if (!empty($fullLonesomeRecords)) {
             foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
@@ -107,12 +107,12 @@ class Diffs extends \SplFileObject
                     // Si le specimencode de l'enregistrement est dans la liste des specimens de ref c'est que tous les
                     // enregistrements correspondant à ce specimen code sont nouveaux
                     // puisque le specimen n'est pas dans l'autre base
-                    if (!in_array($item['specimenCode'], $refSpecimenCode) || $selectedClassesNames == 'specimen') {
+                    if (!in_array($item['specimenCode'], $refSpecimenCode) || $selectedClassName == 'specimen') {
                         $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
                             'className' => $className,
                             'id' => $item['id']
                         ];
-                    } elseif ($selectedClassesNames == 'all') {
+                    } elseif ($selectedClassName == 'all') {
                         $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
                             'className' => $className,
                             'id' => $item['id']

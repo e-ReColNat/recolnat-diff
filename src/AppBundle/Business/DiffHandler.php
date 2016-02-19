@@ -123,12 +123,12 @@ class DiffHandler
     }
 
     /**
-     * @param string     $db
-     * @param null|array $selectedClassesNames
+     * @param string      $db
+     * @param null|string $selectedClassName
      * @return array
      */
-    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames = null)
+    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
     {
-        return $this->getDiffs()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassesNames);
+        return $this->getDiffs()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
     }
 }

@@ -66,6 +66,11 @@ abstract class RecolnatRepositoryAbstract extends \Doctrine\ORM\EntityRepository
         return $orderResultSet;
     }
 
+    /**
+     * @param QueryBuilder $qb
+     * @param array        $specimenCodes
+     * @param string       $alias
+     */
     protected function setSpecimenCodesWhereClause(QueryBuilder &$qb, $specimenCodes, $alias = 's')
     {
 
