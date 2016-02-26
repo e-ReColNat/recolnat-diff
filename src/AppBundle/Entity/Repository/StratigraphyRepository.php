@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
+
 /**
  * StratigraphyRepository
  *
@@ -10,6 +12,19 @@ namespace AppBundle\Entity\Repository;
  */
 class StratigraphyRepository extends RecolnatRepositoryAbstract
 {
+    /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('st')
+            ->from('AppBundle:Stratigraphy', 'st')
+            ->join('st.specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
     /**
      *
      * @param array $ids

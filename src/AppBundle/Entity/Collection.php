@@ -1,32 +1,33 @@
 <?php
 
 namespace AppBundle\Entity;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\CollectionRepository")
-* @ORM\Table(name="Collections")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\CollectionRepository")
+ * @ORM\Table(name="Collections")
+ */
 class Collection
 {
-        /** 
-         * @ORM\Id
-         * @ORM\Column(type="integer") 
-         */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     */
     private $collectionid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $collectioncode;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=250, nullable=true)
      */
     private $collectionname;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $type;
@@ -41,6 +42,7 @@ class Collection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Specimen", mappedBy="collection")
      **/
     private $specimens;
+
     /**
      * Constructor
      */
@@ -48,6 +50,7 @@ class Collection
     {
         $this->specimens = new ArrayCollection();
     }
+
     /**
      * Get collectionid
      *
@@ -153,7 +156,7 @@ class Collection
     {
         return $this->institution;
     }
-    
+
     /**
      * Get specimens
      *

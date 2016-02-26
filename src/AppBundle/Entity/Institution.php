@@ -5,23 +5,23 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\InstitutionRepository")
-* @ORM\Table(name="Institutions")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\InstitutionRepository")
+ * @ORM\Table(name="Institutions")
+ */
 class Institution
 {
-        /** 
-         * @ORM\Id
-         * @ORM\Column(type="integer") 
-         */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     */
     private $institutionid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=30, nullable=true)
      */
     private $institutioncode;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=50, nullable=false)
      */
     private $sourcefileid;
@@ -30,6 +30,7 @@ class Institution
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Collection", mappedBy="institution", fetch="LAZY")
      */
     private $collections;
+
     /**
      * Get institutionid
      *
@@ -87,7 +88,7 @@ class Institution
     {
         return $this->sourcefileid;
     }
-    
+
     public function getCollections()
     {
         return $this->collections;

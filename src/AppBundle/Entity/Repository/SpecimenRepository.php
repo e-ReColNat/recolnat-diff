@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
 use Doctrine\ORM\Query;
 
 /**
@@ -10,6 +11,18 @@ use Doctrine\ORM\Query;
  */
 class SpecimenRepository extends RecolnatRepositoryAbstract
 {
+    /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('s')
+            ->from('AppBundle\Entity\Specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
     /**
      *
      * @param array $ids
@@ -22,7 +35,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
             ->select('s')
             ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
             ->where($qb->expr()->in('s.occurrenceid', ':ids'));
-        $qb->setParameter('ids', $ids);
+        $qb->setParameter('ids', $ids, 'rawid');
         return $qb->getQuery()->getResult();
     }
 
@@ -37,11 +50,27 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
             ->select('s')
             ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
             ->where('s.occurrenceid = :id')
-            ->setParameter('id', $id)
+            ->setParameter('id', $id, 'rawid')
             ->getQuery();
         return $qb->getOneOrNullResult();
     }
 
+    /**
+     * @param array $id
+     * @param string $field
+     * @return object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneFieldById($id,$field)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('s.'.$field)
+            ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
+            ->where('s.occurrenceid = :id')
+            ->setParameter('id', $id, 'rawid')
+            ;
+        return $qb->getQuery()->getArrayResult();
+    }
     /**
      * @param $specimenCode
      * @return object|null

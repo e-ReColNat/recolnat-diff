@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
+
 /**
  * RecolteRepository
  *
@@ -11,18 +13,32 @@ namespace AppBundle\Entity\Repository;
 class RecolteRepository extends RecolnatRepositoryAbstract
 {
     /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('r')
+            ->from('AppBundle\Entity\Recolte', 'r')
+            ->join('r.specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
+
+    /**
      *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
-            ->select('r')
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('r')
             ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
-            ->where('r.eventid IN (\''.implode('\',\'', $ids).'\')')
-            ->getQuery();
-        return $query->getResult();
+            ->andWhere($qb->expr()->in('r.eventid', $ids));
+        $qb->setParameter('ids', $ids, 'rawid');
+        return $qb->getQuery()->getResult();
     }
 
     public function findOneById($id)
@@ -31,9 +47,25 @@ class RecolteRepository extends RecolnatRepositoryAbstract
             ->select('r')
             ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
             ->where('r.eventid = :id')
-            ->setParameter('id', $id)
+            ->setParameter('id', $id, 'rawid')
             ->getQuery();
         return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @param array  $id
+     * @param string $field
+     * @return object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneFieldById($id, $field)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('r.'.$field)
+            ->from('AppBundle\Entity\Recolte', 'r')
+            ->where('r.eventid = :id')
+            ->setParameter('id', $id, 'rawid');
+        return $qb->getQuery()->getArrayResult();
     }
 
     /**

@@ -12,7 +12,7 @@ class Taxon
 {
     /** 
      * @ORM\Id
-     * @ORM\Column(type="rawid") 
+     * @ORM\Column(type="rawid")
      */
     private $taxonid;
 

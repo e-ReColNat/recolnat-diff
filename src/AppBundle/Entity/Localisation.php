@@ -6,131 +6,132 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\LocalisationRepository")
-* @ORM\Table(name="Localisations")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\LocalisationRepository")
+ * @ORM\Table(name="Localisations")
+ */
 class Localisation
 {
-        /** 
-         * @ORM\Id
-         * @ORM\Column(type="integer", length=10) 
-         */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer", length=10)
+     */
     private $locationid;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $averagealtituderounded;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $continent;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $country;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=3, nullable=true)
      */
     private $countrycode;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $county;
 
-    /** 
+    /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $decimallatitude;
 
-    /** 
+    /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $decimallongitude;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $geodeticdatum;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $georeferencesources;
 
-    /** 
+    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $hascoordinates;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $locality;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $locationremarks;
 
-    /** 
+    /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $maximumdepthinmeters;
 
-    /** 
+    /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $maximumelevationinmeters;
 
-    /** 
+    /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $minimumdepthinmeters;
 
-    /** 
+    /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
     private $minimumelevationinmeters;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $municipality;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $stateprovince;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $verbatimcountry;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $verbatimelevation;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=2000, nullable=true)
      */
     private $verbatimlocality;
-    
+
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Recolte", mappedBy="localisation", fetch="LAZY")
      */
     private $recoltes;
-    
+
     public function __construct()
     {
         $this->recoltes = new ArrayCollection();
     }
+
     /**
      * Get locationid
      *
@@ -644,21 +645,22 @@ class Localisation
     {
         return $this->verbatimlocality;
     }
-    
+
     /**
-     * 
+     *
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
-    public function getRecoltes() 
+    public function getRecoltes()
     {
         return $this->recoltes;
     }
-    
+
     public function __toString()
     {
-        return sprintf('%s (%s) %s %s %s', $this->verbatimcountry, $this->country, $this->county, $this->locality, $this->verbatimlocality);
+        return sprintf('%s (%s) %s %s %s', $this->verbatimcountry, $this->country, $this->county, $this->locality,
+            $this->verbatimlocality);
     }
-    
+
     public function toArray()
     {
         return [

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 
 /**
@@ -13,18 +14,33 @@ use Doctrine\ORM\AbstractQuery;
 class BibliographyRepository extends RecolnatRepositoryAbstract
 {
     /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('b')
+            ->from('AppBundle\Entity\Bibliography', 'b')
+            ->join('b.specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
+
+    /**
      *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
-            ->where('b.referenceid IN (\''.implode('\',\'', $ids).'\')')
-            ->getQuery();
-        return $query->getResult();
+            ->andWhere($qb->expr()->in('b.referenceid', $ids));
+        $qb->setParameter('ids', $ids, 'rawid');
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -58,7 +74,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
             ->where('b.referenceid = :id')
-            ->setParameter('id', $id)
+            ->setParameter('id', $id, 'rawid')
             ->getQuery();
     }
 

@@ -26,6 +26,9 @@
                 <span class="icon-bar"></span>
             </button>
             <a href="{{ path("index") }}" class="navbar-brand">Recolnat - Diffs</a>
+            {%  if app.environment=='dev' %}
+                <p class="navbar-text bg-warning text-uppercase">{{ default_connection }}</p>
+            {% endif %}
         </div>
         <div class="navbar-collapse collapse" id="navbar">
             <ul class="nav navbar-nav navbar-right">
@@ -36,9 +39,9 @@
                 <li><a href="#">{{ 'nav.profil' | trans }}</a></li>
                 <li><a href="#">{{ 'nav.aide' | trans }}</a></li>
             </ul>
-            <form class="navbar-form navbar-right">
-                <input type="text" placeholder="Search..." class="form-control">
-            </form>
+            {#<form class="navbar-form navbar-right">#}
+                {#<input type="text" placeholder="Search..." class="form-control">#}
+            {#</form>#}
         </div>
     </div>
 </nav>

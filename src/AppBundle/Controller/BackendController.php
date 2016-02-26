@@ -109,7 +109,8 @@ class BackendController extends Controller
         $response->setData(['choices' => $exportManager->getChoices()]);
 
         $this->setFlashMessageForChoices($choices);
-        return $response;
+        //return $response;
+        return $this->render('@App/Front/generateDiff.html.twig');
     }
 
     /**

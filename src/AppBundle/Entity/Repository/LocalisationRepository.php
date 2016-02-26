@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
+
 /**
  * LocalisationRepository
  *
@@ -10,6 +12,22 @@ namespace AppBundle\Entity\Repository;
  */
 class LocalisationRepository extends RecolnatRepositoryAbstract
 {
+    /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('l')
+            ->from('AppBundle\Entity\Specimen', 's')
+            ->from('AppBundle\Entity\Recolte', 'r')
+            ->from('AppBundle\Entity\Localisation', 'l')
+            ->andWhere('s.recolte = r.eventid')
+            ->andWhere('r.localisation = l.locationid')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
     /**
      *
      * @param array $ids

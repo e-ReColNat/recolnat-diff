@@ -148,7 +148,6 @@ class ExportManager
     {
         $diffs = $this->diffManager->init($this->collection);
         $diffComputer = $this->diffComputer->init($diffs);
-        //$data = $diffs;
         $data = array_merge($diffComputer->getDiffs(),
             [
                 'stats' => $diffComputer->getAllStats(),

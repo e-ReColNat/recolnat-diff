@@ -12,7 +12,7 @@ class Bibliography
 {
     /** 
      * @ORM\Id
-     * @ORM\Column(type="rawid") 
+     * @ORM\Column(type="rawid")
      */
     private $referenceid;
 

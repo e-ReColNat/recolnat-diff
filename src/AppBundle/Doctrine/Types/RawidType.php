@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Doctrine\Types;
 
+use AppBundle\Entity\Repository\SpecimenRepository;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 use Doctrine\DBAL\Types\Type;
@@ -19,21 +20,38 @@ class RawidType extends Type
 
     public function canRequireSQLConversion()
     {
+        return true;
     }
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return $platform->getDoctrineTypeMapping('RAWID');
+        return $platform->getDoctrineTypeMapping('raw');
+        //return 'RAW';
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($sqlExpr, AbstractPlatform $platform)
     {
-        return $value;
+        /*if ($sqlExpr !== null) {
+            return pack('H*', $sqlExpr);
+        }*/
+//        return hex2bin($sqlExpr);
+        //return $sqlExpr;
+
+        //return sprintf("HEXTORAW('%s')", $sqlExpr);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($sqlExpr, AbstractPlatform $platform)
     {
-        return ($value === null) ? null : strtoupper(bin2hex($value));
+        return ($sqlExpr === null) ? null : strtoupper(bin2hex($sqlExpr));
+    }
+
+    public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform)
+    {
+        if (strstr($sqlExpr, 'HEXTORAW')) {
+            sscanf($sqlExpr, "HEXTORAW('%s')", $sqlExpr);
+        }
+        //return strstr($sqlExpr, 'HEXTORAW') ? $sqlExpr : sprintf('HEXTORAW(%s)', $sqlExpr);
+        return sprintf('HEXTORAW(%s)', $sqlExpr);
     }
 }
 

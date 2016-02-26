@@ -220,7 +220,7 @@ class DiffManager
     private function getFromClause($fullClassName, $alias, $institution)
     {
         $metadataSpecimen = $this->em->getMetadataFactory()->getMetadataFor(self::SPECIMEN_CLASSNAME);
-        $specimenTableName = ($institution == true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataSpecimen->getTableName();
+        $specimenTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataSpecimen->getTableName();
 
         $fromClause = '';
         switch ($fullClassName) {
@@ -235,7 +235,7 @@ class DiffManager
                 break;
             case 'AppBundle:Localisation':
                 $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME);
-                $recolteTableName = ($institution == true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataRecolte->getTableName();
+                $recolteTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataRecolte->getTableName();
                 $fromClause = ' FROM %s '.$alias
                     .' INNER JOIN '.$recolteTableName.' ON '.$recolteTableName.'.LOCATIONID = '.$alias.'.LOCATIONID'
                     .' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
@@ -254,7 +254,7 @@ class DiffManager
                 break;
             case 'AppBundle:Taxon':
                 $metadataDetermination = $this->em->getMetadataFactory()->getMetadataFor(self::DETERMINATION_CLASSNAME);
-                $determinationTableName = ($institution == true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataDetermination->getTableName();
+                $determinationTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataDetermination->getTableName();
                 $fromClause = ' FROM %s '.$alias
                     .' INNER JOIN '.$determinationTableName.' ON '.$determinationTableName.'.TAXONID = '.$alias.'.TAXONID'
                     .' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
@@ -307,52 +307,79 @@ class DiffManager
      */
     private function getFullClassName($class)
     {
-        return 'AppBundle:'.$class;
+        return 'AppBundle:'.ucfirst(strtolower($class));
     }
 
     /**
-     * @param int $compt
+     * @param Collection $collection
+     * @param int        $comptEntities
+     * @param int        $comptFields
      * @return array
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function generateDiff($compt)
+    public function generateDiff(Collection $collection, $comptEntities, $comptFields)
     {
-        $randomClassName = $this->getFullClassName($this->entitiesName[array_rand($this->entitiesName, 1)]);
-        $metadata = $this->em->getMetadataFactory()->getMetadataFor($randomClassName);
-        $repository = $this->em->getRepository($randomClassName);
-        $identifier = $metadata->getIdentifierFieldNames() [0];
+        for($i=1; $i<=$comptEntities; $i++) {
+            $doNotTouchThisFields = [
+                'determinations',
+                'sourcefileid',
+                'hascoordinates',
+                'dwcataxonid',
+                'dwcaid',
+                'hasmedia',
+                'created',
+                'modified',
+                'eventdate',
+                'catalognumber',
+                'institutioncode',
+                'collectioncode',
+                'datepublication',
+                'occurrenceid'
+            ];
 
-        $entity = $repository->createQueryBuilder('e')
-            ->orderBy('RAND()')
-            ->setMaxResults(1)
-            ->getQuery()->getOneOrNullResult();
-        $fields = $metadata->getFieldNames();
+            $randomClassName = $this->getFullClassName($this->entitiesName[array_rand($this->entitiesName, 1)]);
+            $metadata = $this->em->getMetadataFactory()->getMetadataFor($randomClassName);
+            $repository = $this->em->getRepository($randomClassName);
+            $identifier = $metadata->getIdentifierFieldNames() [0];
 
-        // On enleve le champ de l'indentifiant
-        unset($fields[array_search($identifier, $fields)]);
-        unset($fields[array_search('dwcaid', $fields)]);
-        unset($fields[array_search('hasmedia', $fields)]);
-        unset($fields[array_search('modified', $fields)]);
-        unset($fields[array_search('catalognumber', $fields)]);
-        unset($fields[array_search('institutioncode', $fields)]);
-        unset($fields[array_search('sourcefileid', $fields)]);
+            $doNotTouchThisFields[] = $identifier;
 
-        shuffle($fields);
-        $randomFields = array_slice($fields, 0, $compt);
-        $fieldMappings = $this->em->getClassMetadata($randomClassName)->fieldMappings;
-        foreach ($randomFields as $fieldName) {
-            $setter = 'set'.$fieldName;
-            if ($fieldName[strlen($fieldName) - 1] == '_') {
-                $setter = 'set'.substr($fieldName, 0, -1);
+            $entity = $repository->getQueryBuilderFindByCollection($collection)
+                ->orderBy('RAND()')
+                ->setMaxResults(1)
+                ->getQuery()->getOneOrNullResult();
+
+            if (!is_null($entity)) {
+                $getIdentifier = 'get'.$identifier;
+                dump($randomClassName);
+                dump($entity->{$getIdentifier}());
+
+                $fields = $metadata->getFieldNames();
+
+
+                foreach ($fields as $key => $field) {
+                    if (in_array($field, $doNotTouchThisFields)) {
+                        unset($fields[$key]);
+                    }
+                }
+
+                shuffle($fields);
+                $randomFields = array_slice($fields, 0, $comptFields);
+                $fieldMappings = $this->em->getClassMetadata($randomClassName)->fieldMappings;
+                foreach ($randomFields as $fieldName) {
+                    $setter = 'set'.$fieldName;
+                    if ($fieldName[strlen($fieldName) - 1] == '_') {
+                        $setter = 'set'.substr($fieldName, 0, -1);
+                    }
+                    $entity->{$setter}($this->getFakeData($metadata->getTypeOfField($fieldName),
+                        $fieldMappings[$fieldName]['length']));
+
+                }
+                $this->em->persist($entity);
             }
-            $entity->{$setter}($this->getFakeData($metadata->getTypeOfField($fieldName),
-                $fieldMappings[$fieldName]['length']));
-
         }
-        $this->em->flush($entity);
-
-
-        return $randomFields;
+        $this->em->flush();
+        $this->em->clear();
     }
 
     /**

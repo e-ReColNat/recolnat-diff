@@ -185,9 +185,9 @@ class GenericEntityManager
         $getter = 'get'.$fieldName;
         if (method_exists($fullClassName, $getter)) {
             $em = $this->getEntityManager($base);
-            $entity = $em->getRepository($fullClassName)->find($id);
+            $data = $em->getRepository($fullClassName)->findOneFieldById($id, $fieldName);
 
-            $data = $entity->{$getter}();
+            //$data = $entity->{$getter}();
             if ($data instanceof \DateTime) {
                 $dateFormater = $this->getDateFormatter();
                 $data = $dateFormater->format($data);
