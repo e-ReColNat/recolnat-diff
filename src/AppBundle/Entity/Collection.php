@@ -1,31 +1,33 @@
 <?php
 
 namespace AppBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\CollectionRepository")
-* @ORM\Table(name="Collections")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\CollectionRepository")
+ * @ORM\Table(name="Collections")
+ */
 class Collection
 {
-        /** 
-         * @ORM\Id
-         * @ORM\Column(type="integer") 
-         */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     */
     private $collectionid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $collectioncode;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=250, nullable=true)
      */
     private $collectionname;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $type;
@@ -40,13 +42,15 @@ class Collection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Specimen", mappedBy="collection")
      **/
     private $specimens;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->specimens = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->specimens = new ArrayCollection();
     }
+
     /**
      * Get collectionid
      *
@@ -132,11 +136,11 @@ class Collection
     /**
      * Set institution
      *
-     * @param \AppBundle\Entity\Institution $institution
+     * @param Institution $institution
      *
      * @return Collection
      */
-    public function setInstitution(\AppBundle\Entity\Institution $institution = null)
+    public function setInstitution(Institution $institution = null)
     {
         $this->institution = $institution;
 
@@ -146,13 +150,13 @@ class Collection
     /**
      * Get institutionid
      *
-     * @return \AppBundle\Entity\Institution
+     * @return Institution
      */
     public function getInstitution()
     {
         return $this->institution;
     }
-    
+
     /**
      * Get specimens
      *

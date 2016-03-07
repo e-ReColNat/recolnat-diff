@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 
 /**
@@ -13,18 +14,33 @@ use Doctrine\ORM\AbstractQuery;
 class BibliographyRepository extends RecolnatRepositoryAbstract
 {
     /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('b.referenceid as id')
+            ->from('AppBundle\Entity\Bibliography', 'b')
+            ->join('b.specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
+
+    /**
      *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
-            ->where('b.referenceid IN (\''.implode('\',\'', $ids).'\')')
-            ->getQuery();
-        return $query->getResult();
+            ->andWhere($qb->expr()->in('b.referenceid', $ids));
+        $qb->setParameter('ids', $ids, 'rawid');
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -58,7 +74,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
             ->where('b.referenceid = :id')
-            ->setParameter('id', $id)
+            ->setParameter('id', $id, 'rawid')
             ->getQuery();
     }
 
@@ -73,8 +89,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b')
             ->join('b.specimen', 's');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -90,9 +105,20 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
             ->from('AppBundle\Entity\Bibliography', 'b')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('b.specimen', 's');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'referenceid');
     }
 
+    /**
+     * @param array $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id) {
+        $qb = $this->createUpdateQuery($datas) ;
+
+        $qb->where('a.referenceid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
+    }
 }

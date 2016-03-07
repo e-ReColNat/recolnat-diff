@@ -2,9 +2,10 @@
 
 namespace AppBundle\Business\Exporter;
 
-use AppBundle\Business\Exporter\AbstractExporter;
 use AppBundle\Business\User\Prefs;
+use AppBundle\Entity\Stratigraphy;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Description of DwcExporter
@@ -36,7 +37,7 @@ class DwcExporter extends AbstractExporter
     public function formatDatas()
     {
         $formatDatas = [];
-        $emptyStratigraphy = new \AppBundle\Entity\Stratigraphy();
+        $emptyStratigraphy = new Stratigraphy();
         $arrayEmptyStratigraphy = $emptyStratigraphy->toArray();
         foreach ($this->datas as $key => $data) {
             $formatDatas[$key] = [];
@@ -97,7 +98,7 @@ class DwcExporter extends AbstractExporter
         $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath());
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]);
 
-        $fileExport = new \Symfony\Component\Filesystem\Filesystem();
+        $fileExport = new Filesystem();
         $fileName = $this->getExportDirPath().'/meta.xml';
         $fileExport->touch($fileName);
         $fileExport->chmod($fileName, 0777);
@@ -128,7 +129,7 @@ class DwcExporter extends AbstractExporter
      */
     private function createZipFile()
     {
-        $fileExport = new \Symfony\Component\Filesystem\Filesystem();
+        $fileExport = new Filesystem();
         $zipFilePath = $this->getExportDirPath().'/dwc.zip';
         $arrayFilesName = [];
         $arrayFilesName[] = $this->getMetaFilepath().' ';
@@ -158,7 +159,7 @@ class DwcExporter extends AbstractExporter
     /**
      *
      * @param \DOMElement $node
-     * @param type        $rowType
+     * @param string      $rowType
      */
     private function setCsvParameterNode(\DOMElement&$node, $rowType)
     {
@@ -187,7 +188,7 @@ class DwcExporter extends AbstractExporter
     /**
      *
      * @param \DOMElement $root
-     * @param type        $extension
+     * @param string      $extension
      */
     private function setXmlGenericEntity(\DOMElement&$root, $extension)
     {

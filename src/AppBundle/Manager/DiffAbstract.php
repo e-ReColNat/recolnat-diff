@@ -51,14 +51,21 @@ abstract class DiffAbstract
     protected $fields = array();
     public $excludeFieldsName = [];
 
+    /**
+     * Nombre max de specimens à requêter par pass
+     */
+    public $maxNbSpecimenPerPass;
+
     abstract protected function getIdSetter();
 
     /**
      * DiffAbstract constructor.
      * @param ManagerRegistry $managerRegistry
+     * @param int             $maxNbSpecimenPerPass
      */
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass)
     {
+        $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
         $this->emD = $managerRegistry->getManager('diff');
@@ -66,25 +73,30 @@ abstract class DiffAbstract
 
     /**
      * @param string $class
-     * @param array $ids
+     * @param array  $specimenCodes
      * @return $this
      */
-    public function init($class, $ids)
+    public function init($class, $specimenCodes)
     {
         $this->class = $class;
         $this->classFullName = 'AppBundle:'.ucfirst($class);
-        $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
-            ->findBySpecimenCodes($ids);
-        $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
-            ->findBySpecimenCodes($ids);
-        $this->compare();
+        $arrayChunkSpecimenCodes = array_chunk($specimenCodes, $this->maxNbSpecimenPerPass);
+        if (count($arrayChunkSpecimenCodes)) {
+            foreach ($arrayChunkSpecimenCodes as $chunkSpecimenCodes) {
+                $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
+                    ->findBySpecimenCodes($chunkSpecimenCodes);
+                $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
+                    ->findBySpecimenCodes($chunkSpecimenCodes);
+                $this->compare();
+            }
+        }
         return $this;
     }
 
     /**
-     * @param string $fieldName
-     * @param string $specimenCode
-     * @param string $id
+     * @param string     $fieldName
+     * @param string     $specimenCode
+     * @param string     $id
      * @param null|array $dataR
      * @param null|array $dataI
      */
@@ -205,8 +217,8 @@ abstract class DiffAbstract
 
     /**
      * @param string $idRecord
-     * @param array $fieldNames
-     * @param $specimenCode
+     * @param array  $fieldNames
+     * @param        $specimenCode
      */
     private function compareFields($idRecord, $fieldNames, $specimenCode)
     {
@@ -226,7 +238,7 @@ abstract class DiffAbstract
 
     /**
      * @param string $db
-     * @param mixed $record
+     * @param mixed  $record
      * @param string $specimenCode
      */
     private function setLonesomeRecord($db, $record, $specimenCode)
@@ -241,4 +253,5 @@ abstract class DiffAbstract
             $this->lonesomeRecords[$db][] = ['specimenCode' => $specimenCode, 'id' => $id];
         }
     }
+
 }

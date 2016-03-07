@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
+
 /**
  * StratigraphyRepository
  *
@@ -10,6 +12,19 @@ namespace AppBundle\Entity\Repository;
  */
 class StratigraphyRepository extends RecolnatRepositoryAbstract
 {
+    /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('st.geologicalcontextid as id')
+            ->from('AppBundle:Stratigraphy', 'st')
+            ->join('st.specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
     /**
      *
      * @param array $ids
@@ -49,8 +64,7 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
         $qb
             ->select('st')
             ->join('st.specimen', 's');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $qb->getQuery()->getResult();
     }
 
@@ -67,8 +81,21 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
             ->select('st')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('st.specimen', 's');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'geologicalcontextid');
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.geologicalcontextid = :id')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }

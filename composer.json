@@ -33,7 +33,11 @@
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^2.7"
+        "symfony/phpunit-bridge": "^2.7",
+        "atoum/atoum-bundle": "~1.1",
+        "atoum/stubs": "*",
+        "squizlabs/php_codesniffer": "2.*",
+        "escapestudios/symfony2-coding-standard": "~2.0"
     },
     "scripts": {
         "post-install-cmd": [

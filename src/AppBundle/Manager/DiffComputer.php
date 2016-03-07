@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Entity\Taxon;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
@@ -49,12 +50,16 @@ class DiffComputer
         'Taxon'
     ];
 
+    protected $maxNbSpecimenPerPass;
+
     /**
      * DiffComputer constructor.
      * @param ManagerRegistry $managerRegistry
+     * @param int             $maxNbSpecimenPerPass
      */
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass)
     {
+        $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
         $this->emD = $managerRegistry->getManager('diff');
@@ -75,7 +80,7 @@ class DiffComputer
                     $specimensCode = $this->arrayIds[$className];
                     $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
                     /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
-                    $diffClassManager = new $nameDiffClassManager($this->managerRegistry);
+                    $diffClassManager = new $nameDiffClassManager($this->managerRegistry, $this->maxNbSpecimenPerPass);
                     $diffClassManager->init($className, $specimensCode);
                     $this->setDiffs($className, $diffClassManager->getStats());
                     $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
@@ -96,7 +101,7 @@ class DiffComputer
         if (!isset($this->diffs['datas'][$specimenCode]['display'])) {
             $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
             $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
-            $this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof \AppBundle\Entity\Taxon ? $taxon->__toString() : '';
+            $this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof Taxon ? $taxon->__toString() : '';
         }
     }
 
@@ -181,6 +186,9 @@ class DiffComputer
     {
         $this->lonesomeRecords[$className] = [];
         foreach ($lonesomeRecords as $db => $items) {
+            if (!isset($this->lonesomeRecords[$className][$db])) {
+                $this->lonesomeRecords[$className][$db] = [];
+            }
             $specimenCodesNewSpecimenRecords = [];
             if ($className != 'Specimen') {
                 $specimenCodesNewSpecimenRecords = array_column($this->lonesomeRecords['Specimen'][$db],

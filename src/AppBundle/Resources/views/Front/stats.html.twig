@@ -96,14 +96,14 @@
     $(document).ready(function(){
         $(".choice").on('change', function() {
             // recuperation des clés des enregistrements concernés
-            specimensCode = jQuery.parseJSON($("table.diffs").find("[rel='"+$(this).attr('name')+"']").html());
-            var choices=new Array() ;
+            var specimensCode = jQuery.parseJSON($("table.diffs").find("[rel='"+$(this).attr('name')+"']").html());
+            var choices=[];
             var radioInput = $(this);
             var fieldName=radioInput.data('fieldname');
             var className=radioInput.data('class');
             var choice = radioInput.attr('value') ;
             $.each(specimensCode, function(specimenCode, relationId) {
-                temp = {
+                var temp = {
                     'className' : className, 
                     'fieldName' : fieldName,
                     'relationId' : relationId,

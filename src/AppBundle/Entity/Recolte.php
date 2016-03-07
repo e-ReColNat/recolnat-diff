@@ -100,7 +100,7 @@ class Recolte
     /**
      * Get eventid
      *
-     * @return rawid
+     * @return string
      */
     public function getEventid()
     {
@@ -446,11 +446,11 @@ class Recolte
     /**
      * Set locationid
      *
-     * @param \AppBundle\Entity\Localisation $locationid
+     * @param Localisation $locationid
      *
      * @return Recolte
      */
-    public function setLocation(\AppBundle\Entity\Localisation $locationid = null)
+    public function setLocation(Localisation $locationid = null)
     {
         $this->locationid = $locationid;
 
@@ -460,7 +460,7 @@ class Recolte
     /**
      * Get locationid
      *
-     * @return \AppBundle\Entity\Localisation
+     * @return Localisation
      */
     public function getLocalisation()
     {
@@ -470,7 +470,7 @@ class Recolte
     /**
      * Get specimen
      *
-     * @return \AppBundle\Entity\Specimen
+     * @return Specimen
      */
     public function getSpecimen()
     {

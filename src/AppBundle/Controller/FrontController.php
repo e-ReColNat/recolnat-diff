@@ -42,6 +42,9 @@ class FrontController extends Controller
 
     /**
      * @Route("{institutionCode}/{collectionCode}/stats", name="stats")
+     * @param string $collectionCode
+     * @param string $institutionCode
+     * @return Response
      */
     public function statsAction($collectionCode, $institutionCode)
     {
@@ -69,6 +72,10 @@ class FrontController extends Controller
 
     /**
      * @Route("{institutionCode}/{collectionCode}/view", name="viewfile")
+     * @param Request $request
+     * @param string  $collectionCode
+     * @param string  $institutionCode
+     * @return Response
      */
     public function viewFileAction(Request $request, $collectionCode, $institutionCode)
     {
@@ -181,6 +188,7 @@ class FrontController extends Controller
      * @param string  $collectionCode
      * @param string  $selectedClassName
      * @param int     $page
+     * @param string  $db
      * @return Response
      */
     public function viewLoneSomeAction(
@@ -195,7 +203,7 @@ class FrontController extends Controller
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensBySpecimenCodes = $exportManager->getLonesomeRecordsIndexedBySpecimenCode($db,
+        $lonesomesSpecimensBySpecimenCodes = $exportManager->getDiffHandler()->getLonesomeRecordsIndexedBySpecimenCode($db,
             $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
@@ -255,6 +263,10 @@ class FrontController extends Controller
     /**
      * @Route("{institutionCode}/{collectionCode}/specimen/tab/{specimenCode}/{type}/{db}",
      *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
+     * @param string $specimenCode
+     * @param string $type
+     * @param string $db
+     * @return Response
      */
     public function viewSpecimenTabAction($specimenCode, $type, $db)
     {
@@ -327,19 +339,15 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("/generateDiff/{institutionCode}/{compt}", name="generateDiff")
+     * @Route("/generateDiff/{collectionCode}/{compt}", name="generateDiff")
      */
-//    public function generateDiff($compt)
-//    {
-//        /* @var $diffManager \AppBundle\Manager\DiffManager */
-//        $em = $this->get('doctrine')->getManager('diff');
-//        $diffManager = new \AppBundle\Manager\DiffManager($em);
-//        //$diffManager = $this->get('diff.manager');
-//        for ($i = 1; $i <= $compt; $i++) {
-//            $diffManager->generateDiff(rand(1, 5));
-//        }
-//        $response = new Response();
-//        return $response;
-//    }
-
+    public function generateDiff($collectionCode, $compt)
+    {
+        $collection = $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
+        /* @var $diffManager \AppBundle\Manager\DiffManager */
+        $diffManager = $this->get('diff.manager');
+        $diffManager->generateDiff($collection, $compt, rand(1, 5));
+        return $this->render('@App/Front/generateDiff.html.twig');
+    }
 }

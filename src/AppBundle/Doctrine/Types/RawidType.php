@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Doctrine\Types;
 
+use AppBundle\Entity\Repository\SpecimenRepository;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 use Doctrine\DBAL\Types\Type;
@@ -19,21 +20,27 @@ class RawidType extends Type
 
     public function canRequireSQLConversion()
     {
+        return false;
     }
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return $platform->getDoctrineTypeMapping('RAWID');
+        return $platform->getDoctrineTypeMapping('raw');
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($sqlExpr, AbstractPlatform $platform)
     {
-        return $value;
+        return $sqlExpr;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($sqlExpr, AbstractPlatform $platform)
     {
-        return ($value === null) ? null : strtoupper(bin2hex($value));
+        return unpack("H*", $sqlExpr)[1];
+    }
+
+    public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform)
+    {
+        return sprintf('HEXTORAW(%s)', $sqlExpr);
     }
 }
 

@@ -1,6 +1,9 @@
 {% set multimedias = specimen.multimedias %}
 {% set determination = specimen.determinations | first %}
-{% set taxon = determination.taxon %}
+{% set taxon = null %}
+{% if determination and determination.taxon %}
+    {% set taxon = determination.taxon  %}
+{% endif %}
 {% set collection = specimen.collection %}
 {% set recolte = specimen.recolte %}
 {% set localisation = recolte.localisation %}

@@ -3,6 +3,7 @@
 namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\User\Prefs;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Description of CsvExporter
@@ -99,7 +100,7 @@ class CsvExporter extends AbstractExporter
      */
     private function createZipFile($zipFilename = 'csv.zip')
     {
-        $fileExport = new \Symfony\Component\Filesystem\Filesystem();
+        $fileExport = new Filesystem();
         $zipFilePath = $this->getExportDirPath().'/'.$zipFilename;
         $arrayFilesName = [];
         foreach ($this->getFiles() as $csvFile) {
@@ -134,7 +135,7 @@ class CsvExporter extends AbstractExporter
      */
     private function createFile($className, $extension = 'csv')
     {
-        $fileExport = new \Symfony\Component\Filesystem\Filesystem();
+        $fileExport = new Filesystem();
         $fileName = $this->exportPath.'/'.strtolower($className).'.'.$extension;
         $fileExport->touch($fileName);
         $fileExport->chmod($fileName, 0777);

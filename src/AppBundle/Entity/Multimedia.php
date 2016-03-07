@@ -2,101 +2,102 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\MultimediaRepository")
-* @ORM\Table(name="Multimedia")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\MultimediaRepository")
+ * @ORM\Table(name="Multimedia")
+ */
 class Multimedia
 {
-        /** 
-         * @ORM\Id
-         * @ORM\Column(type="integer") 
-         */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     */
     private $multimediaid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $audience;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $contributor;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $creator;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=false)
      */
     private $description;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=false)
      */
     private $discriminator;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $format;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=300, nullable=false)
      */
     private $identifier;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $license;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $modified;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $publisher;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $references;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $rights;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $rightsholder;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $source;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $title;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $type;
@@ -111,13 +112,13 @@ class Multimedia
      */
     public function __construct()
     {
-        $this->specimens = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->specimens = new ArrayCollection();
     }
 
     /**
      * Get multimediaid
      *
-     * @return guid
+     * @return string
      */
     public function getMultimediaid()
     {
@@ -535,11 +536,11 @@ class Multimedia
     /**
      * Add occurrenceid
      *
-     * @param \AppBundle\Entity\Specimen $occurrenceid
+     * @param Specimen $occurrenceid
      *
      * @return Multimedia
      */
-    public function addOccurrenceid(\AppBundle\Entity\Specimen $occurrenceid)
+    public function addOccurrenceid(Specimen $occurrenceid)
     {
         $this->occurrenceid[] = $occurrenceid;
 
@@ -549,9 +550,9 @@ class Multimedia
     /**
      * Remove occurrenceid
      *
-     * @param \AppBundle\Entity\Specimen $occurrenceid
+     * @param Specimen $occurrenceid
      */
-    public function removeOccurrenceid(\AppBundle\Entity\Specimen $occurrenceid)
+    public function removeOccurrenceid(Specimen $occurrenceid)
     {
         $this->occurrenceid->removeElement($occurrenceid);
     }
@@ -565,15 +566,16 @@ class Multimedia
     {
         return $this->occurrenceid;
     }
-    
-    public function __toString() {
+
+    public function __toString()
+    {
         return $this->getIdentifier();
     }
-    
+
     public function toArray()
     {
         return [
-            'occurrenceid'=> null,
+            'occurrenceid' => null,
             'multimediaid' => $this->getMultimediaid(),
             'audience' => $this->getAudience(),
             'contributor' => $this->getContributor(),

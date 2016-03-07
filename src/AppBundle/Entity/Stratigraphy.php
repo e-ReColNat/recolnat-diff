@@ -498,6 +498,25 @@ class Stratigraphy
         return $this->member;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getSpecimen()
+    {
+        return $this->specimen;
+    }
+
+    /**
+     * @param mixed $specimen
+     * @return Stratigraphy
+     */
+    public function setSpecimen($specimen)
+    {
+        $this->specimen = $specimen;
+        return $this;
+    }
+
+
     public function __toString()
     {
         return sprintf('%s %s %s', 

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Business;
 
+use Symfony\Component\Filesystem\Filesystem;
+
 /**
  * Description of Choices
  *
@@ -30,7 +32,7 @@ class Choices extends \SplFileObject
 
     public function save($choices)
     {
-        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $fs = new Filesystem();
         $fs->dumpFile($this->getPathname(), json_encode($choices, JSON_PRETTY_PRINT));
         chmod($this->getPathname(), 0755);
     }

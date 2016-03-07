@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -14,18 +15,32 @@ use Doctrine\ORM\Query\Expr\Join;
 class DeterminationRepository extends RecolnatRepositoryAbstract
 {
     /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('d.identificationid as id')
+            ->from('AppBundle\Entity\Determination', 'd')
+            ->join('d.specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
+
+    /**
      *
      * @param array $ids
      * @return array
      */
     public function findById($ids)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
-            ->select('d')
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('d')
             ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
-            ->where('d.identificationid IN (\''.implode('\',\'', $ids).'\')')
-            ->getQuery();
-        return $query->getResult();
+            ->andWhere($qb->expr()->in('d.identificationid', $ids));
+        $qb->setParameter('ids', $ids, 'rawid');
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -50,6 +65,21 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
     }
 
     /**
+     * @param array  $id
+     * @param string $field
+     * @return object|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneFieldById($id, $field)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('d.'.$field)
+            ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
+            ->where('d.identificationid = :id')
+            ->setParameter('id', $id, 'rawid');
+        return $qb->getQuery()->getArrayResult();
+    }
+    /**
      * @param $id
      * @return \Doctrine\ORM\Query
      */
@@ -59,7 +89,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
             ->select('d')
             ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
             ->where('d.identificationid = :id')
-            ->setParameter('id', $id)
+            ->setParameter('id', $id, 'rawid')
             ->getQuery();
     }
 
@@ -70,13 +100,10 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
      */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
-
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('d')
             ->join('d.specimen', 's');
-
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $qb->getQuery()->getResult();
     }
 
@@ -93,14 +120,13 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
             ->select('d')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('d.specimen', 's');
-        $qb->where($qb->expr()->in($this->getExprConcatSpecimenCode(), ':specimenCodes'));
-        $qb->setParameter('specimenCodes', $specimenCodes);
+        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'identificationid');
     }
 
     /**
      *
-     * @param rawid $occurrenceId
+     * @param string $occurrenceId
      * @return \AppBundle\Entity\Determination | null
      */
     public function findBestDetermination($occurrenceId)
@@ -110,7 +136,21 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
         $qb
             ->select('d')
             ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
-        $qb->setParameter('occurrenceid', $occurrenceId);
+        $qb->setParameter('occurrenceid', $occurrenceId, 'rawid');
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getOneOrNullResult(), 'identificationid');
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.identificationid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }

@@ -11,7 +11,7 @@ var routes = {
     todos:{name : 'todos', params:['selectedClassName']},
     choices:{name : 'choices', params:['selectedClassName']},
     excluRecolnat:{name : 'lonesomes', params:['selectedClassName', 'db']},
-    excluInstitution:{name : 'lonesomes', params:['selectedClassName', 'db']},
+    excluInstitution:{name : 'lonesomes', params:['selectedClassName', 'db']}
 };
 
 var x = d3.scale.linear()
@@ -42,7 +42,7 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {
-                decalY = 7 * i * barHeight + ((itkeys)*20);
+                var decalY = 7 * i * barHeight + ((itkeys)*20);
                 return "translate(10," + decalY + ")";
             });
 
@@ -81,8 +81,7 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .attr("y", barHeight / 2)
             .attr("dy", ".35em")
             .text(function (d, i) {
-                title = Translator.transChoice('label.graph.'+keys[itkeys], d, { "count" : d });
-                return title;
+                return Translator.transChoice('label.graph.'+keys[itkeys], d, { "count" : d });
             });
     }
     else {
@@ -91,7 +90,7 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {
-                decalY = 7 * i * barHeight + ((itkeys)*20);
+                var decalY = 7 * i * barHeight + ((itkeys)*20);
                 return "translate(10," + decalY + ")";
             });
 

@@ -8,33 +8,35 @@
         {% endif %}
 
         {% if display %}
-    <div class="row">
-        <div class="col-sm-3">
-            <a href="{{ multimedia.identifier }}"><img src="{{ thumb(multimedia.identifier, 25) }}"
-                                                       class="img-thumbnail"></a>
-        </div>
-        <div class="col-sm-4">
-            {{ printLabelAndField(multimedia, 'multimedia', 'created', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'modified', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'creator', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'format', true, '<br />')|raw }}
-            <a href="{{ multimedia.identifier }}" target="_blank">
-                {{ printLabelAndField(multimedia, 'multimedia', 'identifier', true, '<br />')|raw }}
-            </a>
-            {{ printLabelAndField(multimedia, 'multimedia', 'license', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'rights', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'rightsholder', true, '<br />')|raw }}
-        </div>
-        <div class="col-sm-4">
-            {{ printLabelAndField(multimedia, 'multimedia', 'audience', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'contributor', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'description', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'discriminator', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'publisher ', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'references', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'source', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'title', true, '<br />')|raw }}
-            {{ printLabelAndField(multimedia, 'multimedia', 'type', true, '<br />')|raw }}
-        </div>
-    </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <a href="{{ multimedia.identifier }}"><img src="{{ thumb(multimedia.identifier, 25) }}"
+                                                               class="img-thumbnail"></a>
+                </div>
+                <div class="col-sm-4">
+                    {{ printLabelAndField(multimedia, 'multimedia', 'created', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'modified', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'creator', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'format', true, '<br />')|raw }}
+                    <a href="{{ multimedia.identifier }}" target="_blank">
+                        {{ printLabelAndField(multimedia, 'multimedia', 'identifier', true, '<br />')|raw }}
+                    </a>
+                    {{ printLabelAndField(multimedia, 'multimedia', 'license', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'rights', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'rightsholder', true, '<br />')|raw }}
+                </div>
+                <div class="col-sm-4">
+                    {{ printLabelAndField(multimedia, 'multimedia', 'audience', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'contributor', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'description', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'discriminator', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'publisher ', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'references', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'source', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'title', true, '<br />')|raw }}
+                    {{ printLabelAndField(multimedia, 'multimedia', 'type', true, '<br />')|raw }}
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
 {% endfor %}

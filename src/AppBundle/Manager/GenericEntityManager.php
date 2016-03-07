@@ -185,9 +185,8 @@ class GenericEntityManager
         $getter = 'get'.$fieldName;
         if (method_exists($fullClassName, $getter)) {
             $em = $this->getEntityManager($base);
-            $entity = $em->getRepository($fullClassName)->find($id);
+            $data = $em->getRepository($fullClassName)->findOneFieldById($id, $fieldName);
 
-            $data = $entity->{$getter}();
             if ($data instanceof \DateTime) {
                 $dateFormater = $this->getDateFormatter();
                 $data = $dateFormater->format($data);
@@ -198,18 +197,6 @@ class GenericEntityManager
         }
     }
 
-    /**
-     * @param string $base
-     * @param string $className
-     * @param string $id
-     * @return array|null
-     */
-    public function getArrayOfDatas($base, $className, $id)
-    {
-        $fullClassName = $this->getFullClassName($className);
-        $em = $this->getEntityManager($base);
-        return $em->getRepository($fullClassName)->findOneByIdToArray($id);
-    }
     /**
      * @param string $className
      * @return string
