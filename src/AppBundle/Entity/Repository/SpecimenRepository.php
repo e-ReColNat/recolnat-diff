@@ -18,7 +18,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('s')
+            ->select('s.occurrenceid as id')
             ->from('AppBundle\Entity\Specimen', 's')
             ->andWhere('s.collection = :collection')
             ->setParameter('collection', $collection);
@@ -167,5 +167,19 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
             ->select('s');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $qb->getQuery();
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.occurrenceid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }

@@ -344,18 +344,13 @@ class DiffManager
 
             $doNotTouchThisFields[] = $identifier;
 
-            $entity = $repository->getQueryBuilderFindByCollection($collection)
+            $id = $repository->getQueryBuilderFindByCollection($collection)
                 ->orderBy('RAND()')
                 ->setMaxResults(1)
-                ->getQuery()->getOneOrNullResult();
+                ->getQuery()->getArrayResult();
 
-            if (!is_null($entity)) {
-                $getIdentifier = 'get'.$identifier;
-                dump($randomClassName);
-                dump($entity->{$getIdentifier}());
-
+            if (!is_null($id)) {
                 $fields = $metadata->getFieldNames();
-
 
                 foreach ($fields as $key => $field) {
                     if (in_array($field, $doNotTouchThisFields)) {
@@ -364,22 +359,17 @@ class DiffManager
                 }
 
                 shuffle($fields);
+                $datas = [];
                 $randomFields = array_slice($fields, 0, $comptFields);
                 $fieldMappings = $this->em->getClassMetadata($randomClassName)->fieldMappings;
                 foreach ($randomFields as $fieldName) {
-                    $setter = 'set'.$fieldName;
-                    if ($fieldName[strlen($fieldName) - 1] == '_') {
-                        $setter = 'set'.substr($fieldName, 0, -1);
-                    }
-                    $entity->{$setter}($this->getFakeData($metadata->getTypeOfField($fieldName),
-                        $fieldMappings[$fieldName]['length']));
+                    $datas[$fieldName] = $this->getFakeData($metadata->getTypeOfField($fieldName),
+                        $fieldMappings[$fieldName]['length']);
 
                 }
-                $this->em->persist($entity);
+                $repository->update($datas, $id);
             }
         }
-        $this->em->flush();
-        $this->em->clear();
     }
 
     /**
@@ -412,7 +402,8 @@ class DiffManager
                 return $arrayFloat[array_rand($arrayFloat)];
             case 'datetime':
                 $arrayDate = ['1976-11-08', '2005-12-25', '1953-01-31', '2006-12-13'];
-                return new \DateTime($arrayDate[array_rand($arrayDate)]);
+                $date = new \DateTime($arrayDate[array_rand($arrayDate)]);
+                return $date->format('Y-m-d H:i:s');
             case 'boolean':
                 return array_rand([true, false]);
         }

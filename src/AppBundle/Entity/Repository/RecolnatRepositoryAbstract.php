@@ -38,6 +38,14 @@ abstract class RecolnatRepositoryAbstract extends EntityRepository
      * @param string $alias
      * @return Expr\Func
      */
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    abstract public function update(array $datas, $id);
+
     public static function getExprConcatSpecimenCode($alias = 's')
     {
         $concatFields = array(
@@ -90,5 +98,19 @@ abstract class RecolnatRepositoryAbstract extends EntityRepository
                 'collectionCode' => $collectionCode,
                 'catalogNumbers' => $catalogNumbers,
             ]);
+    }
+
+    /**
+     * @param array $datas
+     * @return QueryBuilder
+     */
+    public function createUpdateQuery(array $datas)
+    {
+        $qb = $this->createQueryBuilder('a')->update();
+
+        foreach ($datas as $field => $value) {
+            $qb->set('a.'.$field, $qb->expr()->literal($value));
+        }
+        return $qb;
     }
 }

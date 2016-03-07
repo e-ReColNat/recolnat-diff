@@ -12,15 +12,38 @@ class Hextoraw extends FunctionNode
 {
     public $field;
 
-    public function getSql(SqlWalker $sqlWalker) {
-        $query = "HEXTORAW('" . $this->field->dispatch($sqlWalker)."')" ;
-        return $query;
+    /**
+     * @param SqlWalker $sqlWalker
+     * @return string
+     */
+    public function getSql(SqlWalker $sqlWalker)
+    {
+        return 'HEXTORAW('.$this->field->dispatch($sqlWalker).')';
     }
 
-    public function parse(Parser $parser) {
+    /**
+     * @param Parser $parser
+     */
+    public function parse(Parser $parser)
+    {
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->field = $parser->StringPrimary();
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+    }
+
+    /**
+     * Get expression value string.
+     *
+     * @param string|Node $expression
+     * @param SqlWalker   $sqlWalker
+     * @return string
+     */
+    protected function getExpressionValue($expression, SqlWalker $sqlWalker)
+    {
+        if ($expression instanceof Node) {
+            $expression = $expression->dispatch($sqlWalker);
+        }
+        return $expression;
     }
 }

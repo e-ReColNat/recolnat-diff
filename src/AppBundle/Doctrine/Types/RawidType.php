@@ -20,37 +20,26 @@ class RawidType extends Type
 
     public function canRequireSQLConversion()
     {
-        return true;
+        return false;
     }
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return $platform->getDoctrineTypeMapping('raw');
-        //return 'RAW';
     }
 
     public function convertToDatabaseValue($sqlExpr, AbstractPlatform $platform)
     {
-        /*if ($sqlExpr !== null) {
-            return pack('H*', $sqlExpr);
-        }*/
-//        return hex2bin($sqlExpr);
-        //return $sqlExpr;
-
-        //return sprintf("HEXTORAW('%s')", $sqlExpr);
+        return $sqlExpr;
     }
 
     public function convertToPHPValue($sqlExpr, AbstractPlatform $platform)
     {
-        return ($sqlExpr === null) ? null : strtoupper(bin2hex($sqlExpr));
+        return unpack("H*", $sqlExpr)[1] ;
     }
 
     public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform)
     {
-        if (strstr($sqlExpr, 'HEXTORAW')) {
-            sscanf($sqlExpr, "HEXTORAW('%s')", $sqlExpr);
-        }
-        //return strstr($sqlExpr, 'HEXTORAW') ? $sqlExpr : sprintf('HEXTORAW(%s)', $sqlExpr);
         return sprintf('HEXTORAW(%s)', $sqlExpr);
     }
 }

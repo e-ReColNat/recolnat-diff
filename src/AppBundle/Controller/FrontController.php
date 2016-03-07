@@ -350,5 +350,4 @@ class FrontController extends Controller
         $diffManager->generateDiff($collection, $compt, rand(1, 5));
         return $this->render('@App/Front/generateDiff.html.twig');
     }
-
 }

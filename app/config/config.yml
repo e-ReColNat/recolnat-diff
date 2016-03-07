@@ -107,6 +107,8 @@ doctrine:
                 naming_strategy: doctrine.orm.naming_strategy.underscore
                 connection: diff
                 dql:
+                    string_functions:
+                        HEXTORAW: AppBundle\Doctrine\Functions\Hextoraw
                     numeric_functions:
                         Rand: AppBundle\Doctrine\Functions\Rand
                 mappings:

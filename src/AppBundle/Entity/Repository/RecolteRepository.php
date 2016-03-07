@@ -19,7 +19,7 @@ class RecolteRepository extends RecolnatRepositoryAbstract
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('r')
+            ->select('r.eventid as id')
             ->from('AppBundle\Entity\Recolte', 'r')
             ->join('r.specimen', 's')
             ->andWhere('s.collection = :collection')
@@ -99,5 +99,19 @@ class RecolteRepository extends RecolnatRepositoryAbstract
             ->andWhere('s.recolte = r.eventid');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'eventid');
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.eventid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }

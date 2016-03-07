@@ -18,16 +18,15 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
      */
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
-        return $this->getEntityManager()->createQueryBuilder()
-            ->select('l')
-            ->from('AppBundle\Entity\Specimen', 's')
-            ->from('AppBundle\Entity\Recolte', 'r')
+        return $this->getEntityManager()->createQueryBuilder('l')
+            ->select('l.locationid as id')
             ->from('AppBundle\Entity\Localisation', 'l')
-            ->andWhere('s.recolte = r.eventid')
-            ->andWhere('r.localisation = l.locationid')
-            ->andWhere('s.collection = :collection')
-            ->setParameter('collection', $collection);
+            ->join('l.recoltes', 'r')
+            ->join('r.specimen', 's', 'WITH', 's.collection = :collection')
+
+            ->setParameter('collection', $collection->getCollectionid());
     }
+
     /**
      *
      * @param array $ids
@@ -94,5 +93,19 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
 
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'locationid');
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.locationid = :id')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }

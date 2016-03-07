@@ -20,7 +20,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('b')
+            ->select('b.referenceid as id')
             ->from('AppBundle\Entity\Bibliography', 'b')
             ->join('b.specimen', 's')
             ->andWhere('s.collection = :collection')
@@ -109,4 +109,16 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'referenceid');
     }
 
+    /**
+     * @param array $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id) {
+        $qb = $this->createUpdateQuery($datas) ;
+
+        $qb->where('a.referenceid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
+    }
 }

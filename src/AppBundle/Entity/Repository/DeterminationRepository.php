@@ -21,7 +21,7 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('d')
+            ->select('d.identificationid as id')
             ->from('AppBundle\Entity\Determination', 'd')
             ->join('d.specimen', 's')
             ->andWhere('s.collection = :collection')
@@ -138,5 +138,19 @@ class DeterminationRepository extends RecolnatRepositoryAbstract
             ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
         $qb->setParameter('occurrenceid', $occurrenceId, 'rawid');
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getOneOrNullResult(), 'identificationid');
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.identificationid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }

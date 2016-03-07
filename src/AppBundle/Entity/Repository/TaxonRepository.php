@@ -20,7 +20,7 @@ class TaxonRepository extends RecolnatRepositoryAbstract
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('t')
+            ->select('t.taxonid as id')
             ->from('AppBundle\Entity\Taxon', 't')
             ->join('t.determination', 'd')
             ->join('d.specimen', 's')
@@ -162,5 +162,19 @@ class TaxonRepository extends RecolnatRepositoryAbstract
             ->orderBy('d.identificationverifstatus', 'DESC');
         $this->setSpecimenCodesWhereClause($qb, [$specimenCode]);
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.taxonid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }

@@ -60,7 +60,7 @@
             </trans-unit>
             <trans-unit id="15">
                 <source>label.notaxon</source>
-                <target>Pas de taxon</target>
+                <target>Ce spécimen n'a pas de taxonomie associée</target>
             </trans-unit>
             <trans-unit id="16">
                 <source>label.filtre.button</source>

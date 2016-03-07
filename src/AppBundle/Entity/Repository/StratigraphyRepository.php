@@ -19,7 +19,7 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('st')
+            ->select('st.geologicalcontextid as id')
             ->from('AppBundle:Stratigraphy', 'st')
             ->join('st.specimen', 's')
             ->andWhere('s.collection = :collection')
@@ -83,5 +83,19 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
             ->join('st.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'geologicalcontextid');
+    }
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.geologicalcontextid = :id')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->execute();
     }
 }
