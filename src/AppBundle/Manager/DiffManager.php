@@ -319,7 +319,7 @@ class DiffManager
      */
     public function generateDiff(Collection $collection, $comptEntities, $comptFields)
     {
-        for($i=1; $i<=$comptEntities; $i++) {
+        for ($i = 1; $i <= $comptEntities; $i++) {
             $doNotTouchThisFields = [
                 'determinations',
                 'sourcefileid',

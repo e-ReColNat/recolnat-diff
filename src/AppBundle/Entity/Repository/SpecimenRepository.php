@@ -23,6 +23,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
             ->andWhere('s.collection = :collection')
             ->setParameter('collection', $collection);
     }
+
     /**
      *
      * @param array $ids
@@ -56,21 +57,21 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
     }
 
     /**
-     * @param array $id
+     * @param array  $id
      * @param string $field
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneFieldById($id,$field)
+    public function findOneFieldById($id, $field)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('s.'.$field)
             ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
             ->where('s.occurrenceid = :id')
-            ->setParameter('id', $id, 'rawid')
-            ;
+            ->setParameter('id', $id, 'rawid');
         return $qb->getQuery()->getArrayResult();
     }
+
     /**
      * @param $specimenCode
      * @return object|null

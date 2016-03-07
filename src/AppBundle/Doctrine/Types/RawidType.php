@@ -35,7 +35,7 @@ class RawidType extends Type
 
     public function convertToPHPValue($sqlExpr, AbstractPlatform $platform)
     {
-        return unpack("H*", $sqlExpr)[1] ;
+        return unpack("H*", $sqlExpr)[1];
     }
 
     public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform)
