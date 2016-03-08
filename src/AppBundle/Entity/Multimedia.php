@@ -13,7 +13,7 @@ class Multimedia
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="rawid")
      */
     private $multimediaid;
 

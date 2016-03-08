@@ -39,22 +39,11 @@ $(document).ready(function () {
     var smallModal = $('#smallModal');
     var selectedSpecimens = [];
     var highlightClass = 'highlight';
-    if (localStorage.getItem('selectedSpecimens')) {
-        selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
-    }
+    var $specimen = $(".specimen");
+
     var maxItemPerPage = $('#maxItemPerPage').find(":selected").text();
     if (localStorage.getItem('maxItemPerPage')) {
         maxItemPerPage = localStorage.getItem('maxItemPerPage');
-    }
-
-    // Checked selected Specimens
-    var nbSelectedSpecimens = selectedSpecimens.length;
-    var $specimen = $(".specimen");
-    if (nbSelectedSpecimens > 0) {
-        var checkboxSpecimen = $specimen.find("[name^='check-specimen']");
-        for (var i = 0; i < nbSelectedSpecimens - 1; i++) {
-            checkboxSpecimen.filter('[value="' + selectedSpecimens[i] + '"]').prop('checked', true);
-        }
     }
 
     // Rajoute les choix effectués au tableau choices
@@ -248,18 +237,4 @@ $(document).ready(function () {
         event.preventDefault();
     });
 
-    // Sélection d'un specimen manuellement
-    $specimen.find("[name^='check-specimen']").change(function () {
-        if ($(this).prop('checked')) {
-            selectedSpecimens.push($(this).val());
-        }
-        else {
-            for (var i = selectedSpecimens.length - 1; i >= 0; i--) {
-                if (selectedSpecimens[i] === $(this).val()) {
-                    selectedSpecimens.splice(i, 1);
-                }
-            }
-        }
-        localStorage.setItem('selectedSpecimens', JSON.stringify(selectedSpecimens));
-    });
 });

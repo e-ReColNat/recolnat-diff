@@ -15,6 +15,7 @@ use AppBundle\Entity\Specimen;
 use AppBundle\Entity\Stratigraphy;
 use AppBundle\Entity\Taxon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\DataCollectorTranslator;
@@ -72,7 +73,7 @@ class SpecimenExtension extends \Twig_Extension
 
     /**
      * @param Specimen $specimen
-     * @param          $class
+     * @param String   $class
      * @return Localisation|Recolte|Specimen|Stratigraphy|array|ArrayCollection
      */
     public function getRelation(Specimen $specimen, $class)
@@ -90,6 +91,8 @@ class SpecimenExtension extends \Twig_Extension
                 return $specimen->getRecolte();
             case 'stratigraphy':
                 return $specimen->getStratigraphy();
+            case 'multimedia':
+                return $specimen->getMultimedias();
             case 'taxon':
                 $determinations = $specimen->getDeterminations();
                 $taxons = [];
@@ -116,7 +119,7 @@ class SpecimenExtension extends \Twig_Extension
 
             $getter = 'get'.current($metadataInfo->getIdentifier());
 
-            if ($relations instanceof \Doctrine\Common\Collections\Collection ||
+            if ($relations instanceof Collection ||
                 $relations instanceof PersistentCollection ||
                 is_array($relations)
             ) {

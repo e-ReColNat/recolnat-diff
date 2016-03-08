@@ -76,7 +76,7 @@ class DiffComputer
         $this->arrayIds = $arrayIds;
         if (count($this->arrayIds) > 0) {
             foreach ($this->classOrder as $className) {
-                if (isset($this->arrayIds[$className])) {
+                if (isset($this->arrayIds[ucfirst($className)])) {
                     $specimensCode = $this->arrayIds[$className];
                     $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
                     /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */

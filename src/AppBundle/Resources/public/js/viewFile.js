@@ -16,7 +16,7 @@ var routes = {
 
 var x = d3.scale.linear()
     .domain([0, d3.max(diffs)+30])
-    .range([0, width]);
+    .range([0, width-(15*8)]); // soustraction de la longueur du texte
 
 var chart = d3.select(".chart")
     .attr("width", width)
