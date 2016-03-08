@@ -7,17 +7,17 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Diffs extends \SplFileObject
 {
-    public $generateDiff;
+    public $searchDiffs;
 
     /**
      * @param string $dirPath
      */
     public function __construct($dirPath)
     {
-        $this->generateDiff = false;
+        $this->searchDiffs = false;
         $path = $dirPath.'/diffs.json';
         if (!is_file($path)) {
-            $this->generateDiff = true;
+            $this->searchDiffs = true;
         }
         parent::__construct($path, 'c+');
         chmod($this->getPathname(), 0755);
@@ -303,6 +303,6 @@ class Diffs extends \SplFileObject
     {
         parent::__construct($this->getPathname(), 'w+');
         parent::__construct($this->getPathname(), 'c+');
-        $this->generateDiff = true;
+        $this->searchDiffs = true;
     }
 }

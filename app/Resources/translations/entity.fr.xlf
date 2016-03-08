@@ -631,7 +631,7 @@
                 <target state="translated">Modifiée le</target> 
             </trans-unit>
             <trans-unit id="158" approved="yes">
-                <source>label.multimedia.fields.publisher</source> 
+                <source>label.multimedia.fields.publisher</source>
                 <target state="translated">Éditeur</target>
             </trans-unit>
             <trans-unit id="159" approved="yes">
@@ -657,6 +657,14 @@
             <trans-unit id="164" approved="yes">
                 <source>label.multimedia.fields.type</source> 
                 <target state="translated">Traduit</target> 
+            </trans-unit>
+            <trans-unit id="165" approved="yes">
+                <source>label.multimedia</source>
+                <target state="translated">{0,1}multimédia|]1,Inf]multimédias</target>
+            </trans-unit>
+            <trans-unit id="166" approved="yes">
+                <source>label.multimedia.abbr</source>
+                <target state="translated">multi.</target>
             </trans-unit>
         </body>
     </file>

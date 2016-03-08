@@ -81,6 +81,7 @@ $(document).ready(function () {
     var $parameters = $("#parameters");
     var institutionCode = $parameters.data("institutioncode") ;
     var collectionCode = $parameters.data("collectioncode") ;
+    var $checkboxSpecimen = $(".specimen").find("[name^='check-specimen']");
     $("#menu-toggle").click(function (e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
@@ -88,24 +89,61 @@ $(document).ready(function () {
     });
 
 
-    var selectedSpecimens;
-    if (localStorage.getItem('selectedSpecimens')) {
+    var selectedSpecimens=[];
+    if (localStorage.getItem('selectedSpecimens') !== null) {
         selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
     }
 
     // Checked selected Specimens
     var nbSelectedSpecimens = selectedSpecimens.length;
     var $linkSelectedSpecimen = $("#linkSelectedSpecimen");
-    if (nbSelectedSpecimens > 0 && $linkSelectedSpecimen.length == 1 && institutionCode !='' && collectionCode !='') {
-        var url = Routing.generate('viewSpecimens', {institutionCode: institutionCode, collectionCode : collectionCode, jsonSpecimensCode : localStorage.getItem('selectedSpecimens')}) ;
-        $linkSelectedSpecimen.attr("href", url).removeClass("hidden") ;
-        if (nbSelectedSpecimens == 1) {
-            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimen')) ;
+    setLinkViewSelected();
+
+    function setLinkViewSelected() {
+        var url = Routing.generate('viewSpecimens', {
+            institutionCode: institutionCode,
+            collectionCode: collectionCode,
+            jsonSpecimensCode: localStorage.getItem('selectedSpecimens')
+        });
+        if (nbSelectedSpecimens == 0) {
+            $linkSelectedSpecimen.attr("href", url).addClass("hidden");
         }
         else {
-            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimens').replace('%count%', nbSelectedSpecimens)) ;
+            $linkSelectedSpecimen.attr("href", url).removeClass("hidden");
+        }
+        if (nbSelectedSpecimens == 1) {
+            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimen'));
+        }
+        else {
+            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimens').replace('%count%', nbSelectedSpecimens));
         }
     }
+
+    if (nbSelectedSpecimens > 0 && $linkSelectedSpecimen.length == 1 && institutionCode !='' && collectionCode !='') {
+        setLinkViewSelected();
+    }
+    if (nbSelectedSpecimens > 0) {
+        for (var i = 0; i < nbSelectedSpecimens; i++) {
+            $checkboxSpecimen.filter('[value="' + selectedSpecimens[i] + '"]').prop('checked', true);
+        }
+    }
+
+    // Sélection d'un specimen manuellement
+    $checkboxSpecimen.change(function () {
+        if ($(this).prop('checked')) {
+            selectedSpecimens.push($(this).val());
+        }
+        else {
+            for (var i = selectedSpecimens.length - 1; i >= 0; i--) {
+                if (selectedSpecimens[i] === $(this).val()) {
+                    selectedSpecimens.splice(i, 1);
+                }
+            }
+        }
+        localStorage.setItem('selectedSpecimens', JSON.stringify(selectedSpecimens));
+        nbSelectedSpecimens = selectedSpecimens.length;
+        setLinkViewSelected();
+    });
 });
 /***********************************************************************************
  * Add Array.indexOf                                                                *

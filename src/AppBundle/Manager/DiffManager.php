@@ -34,6 +34,7 @@ class DiffManager
     const SPECIMEN_CLASSNAME = 'AppBundle:Specimen';
     const RECOLTE_CLASSNAME = 'AppBundle:Recolte';
     const DETERMINATION_CLASSNAME = 'AppBundle:Determination';
+    const MULTIMEDIA_HAS_OCCURRENCES_TABLE_NAME = 'MULTIMEDIA_HAS_OCCURRENCES';
 
     protected $institutionCode;
     protected $collectionCode;
@@ -44,7 +45,8 @@ class DiffManager
         'Localisation',
         'Recolte',
         'Stratigraphy',
-        'Taxon'
+        'Taxon',
+        'Multimedia'
     ];
 
     protected $recolnat_alias;
@@ -235,7 +237,8 @@ class DiffManager
                 break;
             case 'AppBundle:Localisation':
                 $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME);
-                $recolteTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataRecolte->getTableName();
+                $recolteTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'
+                    .$metadataRecolte->getTableName();
                 $fromClause = ' FROM %s '.$alias
                     .' INNER JOIN '.$recolteTableName.' ON '.$recolteTableName.'.LOCATIONID = '.$alias.'.LOCATIONID'
                     .' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
@@ -254,11 +257,22 @@ class DiffManager
                 break;
             case 'AppBundle:Taxon':
                 $metadataDetermination = $this->em->getMetadataFactory()->getMetadataFor(self::DETERMINATION_CLASSNAME);
-                $determinationTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataDetermination->getTableName();
+                $determinationTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'
+                    .$metadataDetermination->getTableName();
                 $fromClause = ' FROM %s '.$alias
                     .' INNER JOIN '.$determinationTableName.' ON '.$determinationTableName.'.TAXONID = '.$alias.'.TAXONID'
                     .' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
                     .$determinationTableName.'.OCCURRENCEID AND '
+                    .$this->getJoinCodeSpecimen();
+                break;
+            case 'AppBundle:Multimedia':
+                $multimediaHasOccurrencesTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias)
+                    .'.'.self::MULTIMEDIA_HAS_OCCURRENCES_TABLE_NAME;
+                $fromClause = ' FROM %s '.$alias
+                    .' INNER JOIN '.$multimediaHasOccurrencesTableName.' ON '.$multimediaHasOccurrencesTableName
+                    .'.MULTIMEDIAID = '.$alias.'.MULTIMEDIAID'
+                    .' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
+                    .$multimediaHasOccurrencesTableName.'.OCCURRENCEID AND '
                     .$this->getJoinCodeSpecimen();
                 break;
         }

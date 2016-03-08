@@ -114,7 +114,7 @@ class ExportManager
 
             $doReload = false;
             $path = $this->diffHandler->getChoices()->getPathname();
-            if ($this->diffHandler->getDiffs()->generateDiff) {
+            if ($this->diffHandler->getDiffs()->searchDiffs) {
                 $results = $this->launchDiffProcess();
             } else {
                 $results = $this->diffHandler->getDiffs()->getData();
@@ -155,7 +155,7 @@ class ExportManager
                 'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
             ]);
         $this->diffHandler->getDiffs()->save($data);
-        $this->diffHandler->getDiffs()->generateDiff = false;
+        $this->diffHandler->getDiffs()->searchDiffs = false;
         return $data;
     }
 

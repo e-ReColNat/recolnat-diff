@@ -33,9 +33,13 @@
                         {% endif %}
                     </td>
                     <td class="nbDiffs">
-                        <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}">
-                            {{ detailedStats.diffs }}
-                        </a>
+                        {% if detailedStats.diffs > 0 %}
+                            <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'institutionCode':institutionCode, 'selectedClassName' : className|lower}) }}">
+                                {{ detailedStats.diffs }}
+                            </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                     <td class="nbTodos">
                         {% set nbTodos = attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs %}
