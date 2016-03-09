@@ -193,6 +193,7 @@
                             beforeSend: function () {
                                 modalSpinner.find('.modal-body h4').remove();
                                 modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
+                                modalPrefs.modal('hide');
                             }
                         })
                         .success(function (data) {
