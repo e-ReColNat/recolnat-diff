@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 
@@ -25,12 +26,23 @@ class MultimediaRepository extends RecolnatRepositoryAbstract
      */
     public function findOneByIdToArray($id)
     {
-
         return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
     }
 
+
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('m')
+            ->from('AppBundle\Entity\Multimedia', 'm')
+            ->join('AppBundle\Entity\Specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
+
+
     /**
-     * @param array $specimenCodes
+     * @param array $specimenCodesdiff
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)

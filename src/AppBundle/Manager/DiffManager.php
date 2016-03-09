@@ -7,6 +7,7 @@ use AppBundle\Entity\Repository\RecolnatRepositoryAbstract;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Description of DiffManager
@@ -53,6 +54,8 @@ class DiffManager
     protected $recolnat_alias;
     protected $recolnat_diff_alias;
 
+    protected $exportDirPath;
+
     /**
      * DiffManager constructor.
      * @param ManagerRegistry $managerRegistry
@@ -74,23 +77,31 @@ class DiffManager
      * @param Collection $collection
      * @return array
      */
-    public function init(Collection $collection)
+    public function init(Collection $collection, $exportDirPath)
     {
         $this->collection = $collection;
-        $diffs = $this->getAllDiff();
-        return $diffs;
+        $this->exportDirPath = $exportDirPath;
+        $this->createDir();
     }
 
+    public function createDir()
+    {
+        $fs = new Filesystem();
+
+        if (!$fs->exists($this->exportDirPath)) {
+            $fs->mkdir($this->exportDirPath, 0777);
+        }
+    }
     /**
      * @return array
      */
-    private function getAllDiff()
+    public function searchDiffs()
     {
-        $results = [];
+        $diffs = [];
         foreach ($this->entitiesName as $entityName) {
-            $results[$entityName] = $this->getDiff($entityName);
+            $diffs[$entityName] = $this->getDiff($entityName);
         }
-        return $results;
+        return $diffs;
     }
 
     /**
@@ -226,17 +237,17 @@ class DiffManager
         $specimenTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'.$metadataSpecimen->getTableName();
 
         $fromClause = '';
-        switch ($fullClassName) {
-            case 'AppBundle:Specimen':
+        switch (str_replace(RecolnatRepositoryAbstract::ENTITY_PREFIX, '', $fullClassName)) {
+            case 'Specimen':
                 $fromClause = ' FROM %s '.$alias.' WHERE '.$this->getJoinCodeSpecimen($alias);
                 break;
-            case 'AppBundle:Bibliography':
-            case 'AppBundle:Determination':
+            case 'Bibliography':
+            case 'Determination':
                 $fromClause = ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.OCCURRENCEID = '
                     .$alias.'.OCCURRENCEID AND '
                     .$this->getJoinCodeSpecimen();
                 break;
-            case 'AppBundle:Localisation':
+            case 'Localisation':
                 $metadataRecolte = $this->em->getMetadataFactory()->getMetadataFor(self::RECOLTE_CLASSNAME);
                 $recolteTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'
                     .$metadataRecolte->getTableName();
@@ -246,17 +257,17 @@ class DiffManager
                     .$recolteTableName.'.EVENTID AND '
                     .$this->getJoinCodeSpecimen();
                 break;
-            case 'AppBundle:Recolte':
+            case 'Recolte':
                 $fromClause = ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.EVENTID = '
                     .$alias.'.EVENTID AND '
                     .$this->getJoinCodeSpecimen();
                 break;
-            case 'AppBundle:Stratigraphy':
+            case 'Stratigraphy':
                 $fromClause = ' FROM %s '.$alias.' INNER JOIN '.$specimenTableName.' s ON s.GEOLOGICALCONTEXTID = '
                     .$alias.'.GEOLOGICALCONTEXTID AND '
                     .$this->getJoinCodeSpecimen();
                 break;
-            case 'AppBundle:Taxon':
+            case 'Taxon':
                 $metadataDetermination = $this->em->getMetadataFactory()->getMetadataFor(self::DETERMINATION_CLASSNAME);
                 $determinationTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias).'.'
                     .$metadataDetermination->getTableName();
@@ -266,7 +277,7 @@ class DiffManager
                     .$determinationTableName.'.OCCURRENCEID AND '
                     .$this->getJoinCodeSpecimen();
                 break;
-            case 'AppBundle:Multimedia':
+            case 'Multimedia':
                 $multimediaHasOccurrencesTableName = ($institution === true ? $this->recolnat_diff_alias : $this->recolnat_alias)
                     .'.'.self::MULTIMEDIA_HAS_OCCURRENCES_TABLE_NAME;
                 $fromClause = ' FROM %s '.$alias
@@ -322,7 +333,7 @@ class DiffManager
      */
     private function getFullClassName($class)
     {
-        return 'AppBundle:'.ucfirst(strtolower($class));
+        return RecolnatRepositoryAbstract::ENTITY_PREFIX.ucfirst(strtolower($class));
     }
 
     /**
@@ -363,7 +374,12 @@ class DiffManager
             $id = $repository->getQueryBuilderFindByCollection($collection)
                 ->orderBy('RAND()')
                 ->setMaxResults(1)
-                ->getQuery()->getArrayResult();
+                ->getQuery()->getSingleScalarResult();
+
+            if ($repository->hasRawId(str_replace($repository::ENTITY_PREFIX, '', $randomClassName))) {
+                $id=bin2hex($id);
+            }
+
 
             if (!is_null($id)) {
                 $fields = $metadata->getFieldNames();

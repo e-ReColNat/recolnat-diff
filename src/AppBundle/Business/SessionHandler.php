@@ -14,6 +14,8 @@ class SessionHandler
     /** @var  GenericEntityManager */
     protected $genericEntityManager;
 
+    protected $collectionCode;
+
     public function __construct(Session $sessionManager, GenericEntityManager $genericEntityManager, array $data)
     {
         $this->sessionManager = $sessionManager;
@@ -27,10 +29,24 @@ class SessionHandler
         $this->sessionManager->set('specimensCode', $this->getSpecimensCode());
     }
 
-    public function mustReload($collectionCode)
+    public function init(DiffHandler $diffHandler, $collectionCode)
+    {
+        $this->collectionCode = $collectionCode;
+        $doReload = $this->mustReload();
+        if ($doReload) {
+            $this->set('choices', $this->diffHandler->getChoices()->getContent());
+        } else {
+            $this->set('file', $this->collectionCode);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function mustReload()
     {
         $doReload = false;
-        if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $collectionCode)) {
+        if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $this->collectionCode)) {
             $doReload = true;
         }
         if (!($this->sessionManager->has('choices')) || empty($this->sessionManager->get('choices'))) {
@@ -38,6 +54,25 @@ class SessionHandler
         }
         return $doReload;
     }
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    public function set($name, $value)
+    {
+        $this->sessionManager->set($name, $value);
+    }
+
+    /**
+     * @param string $name
+     * @param null   $default
+     */
+    public function get($name, $default = null)
+    {
+        $this->sessionManager->get($name, $default);
+    }
+
     /**
      * @return array
      */

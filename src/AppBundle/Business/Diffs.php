@@ -9,13 +9,14 @@ class Diffs extends \SplFileObject
 {
     public $searchDiffs;
 
+    const DIFF_FILENAME = '/diffs.json';
     /**
      * @param string $dirPath
      */
     public function __construct($dirPath)
     {
         $this->searchDiffs = false;
-        $path = $dirPath.'/diffs.json';
+        $path = $dirPath.self::DIFF_FILENAME;
         if (!is_file($path)) {
             $this->searchDiffs = true;
         }

@@ -122,35 +122,25 @@ class ExportManager
         $this->user->init($this->institutionCode);
 
         if (!is_null($collectionCode)) {
-            $fs = new Filesystem();
 
-            if (!$fs->exists($this->getExportDirPath())) {
-                $fs->mkdir($this->getExportDirPath(), 0755);
-            }
-            chmod($this->getExportDirPath(), 0777);
+            $this->diffManager->init($this->collection, $this->getExportDirPath());
+            $this->diffManager->createDir();
 
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collectionCode);
-
-            $path = $this->diffHandler->getChoices()->getPathname();
-
-            $this->launchDiffProcess();
-            $doReload = $this->sessionHandler->mustReload($this->collectionCode);
-            if ($doReload && $fs->exists($path)) {
-                $this->sessionManager->set('choices', $this->diffHandler->getChoices()->getContent());
-            } else {
-                $this->sessionManager->set('file', $this->collectionCode);
-            }
+            $data = $this->launchDiffProcess();
+            $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
+            $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
         }
         return $this;
     }
 
     /**
-     * @return void
+     * @return array
      */
     public function launchDiffProcess()
     {
         if ($this->diffHandler->getDiffs()->searchDiffs) {
-            $diffs = $this->diffManager->init($this->collection);
+            $diffs = $this->diffManager->searchDiffs();
             $diffComputer = $this->diffComputer->init($diffs);
             $data = array_merge($diffComputer->getDiffs(),
                 [
@@ -163,7 +153,7 @@ class ExportManager
         } else {
             $data = $this->diffHandler->getDiffs()->getData();
         }
-        $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
+        return $data;
     }
 
     /**
@@ -313,14 +303,6 @@ class ExportManager
     public function getSessionHandler()
     {
         return $this->sessionHandler;
-    }
-
-    /**
-     * @return void
-     */
-    public function saveChoices()
-    {
-        $this->diffHandler->getChoices()->save($this->getSessionHandler()->getChoices());
     }
 
     /**

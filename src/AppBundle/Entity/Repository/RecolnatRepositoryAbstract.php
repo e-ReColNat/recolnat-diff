@@ -5,7 +5,6 @@ use AppBundle\Entity\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
-use mageekguy\atoum\stubs\asserters\boolean;
 
 /**
  * Description of RecolnatRepository
@@ -177,7 +176,7 @@ abstract class RecolnatRepositoryAbstract extends EntityRepository
      * @param $className
      * @return boolean
      */
-    private function hasRawId($className)
+    public function hasRawId($className)
     {
         $rawId = self::ENTITY_DESCR[strtolower($className)]['rawid'];
         return $rawId;

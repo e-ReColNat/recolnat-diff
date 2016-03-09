@@ -103,14 +103,12 @@ class BackendController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $exportManager->setChoices($choices);
-        $exportManager->saveChoices();
 
         $response = new JsonResponse();
         $response->setData(['choices' => $exportManager->sessionHandler->getChoices()]);
 
         $this->setFlashMessageForChoices($choices);
-        //return $response;
-        return $this->render('@App/Front/generateDiff.html.twig');
+        return $response;
     }
 
     /**
