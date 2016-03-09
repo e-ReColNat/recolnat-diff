@@ -220,18 +220,6 @@ class ExportManager
     }
 
     /**
-     * @return array
-     */
-    public function getSpecimensCode()
-    {
-        $stats = $this->sessionManager->get('diffs');
-        if (is_array($stats['datas'])) {
-            return array_keys($stats['datas']);
-        }
-        return [];
-    }
-
-    /**
      * @param Request $request
      * @return int
      */
