@@ -70,7 +70,7 @@ class StatsManager
      */
     public function getStatsChoices()
     {
-        $choices = $this->exportManager->getChoicesForDisplay();
+        $choices = $this->exportManager->getSessionHandler()->getChoicesForDisplay();
 
         $statsChoices = [];
         $callbackCountChoices = function($value, $className) use (&$statsChoices) {

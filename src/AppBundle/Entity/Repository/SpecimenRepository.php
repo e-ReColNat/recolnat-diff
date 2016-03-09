@@ -42,34 +42,13 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
 
     /**
      * @param array $id
+     * @param int   $fetchMode
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneById($id)
+    public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('s')
-            ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
-            ->where('s.occurrenceid = :id')
-            ->setParameter('id', $id, 'rawid')
-            ->getQuery();
-        return $qb->getOneOrNullResult();
-    }
-
-    /**
-     * @param array  $id
-     * @param string $field
-     * @return object|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findOneFieldById($id, $field)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('s.'.$field)
-            ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
-            ->where('s.occurrenceid = :id')
-            ->setParameter('id', $id, 'rawid');
-        return $qb->getQuery()->getArrayResult();
+        return $this->getQueryFindOneById('specimen', $id)->getOneOrNullResult($fetchMode);
     }
 
     /**

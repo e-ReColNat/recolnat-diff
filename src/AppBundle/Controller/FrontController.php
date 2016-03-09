@@ -146,10 +146,10 @@ class FrontController extends Controller
 
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
         if ($request->get('_route') == 'choices') {
-            $specimensWithChoices = array_keys($exportManager->getChoicesBySpecimenCode());
+            $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesBySpecimenCode());
         }
         if ($request->get('_route') == 'todos') {
-            $specimensWithoutChoices = $exportManager->getChoices();
+            $specimensWithoutChoices = $exportManager->sessionHandler->getChoices();
         }
 
         $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
@@ -170,8 +170,8 @@ class FrontController extends Controller
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,
             'pagination' => $pagination,
-            'choicesFacets' => $exportManager->getChoices(),
-            'choices' => $exportManager->getChoicesForDisplay(),
+            'choicesFacets' => $exportManager->getSessionHandler()->getChoices(),
+            'choices' => $exportManager->getSessionHandler()->getChoicesForDisplay(),
             'maxItemPerPage' => $maxItemPerPage,
             'selectedClassName' => $selectedClassName,
             'type' => $request->get('_route'),
@@ -254,8 +254,8 @@ class FrontController extends Controller
             'diffs' => $diffs,
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,
-            'choicesFacets' => $exportManager->getChoices(),
-            'choices' => $exportManager->getChoicesForDisplay(),
+            'choicesFacets' => $exportManager->getSessionHandler()->getChoices(),
+            'choices' => $exportManager->getSessionHandler()->getChoicesForDisplay(),
             'specimensCode' => $specimensCode,
         ));
     }

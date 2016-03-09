@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use mageekguy\atoum\stubs\asserters\boolean;
 
 /**
  * Description of RecolnatRepository
@@ -12,6 +13,18 @@ use Doctrine\ORM\QueryBuilder;
  */
 abstract class RecolnatRepositoryAbstract extends EntityRepository
 {
+    const ENTITY_DESCR = [
+        'bibliography' => ['rawid' => true, 'identifier' => 'referenceid'],
+        'determination' => ['rawid' => true, 'identifier' => 'identificationid'],
+        'localisation' => ['rawid' => false, 'identifier' => 'locationid'],
+        'multimedia' => ['rawid' => true, 'identifier' => 'multimediaid'],
+        'recolte' => ['rawid' => true, 'identifier' => 'eventid'],
+        'specimen' => ['rawid' => true, 'identifier' => 'occurrenceid'],
+        'stratigraphy' => ['rawid' => false, 'identifier' => 'geologicalcontextid'],
+        'taxon' => ['rawid' => true, 'identifier' => 'taxonid'],
+    ];
+    const ENTITY_PREFIX = 'AppBundle\\Entity\\';
+
     /**
      *
      * @param array $specimenCodes
@@ -101,6 +114,46 @@ abstract class RecolnatRepositoryAbstract extends EntityRepository
     }
 
     /**
+     * @param $id
+     * @return \Doctrine\ORM\Query
+     */
+    public function getQueryFindOneById($className, $id)
+    {
+        return $this->getQbFindOneById($className, $id)
+            ->select('a')
+            ->getQuery();
+    }
+
+    /**
+     * @param string $className
+     * @param string $id
+     * @return QueryBuilder
+     */
+    private function getQbFindOneById($className, $id) {
+        $rawId = $this->hasRawId($className);
+        $identifierName = $this->getIdentifierName($className);
+
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->from(self::ENTITY_PREFIX.ucfirst($className), 'a')
+            ->where('a.'.$identifierName.' = :id')
+            ->setParameter('id', $id, $rawId ? 'rawid' : null);
+
+        return $qb;
+    }
+    /**
+     * @param string $className
+     * @param string $id
+     * @param string $field
+     * @return mixed
+     */
+    public function findOneFieldById($className, $id, $field)
+    {
+        return $this->getQbFindOneById($className, $id)
+            ->select('a.'.$field)
+            ->getQuery()->getSingleScalarResult();
+    }
+
+    /**
      * @param array $datas
      * @return QueryBuilder
      */
@@ -112,5 +165,25 @@ abstract class RecolnatRepositoryAbstract extends EntityRepository
             $qb->set('a.'.$field, $qb->expr()->literal($value));
         }
         return $qb;
+    }
+
+    /**
+     * @param $className
+     * @return boolean
+     */
+    private function hasRawId($className)
+    {
+        $rawId = self::ENTITY_DESCR[strtolower($className)]['rawid'];
+        return $rawId;
+    }
+
+    /**
+     * @param $className
+     * @return string
+     */
+    private function getIdentifierName($className)
+    {
+        $identifierName = self::ENTITY_DESCR[strtolower($className)]['identifier'];
+        return $identifierName;
     }
 }
