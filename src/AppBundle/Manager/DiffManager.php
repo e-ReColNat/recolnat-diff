@@ -75,6 +75,7 @@ class DiffManager
 
     /**
      * @param Collection $collection
+     * @param string     $exportDirPath
      * @return array
      */
     public function init(Collection $collection, $exportDirPath)
@@ -84,7 +85,7 @@ class DiffManager
         $this->createDir();
     }
 
-    public function createDir()
+    private function createDir()
     {
         $fs = new Filesystem();
 
@@ -92,6 +93,7 @@ class DiffManager
             $fs->mkdir($this->exportDirPath, 0777);
         }
     }
+
     /**
      * @return array
      */
@@ -377,7 +379,7 @@ class DiffManager
                 ->getQuery()->getSingleScalarResult();
 
             if ($repository->hasRawId(str_replace($repository::ENTITY_PREFIX, '', $randomClassName))) {
-                $id=bin2hex($id);
+                $id = bin2hex($id);
             }
 
 

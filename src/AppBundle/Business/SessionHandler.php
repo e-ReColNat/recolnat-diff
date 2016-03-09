@@ -14,8 +14,15 @@ class SessionHandler
     /** @var  GenericEntityManager */
     protected $genericEntityManager;
 
+    /** @var  string */
     protected $collectionCode;
 
+    /**
+     * SessionHandler constructor.
+     * @param Session              $sessionManager
+     * @param GenericEntityManager $genericEntityManager
+     * @param array                $data
+     */
     public function __construct(Session $sessionManager, GenericEntityManager $genericEntityManager, array $data)
     {
         $this->sessionManager = $sessionManager;
@@ -29,6 +36,10 @@ class SessionHandler
         $this->sessionManager->set('specimensCode', $this->getSpecimensCode());
     }
 
+    /**
+     * @param DiffHandler $diffHandler
+     * @param string      $collectionCode
+     */
     public function init(DiffHandler $diffHandler, $collectionCode)
     {
         $this->collectionCode = $collectionCode;

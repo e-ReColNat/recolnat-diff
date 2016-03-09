@@ -42,7 +42,7 @@ class MultimediaRepository extends RecolnatRepositoryAbstract
 
 
     /**
-     * @param array $specimenCodesdiff
+     * @param array $specimenCodes
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes)

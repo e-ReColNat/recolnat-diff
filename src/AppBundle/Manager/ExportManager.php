@@ -2,11 +2,11 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Business\Exporter\AbstractExporter;
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\SessionHandler;
 use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Business\DiffHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -124,7 +124,6 @@ class ExportManager
         if (!is_null($collectionCode)) {
 
             $this->diffManager->init($this->collection, $this->getExportDirPath());
-            $this->diffManager->createDir();
 
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collectionCode);
             $data = $this->launchDiffProcess();
@@ -157,15 +156,15 @@ class ExportManager
     }
 
     /**
-     *
      * @return DiffHandler
+     * @throws \Exception
      */
     public function getDiffHandler()
     {
         if ($this->diffHandler instanceof DiffHandler) {
             return $this->diffHandler;
         }
-        return null;
+        throw new \Exception('DiffHandler has not been initialized');
     }
 
     /**
@@ -386,18 +385,24 @@ class ExportManager
      * @param string      $type
      * @param ExportPrefs $exportPrefs
      * @return \ArrayObject|string
+     * @throws \Exception
      */
     public function export($type, ExportPrefs $exportPrefs)
     {
+        $exporter = null;
         $datasWithChoices = $this->prepareExport($exportPrefs);
         switch ($type) {
-            case 'dwc' :
+            case 'dwc':
                 $exporter = new DwcExporter($datasWithChoices, $this->getExportDirPath());
                 break;
-            case 'csv' :
+            case 'csv':
                 $exporter = new CsvExporter($datasWithChoices, $this->getExportDirPath());
         }
-        return $exporter->generate($this->user->getPrefs());
+        if ($exporter instanceof AbstractExporter) {
+            return $exporter->generate($this->user->getPrefs());
+        } else {
+            throw new \Exception(sprintf('exporter %s has not been found', $type));
+        }
     }
 
     /**
