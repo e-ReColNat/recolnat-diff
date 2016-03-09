@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManager;
  */
 class DiffLocalisation extends DiffAbstract
 {
+    public $excludeFieldsName = ['sourcefileid'];
+
     protected function getIdSetter()
     {
         return 'getLocationid';

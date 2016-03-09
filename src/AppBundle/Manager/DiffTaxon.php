@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityManager;
 
 class DiffTaxon extends DiffAbstract
 {
-    public $excludeFieldsName = ['created', 'modified'];
+    public $excludeFieldsName = ['created', 'modified', 'sourcefileid', 'dwcataxonid'];
 
     protected function getIdSetter()
     {
