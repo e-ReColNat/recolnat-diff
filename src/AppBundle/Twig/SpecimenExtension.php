@@ -65,7 +65,6 @@ class SpecimenExtension extends \Twig_Extension
     ) {
         $value = $this->getFieldToString($entity, $fieldName);
         if ($printIfNull || !is_null($value)) {
-            //$label = sprintf('label.%s.fields.%s', $typeEntity, $fieldName);
             $label = $this->getFieldLabel($typeEntity, $fieldName);
             return sprintf('%s  : <span>%s</span>%s', $this->translator->trans($label, $transParams, 'entity'), $value,
                 $endString);
