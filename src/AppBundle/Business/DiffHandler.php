@@ -16,24 +16,41 @@ class DiffHandler
     /*
      * @var Diffs
      */
-    protected $diffs;
+    protected $diffs = null;
 
     protected $dirPath;
-    protected $filename;
+    protected $collectionCode;
 
     /**
      * DiffHandler constructor.
      * @param string $dirPath
-     * @param string $filename
+     * @param string $collectionCode
      */
-    public function __construct($dirPath, $filename)
+    public function __construct($dirPath, $collectionCode)
     {
         $this->dirPath = $dirPath;
-        $this->filename = $filename;
-        $this->setChoicesFile();
-        $this->setDiffsFile();
+        $this->collectionCode = $collectionCode;
     }
 
+    /**
+     * @param array $diffs
+     */
+    public function saveDiffs(array $diffs)
+    {
+        $this->setDiffsFile();
+        $this->getDiffs()->save($diffs);
+    }
+
+    /**
+     * @return bool
+     */
+    public function searchDiffs()
+    {
+        if (!is_file($this->getPath().'/'.Diffs::DIFF_FILENAME)) {
+            return true;
+        }
+        return false;
+    }
     /**
      * Renvoie le timestamp de date de création ou presque ...
      * @return int
@@ -55,9 +72,9 @@ class DiffHandler
     /**
      * @return string
      */
-    public function getFilename()
+    public function getCollectionCode()
     {
-        return $this->filename;
+        return $this->collectionCode;
     }
 
     /**
@@ -73,7 +90,7 @@ class DiffHandler
      */
     public function getPath()
     {
-        return realpath($this->dirPath.'/'.$this->filename);
+        return realpath($this->dirPath.'/'.$this->collectionCode);
     }
 
     /**
@@ -82,6 +99,9 @@ class DiffHandler
      */
     public function getChoices()
     {
+        if (is_null($this->choicesFile)) {
+            $this->setChoicesFile();
+        }
         return $this->choicesFile;
     }
 
@@ -91,6 +111,9 @@ class DiffHandler
      */
     public function getDiffs()
     {
+        if (is_null($this->diffs)) {
+            $this->setDiffsFile();
+        }
         return $this->diffs;
     }
 

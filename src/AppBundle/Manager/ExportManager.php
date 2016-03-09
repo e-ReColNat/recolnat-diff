@@ -138,7 +138,7 @@ class ExportManager
      */
     public function launchDiffProcess()
     {
-        if ($this->diffHandler->getDiffs()->searchDiffs) {
+        if ($this->getDiffHandler()->searchDiffs()) {
             $diffs = $this->diffManager->searchDiffs();
             $diffComputer = $this->diffComputer->init($diffs);
             $data = array_merge($diffComputer->getDiffs(),
@@ -147,10 +147,10 @@ class ExportManager
                     'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
                     'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
                 ]);
-            $this->diffHandler->getDiffs()->save($data);
-            $this->diffHandler->getDiffs()->searchDiffs = false;
+            $this->getDiffHandler()->saveDiffs($data);
+            $this->getDiffHandler()->getDiffs()->searchDiffs = false;
         } else {
-            $data = $this->diffHandler->getDiffs()->getData();
+            $data = $this->getDiffHandler()->getDiffs()->getData();
         }
         return $data;
     }
