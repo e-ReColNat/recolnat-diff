@@ -307,12 +307,13 @@ class ExportManager
         $this->diffHandler->getChoices()->save($sessionChoices);
     }
 
+    /**
+     * @return SessionHandler
+     */
     public function getSessionHandler()
     {
         return $this->sessionHandler;
     }
-
-
 
     /**
      * @return void
@@ -399,29 +400,22 @@ class ExportManager
         return $datasWithChoices;
     }
 
-
     /**
+     * @param string      $type
      * @param ExportPrefs $exportPrefs
-     * @return string
+     * @return \ArrayObject|string
      */
-    public function getCsv(ExportPrefs $exportPrefs)
+    public function export($type, ExportPrefs $exportPrefs)
     {
         $datasWithChoices = $this->prepareExport($exportPrefs);
-        $csvExporter = new CsvExporter($datasWithChoices, $this->getExportDirPath());
-
-        return $csvExporter->generate($this->user->getPrefs());
-    }
-
-    /**
-     * @param ExportPrefs $exportPrefs
-     * @return string
-     */
-    public function getDwc(ExportPrefs $exportPrefs)
-    {
-        $datasWithChoices = $this->prepareExport($exportPrefs);
-        $dwcExporter = new DwcExporter($datasWithChoices, $this->getExportDirPath());
-
-        return $dwcExporter->generate($this->user->getPrefs());
+        switch ($type) {
+            case 'dwc' :
+                $exporter = new DwcExporter($datasWithChoices, $this->getExportDirPath());
+                break;
+            case 'csv' :
+                $exporter = new CsvExporter($datasWithChoices, $this->getExportDirPath());
+        }
+        return $exporter->generate($this->user->getPrefs());
     }
 
     /**

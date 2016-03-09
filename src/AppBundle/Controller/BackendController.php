@@ -37,10 +37,10 @@ class BackendController extends Controller
         $file = null;
         switch ($type) {
             case 'dwc':
-                $file = $exportManager->getDwc($exportPrefs);
+                $file = $exportManager->export('dwc', $exportPrefs);
                 break;
             case 'csv':
-                $file = $exportManager->getCsv($exportPrefs);
+                $file = $exportManager->export('csv', $exportPrefs);
                 break;
         }
         if (!is_null($file)) {
