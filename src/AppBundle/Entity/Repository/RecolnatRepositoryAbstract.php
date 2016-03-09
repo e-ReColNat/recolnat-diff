@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -34,6 +35,11 @@ abstract class RecolnatRepositoryAbstract extends EntityRepository
 
     abstract public function findBySpecimenCodeUnordered($specimenCodes);
 
+    /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    abstract public function getQueryBuilderFindByCollection(Collection $collection);
     /**
      *
      * @param array $ids

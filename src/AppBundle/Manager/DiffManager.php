@@ -3,6 +3,7 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\RecolnatRepositoryAbstract;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -353,6 +354,7 @@ class DiffManager
 
             $randomClassName = $this->getFullClassName($this->entitiesName[array_rand($this->entitiesName, 1)]);
             $metadata = $this->em->getMetadataFactory()->getMetadataFor($randomClassName);
+            /** @var RecolnatRepositoryAbstract $repository */
             $repository = $this->em->getRepository($randomClassName);
             $identifier = $metadata->getIdentifierFieldNames() [0];
 
