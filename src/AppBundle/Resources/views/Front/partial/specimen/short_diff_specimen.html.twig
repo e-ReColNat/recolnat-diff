@@ -40,7 +40,9 @@
             
             {% for fieldName, datas in details.fields %}
                     <tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
-                        <td>{{ ('label.'~className|lower~'.fields.'~fieldName)|trans({},'entity') }}</td>
+                        <td>
+                            {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
+                        </td>
                         <td>
                             {{ fieldToString(relationRecolnat, fieldName)}}
                         </td>

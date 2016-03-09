@@ -42,6 +42,7 @@ class SpecimenExtension extends \Twig_Extension
             new \Twig_SimpleFunction('fieldToString', array($this, 'getFieldToString')),
             new \Twig_SimpleFunction('getTaxon', array($this, 'getTaxon')),
             new \Twig_SimpleFunction('printLabelAndField', array($this, 'printLabelAndField')),
+            new \Twig_SimpleFunction('getFieldLabel', array($this, 'getFieldLabel')),
         );
     }
 
@@ -64,7 +65,8 @@ class SpecimenExtension extends \Twig_Extension
     ) {
         $value = $this->getFieldToString($entity, $fieldName);
         if ($printIfNull || !is_null($value)) {
-            $label = sprintf('label.%s.fields.%s', $typeEntity, $fieldName);
+            //$label = sprintf('label.%s.fields.%s', $typeEntity, $fieldName);
+            $label = $this->getFieldLabel($typeEntity, $fieldName);
             return sprintf('%s  : <span>%s</span>%s', $this->translator->trans($label, $transParams, 'entity'), $value,
                 $endString);
         }
@@ -190,6 +192,19 @@ class SpecimenExtension extends \Twig_Extension
         } else {
             return sprintf('%s %s', $determination->getIdentifiedby(), $determination->getIdentificationverifstatus());
         }
+    }
+
+    /**
+     * @param string $entity
+     * @param string $fieldname
+     * @return string
+     */
+    public function getFieldLabel($entity, $fieldname)
+    {
+        if ($fieldname[strlen($fieldname) - 1] == '_') {
+            $fieldname = substr($fieldname, 0, -1);
+        }
+        return sprintf('label.%s.fields.%s', strtolower($entity), strtolower($fieldname));
     }
 
     /**
