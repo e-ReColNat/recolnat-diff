@@ -106,7 +106,7 @@ class BackendController extends Controller
         $exportManager->saveChoices();
 
         $response = new JsonResponse();
-        $response->setData(['choices' => $exportManager->getChoices()]);
+        $response->setData(['choices' => $exportManager->sessionHandler->getChoices()]);
 
         $this->setFlashMessageForChoices($choices);
         //return $response;
@@ -137,10 +137,10 @@ class BackendController extends Controller
 
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
         if ($type == 'choices') {
-            $specimensWithChoices = array_keys($exportManager->getChoicesBySpecimenCode());
+            $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesBySpecimenCode());
         }
         if ($type == 'todo') {
-            $specimensWithoutChoices = $exportManager->getChoices();
+            $specimensWithoutChoices = $exportManager->getSessionHandler()->getChoices();
         }
         if (!is_null($institutionCode) && !is_null($inputOrigin) && !is_null($inputSpecimens)) {
             $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
@@ -193,7 +193,7 @@ class BackendController extends Controller
 
         $response = new JsonResponse();
         $this->setFlashMessageForChoices($choices);
-        $response->setData(['choices' => $exportManager->getChoices()]);
+        $response->setData(['choices' => $exportManager->getSessionHandler()->getChoices()]);
 
         return $response;
     }

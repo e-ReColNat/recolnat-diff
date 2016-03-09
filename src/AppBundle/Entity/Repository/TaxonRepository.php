@@ -51,7 +51,7 @@ class TaxonRepository extends RecolnatRepositoryAbstract
      */
     public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        return $this->getQueryFindOneById($id)->getOneOrNullResult($fetchMode);
+        return $this->getQueryFindOneById('taxon', $id)->getOneOrNullResult($fetchMode);
     }
 
     /**
@@ -61,36 +61,6 @@ class TaxonRepository extends RecolnatRepositoryAbstract
     public function findOneByIdToArray($id)
     {
         return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
-    }
-
-    /**
-     * @param array  $id
-     * @param string $field
-     * @return object|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findOneFieldById($id, $field)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('t.'.$field)
-            ->from('AppBundle\Entity\Taxon', 't')
-            ->where('t.taxonid = :id')
-            ->setParameter('id', $id, 'rawid');
-        return $qb->getQuery()->getArrayResult();
-    }
-
-    /**
-     * @param $id
-     * @return \Doctrine\ORM\Query
-     */
-    private function getQueryFindOneById($id)
-    {
-        return $this->getEntityManager()->createQueryBuilder()
-            ->select('t')
-            ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
-            ->where('t.taxonid = :id')
-            ->setParameter('id', $id, 'rawid')
-            ->getQuery();
     }
 
     /**

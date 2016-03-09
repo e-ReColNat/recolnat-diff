@@ -23,7 +23,6 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
             ->from('AppBundle\Entity\Localisation', 'l')
             ->join('l.recoltes', 'r')
             ->join('r.specimen', 's', 'WITH', 's.collection = :collection')
-
             ->setParameter('collection', $collection->getCollectionid());
     }
 
@@ -43,15 +42,15 @@ class LocalisationRepository extends RecolnatRepositoryAbstract
         return $query->getResult();
     }
 
-    public function findOneById($id)
+    /**
+     * @param array $id
+     * @param int   $fetchMode
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        $query = $this->getEntityManager()->createQueryBuilder()
-            ->select('l')
-            ->from('AppBundle\Entity\Localisation', 'l', 'l.locationid')
-            ->where('l.locationid = :id')
-            ->setParameter('id', $id)
-            ->getQuery();
-        return $query->getOneOrNullResult();
+        return $this->getQueryFindOneById('localisation', $id)->getOneOrNullResult($fetchMode);
     }
 
     /**

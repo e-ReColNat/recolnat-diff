@@ -51,7 +51,7 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
      */
     public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        return $this->getQueryFindOneById($id)->getOneOrNullResult($fetchMode);
+        return $this->getQueryFindOneById('bibliography', $id)->getOneOrNullResult($fetchMode);
     }
 
     /**
@@ -62,20 +62,6 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
     {
 
         return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
-    }
-
-    /**
-     * @param $id
-     * @return \Doctrine\ORM\Query
-     */
-    private function getQueryFindOneById($id)
-    {
-        return $this->getEntityManager()->createQueryBuilder()
-            ->select('b')
-            ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
-            ->where('b.referenceid = :id')
-            ->setParameter('id', $id, 'rawid')
-            ->getQuery();
     }
 
     /**
@@ -110,12 +96,13 @@ class BibliographyRepository extends RecolnatRepositoryAbstract
     }
 
     /**
-     * @param array $datas
+     * @param array  $datas
      * @param string $id
      * @return mixed
      */
-    public function update(array $datas, $id) {
-        $qb = $this->createUpdateQuery($datas) ;
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
 
         $qb->where('a.referenceid = HEXTORAW(:id)')
             ->setParameter('id', $id);

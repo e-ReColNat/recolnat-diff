@@ -35,31 +35,15 @@ class RecolteRepository extends RecolnatRepositoryAbstract
         return $qb->getQuery()->getResult();
     }
 
-    public function findOneById($id)
-    {
-        $query = $this->getEntityManager()->createQueryBuilder()
-            ->select('r')
-            ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
-            ->where('r.eventid = :id')
-            ->setParameter('id', $id, 'rawid')
-            ->getQuery();
-        return $query->getOneOrNullResult();
-    }
-
     /**
-     * @param array  $id
-     * @param string $field
-     * @return object|null
+     * @param array $id
+     * @param int   $fetchMode
+     * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneFieldById($id, $field)
+    public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('r.'.$field)
-            ->from('AppBundle\Entity\Recolte', 'r')
-            ->where('r.eventid = :id')
-            ->setParameter('id', $id, 'rawid');
-        return $qb->getQuery()->getArrayResult();
+        return $this->getQueryFindOneById('recolte', $id)->getOneOrNullResult($fetchMode);
     }
 
     /**
