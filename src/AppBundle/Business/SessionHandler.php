@@ -45,7 +45,7 @@ class SessionHandler
         $this->collectionCode = $collectionCode;
         $doReload = $this->mustReload();
         if ($doReload) {
-            $this->set('choices', $this->diffHandler->getChoices()->getContent());
+            $this->set('choices', $diffHandler->getChoices()->getContent());
         } else {
             $this->set('file', $this->collectionCode);
         }
