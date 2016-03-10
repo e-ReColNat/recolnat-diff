@@ -1,0 +1,10 @@
+{
+    "dwcDelimiter": ";",
+    "dwcEnclosure": "",
+    "dwcLineBreak": "\\n",
+    "dwcDateFormat": "d-m-Y",
+    "csvDelimiter": ";",
+    "csvEnclosure": "",
+    "csvLineBreak": "\\n",
+    "csvDateFormat": "d-m-Y"
+}

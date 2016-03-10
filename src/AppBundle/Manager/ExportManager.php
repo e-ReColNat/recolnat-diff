@@ -79,9 +79,10 @@ class ExportManager
      * @param ManagerRegistry      $managerRegistry
      * @param string               $export_path
      * @param Session              $sessionManager
-     * @param DiffComputer         $diffComputer
      * @param GenericEntityManager $genericEntityManager
      * @param DiffManager          $diffManager
+     * @param int                  $maxItemPerPage
+     * @param DiffComputer         $diffComputer
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -344,7 +345,6 @@ class ExportManager
      */
     private function getArrayDatasWithChoices($datas)
     {
-        $genericEntityManager = $this->genericEntityManager;
         $datasWithChoices = [];
         $entitiesNameWithArray = [
             'Determination',
@@ -356,7 +356,7 @@ class ExportManager
 
         foreach ($datas as $index => $specimen) {
 
-            $arraySpecimenWithEntities = $genericEntityManager->formatArraySpecimen($specimen);
+            $arraySpecimenWithEntities = $this->genericEntityManager->formatArraySpecimen($specimen);
             $datasWithChoices[$index] = $arraySpecimenWithEntities;
 
             foreach ($arraySpecimenWithEntities as $className => $row) {
@@ -417,23 +417,5 @@ class ExportManager
             $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
         return $datasWithChoices;
-    }
-
-    /**
-     *
-     * @param string $className
-     * @param string $relationId
-     * @param string $fieldName
-     * @return array
-     */
-    public function getChoice($className, $relationId, $fieldName)
-    {
-        $returnChoice = null;
-        foreach ($this->sessionHandler->getChoices() as $row) {
-            if ($row['className'] == $className && $row['relationId'] == $relationId && $row['fieldName'] == $fieldName) {
-                $returnChoice = $row['data'];
-            }
-        }
-        return $returnChoice;
     }
 }
