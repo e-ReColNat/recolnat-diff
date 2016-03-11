@@ -1,7 +1,6 @@
 <?php
 namespace AppBundle\Doctrine\Types;
 
-use AppBundle\Entity\Repository\SpecimenRepositoryRecolnatRepository;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 use Doctrine\DBAL\Types\Type;
