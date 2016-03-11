@@ -144,7 +144,7 @@ class CsvExporter extends AbstractExporter
     }
 
     /**
-     * @return \ArrayObject
+     * @return array<string,\SplFileObject>
      */
     public function getFiles()
     {

@@ -459,7 +459,7 @@ class Specimen
      */
     public function setHascoordinates($hascoordinates)
     {
-        $this->hascoordinates = $hascoordinates;
+        $this->hascoordinates = (bool) $hascoordinates;
 
         return $this;
     }
@@ -471,7 +471,7 @@ class Specimen
      */
     public function getHascoordinates()
     {
-        return $this->hascoordinates;
+        return (bool) $this->hascoordinates;
     }
 
     /**
@@ -483,7 +483,7 @@ class Specimen
      */
     public function setHasmedia($hasmedia)
     {
-        $this->hasmedia = $hasmedia;
+        $this->hasmedia = (bool) $hasmedia;
 
         return $this;
     }
@@ -495,7 +495,7 @@ class Specimen
      */
     public function getHasmedia()
     {
-        return $this->hasmedia;
+        return (bool) $this->hasmedia;
     }
 
     /**
@@ -717,7 +717,7 @@ class Specimen
     /**
      * Set collectionid
      *
-     * @param Collection $collection|null
+     * @param Collection|null $collection
      *
      * @return Specimen
      */
@@ -741,7 +741,7 @@ class Specimen
     /**
      * Set geologicalcontextid
      *
-     * @param Stratigraphy $geologicalcontextid|null
+     * @param Stratigraphy|null $geologicalcontextid
      *
      * @return Specimen
      */
@@ -765,7 +765,7 @@ class Specimen
     /**
      * Set eventid
      *
-     * @param Recolte $eventid|null
+     * @param Recolte|null $eventid
      *
      * @return Specimen
      */

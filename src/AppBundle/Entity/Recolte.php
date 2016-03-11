@@ -446,7 +446,7 @@ class Recolte
     /**
      * Set locationid
      *
-     * @param Localisation $locationid|null
+     * @param Localisation|null $locationid
      *
      * @return Recolte
      */

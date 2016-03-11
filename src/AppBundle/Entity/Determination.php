@@ -337,7 +337,7 @@ class Determination
     /**
      * Set occurrenceid
      *
-     * @param Specimen $occurrenceid|null
+     * @param Specimen|null $occurrenceid
      *
      * @return Determination
      */
@@ -361,7 +361,7 @@ class Determination
     /**
      * Set taxonid
      *
-     * @param Taxon $taxon|null
+     * @param Taxon|null $taxon
      *
      * @return Determination
      */

@@ -136,7 +136,7 @@ class Collection
     /**
      * Set institution
      *
-     * @param Institution $institution|null
+     * @param Institution|null $institution
      *
      * @return Collection
      */

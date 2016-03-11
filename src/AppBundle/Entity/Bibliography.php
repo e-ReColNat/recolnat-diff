@@ -384,7 +384,7 @@ class Bibliography
     /**
      * Set specimen
      *
-     * @param Specimen $occurrence|null
+     * @param Specimen|null $occurrence
      *
      * @return Bibliography
      */
