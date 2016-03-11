@@ -67,8 +67,7 @@ nbproject/*
 
 ### RECOLNAT SPECIFIC ###
 data/*
-src/AppBundle/Test/data/
-src/AppBundle/Test/data/*
+src/AppBundle/Tests
 !data/.gitkeep
 !bin/talend_converter
 !bin/talend_converter/*
