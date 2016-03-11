@@ -136,7 +136,7 @@ class Collection
     /**
      * Set institution
      *
-     * @param Institution $institution
+     * @param Institution $institution|null
      *
      * @return Collection
      */
@@ -150,7 +150,7 @@ class Collection
     /**
      * Get institutionid
      *
-     * @return Institution
+     * @return Institution|null
      */
     public function getInstitution()
     {

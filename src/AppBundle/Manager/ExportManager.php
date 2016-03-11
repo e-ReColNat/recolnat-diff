@@ -139,7 +139,7 @@ class ExportManager
      */
     public function launchDiffProcess()
     {
-        if ($this->getDiffHandler()->searchDiffs()) {
+        if ($this->getDiffHandler()->shouldSearchDiffs()) {
             $diffs = $this->diffManager->searchDiffs();
             $diffComputer = $this->diffComputer->init($diffs);
             $data = array_merge($diffComputer->getDiffs(),
@@ -235,7 +235,7 @@ class ExportManager
         $institutionDir = $this->user->getDataDirPath();
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && is_dir($institutionDir.$entry)) {
+                if ($entry != '.' && $entry != '..' && is_dir($institutionDir.$entry)) {
                     $returnDirs[] = new DiffHandler($institutionDir, $entry);
                 }
             }

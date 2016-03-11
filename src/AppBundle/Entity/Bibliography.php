@@ -384,7 +384,7 @@ class Bibliography
     /**
      * Set specimen
      *
-     * @param Specimen $occurrence
+     * @param Specimen $occurrence|null
      *
      * @return Bibliography
      */
@@ -398,7 +398,7 @@ class Bibliography
     /**
      * Get specimen
      *
-     * @return \AppBundle\Entity\Specimen
+     * @return \AppBundle\Entity\Specimen|null
      */
     public function getSpecimen()
     {

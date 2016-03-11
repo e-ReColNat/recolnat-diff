@@ -44,13 +44,11 @@ class DiffHandler
     /**
      * @return bool
      */
-    public function searchDiffs()
+    public function shouldSearchDiffs()
     {
-        if (!is_file($this->getPath().'/'.Diffs::DIFF_FILENAME)) {
-            return true;
-        }
-        return false;
+        return !is_file($this->getPath().'/'.Diffs::DIFF_FILENAME);
     }
+
     /**
      * Renvoie le timestamp de date de création ou presque ...
      * @return int
@@ -136,7 +134,7 @@ class DiffHandler
     }
 
     /**
-     * @param string            $db
+     * @param string|null       $db
      * @param string|array|null $selectedClassesNames
      * @return array
      */

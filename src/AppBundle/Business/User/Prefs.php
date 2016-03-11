@@ -10,14 +10,14 @@ namespace AppBundle\Business\User;
 class Prefs
 {
 
-    protected $dwcDelimiter = ";";
-    protected $dwcEnclosure = "";
+    protected $dwcDelimiter = ';';
+    protected $dwcEnclosure = '';
     protected $dwcLineBreak = "\\n";
-    protected $dwcDateFormat = "d-m-Y";
-    protected $csvDelimiter = ";";
-    protected $csvEnclosure = "";
+    protected $dwcDateFormat = 'd-m-Y';
+    protected $csvDelimiter = ';';
+    protected $csvEnclosure = '';
     protected $csvLineBreak = "\\n";
-    protected $csvDateFormat = "d-m-Y";
+    protected $csvDateFormat = 'd-m-Y';
 
     const DATE_DISPLAY_FORMAT = [
         '18/01/2016' => 'd/m/Y', 
@@ -135,14 +135,14 @@ class Prefs
     public function toArray()
     {
         return [
-            "dwcDelimiter" => $this->getDwcDelimiter(),
-            "dwcEnclosure" => $this->getDwcEnclosure(),
-            "dwcLineBreak" => $this->getDwcLineBreak(),
-            "dwcDateFormat" => $this->getDwcDateFormat(),
-            "csvDelimiter" => $this->getCsvDelimiter(),
-            "csvEnclosure" => $this->getCsvEnclosure(),
-            "csvLineBreak" => $this->getCsvLineBreak(),
-            "csvDateFormat" => $this->getCsvDateFormat(),
+            'dwcDelimiter' => $this->getDwcDelimiter(),
+            'dwcEnclosure' => $this->getDwcEnclosure(),
+            'dwcLineBreak' => $this->getDwcLineBreak(),
+            'dwcDateFormat' => $this->getDwcDateFormat(),
+            'csvDelimiter' => $this->getCsvDelimiter(),
+            'csvEnclosure' => $this->getCsvEnclosure(),
+            'csvLineBreak' => $this->getCsvLineBreak(),
+            'csvDateFormat' => $this->getCsvDateFormat(),
         ];
     }
 

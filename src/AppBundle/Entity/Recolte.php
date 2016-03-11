@@ -446,7 +446,7 @@ class Recolte
     /**
      * Set locationid
      *
-     * @param Localisation $locationid
+     * @param Localisation $locationid|null
      *
      * @return Recolte
      */
@@ -460,7 +460,7 @@ class Recolte
     /**
      * Get locationid
      *
-     * @return Localisation
+     * @return Localisation|null
      */
     public function getLocalisation()
     {

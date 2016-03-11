@@ -76,12 +76,12 @@ class Specimen
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hascoordinates = '0';
+    private $hascoordinates = 0;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hasmedia = '0';
+    private $hasmedia = 0;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=false)
@@ -717,7 +717,7 @@ class Specimen
     /**
      * Set collectionid
      *
-     * @param Collection $collection
+     * @param Collection $collection|null
      *
      * @return Specimen
      */
@@ -731,7 +731,7 @@ class Specimen
     /**
      * Get collectionid
      *
-     * @return \AppBundle\Entity\Collection
+     * @return \AppBundle\Entity\Collection|null
      */
     public function getCollection()
     {
@@ -741,7 +741,7 @@ class Specimen
     /**
      * Set geologicalcontextid
      *
-     * @param Stratigraphy $geologicalcontextid
+     * @param Stratigraphy $geologicalcontextid|null
      *
      * @return Specimen
      */
@@ -755,7 +755,7 @@ class Specimen
     /**
      * Get stratigraphy
      *
-     * @return \AppBundle\Entity\Stratigraphy
+     * @return \AppBundle\Entity\Stratigraphy|null
      */
     public function getStratigraphy()
     {
@@ -765,7 +765,7 @@ class Specimen
     /**
      * Set eventid
      *
-     * @param Recolte $eventid
+     * @param Recolte $eventid|null
      *
      * @return Specimen
      */
@@ -779,7 +779,7 @@ class Specimen
     /**
      * Get recolte
      *
-     * @return Recolte
+     * @return Recolte|null
      */
     public function getRecolte()
     {

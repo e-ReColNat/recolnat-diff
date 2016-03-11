@@ -137,7 +137,7 @@ class FrontController extends Controller
         Request $request,
         $institutionCode,
         $collectionCode,
-        $selectedClassName = "all",
+        $selectedClassName = 'all',
         $page = 1
     ) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */

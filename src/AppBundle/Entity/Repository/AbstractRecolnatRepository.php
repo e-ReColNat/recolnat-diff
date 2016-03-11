@@ -11,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
  *
  * @author tpateffoz
  */
-abstract class RecolnatRepositoryAbstract extends EntityRepository
+abstract class AbstractRecolnatRepository extends EntityRepository
 {
     const ENTITY_DESCR = [
         'bibliography' => ['rawid' => true, 'identifier' => 'referenceid'],

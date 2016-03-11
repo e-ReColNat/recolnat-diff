@@ -20,12 +20,12 @@ class User
 
     /**
      * User constructor.
-     * @param string $export_path
+     * @param string $exportPath
      * @param int    $maxItemPerPage
      */
-    public function __construct($export_path, $maxItemPerPage)
+    public function __construct($exportPath, $maxItemPerPage)
     {
-        $this->exportPath = $export_path;
+        $this->exportPath = $exportPath;
         $this->maxItemPerPage = $maxItemPerPage;
     }
 
@@ -64,7 +64,7 @@ class User
             $this->savePrefs($this->prefs);
         }
 
-        $handle = fopen($this->getPrefsFileName(), "r");
+        $handle = fopen($this->getPrefsFileName(), 'r');
         $this->prefs->load(json_decode(fread($handle, filesize($this->getPrefsFileName())), true));
         return $this->prefs;
     }
@@ -74,7 +74,7 @@ class User
      */
     public function savePrefs(Prefs $prefs)
     {
-        $handle = fopen($this->getPrefsFileName(), "w");
+        $handle = fopen($this->getPrefsFileName(), 'w');
         fwrite($handle, $prefs->toJson());
         fclose($handle);
         chmod($this->getPrefsFileName(), 0755);

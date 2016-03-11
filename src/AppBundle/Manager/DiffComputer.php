@@ -79,7 +79,7 @@ class DiffComputer
                 if (isset($this->arrayIds[ucfirst($className)])) {
                     $specimensCode = $this->arrayIds[$className];
                     $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
-                    /* @var $diffClassManager \AppBundle\Manager\DiffAbstract */
+                    /* @var $diffClassManager \AppBundle\Manager\AbstractDiff */
                     $diffClassManager = new $nameDiffClassManager($this->managerRegistry, $this->maxNbSpecimenPerPass);
                     $diffClassManager->init($className, $specimensCode);
                     $this->setDiffs($className, $diffClassManager->getStats());

@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
  *
  * @author tpateffoz
  */
-abstract class DiffAbstract
+abstract class AbstractDiff
 {
     protected $class;
     protected $classFullName;
