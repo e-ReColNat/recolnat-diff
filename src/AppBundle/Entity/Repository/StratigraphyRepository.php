@@ -7,7 +7,7 @@ use AppBundle\Entity\Collection;
 /**
  * StratigraphyRepository
  */
-class StratigraphyRepository extends RecolnatRepositoryAbstract
+class StratigraphyRepository extends AbstractRecolnatRepository
 {
     /**
      * @param Collection $collection
@@ -52,7 +52,7 @@ class StratigraphyRepository extends RecolnatRepositoryAbstract
     /**
      *
      * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @return array
      */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {

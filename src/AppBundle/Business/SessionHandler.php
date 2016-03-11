@@ -43,7 +43,7 @@ class SessionHandler
     public function init(DiffHandler $diffHandler, $collectionCode)
     {
         $this->collectionCode = $collectionCode;
-        $doReload = $this->mustReload();
+        $doReload = $this->shouldReload();
         if ($doReload) {
             $this->set('choices', $diffHandler->getChoices()->getContent());
         } else {
@@ -54,7 +54,7 @@ class SessionHandler
     /**
      * @return bool
      */
-    public function mustReload()
+    public function shouldReload()
     {
         $doReload = false;
         if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $this->collectionCode)) {
@@ -116,7 +116,7 @@ class SessionHandler
      */
     public function getChoicesForEntity($className, $arrayEntity)
     {
-        $returnChoices = null;
+        $returnChoices = [];
         if (array_key_exists($this->genericEntityManager->getIdentifierName($className), $arrayEntity)) {
             $relationId = $arrayEntity[$this->genericEntityManager->getIdentifierName($className)];
 
@@ -160,7 +160,7 @@ class SessionHandler
     public function setChoiceForEntity(&$datasWithChoices, $index, $className, $arrayEntity, $indexSubArray = null)
     {
         $choices = $this->getChoicesForEntity($className, $arrayEntity);
-        if (is_array($choices) && count($choices) > 0) {
+        if (count($choices) > 0) {
             foreach ($choices as $choice) {
                 if (!is_null($indexSubArray)) {
                     $datasWithChoices[$index][$className][$indexSubArray][$choice['fieldName']] = $choice['data'];

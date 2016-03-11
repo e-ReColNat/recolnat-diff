@@ -62,7 +62,7 @@ class BackendController extends Controller
      * @param string $path
      * @return Response
      */
-    public function downloadAction($path = "")
+    public function downloadAction($path = '')
     {
         $response = new Response();
         if ($path != '') {
@@ -174,11 +174,11 @@ class BackendController extends Controller
                             }
                             if ($doUpdate) {
                                 $choices[] = [
-                                    "className" => $className,
-                                    "fieldName" => $fieldName,
-                                    "relationId" => $relationId,
-                                    "choice" => $inputOrigin,
-                                    "specimenCode" => $specimenCode,
+                                    'className' => $className,
+                                    'fieldName' => $fieldName,
+                                    'relationId' => $relationId,
+                                    'choice' => $inputOrigin,
+                                    'specimenCode' => $specimenCode,
                                 ];
                             }
                         }

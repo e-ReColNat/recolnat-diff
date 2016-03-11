@@ -15,7 +15,6 @@ services:
         class: AppBundle\Manager\GenericEntityManager
         arguments:
             managerRegistry: "@doctrine"
-            translator: "@translator"
 
     exportManager:
         class: AppBundle\Manager\ExportManager

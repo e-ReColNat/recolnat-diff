@@ -4,7 +4,7 @@ namespace AppBundle\Manager;
 use Doctrine\ORM\EntityManager;
 
 
-class DiffStratigraphy extends DiffAbstract
+class DiffStratigraphy extends AbstractDiff
 {
     public $excludeFieldsName = ['sourcefileid'];
 

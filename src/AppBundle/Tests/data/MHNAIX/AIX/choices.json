@@ -1,0 +1,34 @@
+[
+    {
+        "className": "Specimen",
+        "fieldName": "associatedreferences",
+        "relationId": "1baf6c5ff46b4a38a4bb131739cc55f8",
+        "choice": "institution",
+        "specimenCode": "MHNAIX#AIX#AIX017190",
+        "data": null
+    },
+    {
+        "className": "Specimen",
+        "fieldName": "lifestage",
+        "relationId": "1baf6c5ff46b4a38a4bb131739cc55f8",
+        "choice": "institution",
+        "specimenCode": "MHNAIX#AIX#AIX017190",
+        "data": null
+    },
+    {
+        "className": "Specimen",
+        "fieldName": "occurrenceremarks",
+        "relationId": "1baf6c5ff46b4a38a4bb131739cc55f8",
+        "choice": "institution",
+        "specimenCode": "MHNAIX#AIX#AIX017190",
+        "data": "tretre123456"
+    },
+    {
+        "className": "Specimen",
+        "fieldName": "rights",
+        "relationId": "1baf6c5ff46b4a38a4bb131739cc55f8",
+        "choice": "institution",
+        "specimenCode": "MHNAIX#AIX#AIX017190",
+        "data": null
+    }
+]

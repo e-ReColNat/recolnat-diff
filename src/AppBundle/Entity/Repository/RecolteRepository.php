@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
 
-class RecolteRepository extends RecolnatRepositoryAbstract
+class RecolteRepository extends AbstractRecolnatRepository
 {
     /**
      * @param Collection $collection
@@ -49,7 +49,7 @@ class RecolteRepository extends RecolnatRepositoryAbstract
     /**
      *
      * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @return array
      */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {

@@ -3,7 +3,7 @@ namespace AppBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 
-class DiffTaxon extends DiffAbstract
+class DiffTaxon extends AbstractDiff
 {
     public $excludeFieldsName = ['created', 'modified', 'sourcefileid', 'dwcataxonid'];
 

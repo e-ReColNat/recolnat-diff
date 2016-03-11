@@ -25,12 +25,12 @@ class MultimediaExtension extends \Twig_Extension
     public function getThumb($url, $width) {
         $parseUrl = parse_url($url);
         switch ($parseUrl['host']) {
-            case "dsiphoto.mnhn.fr":
-                return "http://imager.mnhn.fr/imager/v".$width.$parseUrl['path'];
-            case "sonneratphoto.mnhn.fr":
-               return "http://imager.mnhn.fr/imager2/v".$width.$parseUrl['path'];
-            case "mediaphoto.mnhn.fr":
-               return "http://imager.mnhn.fr/imager3/v".$width.$parseUrl['path'];
+            case 'dsiphoto.mnhn.fr':
+                return 'http://imager.mnhn.fr/imager/v'.$width.$parseUrl['path'];
+            case 'sonneratphoto.mnhn.fr':
+               return 'http://imager.mnhn.fr/imager2/v'.$width.$parseUrl['path'];
+            case 'mediaphoto.mnhn.fr':
+               return 'http://imager.mnhn.fr/imager3/v'.$width.$parseUrl['path'];
         }
     }
 

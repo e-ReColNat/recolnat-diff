@@ -6,7 +6,7 @@ use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 
-class MultimediaRepository extends RecolnatRepositoryAbstract
+class MultimediaRepository extends AbstractRecolnatRepository
 {
 
     /**
@@ -22,7 +22,7 @@ class MultimediaRepository extends RecolnatRepositoryAbstract
 
     /**
      * @param $id
-     * @return array|null
+     * @return array|object|null
      */
     public function findOneByIdToArray($id)
     {

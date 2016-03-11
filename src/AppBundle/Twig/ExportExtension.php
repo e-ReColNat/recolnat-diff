@@ -36,7 +36,7 @@ class ExportExtension extends \Twig_Extension
      * @param array $choices
      * @param string $className
      * @param string $specimenCode
-     * @return type
+     * @return integer
      */
     public function getCountChoices($choices, $specimenCode, $className)
     {

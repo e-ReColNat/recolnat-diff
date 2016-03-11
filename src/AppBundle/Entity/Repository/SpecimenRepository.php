@@ -9,7 +9,7 @@ use Doctrine\ORM\Query;
  * SpecimenRepository
  *
  */
-class SpecimenRepository extends RecolnatRepositoryAbstract
+class SpecimenRepository extends AbstractRecolnatRepository
 {
     /**
      * @param Collection $collection
@@ -75,7 +75,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
     /**
      *
      * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @return array
      */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
@@ -90,7 +90,7 @@ class SpecimenRepository extends RecolnatRepositoryAbstract
     /**
      *
      * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @return array
      */
     public function findAllBySpecimenCodeUnordered($specimenCodes)
     {

@@ -4,11 +4,11 @@ namespace AppBundle\Tests\Controller;
 use atoum\AtoumBundle\Test\Units\WebTestCase;
 use atoum\AtoumBundle\Test\Controller\ControllerTest;
 
-class DefaultController extends ControllerTest
+class FrontController extends ControllerTest
 {
     public function testIndex()
     {
-        $this
+        /*$this
             ->request(array('debug' => true))
                 ->GET('/')
                     ->hasStatus(200)
@@ -18,7 +18,7 @@ class DefaultController extends ControllerTest
                         ->hasElement('h1')
                             ->withContent('Welcome to Symfony')
                             ->exactly(0)
-                        ->end()
+                        ->end()*/
                 //$this->assertContains('Welcome to Symfony', $crawler->filter('#container h1')->text());
                 /*->POST('/demo/contact')
                     ->hasStatus(200)

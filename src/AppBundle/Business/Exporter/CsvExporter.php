@@ -32,7 +32,7 @@ class CsvExporter extends AbstractExporter
     /**
      * @param Prefs $prefs
      * @param array $options
-     * @return \ArrayObject|string
+     * @return array<string,\SplFileObject>|string
      */
     public function generate(Prefs $prefs, array $options = [])
     {
@@ -48,6 +48,7 @@ class CsvExporter extends AbstractExporter
             $this->setCsvDateFormat($prefs->getCsvDateFormat());
         }
         $filesHandler = [];
+        /* @var \AppBundle\Business\Exporter\Entity\AbstractEntityExporter $entityExporters[] */
         $entityExporters = [];
         $entitiesNameWithArray = [
             'Determination',
@@ -56,7 +57,7 @@ class CsvExporter extends AbstractExporter
         ];
         foreach ($this->datas as $key => $record) {
             foreach ($record as $className => $datasPerClass) {
-                /* @var $entityExporter \AppBundle\Business\Exporter\Entity\AbstractEntityExporter */
+
                 if (!isset($entityExporters[$className])) {
                     $entityExporters[$className] = $this->getEntityExporter($className);
                 }
@@ -142,6 +143,9 @@ class CsvExporter extends AbstractExporter
         $this->files[$className] = new \SplFileObject($fileName);
     }
 
+    /**
+     * @return array<string,\SplFileObject>
+     */
     public function getFiles()
     {
         return $this->files;
@@ -160,7 +164,7 @@ class CsvExporter extends AbstractExporter
         if (count($datas) > 0) {
             if (!isset($this->acceptedFieldsName[$className])) {
                 foreach ($this->fieldsName[$className] as $fieldName) {
-                    if ($entityExporter->exportToCsv($fieldName)) {
+                    if ($entityExporter->shouldExportToCsv($fieldName)) {
                         $this->acceptedFieldsName[$className][] = $fieldName;
                     }
                 }
@@ -198,8 +202,8 @@ class CsvExporter extends AbstractExporter
         $encloseAll = false,
         $nullToMysqlNull = false
     ) {
-        $delimiter_esc = preg_quote($delimiter, '/');
-        $enclosure_esc = preg_quote($enclosure, '/');
+        $escDelimiter = preg_quote($delimiter, '/');
+        $escEnclosure = preg_quote($enclosure, '/');
 
         $output = array();
         foreach ($fields as $field) {
@@ -209,7 +213,7 @@ class CsvExporter extends AbstractExporter
             }
 
             // Enclose fields containing $delimiter, $enclosure or whitespace
-            if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc})/", $field)) {
+            if ($encloseAll || preg_match("/(?:${escDelimiter}|${escEnclosure})/", $field)) {
                 $output[] = $enclosure.str_replace(
                         $enclosure, $enclosure.$enclosure,
                         $this->convertField($field, $this->getCsvDateFormat())

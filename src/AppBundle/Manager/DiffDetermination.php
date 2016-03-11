@@ -3,7 +3,7 @@ namespace AppBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 
-class DiffDetermination extends DiffAbstract
+class DiffDetermination extends AbstractDiff
 {
 
     public $excludeFieldsName = ['hascoordinates', 'verbatimcountry', 'sourcefileid', 'averagealtituderounded'];

@@ -26,7 +26,7 @@ class DwcExporter extends AbstractExporter
     ];
     protected $formattedDatas = [];
     protected $dwcDelimiter = "\t";
-    protected $dwcEnclosure = "\"";
+    protected $dwcEnclosure = '"';
     protected $dwcLineBreak = "\t";
     protected $dwcIgnoreHeaderLines = true;
     protected $dwcDateFormat = 'Y-m-d';

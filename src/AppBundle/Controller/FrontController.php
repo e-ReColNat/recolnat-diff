@@ -137,7 +137,7 @@ class FrontController extends Controller
         Request $request,
         $institutionCode,
         $collectionCode,
-        $selectedClassName = "all",
+        $selectedClassName = 'all',
         $page = 1
     ) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
@@ -195,9 +195,9 @@ class FrontController extends Controller
         Request $request,
         $institutionCode,
         $collectionCode,
-        $selectedClassName = "all",
-        $page = 1,
-        $db
+        $db,
+        $selectedClassName = 'all',
+        $page = 1
     ) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);

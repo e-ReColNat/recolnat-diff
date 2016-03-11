@@ -1,7 +1,6 @@
 <?php
 namespace AppBundle\Doctrine\Types;
 
-use AppBundle\Entity\Repository\SpecimenRepository;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 use Doctrine\DBAL\Types\Type;
@@ -35,7 +34,7 @@ class RawidType extends Type
 
     public function convertToPHPValue($sqlExpr, AbstractPlatform $platform)
     {
-        return unpack("H*", $sqlExpr)[1];
+        return unpack('H*', $sqlExpr)[1];
     }
 
     public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform)

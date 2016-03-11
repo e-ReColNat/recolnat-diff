@@ -76,12 +76,12 @@ class Specimen
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hascoordinates = '0';
+    private $hascoordinates = 0;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hasmedia = '0';
+    private $hasmedia = 0;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=false)
@@ -459,7 +459,7 @@ class Specimen
      */
     public function setHascoordinates($hascoordinates)
     {
-        $this->hascoordinates = $hascoordinates;
+        $this->hascoordinates = $hascoordinates > 0 ? 1 : 0;
 
         return $this;
     }
@@ -471,7 +471,7 @@ class Specimen
      */
     public function getHascoordinates()
     {
-        return $this->hascoordinates;
+        return (bool) $this->hascoordinates;
     }
 
     /**
@@ -483,7 +483,7 @@ class Specimen
      */
     public function setHasmedia($hasmedia)
     {
-        $this->hasmedia = $hasmedia;
+        $this->hasmedia = $hasmedia > 0 ? 1 : 0;
 
         return $this;
     }
@@ -495,7 +495,7 @@ class Specimen
      */
     public function getHasmedia()
     {
-        return $this->hasmedia;
+        return (bool) $this->hasmedia;
     }
 
     /**
@@ -717,7 +717,7 @@ class Specimen
     /**
      * Set collectionid
      *
-     * @param Collection $collection
+     * @param Collection|null $collection
      *
      * @return Specimen
      */
@@ -731,7 +731,7 @@ class Specimen
     /**
      * Get collectionid
      *
-     * @return \AppBundle\Entity\Collection
+     * @return \AppBundle\Entity\Collection|null
      */
     public function getCollection()
     {
@@ -741,7 +741,7 @@ class Specimen
     /**
      * Set geologicalcontextid
      *
-     * @param Stratigraphy $geologicalcontextid
+     * @param Stratigraphy|null $geologicalcontextid
      *
      * @return Specimen
      */
@@ -755,7 +755,7 @@ class Specimen
     /**
      * Get stratigraphy
      *
-     * @return \AppBundle\Entity\Stratigraphy
+     * @return \AppBundle\Entity\Stratigraphy|null
      */
     public function getStratigraphy()
     {
@@ -765,7 +765,7 @@ class Specimen
     /**
      * Set eventid
      *
-     * @param Recolte $eventid
+     * @param Recolte|null $eventid
      *
      * @return Specimen
      */
@@ -779,7 +779,7 @@ class Specimen
     /**
      * Get recolte
      *
-     * @return Recolte
+     * @return Recolte|null
      */
     public function getRecolte()
     {
@@ -813,7 +813,7 @@ class Specimen
     /**
      * Get multimedias
      *
-     * @return Collection
+     * @return ArrayCollection
      */
     public function getMultimedias()
     {
@@ -822,7 +822,7 @@ class Specimen
 
     /**
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
     public function getDeterminations()
     {
@@ -831,23 +831,32 @@ class Specimen
 
     /**
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
     public function getBibliographies()
     {
         return $this->bibliographies;
     }
 
+    /**
+     * @return string
+     */
     public function getSpecimenCode()
     {
         return $this->getInstitutioncode().$this->getCollectioncode().$this->getCatalognumber();
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->catalognumber;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [

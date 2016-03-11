@@ -337,7 +337,7 @@ class Determination
     /**
      * Set occurrenceid
      *
-     * @param Specimen $occurrenceid
+     * @param Specimen|null $occurrenceid
      *
      * @return Determination
      */
@@ -351,7 +351,7 @@ class Determination
     /**
      * Get occurrenceid
      *
-     * @return \AppBundle\Entity\Specimen
+     * @return \AppBundle\Entity\Specimen|null
      */
     public function getOccurrenceid()
     {
@@ -361,7 +361,7 @@ class Determination
     /**
      * Set taxonid
      *
-     * @param Taxon $taxon
+     * @param Taxon|null $taxon
      *
      * @return Determination
      */
@@ -375,7 +375,7 @@ class Determination
     /**
      * Get taxonid
      *
-     * @return \AppBundle\Entity\Taxon
+     * @return \AppBundle\Entity\Taxon|null
      */
     public function getTaxon()
     {

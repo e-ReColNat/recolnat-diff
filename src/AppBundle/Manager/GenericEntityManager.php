@@ -4,7 +4,6 @@ namespace AppBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Intl\Locale;
 
 /**
@@ -29,22 +28,18 @@ class GenericEntityManager
      * @var ManagerRegistry
      */
     protected $managerRegistry;
-    protected $translator;
     protected $stats = array();
     protected $excludeFieldsName = [];
 
     /**
      * GenericEntityManager constructor.
      * @param ManagerRegistry $managerRegistry
-     * @param DataCollectorTranslator $translator
      */
-    public function __construct(ManagerRegistry $managerRegistry, DataCollectorTranslator $translator)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
         $this->emI = $managerRegistry->getManager('diff');
-
-        $this->translator = $translator;
     }
 
     /**
@@ -63,19 +58,11 @@ class GenericEntityManager
     /**
      * @param string|object $entity
      * @return string
-     * @throws \Doctrine\ORM\Mapping\MappingException
      * @throws \Exception
      */
     public function getIdentifierName($entity)
     {
-        if (!is_object($entity)) {
-            try {
-                $fullClassName = $this->getFullClassName($entity);
-                $entity = new $fullClassName;
-            } catch (\Exception $ex) {
-                throw new \Exception(sprintf('class %s n\'existe pas', $this->getFullClassName($entity)));
-            }
-        }
+        $entity = $this->getEntityClass($entity);
         $meta = $this->emR->getClassMetadata(get_class($entity));
         $identifier = $meta->getSingleIdentifierFieldName();
         return $identifier;
@@ -89,14 +76,7 @@ class GenericEntityManager
      */
     public function getIdentifierValue($entity)
     {
-        if (!is_object($entity)) {
-            try {
-                $fullClassName = $this->getFullClassName($entity);
-                $entity = new $fullClassName;
-            } catch (\Exception $ex) {
-                throw new \Exception(sprintf('class %s n\'existe pas', $this->getFullClassName($entity)));
-            }
-        }
+        $entity = $this->getEntityClass($entity);
         $meta = $this->emR->getClassMetadata(get_class($entity));
         $identifier = $meta->getSingleIdentifierFieldName();
         $getter = 'get'.$identifier;
@@ -104,9 +84,28 @@ class GenericEntityManager
     }
 
     /**
+     * @param $entity
+     * @return mixed
+     * @throws \Exception
+     */
+    private function getEntityClass($entity)
+    {
+        if (!is_object($entity)) {
+            $fullClassName = $this->getFullClassName($entity);
+            if (class_exists($fullClassName)) {
+                $entity = new $fullClassName;
+                return $entity;
+            } else {
+                throw new \Exception(sprintf('class %s n\'existe pas', $fullClassName));
+            }
+        }
+        return $entity;
+    }
+
+    /**
      * @param string $base
      * @param string $className
-     * @param array $specimenCodes
+     * @param array  $specimenCodes
      * @return mixed
      */
     public function getEntitiesBySpecimenCodes($base, $className, $specimenCodes)
@@ -127,7 +126,7 @@ class GenericEntityManager
 
     /**
      * @param string $base
-     * @param array $specimenCodes
+     * @param array  $specimenCodes
      * @return mixed
      */
     public function getEntitiesLinkedToSpecimens($base, $specimenCodes)
@@ -248,4 +247,5 @@ class GenericEntityManager
         }
         return $em;
     }
+
 }

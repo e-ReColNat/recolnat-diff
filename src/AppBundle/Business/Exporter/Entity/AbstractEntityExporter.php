@@ -43,7 +43,7 @@ abstract class AbstractEntityExporter
         return array_keys($this->getExportProperties());
     }
 
-    public function exportToCsv($fieldName)
+    public function shouldExportToCsv($fieldName)
     {
         return is_null($this->getExportProperty($fieldName)) ? false : true;
     }

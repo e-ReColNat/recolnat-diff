@@ -2,7 +2,9 @@
 
 namespace AppBundle\Business\Exporter;
 
+use AppBundle\Business\Exporter\Entity\AbstractEntityExporter;
 use AppBundle\Business\User\Prefs;
+
 /**
  * Description of Exporter
  *
@@ -14,51 +16,64 @@ abstract class AbstractExporter
     public $exportPrefs;
     public $datas;
     public $entitiesName = [
-            'Specimen',     
-            'Bibliography',
-            'Determination',
-            'Localisation',
-            'Recolte',
-            'Stratigraphy',
-            'Taxon',
-            'Multimedia'
-        ];
-    
+        'Specimen',
+        'Bibliography',
+        'Determination',
+        'Localisation',
+        'Recolte',
+        'Stratigraphy',
+        'Taxon',
+        'Multimedia'
+    ];
+
     public $arrayEntityExport = [];
+
     /**
-     * @param array $datas
+     * @param array  $datas
      * @param string $exportPath
      */
-    public function __construct($datas, $exportPath) {
+    public function __construct($datas, $exportPath)
+    {
         $this->datas = $datas;
         $this->exportPath = $exportPath;
         foreach ($this->entitiesName as $className) {
             $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\Entity\\'.ucfirst($className).'Exporter';
-            /* @var $entityExporter \AppBundle\Business\Exporter\AbstractEntityExporter */
+            /* @var $entityExporter \AppBundle\Business\Exporter\Entity\AbstractEntityExporter */
             $this->arrayEntityExport[$className] = new $entityExporterConstructor();
         }
     }
-    
+
     /**
-     * 
+     *
      * @param string $className
      * @return AbstractEntityExporter
      */
-    public function getEntityExporter($className) {
+    public function getEntityExporter($className)
+    {
         return $this->arrayEntityExport[$className];
     }
-    
-    public function getExportDirPath() {
+
+    /**
+     * @return string
+     */
+    public function getExportDirPath()
+    {
         return realpath($this->exportPath);
     }
-    
-    public function array_delete($array, $element) {
+
+    /**
+     * @param array $array
+     * @param mixed $element
+     * @return array
+     */
+    public function arrayDelete($array, $element)
+    {
         return array_diff($array, [$element]);
     }
-    
+
     /**
-     * 
-     * @param mixed $value
+     *
+     * @param mixed  $value
      * @param string $dateFormat
      * @return mixed Time
      */
@@ -69,8 +84,9 @@ abstract class AbstractExporter
         }
         return $value;
     }
-    
+
     abstract public function generate(Prefs $prefs, array $options = []);
+
     abstract public function formatDatas();
-    
+
 }

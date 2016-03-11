@@ -10,6 +10,7 @@ class Diffs extends \SplFileObject
     public $searchDiffs;
 
     const DIFF_FILENAME = '/diffs.json';
+
     /**
      * @param string $dirPath
      */
@@ -52,8 +53,8 @@ class Diffs extends \SplFileObject
     }
 
     /**
-     * @param string $db
-     * @param string|array|null  $selectedClassesNames
+     * @param string|null       $db
+     * @param string|array|null $selectedClassesNames
      * @return array
      */
     public function getLonesomeRecords($db = null, $selectedClassesNames = null)
@@ -91,8 +92,8 @@ class Diffs extends \SplFileObject
     }
 
     /**
-     * @param string $db
-     * @param string $selectedClassName
+     * @param string      $db
+     * @param string|null $selectedClassName
      * @return array
      */
     public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
@@ -169,10 +170,7 @@ class Diffs extends \SplFileObject
                     return $item['db'] == $db && $item['class'] == $className;
                 }
             });
-            if (count($itemsFiltered) > 0) {
-                return true;
-            }
-            return false;
+            return count($itemsFiltered) > 0;
         });
     }
 
