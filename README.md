@@ -1,3 +1,5 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/e-ReColNat/recolnat-diff/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/e-ReColNat/recolnat-diff/?branch=master)
+
 # DWC-DIFF - eRecolnat
 Outil d'aide décisionnel des données exportés depuis eRecolnat
 
