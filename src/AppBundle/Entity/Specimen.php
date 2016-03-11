@@ -459,7 +459,7 @@ class Specimen
      */
     public function setHascoordinates($hascoordinates)
     {
-        $this->hascoordinates = (bool) $hascoordinates;
+        $this->hascoordinates = $hascoordinates > 0 ? 1 : 0;
 
         return $this;
     }
@@ -483,7 +483,7 @@ class Specimen
      */
     public function setHasmedia($hasmedia)
     {
-        $this->hasmedia = (bool) $hasmedia;
+        $this->hasmedia = $hasmedia > 0 ? 1 : 0;
 
         return $this;
     }
