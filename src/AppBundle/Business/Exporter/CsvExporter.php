@@ -32,7 +32,7 @@ class CsvExporter extends AbstractExporter
     /**
      * @param Prefs $prefs
      * @param array $options
-     * @return \ArrayObject|string
+     * @return array<string,\SplFileObject>|string
      */
     public function generate(Prefs $prefs, array $options = [])
     {

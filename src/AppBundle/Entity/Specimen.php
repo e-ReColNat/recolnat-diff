@@ -813,7 +813,7 @@ class Specimen
     /**
      * Get multimedias
      *
-     * @return Collection
+     * @return ArrayCollection
      */
     public function getMultimedias()
     {
@@ -822,7 +822,7 @@ class Specimen
 
     /**
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
     public function getDeterminations()
     {
@@ -831,23 +831,32 @@ class Specimen
 
     /**
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return ArrayCollection
      */
     public function getBibliographies()
     {
         return $this->bibliographies;
     }
 
+    /**
+     * @return string
+     */
     public function getSpecimenCode()
     {
         return $this->getInstitutioncode().$this->getCollectioncode().$this->getCatalognumber();
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->catalognumber;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [
