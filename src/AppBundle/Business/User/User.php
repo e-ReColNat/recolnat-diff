@@ -2,6 +2,7 @@
 
 namespace AppBundle\Business\User;
 
+use AppBundle\Entity\Institution;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -18,16 +19,11 @@ class User
     private $exportPath;
     private $maxItemPerPage;
 
-    /**
-     * User constructor.
-     * @param string $exportPath
-     * @param int    $maxItemPerPage
-     */
-    public function __construct($exportPath, $maxItemPerPage)
-    {
-        $this->exportPath = $exportPath;
-        $this->maxItemPerPage = $maxItemPerPage;
-    }
+    /** @var  string */
+    private $username;
+    /** @var  string */
+    private $password;
+
 
     /**
      * @param string $institutionCode
@@ -81,6 +77,18 @@ class User
     }
 
     /**
+     * @return bool
+     */
+    public function hasGrantedAccess()
+    {
+        /** Todo : Implement cas identification */
+        $grantedAccess = true;
+        if ($grantedAccess) {
+            $this->institutionCode = 'MHNAIX';
+        }
+        return $grantedAccess;
+    }
+    /**
      * @return string
      */
     public function getPrefsFileName()
@@ -95,4 +103,93 @@ class User
     {
         return realpath($this->exportPath).'/'.$this->institutionCode.'/';
     }
+
+    /**
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param string $username
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInstitutionCode()
+    {
+        return $this->institutionCode;
+    }
+
+    /**
+     * @param mixed $institutionCode
+     * @return User
+     */
+    public function setInstitutionCode($institutionCode)
+    {
+        $this->institutionCode = $institutionCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExportPath()
+    {
+        return $this->exportPath;
+    }
+
+    /**
+     * @param string $exportPath
+     * @return User
+     */
+    public function setExportPath($exportPath)
+    {
+        $this->exportPath = $exportPath;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItemPerPage()
+    {
+        return $this->maxItemPerPage;
+    }
+
+    /**
+     * @param int $maxItemPerPage
+     * @return User
+     */
+    public function setMaxItemPerPage($maxItemPerPage)
+    {
+        $this->maxItemPerPage = $maxItemPerPage;
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+
 }

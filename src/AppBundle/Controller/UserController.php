@@ -2,11 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\User\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\UserPrefsType;
+use AppBundle\Form\Type\LoginType;
 
 /**
  * Description of UserController
@@ -28,15 +30,15 @@ class UserController extends Controller
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
         return $this->render('@App/User/viewPrefs.html.twig', array(
-                    'institutionCode' => $institutionCode,
-                    'prefs' => $prefs,
+            'institutionCode' => $institutionCode,
+            'prefs' => $prefs,
         ));
     }
 
     /**
      * @Route("/user/{institutionCode}/prefs/edit", name="editPrefsUser")
      * @param Request $request
-     * @param string $institutionCode
+     * @param string  $institutionCode
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function editAction(Request $request, $institutionCode)
@@ -47,7 +49,7 @@ class UserController extends Controller
 
         $prefs = $user->getPrefs();
         $form = $this->createForm(UserPrefsType::class, $prefs);
-        
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -56,13 +58,39 @@ class UserController extends Controller
             $message = $translator->trans('prefs.saved', [], 'prefs');
             $user->savePrefs($prefs);
             $this->addFlash('success', $message);
-            return $this->redirectToRoute('viewPrefsUser', ['institutionCode'=>$institutionCode]);
+            return $this->redirectToRoute('viewPrefsUser', ['institutionCode' => $institutionCode]);
         }
-    
+
         return $this->render('@App/User/editPrefs.html.twig', array(
-                    'institutionCode' => $institutionCode,
-                    'form' => $form->createView(),
+            'institutionCode' => $institutionCode,
+            'form' => $form->createView(),
         ));
     }
 
+    /**
+     * @Route("/login/", name="login")
+     * @param Request $request
+     * @return Response
+     */
+    public function loginAction(Request $request)
+    {
+        $authenticationUtils = $this->get('security.authentication_utils');
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        $user = new User();
+        $form = $this->createForm(LoginType::class, $user);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($user->hasGrantedAccess()) {
+                return $this->redirectToRoute('index');
+            }
+        }
+        return $this->render('@App/User/login.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error,
+        ]);
+    }
 }
