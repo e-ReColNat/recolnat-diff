@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 class DiffDetermination extends AbstractDiff
 {
 
-    public $excludeFieldsName = ['hascoordinates', 'verbatimcountry', 'sourcefileid', 'averagealtituderounded'];
+    public $excludeFieldsName = ['hascoordinates', 'sourcefileid'];
 
     protected function getIdSetter()
     {

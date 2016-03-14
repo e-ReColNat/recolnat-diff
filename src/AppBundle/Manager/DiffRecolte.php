@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityManager;
 
 class DiffRecolte extends AbstractDiff
 {
-    public $excludeFieldsName = ['eventdate', 'sourcefileid'];
+    public $excludeFieldsName = ['eventdate', 'sourcefileid', 'averagealtituderounded'];
     protected function getIdSetter()
     {
         return 'getEventid';
