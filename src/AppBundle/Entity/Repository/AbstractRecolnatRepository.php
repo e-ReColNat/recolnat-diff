@@ -2,6 +2,7 @@
 namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -28,9 +29,10 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     /**
      *
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    abstract public function findBySpecimenCodes($specimenCodes);
+    abstract public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY);
 
     abstract public function findBySpecimenCodeUnordered($specimenCodes);
 
@@ -85,9 +87,17 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     protected function orderResultSetBySpecimenCode($resultsSet, $identifierName)
     {
         $orderResultSet = [];
-        if (count($resultsSet) > 0) {
+        if (count($resultsSet)) {
             foreach ($resultsSet as $resultRow) {
-                $orderResultSet[$resultRow['specimencode']][$resultRow[0]->{'get'.$identifierName}()] = $resultRow[0];
+                if (!empty($resultRow)) {
+                    if (is_array($resultRow[0])) {
+                        $specimenCode = $resultRow['specimencode'];
+                        $orderResultSet[$specimenCode][$resultRow[0][$identifierName]] = $resultRow[0];
+                    }
+                    else {
+                        $orderResultSet[$resultRow['specimencode']][$resultRow[0]->{'get'.$identifierName}()] = $resultRow[0];
+                    }
+                }
             }
         }
         return $orderResultSet;
@@ -101,12 +111,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     protected function setSpecimenCodesWhereClause(QueryBuilder &$qb, $specimenCodes, $alias = 's')
     {
 
-        $catalogNumbers = [];
-        list($institutionCode, $collectionCode,) = explode('#', current($specimenCodes));
-        foreach ($specimenCodes as $specimenCode) {
-            $temp = explode('#', $specimenCode);
-            $catalogNumbers[] = end($temp);
-        }
+        list($catalogNumbers, $institutionCode, $collectionCode) = $this->splitSpecimenCodes($specimenCodes);
 
         $qb->andWhere(sprintf('%s.institutioncode = :institutionCode', $alias))
             ->andWhere(sprintf('%s.collectioncode = :collectionCode', $alias))
@@ -118,6 +123,20 @@ abstract class AbstractRecolnatRepository extends EntityRepository
             ]);
     }
 
+    /**
+     * @param $specimenCodes
+     * @return array
+     */
+    protected function splitSpecimenCodes($specimenCodes)
+    {
+        $catalogNumbers = [];
+        list($institutionCode, $collectionCode,) = explode('#', current($specimenCodes));
+        foreach ($specimenCodes as $specimenCode) {
+            $temp = explode('#', $specimenCode);
+            $catalogNumbers[] = end($temp);
+        }
+        return array($catalogNumbers, $institutionCode, $collectionCode);
+    }
     /**
      * @param $id
      * @return \Doctrine\ORM\Query

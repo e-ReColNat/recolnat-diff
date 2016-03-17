@@ -82,9 +82,10 @@ class BibliographyRepository extends AbstractRecolnatRepository
     /**
      *
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('b')
@@ -92,7 +93,7 @@ class BibliographyRepository extends AbstractRecolnatRepository
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('b.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'referenceid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'referenceid');
     }
 
     /**

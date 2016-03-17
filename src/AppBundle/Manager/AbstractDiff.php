@@ -3,7 +3,9 @@
 namespace AppBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * Description of DiffInterface
@@ -58,6 +60,8 @@ abstract class AbstractDiff
 
     abstract protected function getIdSetter();
 
+    abstract protected function getIdField();
+
     /**
      * DiffAbstract constructor.
      * @param ManagerRegistry $managerRegistry
@@ -82,12 +86,24 @@ abstract class AbstractDiff
         $this->classFullName = 'AppBundle:'.ucfirst($class);
         $arrayChunkSpecimenCodes = array_chunk($specimenCodes, $this->maxNbSpecimenPerPass);
         if (count($arrayChunkSpecimenCodes)) {
+            $stopwatch = new Stopwatch();
             foreach ($arrayChunkSpecimenCodes as $chunkSpecimenCodes) {
+                $stopwatch->start('recolnat') ;
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
-                    ->findBySpecimenCodes($chunkSpecimenCodes);
+                    ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
+                $event = $stopwatch->stop('recolnat') ;
+                dump('recolnat : '.$event->getDuration());
+
+                $stopwatch->start('insti') ;
                 $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
-                    ->findBySpecimenCodes($chunkSpecimenCodes);
+                    ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
+                $event = $stopwatch->stop('insti') ;
+                dump('insti : '.$event->getDuration());
+
+                $stopwatch->start('compare') ;
                 $this->compare();
+                $event = $stopwatch->stop('compare') ;
+                dump('compare : '.$event->getDuration());
             }
         }
         return $this;
@@ -100,11 +116,8 @@ abstract class AbstractDiff
      * @param null|array $dataR
      * @param null|array $dataI
      */
-    protected function addStat($fieldName, $specimenCode, $id, $dataR = null, $dataI = null)
+    private function addStat($fieldName, $specimenCode, $id, $dataR = null, $dataI = null)
     {
-        if (!isset($this->fields)) {
-            $this->fields = [];
-        }
         if (!isset($this->fields[$fieldName])) {
             $this->fields[$fieldName] = 0;
         }
@@ -226,9 +239,11 @@ abstract class AbstractDiff
         $recordInstitution = $this->recordsInstitution[$specimenCode][$idRecord];
         foreach ($fieldNames as $fieldName) {
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
-                $getter = 'get'.$fieldName;
-                $dataR = $recordRecolnat->{$getter}();
-                $dataI = $recordInstitution->{$getter}();
+                //$getter = 'get'.$fieldName;
+                //$dataR = $recordRecolnat->{$getter}();
+                //$dataI = $recordInstitution->{$getter}();
+                $dataR = $recordRecolnat[$fieldName] ;
+                $dataI = $recordInstitution[$fieldName] ;
                 if ($dataR !== $dataI) {
                     $this->addStat($fieldName, $specimenCode, $idRecord, $dataR, $dataI);
                 }
@@ -245,7 +260,7 @@ abstract class AbstractDiff
     {
         $id = null;
         if (is_array($record)) {
-            $id = key($record);
+            $id = $record[$this->getIdField()];
         } elseif (is_object($record)) {
             $id = $record->{$this->getIdSetter()}();
         }

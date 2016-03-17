@@ -4,10 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Form\Type\ExportPrefsType;
+use AppBundle\Manager\RecolnatServer;
+use Doctrine\ORM\AbstractQuery;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class FrontController extends Controller
 {
@@ -159,9 +163,10 @@ class FrontController extends Controller
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
 
-        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
+        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
+            AbstractQuery::HYDRATE_OBJECT);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-            'diff')->findBySpecimenCodes($specimensCode);
+            'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewDiffs.html.twig', array(
             'institutionCode' => $institutionCode,
@@ -212,10 +217,11 @@ class FrontController extends Controller
 
 
         if ($db == 'recolnat') {
-            $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
+            $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
+                AbstractQuery::HYDRATE_OBJECT);
         } else {
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-                'diff')->findBySpecimenCodes($specimensCode);
+                'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
         }
 
         return $this->render('@App/Front/viewLonesome.html.twig', array(
@@ -244,9 +250,10 @@ class FrontController extends Controller
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $diffs = $exportManager->getDiffsBySpecimensCode($specimensCode);
 
-        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode);
+        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
+            AbstractQuery::HYDRATE_OBJECT);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-            'diff')->findBySpecimenCodes($specimensCode);
+            'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'institutionCode' => $institutionCode,

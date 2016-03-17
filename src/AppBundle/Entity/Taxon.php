@@ -156,7 +156,7 @@ class Taxon
      */
     private $vernacularname;
     /**
-     * @ORM\OneToOne(targetEntity="Determination", mappedBy="taxon")
+     * @ORM\OneToOne(targetEntity="Determination", mappedBy="taxon", fetch="EAGER")
      **/
     private $determination;
 
@@ -854,9 +854,14 @@ class Taxon
     
     public function __toString()
     {
-        return trim(sprintf('%s %s', $this->scientificname, $this->scientificnameauthorship)); 
+        return self::toString($this->scientificname, $this->scientificnameauthorship);
     }
-    
+
+    public static function toString($scientificname=NULL, $scientificnameauthorship=NULL)
+    {
+        return trim(sprintf('%s %s', $scientificname, $scientificnameauthorship));
+    }
+
     public function toArray() {
         return [
             'taxonid' => $this->getTaxonid(),

@@ -74,7 +74,7 @@ class Determination
     protected $specimen;
 
     /**
-     * @ORM\OneToOne(targetEntity="Taxon", inversedBy="determination", fetch="EAGER")
+     * @ORM\OneToOne(targetEntity="Taxon", inversedBy="determination", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="taxonid", referencedColumnName="taxonid")
      **/
     private $taxon;
@@ -87,7 +87,7 @@ class Determination
     /**
      * Get identificationid
      *
-     * @return guid
+     * @return rawid
      */
     public function getIdentificationid()
     {

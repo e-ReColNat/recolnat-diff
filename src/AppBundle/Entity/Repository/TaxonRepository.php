@@ -3,7 +3,11 @@
 namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Taxon;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 /**
  * TaxonRepository
@@ -83,9 +87,10 @@ class TaxonRepository extends AbstractRecolnatRepository
     /**
      *
      * @param array $specimenCodes
+     * @param       $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
         $qb = $this->createQueryBuilder('t');
 
@@ -95,7 +100,7 @@ class TaxonRepository extends AbstractRecolnatRepository
             ->innerJoin('t.determination', 'd')
             ->join('d.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'taxonid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'taxonid');
     }
 
     /**
@@ -117,21 +122,59 @@ class TaxonRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param $specimenCode
+     * @param mixed $specimensCode
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findBestTaxonsBySpecimenCode($specimenCode)
+    public function findBestTaxonsBySpecimenCode($specimensCode)
     {
-        $qb = $this->createQueryBuilder('t');
-        $qb
-            ->select('t')
-            ->innerJoin('t.determination', 'd')
-            ->join('d.specimen', 's')
-            ->setMaxResults(1)
-            ->orderBy('d.identificationverifstatus', 'DESC');
-        $this->setSpecimenCodesWhereClause($qb, [$specimenCode]);
-        return $qb->getQuery()->getOneOrNullResult();
+        if (!is_array($specimensCode)) {
+            $specimensCode = [$specimensCode];
+        }
+
+        list($catalogNumbers, $institutionCode, $collectionCode) = $this->splitSpecimenCodes($specimensCode);
+
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('scientificname', 'scientificname');
+        $rsm->addScalarResult('scientificnameauthorship', 'scientificnameauthorship');
+        $rsm->addScalarResult('specimenCode', 'specimenCode');
+        $nativeSqlTaxon = '
+        WITH FirstIDentified AS (
+           SELECT First_Value(t.taxonid) OVER (PARTITION BY catalognumber ORDER BY identificationverifstatus) First,
+           t.taxonid, t.scientificname, t.scientificnameauthorship, s.institutioncode || \'#\' || s.collectioncode || \'#\' || s.catalognumber AS specimencode
+           FROM Taxons t
+           JOIN Determinations d ON t.taxonid = d.taxonid
+           JOIN Specimens s on d.occurrenceid = s.occurrenceid
+           WHERE s.institutioncode = :institutionCode AND s.collectioncode = :collectionCode AND
+           s.catalognumber IN (:catalogNumbers)
+        )
+        SELECT specimenCode, scientificname, scientificnameauthorship FROM FirstIdentified
+        WHERE taxonid = First
+        ';
+
+        $this->getEntityManager()->getConnection()
+            ->setFetchMode(\PDO::FETCH_ASSOC);
+        $results = $this->getEntityManager()->getConnection()->executeQuery(
+            $nativeSqlTaxon,
+            [
+                'institutionCode' => $institutionCode,
+                'collectionCode' => $collectionCode,
+                'catalogNumbers' => $catalogNumbers
+            ],
+            [
+                'catalogNumbers' => Connection::PARAM_STR_ARRAY
+            ]
+        )->fetchAll();
+
+        $formattedResult = [];
+        if (count($results)) {
+            foreach ($results as $values) {
+                $formattedResult[$values['SPECIMENCODE']] = Taxon::toString($values['SCIENTIFICNAME'],
+                    $values['SCIENTIFICNAMEAUTHORSHIP']);
+            }
+        }
+
+        return $formattedResult;
     }
 
     /**

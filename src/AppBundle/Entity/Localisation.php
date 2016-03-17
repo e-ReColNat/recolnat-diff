@@ -123,7 +123,7 @@ class Localisation
     private $verbatimlocality;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Recolte", mappedBy="localisation", fetch="LAZY")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Recolte", mappedBy="localisation", fetch="EXTRA_LAZY")
      */
     private $recoltes;
 

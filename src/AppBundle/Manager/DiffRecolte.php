@@ -10,4 +10,9 @@ class DiffRecolte extends AbstractDiff
     {
         return 'getEventid';
     }
+
+    protected function getIdField()
+    {
+        return 'eventid';
+    }
 }

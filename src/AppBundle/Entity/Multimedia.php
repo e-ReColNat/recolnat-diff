@@ -103,7 +103,7 @@ class Multimedia
     private $type;
 
     /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Specimen", mappedBy="multimedias")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Specimen", mappedBy="multimedias", fetch="EXTRA_LAZY")
      **/
     private $specimens;
 

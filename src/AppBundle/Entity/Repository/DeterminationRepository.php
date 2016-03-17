@@ -81,9 +81,10 @@ class DeterminationRepository extends AbstractRecolnatRepository
     /**
      *
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
         $qb = $this->createQueryBuilder('d');
 
@@ -92,7 +93,7 @@ class DeterminationRepository extends AbstractRecolnatRepository
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('d.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'identificationid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'identificationid');
     }
 
     /**

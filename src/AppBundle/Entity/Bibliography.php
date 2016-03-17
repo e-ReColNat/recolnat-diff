@@ -77,7 +77,7 @@ class Bibliography
     private $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="bibliographies", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="bibliographies", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
      */
     protected $specimen;

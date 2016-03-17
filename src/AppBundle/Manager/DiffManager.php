@@ -37,6 +37,16 @@ class DiffManager
     const RECOLTE_CLASSNAME = 'AppBundle:Recolte';
     const DETERMINATION_CLASSNAME = 'AppBundle:Determination';
     const MULTIMEDIA_HAS_OCCURRENCES_TABLE_NAME = 'MULTIMEDIA_HAS_OCCURRENCES';
+    const ENTITIES_NAME = [
+        'Specimen',
+        'Bibliography',
+        'Determination',
+        'Localisation',
+        'Recolte',
+        'Stratigraphy',
+        'Taxon',
+        'Multimedia'
+    ];
 
     protected $institutionCode;
     protected $collectionCode;
@@ -98,11 +108,11 @@ class DiffManager
      */
     public function searchDiffs()
     {
-        $diffs = [];
+        $specimenCodes = [];
         foreach ($this->entitiesName as $entityName) {
-            $diffs[$entityName] = $this->getDiff($entityName);
+            $specimenCodes[$entityName] = $this->getDiff($entityName);
         }
-        return $diffs;
+        return $specimenCodes;
     }
 
     /**
@@ -302,7 +312,7 @@ class DiffManager
      * @return array
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function getDiff($className)
+    public function getDiff($className)
     {
         $fullClassName = $this->getFullClassName($className);
         $db1 = ['name' => $this->recolnatAlias, 'alias' => 'r'];

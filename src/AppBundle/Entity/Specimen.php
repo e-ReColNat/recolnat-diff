@@ -141,7 +141,7 @@ class Specimen
     private $stratigraphy;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", inversedBy="specimen", fetch="EAGER")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", inversedBy="specimen", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
      **/
     private $recolte;

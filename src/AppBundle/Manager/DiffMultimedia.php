@@ -11,4 +11,9 @@ class DiffMultimedia extends AbstractDiff
     {
         return 'getMultimediaid';
     }
+
+    protected function getIdField()
+    {
+        return 'multimediaid';
+    }
 }

@@ -13,4 +13,8 @@ class DiffStratigraphy extends AbstractDiff
         return 'getGeologicalcontextid';
     }
 
+    protected function getIdField()
+    {
+        return 'geologicalcontextid';
+    }
 }

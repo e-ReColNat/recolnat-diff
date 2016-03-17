@@ -14,4 +14,9 @@ class DiffLocalisation extends AbstractDiff
     {
         return 'getLocationid';
     }
+
+    protected function getIdField()
+    {
+        return 'locationid';
+    }
 }

@@ -68,9 +68,10 @@ class StratigraphyRepository extends AbstractRecolnatRepository
     /**
      *
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
         $qb = $this->createQueryBuilder('st');
 
@@ -79,7 +80,7 @@ class StratigraphyRepository extends AbstractRecolnatRepository
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('st.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'geologicalcontextid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'geologicalcontextid');
     }
 
     /**

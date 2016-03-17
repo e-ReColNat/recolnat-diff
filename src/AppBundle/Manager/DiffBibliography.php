@@ -13,4 +13,8 @@ class DiffBibliography extends AbstractDiff
         return 'getReferenceId';
     }
 
+    protected function getIdField()
+    {
+        return 'referenceid';
+    }
 }

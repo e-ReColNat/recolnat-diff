@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
+use Doctrine\ORM\AbstractQuery;
 
 class RecolteRepository extends AbstractRecolnatRepository
 {
@@ -65,18 +66,19 @@ class RecolteRepository extends AbstractRecolnatRepository
     /**
      *
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder()
+        $qb = $this->createQueryBuilder('r');
+
+        $qb
             ->select('r')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
-            ->from('AppBundle\Entity\Recolte', 'r')
-            ->join('AppBundle\Entity\Specimen', 's')
-            ->andWhere('s.recolte = r.eventid');
+            ->join('r.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'eventid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'eventid');
     }
 
     /**

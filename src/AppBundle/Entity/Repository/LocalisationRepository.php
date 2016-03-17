@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
+use Doctrine\ORM\AbstractQuery;
 
 /**
  * LocalisationRepository
@@ -60,8 +61,7 @@ class LocalisationRepository extends AbstractRecolnatRepository
      */
     public function findBySpecimenCodeUnordered($specimenCodes)
     {
-        $qb = $this->createQueryBuilder('l');
-        $query = $this->getEntityManager()->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
             ->from('AppBundle\Entity\Specimen', 's')
             ->from('AppBundle\Entity\Recolte', 'r')
@@ -70,18 +70,18 @@ class LocalisationRepository extends AbstractRecolnatRepository
             ->andWhere('r.localisation = l.locationid');
 
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $query->getQuery()->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
      *
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
-        $qb = $this->createQueryBuilder('l');
-        $query = $this->getEntityManager()->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->from('AppBundle\Entity\Specimen', 's')
@@ -91,7 +91,7 @@ class LocalisationRepository extends AbstractRecolnatRepository
             ->andWhere('r.localisation = l.locationid');
 
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($query->getQuery()->getResult(), 'locationid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'locationid');
     }
 
     /**

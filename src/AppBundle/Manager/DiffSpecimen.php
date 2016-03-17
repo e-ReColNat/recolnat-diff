@@ -12,4 +12,9 @@ class DiffSpecimen extends AbstractDiff
     {
         return 'getOccurrenceid';
     }
+
+    protected function getIdField()
+    {
+        return 'occurrenceid';
+    }
 }

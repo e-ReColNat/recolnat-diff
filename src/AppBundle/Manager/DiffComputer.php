@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManager;
 class DiffComputer
 {
 
-    private $arrayIds;
+    private $specimenCodes;
 
     /**
      * Holds the Doctrine entity manager for eRecolnat database interaction
@@ -34,17 +34,19 @@ class DiffComputer
     protected $managerRegistry;
 
 
-    protected $diffs = array();
-    protected $lonesomeRecords = array();
-    protected $classes = array();
-    protected $stats = array();
-    protected $statsLonesomeRecords = array();
+    protected $diffs = [];
+    protected $lonesomeRecords = [];
+    protected $classes = [];
+    protected $stats = [];
+    protected $statsLonesomeRecords = [];
+    protected $taxons = [];
 
     private $classOrder = [
         'Specimen',
         'Bibliography',
         'Determination',
         'Multimedia',
+        'Localisation',
         'Recolte',
         'Stratigraphy',
         'Taxon'
@@ -68,25 +70,15 @@ class DiffComputer
     }
 
     /**
-     * @param array $arrayIds
+     * @param array $specimenCodes
      * @return $this
      */
-    public function init($arrayIds)
+    public function init($specimenCodes)
     {
-        $this->arrayIds = $arrayIds;
-        if (count($this->arrayIds) > 0) {
+        $this->setSpecimenCodes($specimenCodes);
+        if (count($this->specimenCodes) > 0) {
             foreach ($this->classOrder as $className) {
-                if (isset($this->arrayIds[ucfirst($className)])) {
-                    $specimensCode = $this->arrayIds[$className];
-                    $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
-                    /* @var $diffClassManager \AppBundle\Manager\AbstractDiff */
-                    $diffClassManager = new $nameDiffClassManager($this->managerRegistry, $this->maxNbSpecimenPerPass);
-                    $diffClassManager->init($className, $specimensCode);
-                    $this->setDiffs($className, $diffClassManager->getStats());
-                    $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
-                    $this->computeDiffs($className);
-                    unset($diffClassManager);
-                }
+                $this->computeClassname($className);
             }
         }
         $this->diffs['classes'] = $this->classes;
@@ -94,14 +86,68 @@ class DiffComputer
     }
 
     /**
+     * @param $specimenCodes
+     */
+    public function setSpecimenCodes($specimenCodes)
+    {
+        $this->specimenCodes = $specimenCodes;
+        $this->setTaxons();
+    }
+
+    /**
+     * @param $className
+     */
+    public function computeClassname($className)
+    {
+        if (isset($this->specimenCodes[ucfirst($className)])) {
+            $specimensCode = $this->specimenCodes[$className];
+            $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
+            /* @var $diffClassManager \AppBundle\Manager\AbstractDiff */
+            $diffClassManager = new $nameDiffClassManager($this->managerRegistry, $this->maxNbSpecimenPerPass);
+            $diffClassManager->init($className, $specimensCode);
+            $this->setDiffs($className, $diffClassManager->getStats());
+            $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
+            $this->computeDiffs($className);
+            unset($diffClassManager);
+        }
+    }
+
+    private function setTaxons()
+    {
+        $flattenSpecimenCodes = [];
+        array_walk_recursive($this->specimenCodes, function($a) use (&$flattenSpecimenCodes) {
+            $flattenSpecimenCodes[] = $a;
+        });
+
+        $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
+
+        $arrayChunkSpecimenCodes = array_chunk($flattenSpecimenCodes, 300);
+        if (count($arrayChunkSpecimenCodes)) {
+            foreach ($arrayChunkSpecimenCodes as $chunkSpecimenCodes) {
+                $taxons = $taxonRepository->findBestTaxonsBySpecimenCode($chunkSpecimenCodes);
+                $this->taxons = array_merge($this->taxons, $taxons);
+            }
+        }
+    }
+
+    private function getTaxon($specimenCode)
+    {
+        if (isset($this->taxons[$specimenCode])) {
+            return $this->taxons[$specimenCode];
+        }
+        return null;
+    }
+
+    /**
      * @param string $specimenCode
      */
     private function setTaxon($specimenCode)
     {
-        if (!isset($this->diffs['datas'][$specimenCode]['display'])) {
-            $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
-            $taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
-            $this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof Taxon ? $taxon->__toString() : '';
+        if (!isset($this->diffs['datas'][$specimenCode]['taxon'])) {
+            //$taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
+            //$taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
+            //$this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof Taxon ? $taxon->__toString() : '';
+            $this->diffs['datas'][$specimenCode]['taxon'] = $this->getTaxon($specimenCode);
         }
     }
 
@@ -154,10 +200,14 @@ class DiffComputer
     }
 
     /**
+     * @param string|null $className
      * @return array
      */
-    public function getDiffs()
+    public function getDiffs($className = null)
     {
+        if (null !== $className) {
+            return $this->diffs[$className];
+        }
         return $this->diffs;
     }
 

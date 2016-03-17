@@ -112,9 +112,10 @@ class SpecimenRepository extends AbstractRecolnatRepository
     /**
      *
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -131,7 +132,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
         $query = $qb->getQuery();
         $query->useResultCache(true, 300);
-        return $this->orderResultSetBySpecimenCode($query->getResult(), 'occurrenceid');
+        return $this->orderResultSetBySpecimenCode($query->getResult($hydratationMode), 'occurrenceid');
     }
 
     /**

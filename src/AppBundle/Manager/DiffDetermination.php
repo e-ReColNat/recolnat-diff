@@ -13,4 +13,8 @@ class DiffDetermination extends AbstractDiff
         return 'getIdentificationId';
     }
 
+    protected function getIdField()
+    {
+        return 'identificationid';
+    }
 }

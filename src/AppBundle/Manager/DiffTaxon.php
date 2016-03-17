@@ -11,4 +11,9 @@ class DiffTaxon extends AbstractDiff
     {
         return 'getTaxonid';
     }
+
+    protected function getIdField()
+    {
+        return 'taxonid';
+    }
 }

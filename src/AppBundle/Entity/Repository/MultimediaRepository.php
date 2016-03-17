@@ -43,9 +43,10 @@ class MultimediaRepository extends AbstractRecolnatRepository
 
     /**
      * @param array $specimenCodes
+     * @param $hydratationMode int
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes)
+    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('m')
@@ -54,7 +55,7 @@ class MultimediaRepository extends AbstractRecolnatRepository
             ->innerJoin('m.specimens', 's')
             ->orderBy('m.identifier', 'ASC');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult(), 'multimediaid');
+        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'multimediaid');
     }
 
     /**
