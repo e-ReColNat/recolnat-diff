@@ -534,37 +534,37 @@ class Multimedia
     }
 
     /**
-     * Add occurrenceid
+     * Add specimen
      *
-     * @param Specimen $occurrenceid
+     * @param Specimen $specimen
      *
      * @return Multimedia
      */
-    public function addOccurrenceid(Specimen $occurrenceid)
+    public function addSpecimen(Specimen $specimen)
     {
-        $this->occurrenceid[] = $occurrenceid;
+        $this->specimens[] = $specimen;
 
         return $this;
     }
 
     /**
-     * Remove occurrenceid
+     * Remove specimen
      *
-     * @param Specimen $occurrenceid
+     * @param Specimen $specimen
      */
-    public function removeOccurrenceid(Specimen $occurrenceid)
+    public function removeSpecimen(Specimen $specimen)
     {
-        $this->occurrenceid->removeElement($occurrenceid);
+        $this->specimens->removeElement($specimen);
     }
 
     /**
-     * Get occurrenceid
+     * Get specimens
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getOccurrenceid()
+    public function getSpecimens()
     {
-        return $this->occurrenceid;
+        return $this->specimens;
     }
 
     public function __toString()
