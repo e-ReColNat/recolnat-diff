@@ -54,6 +54,22 @@ module.exports = function(grunt) {
                     dest: 'web/assets/AppBundle/js',
                     src: ['**', '!default.js', '!jquery.toaster.js','!string.js']
                 }]
+            },
+            fonts: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/AppBundle/Resources/bootstrap-3.3.6/fonts',
+                    dest: 'web/assets/vendor/fonts',
+                    src: ['**']
+                }]
+            },
+            favicon: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/AppBundle/Resources/public/images',
+                    dest: 'web/',
+                    src: ['favico.png']
+                }]
             }
         },
         concat: {

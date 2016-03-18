@@ -160,4 +160,41 @@ class DiffHandler
         $this->collectionCode = $collectionCode;
         return $this;
     }
+
+    /**
+     * @param $items
+     * @param $diffs
+     * @param $inputClassesName
+     * @param $inputOrigin
+     * @param $choices
+     * @return array
+     */
+    public static function formatItemsToChoices($items, $diffs, $inputClassesName, $inputOrigin, $choices)
+    {
+        if (count($items) > 0) {
+            foreach ($items as $specimenCode => $row) {
+                foreach ($row['classes'] as $className => $data) {
+                    $rowClass = $diffs['datas'][$specimenCode]['classes'][$className];
+                    $relationId = $rowClass['id'];
+                    foreach ($rowClass['fields'] as $fieldName => $rowFields) {
+                        $doUpdate = false;
+                        if (in_array(strtolower($className), $inputClassesName)) {
+                            $doUpdate = true;
+                        }
+                        if ($doUpdate) {
+                            $choices[] = [
+                                'className' => $className,
+                                'fieldName' => $fieldName,
+                                'relationId' => $relationId,
+                                'choice' => $inputOrigin,
+                                'specimenCode' => $specimenCode,
+                            ];
+                        }
+                    }
+                }
+            }
+            return $choices;
+        }
+        return $choices;
+    }
 }
