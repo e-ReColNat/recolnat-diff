@@ -77,7 +77,7 @@ class ExportManager
 
     /**
      * @param ManagerRegistry      $managerRegistry
-     * @param string               $export_path
+     * @param string               $exportPath
      * @param Session              $sessionManager
      * @param GenericEntityManager $genericEntityManager
      * @param DiffManager          $diffManager
@@ -86,7 +86,7 @@ class ExportManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
-        $export_path,
+        $exportPath,
         Session $sessionManager,
         GenericEntityManager $genericEntityManager,
         DiffManager $diffManager,
@@ -94,7 +94,7 @@ class ExportManager
         DiffComputer $diffComputer
     ) {
         $this->managerRegistry = $managerRegistry;
-        $this->exportPath = $export_path;
+        $this->exportPath = $exportPath;
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
         $this->diffManager = $diffManager;
@@ -126,7 +126,8 @@ class ExportManager
 
             $this->diffManager->init($this->collection, $this->getExportDirPath());
 
-            $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collectionCode);
+            $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
+            $this->diffHandler->setCollectionCode($collectionCode);
             $data = $this->launchDiffProcess();
             $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
             $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
@@ -236,7 +237,7 @@ class ExportManager
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != '.' && $entry != '..' && is_dir($institutionDir.$entry)) {
-                    $returnDirs[] = new DiffHandler($institutionDir, $entry);
+                    $returnDirs[] = new DiffHandler($institutionDir);
                 }
             }
             closedir($handle);

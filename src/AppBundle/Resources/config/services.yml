@@ -20,7 +20,7 @@ services:
         class: AppBundle\Manager\ExportManager
         arguments:
             managerRegistry: "@doctrine"
-            export_path: "%export_path%"
+            exportPath: "%export_path%"
             sessionManager: "@session"
             genericEntityManager: "@genericEntityManager"
             diffManager: "@diff.manager"
@@ -29,14 +29,14 @@ services:
     userManager:
         class: AppBundle\Business\User\User
         arguments:
-            export_path: "%export_path%"
+            exportPath: "%export_path%"
             maxItemPerPage: "%knp_paginator.page_range%"
 
     statsManager:
         class: AppBundle\Business\StatsManager
         arguments:
             exportManager: "@exportmanager"
-            
+
     # TWIG EXTENSIONS
     app.twig_multimedia_extension:
         class: AppBundle\Twig\MultimediaExtension

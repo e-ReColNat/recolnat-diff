@@ -2,19 +2,77 @@
 
 {% set sumSpecimens = 0 %}
 {% block body %}
-    <h1 class="page-header">{{'welcome' | trans({'%name%' : institution.institutionCode},'user') }}</h1>
-    <h2>{{'listFiles' | trans({},'user') }}</h2>
-    <ul>
-        {% for file in files %}
-            <li>
-                <a href="{{ path('viewfile', {'collectionCode':file.getCollectionCode, 'institutionCode':institutionCode }) }}">
-                    {{file.getCollectionCode}}
+    <h1 class="page-header">{{ 'welcome' | trans({'%name%' : institution.institutionCode},'user') }}</h1>
+    {% if collections|length > 0 %}
+        {% for collection in collections %}
+            {% if (collection['diffHandler']|length == 0) %}
+                {{ 'label.searchDiffs' | trans }}
+
+                <a class="searchDiffButton btn btn-primary" role="button"
+                   href="{{ path('searchDiff', {'institutionCode' : institution.institutionCode, 'collectionCode' : collection.collection.collectionCode}) }}">
+                    <span class="glyphicon glyphicon-search"
+                          aria-hidden="true"></span> {{ 'label.searchDiffs' | trans }}
+                    - {{ collection.collection.collectionCode }}
+                </a>
+            {% else %}
+                <a href="{{ path('viewfile', {'collectionCode':collection['collection'].getCollectionCode, 'institutionCode':institution.getInstitutionCode }) }}">
+                    {{ collection['collection'].getCollectionCode }}
                 </a>
                 <ul>
-                    <li>{{'fichier.creele'|trans({'%date%': file.getCTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
-                    <li>{{'fichier.modifiele'|trans({'%date%': file.getMTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
+                    {% for diffHandler in collection['diffHandler'] %}
+                        <li>{{ 'fichier.creele'|trans({'%date%': diffHandler.getCTime|date("d/m/Y"), '%heure%' :diffHandler.getCTime|date("H:i:s")}) }}</li>
+                        <li>{{ 'fichier.modifiele'|trans({'%date%': diffHandler.getMTime|date("d/m/Y"), '%heure%' :diffHandler.getCTime|date("H:i:s")}) }}</li>
+                    {% endfor %}
                 </ul>
-            </li>
+            {% endif %}
         {% endfor %}
-    </ul>
+    {% endif %}
+    {% include "@App/Front/partial/searchDiffModal.html.twig" %}
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("a.searchDiffButton").on('click', function(event){
+                event.preventDefault();
+                $("#modal").modal({
+                    backdrop: 'static',
+                    keyboard: false
+                }).modal('show');
+
+                var progressbar = $("#modal").find(".progress-bar") ;
+                var steps;
+
+                try {
+                    var source    = new EventSource($(this).attr('href'));
+                    source.onopen = function () {
+                        return;
+                    };
+                    source.addEventListener('steps', function (evt) {
+                        console.log(evt);
+                        steps = parseInt(evt.data);
+                    });
+                    source.addEventListener('step', function (evt) {
+                        console.log(evt);
+                        data = jQuery.parseJSON(evt.data);
+                        progress(parseInt(data.count) / steps * 100, progressbar, data.step);
+                        if (parseInt(data.count) === steps) {
+                            source.close();
+                        }
+                    });
+                    source.addEventListener('close', function (evt) {
+                        source.close();
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+            function progress(percent, $element, label) {
+                $element.css('width', percent+ "%").html(Math.ceil(percent) + "%");
+                $element.parent().next().html(Translator.trans(label)) ;
+            }
+        });
+
+
+    </script>
 {% endblock %}

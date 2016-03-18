@@ -2,12 +2,15 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Description of AjaxDiffsController
@@ -16,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BackendController extends Controller
 {
+
     /**
      * @Route("/{institutionCode}/{collectionCode}/export/{type}/", name="export")
      * @param string  $type
@@ -43,18 +47,74 @@ class BackendController extends Controller
                 $file = $exportManager->export('csv', $exportPrefs);
                 break;
         }
-        if (!is_null($file)) {
-            return new JsonResponse(['file' => urlencode($file)]);
-        } else {
-            $response = new JsonResponse();
-            $translator = $this->get('translator');
-            $message = $translator->trans('export.probleme');
+        $response = new JsonResponse();
+        if (is_null($file)) {
+            $message = $this->get('translator')->trans('export.probleme');
             $response->setContent($message);
 
             $this->addFlash('error', $message);
             $response->setStatusCode(400);
             return $response;
         }
+        return $response->setContent(['file' => urlencode($file)]);
+    }
+
+    /**
+     * @Route("/{institutionCode}/{collectionCode}/searchDiff/", name="searchDiff", options={"expose"=true})
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @return Response
+     */
+    public function searchDiffAction($institutionCode, $collectionCode)
+    {
+        $collection = $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
+
+
+        $diffManager = $this->get('diff.manager');
+        $diffComputer = $this->get('diff.computer');
+        $diffManager->init($collection, $this->getParameter('export_path'));
+        $response = new StreamedResponse();
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache');
+        $diffManager->init($collection, $this->getParameter('export_path'));
+
+        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
+        $diffHandler->setCollectionCode($collectionCode);
+
+        $response->setCallback(function() use ($diffManager, $diffComputer, $diffHandler) {
+            $server = new RecolnatServer();
+            $specimenCodes = [];
+
+            // Nb total d'étapes :  Search / Compute pour chaque entité
+            // +1 étape sauvegarde
+            $server->steps->send(count($diffManager::ENTITIES_NAME) * 2 + 1);
+            $countStep = 0;
+            foreach ($diffManager::ENTITIES_NAME as $entityName) {
+
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'search '.$entityName]));
+                $specimenCodes[$entityName] = $diffManager->getDiff($entityName);
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'compute '.$entityName]));
+
+                $diffComputer->setSpecimenCodes($specimenCodes);
+                $diffComputer->computeClassname($entityName);
+            }
+
+            $datas = array_merge($diffComputer->getDiffs(),
+                [
+                    'stats' => $diffComputer->getAllStats(),
+                    'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
+                    'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
+                ]);
+
+            $server->step->send(json_encode(['count' => $countStep++, 'step' => 'save']));
+            $diffHandler->saveDiffs($datas);
+            $server->step->send(json_encode(['count' => $countStep++, 'step' => 'done']));
+            $server->close->send(true);
+        });
+
+        $response->send();
     }
 
     /**
@@ -162,29 +222,7 @@ class BackendController extends Controller
                     }
                     break;
             }
-            if (count($items) > 0) {
-                foreach ($items as $specimenCode => $row) {
-                    foreach ($row['classes'] as $className => $data) {
-                        $rowClass = $diffs['datas'][$specimenCode]['classes'][$className];
-                        $relationId = $rowClass['id'];
-                        foreach ($rowClass['fields'] as $fieldName => $rowFields) {
-                            $doUpdate = false;
-                            if (in_array(strtolower($className), $inputClassesName)) {
-                                $doUpdate = true;
-                            }
-                            if ($doUpdate) {
-                                $choices[] = [
-                                    'className' => $className,
-                                    'fieldName' => $fieldName,
-                                    'relationId' => $relationId,
-                                    'choice' => $inputOrigin,
-                                    'specimenCode' => $specimenCode,
-                                ];
-                            }
-                        }
-                    }
-                }
-            }
+            $choices = DiffHandler::formatItemsToChoices($items, $diffs, $inputClassesName, $inputOrigin, $choices);
         }
 
         $exportManager->setChoices($choices);

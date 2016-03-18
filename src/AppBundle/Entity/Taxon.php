@@ -5,153 +5,153 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\TaxonRepository")
-* @ORM\Table(name="Taxons")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\TaxonRepository")
+ * @ORM\Table(name="Taxons")
+ */
 class Taxon
 {
-    /** 
+    /**
      * @ORM\Id
      * @ORM\Column(type="rawid")
      */
     private $taxonid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $acceptednameusage;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true, name="class_")
      */
     private $class;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $dwcataxonid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $family;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $genus;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $higherclassification;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $infraspecificepithet;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $kingdom;
 
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $modified;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $nameaccordingto;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $namepublishedin;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $namepublishedinyear;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $nomenclaturalcode;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $nomenclaturalstatus;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true, name="order_")
      */
     private $order;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $originalnameusage;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $parentnameusage;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $phylum;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $scientificname;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $scientificnameauthorship;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $specificepithet;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $subgenus;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $taxonomicstatus;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
     private $taxonrank;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $taxonremarks;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $verbatimtaxonrank;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $vernacularname;
@@ -841,7 +841,7 @@ class Taxon
     {
         return $this->vernacularname;
     }
-    
+
     /**
      * Get determination
      *
@@ -851,18 +851,19 @@ class Taxon
     {
         return $this->determination;
     }
-    
+
     public function __toString()
     {
         return self::toString($this->scientificname, $this->scientificnameauthorship);
     }
 
-    public static function toString($scientificname=NULL, $scientificnameauthorship=NULL)
+    public static function toString($scientificname = null, $scientificnameauthorship = null)
     {
         return trim(sprintf('%s %s', $scientificname, $scientificnameauthorship));
     }
 
-    public function toArray() {
+    public function toArray()
+    {
         return [
             'taxonid' => $this->getTaxonid(),
             'acceptednameusage' => $this->getAcceptednameusage(),

@@ -36,7 +36,7 @@ class CsvExporter extends AbstractExporter
      */
     public function generate(Prefs $prefs, array $options = [])
     {
-        if (isset($options['dwc']) && $options['dwc'] == true) {
+        if (isset($options['dwc']) && $options['dwc'] === true) {
             $this->setCsvDelimiter($prefs->getDwcDelimiter());
             $this->setCsvEnclosure($prefs->getDwcEnclosure());
             $this->setCsvLineBreak($prefs->getDwcLineBreak());
@@ -88,7 +88,7 @@ class CsvExporter extends AbstractExporter
         foreach ($filesHandler as $className => $fileHandler) {
             fclose($fileHandler);
         }
-        if (isset($options['dwc']) && $options['dwc'] == true) {
+        if (isset($options['dwc']) && $options['dwc'] === true) {
             return $this->getFiles();
         } else {
             return $this->createZipFile();

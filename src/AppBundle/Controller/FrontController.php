@@ -2,16 +2,15 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
-use AppBundle\Manager\RecolnatServer;
 use Doctrine\ORM\AbstractQuery;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class FrontController extends Controller
 {
@@ -30,17 +29,29 @@ class FrontController extends Controller
     public function indexAction()
     {
         $institutionCode = 'MHNAIX';
-        $collectionCode = 'AIX';
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $files = $exportManager->getFiles();
         /* @var $institution \AppBundle\Entity\Institution */
         $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
             ->findOneBy(['institutioncode' => $institutionCode]);
+
+        $collections = [];
+        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
+        $exportManager = $this->get('exportManager');
+        /** @var Collection $collection */
+        foreach ($institution->getCollections() as $collection) {
+            $collectionCode = $collection->getCollectioncode();
+            $collections[$collectionCode]['collection'] = $collection;
+            $diffHandler->setCollectionCode($collectionCode);
+            $collections[$collectionCode]['diffHandler'] = [];
+            if (!$diffHandler->shouldSearchDiffs()) {
+                /* @var $exportManager \AppBundle\Manager\ExportManager */
+                $exportManager = $exportManager->init($institutionCode, $collectionCode);
+                $collections[$collectionCode]['diffHandler'] = $exportManager->getFiles();
+            }
+        }
+
         return $this->render('@App/Front/index.html.twig', array(
-            'institutionCode' => $institutionCode,
-            'files' => $files,
             'institution' => $institution,
+            'collections' => $collections,
         ));
     }
 
@@ -348,7 +359,7 @@ class FrontController extends Controller
     /**
      * @Route("/generateDiff/{collectionCode}/{compt}", name="generateDiff")
      */
-    public function generateDiff($collectionCode, $compt)
+    public function generateDiffAction($collectionCode, $compt)
     {
         $collection = $this->getDoctrine()->getManager()
             ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);

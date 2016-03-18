@@ -2,7 +2,6 @@
 
 namespace AppBundle\Manager;
 
-use AppBundle\Entity\Taxon;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
@@ -144,9 +143,6 @@ class DiffComputer
     private function setTaxon($specimenCode)
     {
         if (!isset($this->diffs['datas'][$specimenCode]['taxon'])) {
-            //$taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
-            //$taxon = $taxonRepository->findBestTaxonsBySpecimenCode($specimenCode);
-            //$this->diffs['datas'][$specimenCode]['taxon'] = $taxon instanceof Taxon ? $taxon->__toString() : '';
             $this->diffs['datas'][$specimenCode]['taxon'] = $this->getTaxon($specimenCode);
         }
     }

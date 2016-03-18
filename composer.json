@@ -1,5 +1,6 @@
 {
-    "name": "tpateffoz/recolnat.sf3",
+    "name": "eRecolnat.diffs",
+    "description" : "Outils d'aide à la décision pour l'export des différences, entre la base de eRecolnat et les collections naturalistes",
     "license": "proprietary",
     "type": "project",
     "autoload": {
