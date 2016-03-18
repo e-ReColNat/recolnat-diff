@@ -29,7 +29,7 @@ class StatsManager
     {
         $this->institutionCode = $institutionCode;
         $this->collectionCode = $collectionCode;
-        $this->exportManager = $this->exportManager->init($institutionCode, $collectionCode);
+        $this->exportManager = $this->exportManager->init($this->institutionCode, $this->collectionCode);
         return $this;
     }
 

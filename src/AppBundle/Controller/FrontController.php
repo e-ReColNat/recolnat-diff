@@ -4,17 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
-use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
-use AppBundle\Manager\RecolnatServer;
 use Doctrine\ORM\AbstractQuery;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class FrontController extends Controller
 {
@@ -37,12 +33,12 @@ class FrontController extends Controller
         $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
             ->findOneBy(['institutioncode' => $institutionCode]);
 
-        $collections=[];
+        $collections = [];
         $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
         $exportManager = $this->get('exportManager');
         /** @var Collection $collection */
         foreach ($institution->getCollections() as $collection) {
-            $collectionCode = $collection->getCollectioncode() ;
+            $collectionCode = $collection->getCollectioncode();
             $collections[$collectionCode]['collection'] = $collection;
             $diffHandler->setCollectionCode($collectionCode);
             $collections[$collectionCode]['diffHandler'] = [];

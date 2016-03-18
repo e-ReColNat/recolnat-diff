@@ -61,8 +61,8 @@ class BackendController extends Controller
 
     /**
      * @Route("/{institutionCode}/{collectionCode}/searchDiff/", name="searchDiff", options={"expose"=true})
-     * @param string  $institutionCode
-     * @param string  $collectionCode
+     * @param string $institutionCode
+     * @param string $collectionCode
      * @return Response
      */
     public function searchDiffAction($institutionCode, $collectionCode)
@@ -89,13 +89,13 @@ class BackendController extends Controller
 
             // Nb total d'étapes :  Search / Compute pour chaque entité
             // +1 étape sauvegarde
-            $server->steps->send(count($diffManager::ENTITIES_NAME)*2 +1);
-            $countStep = 0 ;
+            $server->steps->send(count($diffManager::ENTITIES_NAME) * 2 + 1);
+            $countStep = 0;
             foreach ($diffManager::ENTITIES_NAME as $entityName) {
 
-                $server->step->send(json_encode(['count'=> $countStep++, 'step'=>'search '.$entityName]));
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'search '.$entityName]));
                 $specimenCodes[$entityName] = $diffManager->getDiff($entityName);
-                $server->step->send(json_encode(['count'=> $countStep++, 'step'=>'compute '.$entityName]));
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'compute '.$entityName]));
 
                 $diffComputer->setSpecimenCodes($specimenCodes);
                 $diffComputer->computeClassname($entityName);
@@ -108,9 +108,9 @@ class BackendController extends Controller
                     'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
                 ]);
 
-            $server->step->send(json_encode(['count'=> $countStep++, 'step'=>'save']));
+            $server->step->send(json_encode(['count' => $countStep++, 'step' => 'save']));
             $diffHandler->saveDiffs($datas);
-            $server->step->send(json_encode(['count'=> $countStep++, 'step'=>'done']));
+            $server->step->send(json_encode(['count' => $countStep++, 'step' => 'done']));
             $server->close->send(true);
         });
 

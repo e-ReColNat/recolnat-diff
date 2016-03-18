@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tpateffoz
- * Date: 15/03/16
- * Time: 11:35
- */
-
 namespace AppBundle\Manager;
 
 

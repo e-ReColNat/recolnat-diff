@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Description of MultimediaExtension
- *
- * @author tpateffoz
- */
-
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Determination;
@@ -236,7 +230,7 @@ class SpecimenExtension extends \Twig_Extension
         $determinations = $specimen->getDeterminations();
         if (count($determinations) > 0) {
             $taxon = $determinations[0]->getTaxon();
-            if ($taxon != null) {
+            if ($taxon !== null) {
                 return $taxon;
             } else {
                 return null;
