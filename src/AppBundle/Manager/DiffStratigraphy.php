@@ -1,8 +1,6 @@
 <?php
 namespace AppBundle\Manager;
 
-use Doctrine\ORM\EntityManager;
-
 
 class DiffStratigraphy extends AbstractDiff
 {

@@ -2,19 +2,39 @@
 
 {% set sumSpecimens = 0 %}
 {% block body %}
-    <h1 class="page-header">{{'welcome' | trans({'%name%' : institution.institutionCode},'user') }}</h1>
-    <h2>{{'listFiles' | trans({},'user') }}</h2>
-    <ul>
-        {% for file in files %}
-            <li>
-                <a href="{{ path('viewfile', {'collectionCode':file.getCollectionCode, 'institutionCode':institutionCode }) }}">
-                    {{file.getCollectionCode}}
+    <h1 class="page-header">{{ 'welcome' | trans({'%name%' : institution.institutionCode},'user') }}</h1>
+    {% if collections|length > 0 %}
+        {% for collection in collections %}
+            {%  if (collection['diffHandler']|length == 0) %}
+                {{  'label.searchDiffs' | trans }}
+            {% else %}
+                <a href="{{ path('viewfile', {'collectionCode':collection['collection'].getCollectionCode, 'institutionCode':institution.getInstitutionCode }) }}">
+                    {{ collection['collection'].getCollectionCode }}
                 </a>
+                {% dump(collection['diffHandler'])%}
                 <ul>
-                    <li>{{'fichier.creele'|trans({'%date%': file.getCTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
-                    <li>{{'fichier.modifiele'|trans({'%date%': file.getMTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")})}}</li>
+                {% for diffHandler in collection['diffHandler'] %}
+                    <li>{{ 'fichier.creele'|trans({'%date%': diffHandler.getCTime|date("d/m/Y"), '%heure%' :diffHandler.getCTime|date("H:i:s")}) }}</li>
+                    <li>{{ 'fichier.modifiele'|trans({'%date%': diffHandler.getMTime|date("d/m/Y"), '%heure%' :diffHandler.getCTime|date("H:i:s")}) }}</li>
+                {% endfor %}
                 </ul>
-            </li>
+            {% endif %}
         {% endfor %}
-    </ul>
+
+    {#{% else %}#}
+        {#<h2>{{ 'listFiles' | trans({},'user') }}</h2>#}
+        {#<ul>#}
+            {#{% for file in files %}#}
+                {#<li>#}
+                    {#<a href="{{ path('viewfile', {'collectionCode':file.getCollectionCode, 'institutionCode':institutionCode }) }}">#}
+                        {#{{ file.getCollectionCode }}#}
+                    {#</a>#}
+                    {#<ul>#}
+                        {#<li>{{ 'fichier.creele'|trans({'%date%': file.getCTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")}) }}</li>#}
+                        {#<li>{{ 'fichier.modifiele'|trans({'%date%': file.getMTime|date("d/m/Y"), '%heure%' :file.getCTime|date("H:i:s")}) }}</li>#}
+                    {#</ul>#}
+                {#</li>#}
+            {#{% endfor %}#}
+        {#</ul>#}
+    {% endif %}
 {% endblock %}

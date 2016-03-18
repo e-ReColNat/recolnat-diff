@@ -89,6 +89,9 @@ class Institution
         return $this->sourcefileid;
     }
 
+    /**
+     * @return mixed
+     */
     public function getCollections()
     {
         return $this->collections;

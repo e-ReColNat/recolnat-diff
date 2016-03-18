@@ -88,21 +88,21 @@ abstract class AbstractDiff
         if (count($arrayChunkSpecimenCodes)) {
             $stopwatch = new Stopwatch();
             foreach ($arrayChunkSpecimenCodes as $chunkSpecimenCodes) {
-                $stopwatch->start('recolnat') ;
+                $stopwatch->start('recolnat');
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
                     ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
-                $event = $stopwatch->stop('recolnat') ;
+                $event = $stopwatch->stop('recolnat');
                 dump('recolnat : '.$event->getDuration());
 
-                $stopwatch->start('insti') ;
+                $stopwatch->start('insti');
                 $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
                     ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
-                $event = $stopwatch->stop('insti') ;
+                $event = $stopwatch->stop('insti');
                 dump('insti : '.$event->getDuration());
 
-                $stopwatch->start('compare') ;
+                $stopwatch->start('compare');
                 $this->compare();
-                $event = $stopwatch->stop('compare') ;
+                $event = $stopwatch->stop('compare');
                 dump('compare : '.$event->getDuration());
             }
         }
@@ -239,11 +239,8 @@ abstract class AbstractDiff
         $recordInstitution = $this->recordsInstitution[$specimenCode][$idRecord];
         foreach ($fieldNames as $fieldName) {
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
-                //$getter = 'get'.$fieldName;
-                //$dataR = $recordRecolnat->{$getter}();
-                //$dataI = $recordInstitution->{$getter}();
-                $dataR = $recordRecolnat[$fieldName] ;
-                $dataI = $recordInstitution[$fieldName] ;
+                $dataR = $recordRecolnat[$fieldName];
+                $dataI = $recordInstitution[$fieldName];
                 if ($dataR !== $dataI) {
                     $this->addStat($fieldName, $specimenCode, $idRecord, $dataR, $dataI);
                 }

@@ -24,12 +24,10 @@ class DiffHandler
     /**
      * DiffHandler constructor.
      * @param string $dirPath
-     * @param string $collectionCode
      */
-    public function __construct($dirPath, $collectionCode)
+    public function __construct($dirPath)
     {
         $this->dirPath = $dirPath;
-        $this->collectionCode = $collectionCode;
     }
 
     /**
@@ -116,7 +114,7 @@ class DiffHandler
     }
 
     /**
-     * @return $this
+     * @return DiffHandler
      */
     public function setChoicesFile()
     {
@@ -125,7 +123,7 @@ class DiffHandler
     }
 
     /**
-     * @return $this
+     * @return DiffHandler
      */
     public function setDiffsFile()
     {
@@ -151,5 +149,15 @@ class DiffHandler
     public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
     {
         return $this->getDiffs()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
+    }
+
+    /**
+     * @param $collectionCode
+     * @return DiffHandler
+     */
+    public function setCollectionCode($collectionCode)
+    {
+        $this->collectionCode = $collectionCode;
+        return $this;
     }
 }

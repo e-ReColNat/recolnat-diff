@@ -7,7 +7,6 @@ use AppBundle\Entity\Taxon;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 /**
  * TaxonRepository
@@ -122,7 +121,7 @@ class TaxonRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param mixed $specimensCode
+     * @param array|string $specimensCode
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */

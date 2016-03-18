@@ -2,7 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\User\User;
+use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
 use AppBundle\Manager\RecolnatServer;
 use Doctrine\ORM\AbstractQuery;
@@ -30,17 +33,29 @@ class FrontController extends Controller
     public function indexAction()
     {
         $institutionCode = 'MHNAIX';
-        $collectionCode = 'AIX';
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $files = $exportManager->getFiles();
         /* @var $institution \AppBundle\Entity\Institution */
         $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
             ->findOneBy(['institutioncode' => $institutionCode]);
+
+        $collections=[];
+        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
+        $exportManager = $this->get('exportManager');
+        /** @var Collection $collection */
+        foreach ($institution->getCollections() as $collection) {
+            $collectionCode = $collection->getCollectioncode() ;
+            $collections[$collectionCode]['collection'] = $collection;
+            $diffHandler->setCollectionCode($collectionCode);
+            $collections[$collectionCode]['diffHandler'] = [];
+            if (!$diffHandler->shouldSearchDiffs()) {
+                /* @var $exportManager \AppBundle\Manager\ExportManager */
+                $exportManager = $exportManager->init($institutionCode, $collectionCode);
+                $collections[$collectionCode]['diffHandler'] = $exportManager->getFiles();
+            }
+        }
+
         return $this->render('@App/Front/index.html.twig', array(
-            'institutionCode' => $institutionCode,
-            'files' => $files,
             'institution' => $institution,
+            'collections' => $collections,
         ));
     }
 
@@ -348,7 +363,7 @@ class FrontController extends Controller
     /**
      * @Route("/generateDiff/{collectionCode}/{compt}", name="generateDiff")
      */
-    public function generateDiff($collectionCode, $compt)
+    public function generateDiffAction($collectionCode, $compt)
     {
         $collection = $this->getDoctrine()->getManager()
             ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
@@ -357,4 +372,129 @@ class FrontController extends Controller
         $diffManager->generateDiff($collection, $compt, rand(1, 5));
         return $this->render('@App/Front/generateDiff.html.twig');
     }
+
+    /**
+     * @Route("/test/", name="test")
+     */
+    public function testAction()
+    {
+        $institutionCode = 'MHNAIX';
+        $collectionCode = 'AIX';
+        $collection = $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
+        /*
+                $diffManager = $this->get('diff.manager');
+                $diffComputer = $this->get('diff.computer');
+                $user = new User($this->getParameter('export_path'), $this->getParameter('maxitemperpage'));
+                $user->init($institutionCode);
+
+                $diffHandler = new DiffHandler($user->getDataDirPath(), $collectionCode);
+
+                $diffManager->init($collection, $this->getParameter('export_path'));
+
+                $specimenCodes = [];
+
+                $stopwatch = new Stopwatch();
+                foreach ($diffManager::ENTITIES_NAME as $entityName) {
+
+                    //if ($entityName == 'Specimen' || $entityName == 'Recolte') {
+
+                    $stopwatch->start($entityName);
+                    $specimenCodes[$entityName] = $diffManager->getDiff($entityName);
+                    $event = $stopwatch->stop($entityName);
+                    dump('stop search : '.$entityName.' '.number_format($event->getDuration() / 1000, 2).'s');
+
+                    $stopwatch->start($entityName);
+                    $diffComputer->setSpecimenCodes($specimenCodes);
+                    $diffComputer->computeClassname($entityName);
+                    $event = $stopwatch->stop($entityName);
+                    dump('stop compute : '.$entityName.' '.number_format($event->getDuration() / 1000, 2).'s');
+                    //}
+                }
+        */
+        return $this->render('@App/Front/test.html.twig', [
+            'collectionCode' => $collectionCode,
+        ]);
+    }
+
+    /**
+     * @Route("/testEvent/{collectionCode}/", name="testEvent", options={"expose"=true})
+     */
+    public function testEventAction($collectionCode)
+    {
+        $collection = $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
+        $institutionCode = $collection->getInstitution()->getInstitutioncode();
+
+        $diffManager = $this->get('diff.manager');
+        $diffComputer = $this->get('diff.computer');
+        $user = new User($this->getParameter('export_path'), $this->getParameter('maxitemperpage'));
+        $user->init($institutionCode);
+
+        $diffHandler = new DiffHandler($user->getDataDirPath());
+
+        $diffManager->init($collection, $this->getParameter('export_path'));
+        $response = new StreamedResponse();
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache');
+        ini_set('output_buffering', 0);
+        ob_implicit_flush();
+
+        $response->setCallback(function() use ($diffManager, $diffComputer, $diffHandler) {
+            $server = new RecolnatServer();
+            $stopwatch = new Stopwatch();
+            $specimenCodes = [];
+
+            foreach ($diffManager::ENTITIES_NAME as $entityName) {
+
+                //if ($entityName == 'Specimen' || $entityName == 'Recolte') {
+                $server->entity->send('start search : '.$entityName);
+
+                $stopwatch->start($entityName);
+                $specimenCodes[$entityName] = $diffManager->getDiff($entityName);
+                $event = $stopwatch->stop($entityName);
+
+                $server->entity->send('stop search : '.$entityName.' '.number_format($event->getDuration() / 1000,
+                        2).'s');
+
+                $server->entity->send('start compute : '.$entityName);
+
+                $stopwatch->start($entityName);
+                $diffComputer->setSpecimenCodes($specimenCodes);
+                $diffComputer->computeClassname($entityName);
+                $event = $stopwatch->stop($entityName);
+
+                $server->entity->send('stop compute : '.$entityName.' '.number_format($event->getDuration() / 1000,
+                        2).'s');
+                //}
+            }
+
+            $server->entity->send('save');
+            $stopwatch->start('save');
+            $datas = array_merge($diffComputer->getDiffs(),
+                [
+                    'stats' => $diffComputer->getAllStats(),
+                    'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
+                    'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
+                ]);
+
+            //$diffHandler->save($datas);
+            $event = $stopwatch->stop('save');
+            $server->entity->send('stop save : '.number_format($event->getDuration() / 1000,
+                    2).'s');
+            $server->close->send(true);
+        });
+
+        $response->send();
+    }
 }
+/**
+ * $data = array_merge($diffComputer->getDiffs(),
+ * [
+ * 'stats' => $diffComputer->getAllStats(),
+ * 'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
+ * 'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
+ * ]);
+ * $this->getDiffHandler()->saveDiffs($data);
+ */

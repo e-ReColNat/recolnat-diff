@@ -29,7 +29,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     /**
      *
      * @param array $specimenCodes
-     * @param $hydratationMode int
+     * @param       $hydratationMode int
      * @return array
      */
     abstract public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY);
@@ -41,6 +41,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      * @return \Doctrine\ORM\QueryBuilder
      */
     abstract public function getQueryBuilderFindByCollection(Collection $collection);
+
     /**
      *
      * @param array $ids
@@ -93,8 +94,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
                     if (is_array($resultRow[0])) {
                         $specimenCode = $resultRow['specimencode'];
                         $orderResultSet[$specimenCode][$resultRow[0][$identifierName]] = $resultRow[0];
-                    }
-                    else {
+                    } else {
                         $orderResultSet[$resultRow['specimencode']][$resultRow[0]->{'get'.$identifierName}()] = $resultRow[0];
                     }
                 }
@@ -137,6 +137,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         }
         return array($catalogNumbers, $institutionCode, $collectionCode);
     }
+
     /**
      * @param $id
      * @return \Doctrine\ORM\Query
@@ -153,7 +154,8 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      * @param string $id
      * @return QueryBuilder
      */
-    private function getQbFindOneById($className, $id) {
+    private function getQbFindOneById($className, $id)
+    {
         $rawId = $this->hasRawId($className);
         $identifierName = $this->getIdentifierName($className);
 
@@ -164,6 +166,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
         return $qb;
     }
+
     /**
      * @param string $className
      * @param string $id
