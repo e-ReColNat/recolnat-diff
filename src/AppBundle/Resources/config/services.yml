@@ -63,3 +63,7 @@ services:
         arguments: ["@session"]
         tags:
             - { name: kernel.event_listener, event: kernel.response}
+
+    # Security
+    #recolnat.cas_authenticator:
+    #    class: AppBundle\Security\RecolnatAuthenticator

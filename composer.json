@@ -29,7 +29,8 @@
         "knplabs/knp-paginator-bundle" : "dev-master",
         "friendsofsymfony/jsrouting-bundle": "dev-master",
         "oyejorge/less.php": "v1.7.0.10",
-        "willdurand/js-translation-bundle": "^2.5"
+        "willdurand/js-translation-bundle": "^2.5",
+        "prayno/casauth-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

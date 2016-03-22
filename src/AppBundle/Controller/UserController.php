@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Business\User\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\UserPrefsType;
@@ -67,30 +68,17 @@ class UserController extends Controller
         ));
     }
 
+
     /**
-     * @Route("/login/", name="login")
-     * @param Request $request
-     * @return Response
+     * @Route("/userlogout/", name="userlogout")
      */
-    public function loginAction(Request $request)
+    public function logoutAction()
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
+        $this->get('security.token_storage')->setToken(null);
+        $this->get('session')->invalidate();
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        $url = $this->getParameter('server_logout_url');
 
-        $user = new User();
-        $form = $this->createForm(LoginType::class, $user);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user->hasGrantedAccess()) {
-                return $this->redirectToRoute('index');
-            }
-        }
-        return $this->render('@App/User/login.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error,
-        ]);
+        return $this->redirect($url.'?service=http://recolnat-diff.tld/app_dev.php');
     }
 }

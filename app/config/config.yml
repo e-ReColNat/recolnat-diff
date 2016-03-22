@@ -15,6 +15,7 @@ parameters:
         - 10
         - 20
         - 50
+    server_logout_url: http://localhost:8080/cas/logout
 
 framework:
     #esi:             ~
@@ -129,3 +130,9 @@ knp_paginator:
     page_range: 5
     template:
          pagination: "@App/Front/helpers/paginator-bootstrap.html.twig"
+
+p_rayno_cas_auth:
+    server_login_url: https://localhost:8443/cas/
+    server_validation_url: https://localhost:8443/cas/serviceValidate
+    server_logout_url: https://localhost:8443/cas/logout
+    xml_namespace: cas

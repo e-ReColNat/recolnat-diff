@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "58f2eb04d5810c0452a1ec1ea01f5307",
-    "content-hash": "47976e441a5a2de529ea0bc3580d1427",
+    "hash": "721d1161b899bb8a5e969e4d6d9b36ff",
+    "content-hash": "71e380e429ce53488132de7a36749820",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1247,6 +1247,50 @@
                 "random"
             ],
             "time": "2015-12-10 14:48:13"
+        },
+        {
+            "name": "prayno/casauth-bundle",
+            "version": "v1.0.1",
+            "target-dir": "PRayno/CasAuthBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PRayno/CasAuthBundle.git",
+                "reference": "3edd93ac737fa1a88438835daa10c1fe4adc90ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PRayno/CasAuthBundle/zipball/3edd93ac737fa1a88438835daa10c1fe4adc90ab",
+                "reference": "3edd93ac737fa1a88438835daa10c1fe4adc90ab",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/symfony": ">=2.8"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "PRayno\\CasAuthBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL"
+            ],
+            "authors": [
+                {
+                    "name": "Pierre Raynaud",
+                    "email": "pierre.raynaud@udamail.fr"
+                }
+            ],
+            "description": "Basic CAS (SSO) authenticator for Symfony 3",
+            "keywords": [
+                "PRayno",
+                "SSO",
+                "Symfony 3",
+                "cas",
+                "guard"
+            ],
+            "time": "2016-02-05 09:21:46"
         },
         {
             "name": "psr/log",
