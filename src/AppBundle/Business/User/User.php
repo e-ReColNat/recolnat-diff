@@ -16,7 +16,6 @@ class User
     /* @var $prefs \AppBundle\Business\User\Prefs */
     private $prefs;
     private $exportPath;
-    private $maxItemPerPage;
 
 
     /**
@@ -122,21 +121,4 @@ class User
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getMaxItemPerPage()
-    {
-        return $this->maxItemPerPage;
-    }
-
-    /**
-     * @param int $maxItemPerPage
-     * @return User
-     */
-    public function setMaxItemPerPage($maxItemPerPage)
-    {
-        $this->maxItemPerPage = $maxItemPerPage;
-        return $this;
-    }
 }

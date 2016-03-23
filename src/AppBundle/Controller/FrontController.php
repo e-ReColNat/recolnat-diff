@@ -68,6 +68,7 @@ class FrontController extends Controller
 
         $statsBySimilarity = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $statsManager->getSumStats();
+
         return $this->render('@App/Front/stats.html.twig', array(
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
@@ -104,6 +105,7 @@ class FrontController extends Controller
             if ($a['diffs'] == $b['diffs']) {
                 return 0;
             }
+
             return ($a['diffs'] > $b['diffs']) ? -1 : 1;
         };
         uasort($stats, $sortStats);
@@ -350,6 +352,9 @@ class FrontController extends Controller
 
     /**
      * @Route("/generateDiff/{collectionCode}/{compt}", name="generateDiff")
+     * @param string  $collectionCode
+     * @param integer $compt
+     * @return Response
      */
     public function generateDiffAction($collectionCode, $compt)
     {
@@ -358,6 +363,7 @@ class FrontController extends Controller
         /* @var $diffManager \AppBundle\Manager\DiffManager */
         $diffManager = $this->get('diff.manager');
         $diffManager->generateDiff($collection, $compt, rand(1, 5));
+
         return $this->render('@App/Front/generateDiff.html.twig');
     }
 }

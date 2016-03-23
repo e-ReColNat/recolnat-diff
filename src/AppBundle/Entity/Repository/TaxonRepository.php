@@ -43,6 +43,7 @@ class TaxonRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Taxon', 't', 't.taxonid')
             ->andWhere($qb->expr()->in('t.taxonid', $ids));
         $qb->setParameter('ids', $ids, 'rawid');
+
         return $qb->getQuery()->getResult();
     }
 
@@ -80,13 +81,14 @@ class TaxonRepository extends AbstractRecolnatRepository
             ->innerJoin('t.determination', 'd')
             ->join('d.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      *
-     * @param array $specimenCodes
-     * @param       $hydratationMode int
+     * @param array   $specimenCodes
+     * @param integer $hydratationMode
      * @return array
      */
     public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
@@ -99,12 +101,13 @@ class TaxonRepository extends AbstractRecolnatRepository
             ->innerJoin('t.determination', 'd')
             ->join('d.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'taxonid');
     }
 
     /**
-     * @param $occurrenceId
-     * @return object|null
+     * @param string $occurrenceId
+     * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findBestTaxon($occurrenceId)
@@ -117,12 +120,13 @@ class TaxonRepository extends AbstractRecolnatRepository
             ->setParameter('occurrenceid', $occurrenceId)
             ->setMaxResults(1)
             ->orderBy('d.identificationverifstatus', 'DESC');
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
      * @param array|string $specimensCode
-     * @return object|null
+     * @return array
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findBestTaxonsBySpecimenCode($specimensCode)
@@ -187,6 +191,7 @@ class TaxonRepository extends AbstractRecolnatRepository
 
         $qb->where('a.taxonid = HEXTORAW(:id)')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
     }
 }

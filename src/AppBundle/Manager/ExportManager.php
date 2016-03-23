@@ -120,7 +120,7 @@ class ExportManager
         $this->institutionCode = $institutionCode;
         $this->collectionCode = $collectionCode;
         $this->user = new User();
-        $this->user->setExportPath($this->exportPath)->setMaxItemPerPage($this->maxItemPerPage);
+        $this->user->setExportPath($this->exportPath);
         $this->user->init($this->institutionCode);
 
         if (!is_null($collectionCode)) {

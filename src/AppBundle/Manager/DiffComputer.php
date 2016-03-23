@@ -159,8 +159,6 @@ class DiffComputer
                 if (!isset($this->diffs['datas'][$specimenCode])) {
                     $this->diffs['datas'][$specimenCode] = [];
                     $this->diffs['datas'][$specimenCode]['classes'] = [];
-                }
-                if (!isset($this->diffs['datas'][$specimenCode]['classes'][$className])) {
                     $this->diffs['datas'][$specimenCode]['classes'][$className] = [];
                 }
                 foreach ($rows as $recordId => $fields) {

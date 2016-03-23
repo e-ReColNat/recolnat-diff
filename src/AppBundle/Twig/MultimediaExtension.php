@@ -22,16 +22,28 @@ class MultimediaExtension extends \Twig_Extension
         );
     }
 
-    public function getThumb($url, $width) {
+    /**
+     * @param string  $url
+     * @param integer $width
+     * @return string
+     */
+    public function getThumb($url, $width)
+    {
         $parseUrl = parse_url($url);
+        $returnThumb = '';
         switch ($parseUrl['host']) {
             case 'dsiphoto.mnhn.fr':
-                return 'http://imager.mnhn.fr/imager/v'.$width.$parseUrl['path'];
+                $returnThumb = 'http://imager.mnhn.fr/imager/v'.$width.$parseUrl['path'];
+                break;
             case 'sonneratphoto.mnhn.fr':
-               return 'http://imager.mnhn.fr/imager2/v'.$width.$parseUrl['path'];
+                $returnThumb = 'http://imager.mnhn.fr/imager2/v'.$width.$parseUrl['path'];
+                break;
             case 'mediaphoto.mnhn.fr':
-               return 'http://imager.mnhn.fr/imager3/v'.$width.$parseUrl['path'];
+                $returnThumb = 'http://imager.mnhn.fr/imager3/v'.$width.$parseUrl['path'];
+                break;
         }
+
+        return $returnThumb;
     }
 
     public function getName()

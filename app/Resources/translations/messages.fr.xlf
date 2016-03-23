@@ -310,6 +310,10 @@
                 <source>export.probleme</source>
                 <target>Un problème est survenu lors de l'export</target>
             </trans-unit>
+            <trans-unit id="78">
+                <source>label.searchDiffs</source>
+                <target>Rechercher les différences</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

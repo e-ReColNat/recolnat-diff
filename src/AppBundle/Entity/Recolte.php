@@ -444,21 +444,21 @@ class Recolte
     }
 
     /**
-     * Set locationid
+     * Set localisation
      *
-     * @param Localisation|null $locationid
+     * @param Localisation|null $localisation
      *
      * @return Recolte
      */
-    public function setLocation(Localisation $locationid = null)
+    public function setLocation(Localisation $localisation = null)
     {
-        $this->locationid = $locationid;
+        $this->localisation = $localisation;
 
         return $this;
     }
 
     /**
-     * Get locationid
+     * Get localisation
      *
      * @return Localisation|null
      */

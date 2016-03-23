@@ -76,6 +76,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
             "'#'",
             sprintf('%s.catalognumber', $alias),
         );
+
         return new Expr\Func('CONCAT', $concatFields);
     }
 
@@ -100,6 +101,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
                 }
             }
         }
+
         return $orderResultSet;
     }
 
@@ -135,11 +137,13 @@ abstract class AbstractRecolnatRepository extends EntityRepository
             $temp = explode('#', $specimenCode);
             $catalogNumbers[] = end($temp);
         }
+
         return array($catalogNumbers, $institutionCode, $collectionCode);
     }
 
     /**
-     * @param $id
+     * @param string $className
+     * @param string $id
      * @return \Doctrine\ORM\Query
      */
     public function getQueryFindOneById($className, $id)
@@ -191,6 +195,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         foreach ($datas as $field => $value) {
             $qb->set('a.'.$field, $qb->expr()->literal($value));
         }
+
         return $qb;
     }
 
@@ -201,6 +206,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     public function hasRawId($className)
     {
         $rawId = self::ENTITY_DESCR[strtolower($className)]['rawid'];
+
         return $rawId;
     }
 
@@ -211,6 +217,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     private function getIdentifierName($className)
     {
         $identifierName = self::ENTITY_DESCR[strtolower($className)]['identifier'];
+
         return $identifierName;
     }
 }

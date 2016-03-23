@@ -73,29 +73,39 @@ class SpecimenExtension extends \Twig_Extension
      */
     public function getRelation(Specimen $specimen, $class)
     {
+        $relation=null ;
         switch (strtolower($class)) {
             case 'specimen':
-                return $specimen;
+                $relation= $specimen;
+                break;
             case 'bibliography':
-                return $specimen->getBibliographies();
+                $relation= $specimen->getBibliographies();
+                break;
             case 'determination':
-                return $specimen->getDeterminations();
+                $relation= $specimen->getDeterminations();
+                break;
             case 'localisation':
-                return $specimen->getRecolte()->getLocalisation();
+                $relation= $specimen->getRecolte()->getLocalisation();
+                break;
             case 'recolte':
-                return $specimen->getRecolte();
+                $relation= $specimen->getRecolte();
+                break;
             case 'stratigraphy':
-                return $specimen->getStratigraphy();
+                $relation= $specimen->getStratigraphy();
+                break;
             case 'multimedia':
-                return $specimen->getMultimedias();
+                $relation= $specimen->getMultimedias();
+                break;
             case 'taxon':
                 $determinations = $specimen->getDeterminations();
                 $taxons = [];
                 foreach ($determinations as $determination) {
                     $taxons[] = $determination->getTaxon();
                 }
-                return $taxons;
+                $relation= $taxons;
+                break;
         }
+        return $relation;
     }
 
     /**

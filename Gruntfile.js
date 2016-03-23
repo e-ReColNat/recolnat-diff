@@ -68,7 +68,8 @@ module.exports = function(grunt) {
                     expand: true,
                     cwd: 'src/AppBundle/Resources/public/images',
                     dest: 'web/',
-                    src: ['favico.png']
+                    src: ['favicon.png'],
+                    ext: '.ico'
                 }]
             }
         },

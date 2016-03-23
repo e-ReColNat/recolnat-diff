@@ -60,10 +60,11 @@
                 {% if selectedClassName is not defined %}
                 {% set selectedClassName = "all" %}
                 {% endif %}
+                var url;
                 {% if app.request.attributes.get('_route') == 'lonesomes' %}
-                var url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
+                    url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
                 {% else %}
-                var url = "{{ path(app.request.attributes.get('_route'),
+                    url = "{{ path(app.request.attributes.get('_route'),
                 {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
                 {% endif %}
 

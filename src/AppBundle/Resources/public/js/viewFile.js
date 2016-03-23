@@ -32,13 +32,13 @@ var optParams = {
     'institutionCode': institutionCode,
     'collectionCode' : collectionCode
 };
-
+var bar;
 for (var itkeys = 0; itkeys < keys.length; itkeys++) {
     var selectedDatas = datas.map(function (obj) {
         return obj[keys[itkeys]];
     });
     if (keys[itkeys] != 'name') {
-        var bar = groupBar
+        bar = groupBar
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {
@@ -86,7 +86,7 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
     }
     else {
 
-        var bar = groupBar
+        bar = groupBar
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {

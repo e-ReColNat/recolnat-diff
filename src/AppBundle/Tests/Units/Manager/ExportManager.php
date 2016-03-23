@@ -47,7 +47,7 @@ class ExportManager extends Units\Test
 
         $this->exportManager = new \AppBundle\Manager\ExportManager(
             $managerRegistry,
-            realpath(__DIR__.'/../../data'),
+            $this->container->getParameter('export_path'),
             $this->container->get('session'),
             $this->container->get('genericentitymanager'),
             $this->container->get('diff.manager'),

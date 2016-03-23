@@ -86,7 +86,7 @@ class Bibliography
     /**
      * Get referenceid
      *
-     * @return guid
+     * @return string
      */
     public function getReferenceid()
     {

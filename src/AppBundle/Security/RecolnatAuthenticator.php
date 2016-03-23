@@ -21,6 +21,10 @@ class RecolnatAuthenticator extends CasAuthenticator
      * Called on every request. Return whatever credentials you want,
      * or null to stop authentication.
      */
+    /**
+     * @param Request $request
+     * @return array|null
+     */
     public function getCredentials(Request $request)
     {
         if ($request->get($this->config['query_ticket_parameter'])) {

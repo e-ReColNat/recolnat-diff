@@ -19,7 +19,7 @@ class LocalisationRepository extends AbstractRecolnatRepository
      */
     public function getQueryBuilderFindByCollection(Collection $collection)
     {
-        return $this->getEntityManager()->createQueryBuilder('l')
+        return $this->getEntityManager()->createQueryBuilder()
             ->select('l.locationid as id')
             ->from('AppBundle\Entity\Localisation', 'l')
             ->join('l.recoltes', 'r')

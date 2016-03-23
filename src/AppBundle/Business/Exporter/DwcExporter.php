@@ -135,6 +135,7 @@ class DwcExporter extends AbstractExporter
         $arrayFilesName[] = $this->getMetaFilepath().' ';
         if (is_array($this->csvFiles) && count($this->csvFiles) > 0) {
             foreach ($this->csvFiles as $csvFile) {
+                /** @var \SplFileObject $csvFile */
                 $arrayFilesName[] = $csvFile->getPathName().' ';
             }
 

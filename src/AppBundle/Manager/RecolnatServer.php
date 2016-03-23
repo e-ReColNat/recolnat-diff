@@ -4,6 +4,9 @@ namespace AppBundle\Manager;
 
 use Hoa\Eventsource\Server;
 
+/**
+ * @property \Hoa\Eventsource\Server steps
+ */
 class RecolnatServer extends Server
 {
     /**

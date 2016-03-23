@@ -105,6 +105,7 @@ class CsvExporter extends AbstractExporter
         $zipFilePath = $this->getExportDirPath().'/'.$zipFilename;
         $arrayFilesName = [];
         foreach ($this->getFiles() as $csvFile) {
+            /** @var \SplFileObject $csvFile */
             $arrayFilesName[] = $csvFile->getPathName();
         }
         $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));

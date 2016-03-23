@@ -3,7 +3,7 @@ namespace AppBundle\Manager;
 
 class DiffSpecimen extends AbstractDiff
 {
-    public $excludeFieldsName = ['created', 'modified', 'dwcaid', 'hasmedia', 'sourcefileid', 'hascoordinates'];
+    public $excludeFieldsName = ['created', 'modified', 'dwcaid', 'hasmedia', 'sourcefileid', 'hascoordinates', 'explore_url'];
 
     protected function getIdSetter()
     {

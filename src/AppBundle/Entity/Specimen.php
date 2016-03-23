@@ -495,7 +495,7 @@ class Specimen
      */
     public function getHasmedia()
     {
-        return $this->hasmedia;
+        return (bool) $this->hasmedia;
     }
 
     /**
@@ -739,15 +739,15 @@ class Specimen
     }
 
     /**
-     * Set geologicalcontextid
+     * Set stratigraphy
      *
-     * @param Stratigraphy|null $geologicalcontextid
+     * @param Stratigraphy|null $stratigraphy
      *
      * @return Specimen
      */
-    public function setGeologicalcontextid(Stratigraphy $geologicalcontextid = null)
+    public function setGeologicalcontextid(Stratigraphy $stratigraphy = null)
     {
-        $this->geologicalcontext = $geologicalcontextid;
+        $this->stratigraphy = $stratigraphy;
 
         return $this;
     }
@@ -765,13 +765,13 @@ class Specimen
     /**
      * Set eventid
      *
-     * @param Recolte|null $eventid
+     * @param Recolte|null $recolte
      *
      * @return Specimen
      */
-    public function setRecolte(Recolte $eventid = null)
+    public function setRecolte(Recolte $recolte = null)
     {
-        $this->eventid = $eventid;
+        $this->recolte = $recolte;
 
         return $this;
     }

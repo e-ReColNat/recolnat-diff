@@ -87,7 +87,7 @@ class Determination
     /**
      * Get identificationid
      *
-     * @return rawid
+     * @return string
      */
     public function getIdentificationid()
     {

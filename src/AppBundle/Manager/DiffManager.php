@@ -219,6 +219,7 @@ class DiffManager
                 case 'created':
                 case 'modified':
                 case 'eventdate':
+                case 'explore_url':
                     unset($arrayFieldsTypeDb1[$key]);
                     unset($arrayFieldsTypeDb2[$key]);
                     break;
