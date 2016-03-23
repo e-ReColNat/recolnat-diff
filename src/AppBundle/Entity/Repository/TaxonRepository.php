@@ -33,7 +33,7 @@ class TaxonRepository extends AbstractRecolnatRepository
 
     /**
      *
-     * @param array $ids
+     * @param string $ids
      * @return array
      */
     public function findById($ids)

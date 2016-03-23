@@ -42,7 +42,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param array $id
+     * @param string $id
      * @param int   $fetchMode
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException

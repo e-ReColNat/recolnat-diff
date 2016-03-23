@@ -51,7 +51,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
     /**
      *
-     * @param array $id
+     * @param string $id
      */
     abstract public function findOneById($id);
 

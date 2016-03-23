@@ -60,9 +60,11 @@ class SpecimenExtension extends \Twig_Extension
         $value = $this->getFieldToString($entity, $fieldName);
         if ($printIfNull || !is_null($value)) {
             $label = $this->getFieldLabel($typeEntity, $fieldName);
+
             return sprintf('%s  : <span>%s</span>%s', $this->translator->trans($label, $transParams, 'entity'), $value,
                 $endString);
         }
+
         return '';
     }
 
@@ -73,28 +75,28 @@ class SpecimenExtension extends \Twig_Extension
      */
     public function getRelation(Specimen $specimen, $class)
     {
-        $relation=null ;
+        $relation = null;
         switch (strtolower($class)) {
             case 'specimen':
-                $relation= $specimen;
+                $relation = $specimen;
                 break;
             case 'bibliography':
-                $relation= $specimen->getBibliographies();
+                $relation = $specimen->getBibliographies();
                 break;
             case 'determination':
-                $relation= $specimen->getDeterminations();
+                $relation = $specimen->getDeterminations();
                 break;
             case 'localisation':
-                $relation= $specimen->getRecolte()->getLocalisation();
+                $relation = $specimen->getRecolte()->getLocalisation();
                 break;
             case 'recolte':
-                $relation= $specimen->getRecolte();
+                $relation = $specimen->getRecolte();
                 break;
             case 'stratigraphy':
-                $relation= $specimen->getStratigraphy();
+                $relation = $specimen->getStratigraphy();
                 break;
             case 'multimedia':
-                $relation= $specimen->getMultimedias();
+                $relation = $specimen->getMultimedias();
                 break;
             case 'taxon':
                 $determinations = $specimen->getDeterminations();
@@ -102,9 +104,10 @@ class SpecimenExtension extends \Twig_Extension
                 foreach ($determinations as $determination) {
                     $taxons[] = $determination->getTaxon();
                 }
-                $relation= $taxons;
+                $relation = $taxons;
                 break;
         }
+
         return $relation;
     }
 
@@ -137,6 +140,7 @@ class SpecimenExtension extends \Twig_Extension
                 $return = $relations;
             }
         }
+
         return $return;
     }
 
@@ -164,6 +168,7 @@ class SpecimenExtension extends \Twig_Extension
                     $toString = $relation->__toString();
             }
         }
+
         return $toString;
     }
 
@@ -207,6 +212,7 @@ class SpecimenExtension extends \Twig_Extension
         if ($fieldname[strlen($fieldname) - 1] == '_') {
             $fieldname = substr($fieldname, 0, -1);
         }
+
         return sprintf('label.%s.fields.%s', strtolower($entity), strtolower($fieldname));
     }
 
@@ -228,6 +234,7 @@ class SpecimenExtension extends \Twig_Extension
                 $returnString = $value;
             }
         }
+
         return $returnString;
     }
 

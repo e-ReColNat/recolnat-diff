@@ -44,7 +44,7 @@ class BibliographyRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param array $id
+     * @param string $id
      * @param int   $fetchMode
      * @return array|object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
@@ -55,12 +55,11 @@ class BibliographyRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return array|object|null
      */
     public function findOneByIdToArray($id)
     {
-
         return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
     }
 

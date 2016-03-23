@@ -9,7 +9,7 @@ class MultimediaRepository extends AbstractRecolnatRepository
 {
 
     /**
-     * @param array $id
+     * @param string $id
      * @param int   $fetchMode
      * @return array|object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
@@ -20,7 +20,7 @@ class MultimediaRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return array|object|null
      */
     public function findOneByIdToArray($id)

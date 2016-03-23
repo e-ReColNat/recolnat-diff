@@ -44,7 +44,7 @@ class LocalisationRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param array $id
+     * @param string $id
      * @param int   $fetchMode
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
