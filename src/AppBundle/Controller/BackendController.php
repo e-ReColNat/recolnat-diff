@@ -21,7 +21,7 @@ class BackendController extends Controller
 {
 
     /**
-     * @Route("/{institutionCode}/{collectionCode}/export/{type}/", name="export")
+     * @Route("/{institutionCode}/{collectionCode}/export/{type}/", name="export", requirements={"type": "csv|dwc"})
      * @param string  $type
      * @param Request $request
      * @param string  $institutionCode
@@ -39,14 +39,7 @@ class BackendController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $file = null;
-        switch ($type) {
-            case 'dwc':
-                $file = $exportManager->export('dwc', $exportPrefs);
-                break;
-            case 'csv':
-                $file = $exportManager->export('csv', $exportPrefs);
-                break;
-        }
+        $file = $exportManager->export($type, $exportPrefs);
         $response = new JsonResponse();
         if (is_null($file)) {
             $message = $this->get('translator')->trans('export.probleme');
@@ -54,9 +47,11 @@ class BackendController extends Controller
 
             $this->addFlash('error', $message);
             $response->setStatusCode(400);
+
             return $response;
         }
-        return $response->setContent(['file' => urlencode($file)]);
+
+        return $response->setData(['file' => urlencode($file)]);
     }
 
     /**
@@ -70,7 +65,6 @@ class BackendController extends Controller
         $collection = $this->getDoctrine()->getManager()
             ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
 
-
         $diffManager = $this->get('diff.manager');
         $diffComputer = $this->get('diff.computer');
         $diffManager->init($collection, $this->getParameter('export_path'));
@@ -83,6 +77,19 @@ class BackendController extends Controller
         $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
         $diffHandler->setCollectionCode($collectionCode);
 
+        $this->SearchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler);
+
+        $response->send();
+    }
+
+    /**
+     * @param $response
+     * @param $diffManager
+     * @param $diffComputer
+     * @param $diffHandler
+     */
+    private function SearchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler)
+    {
         $response->setCallback(function() use ($diffManager, $diffComputer, $diffHandler) {
             $server = new RecolnatServer();
             $specimenCodes = [];
@@ -101,20 +108,12 @@ class BackendController extends Controller
                 $diffComputer->computeClassname($entityName);
             }
 
-            $datas = array_merge($diffComputer->getDiffs(),
-                [
-                    'stats' => $diffComputer->getAllStats(),
-                    'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
-                    'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
-                ]);
+            $datas = $diffComputer->getAllDatas();
 
             $server->step->send(json_encode(['count' => $countStep++, 'step' => 'save']));
             $diffHandler->saveDiffs($datas);
             $server->step->send(json_encode(['count' => $countStep++, 'step' => 'done']));
-            $server->close->send(true);
         });
-
-        $response->send();
     }
 
     /**
@@ -147,6 +146,7 @@ class BackendController extends Controller
         } else {
             $this->get('session')->set('maxItemPerPage', $this->container->getParameter('maxitemperpage')[0]);
         }
+
         return new JsonResponse($this->get('session')->get('maxItemPerPage'));
     }
 
@@ -168,6 +168,7 @@ class BackendController extends Controller
         $response->setData(['choices' => $exportManager->sessionHandler->getChoices()]);
 
         $this->setFlashMessageForChoices($choices);
+
         return $response;
     }
 
@@ -182,14 +183,10 @@ class BackendController extends Controller
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $inputOrigin = $request->get('origin', null);
-        $inputSpecimens = $request->get('specimens', null);
-        $inputClassesName = $request->get('classesName', []);
-        $page = $request->get('page', null);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
-        $selectedSpecimens = json_decode($request->get('selectedSpecimens', null));
-        $selectedClassName = $request->get('selectedClassName', null);
-        $type = json_decode($request->get('type', null));
+
+        list($inputOrigin, $inputSpecimens, $inputClassesName, $page, $selectedSpecimens, $selectedClassName, $type) =
+            $this->getParamsForSetChoices($request);
         $choices = [];
         $items = [];
 
@@ -203,25 +200,8 @@ class BackendController extends Controller
         if (!is_null($institutionCode) && !is_null($inputOrigin) && !is_null($inputSpecimens)) {
             $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
                 $specimensWithoutChoices);
-            switch ($inputSpecimens) {
-                case 'page':
-                    $paginator = $this->get('knp_paginator');
-                    $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
-                    $items = $pagination->getItems();
-                    break;
-                case 'allDatas':
-                    $items = $diffs['datas'];
-                    break;
-                case 'selectedSpecimens':
-                    if (!is_null($selectedSpecimens) && is_array($selectedSpecimens)) {
-                        foreach ($selectedSpecimens as $specimenCode) {
-                            if (isset($diffs['datas'][$specimenCode])) {
-                                $items[$specimenCode] = $diffs['datas'][$specimenCode];
-                            }
-                        }
-                    }
-                    break;
-            }
+            $items = $this->getItemsForSetChoices($inputSpecimens, $diffs, $page, $maxItemPerPage,
+                $selectedSpecimens, $items);
             $choices = DiffHandler::formatItemsToChoices($items, $diffs, $inputClassesName, $inputOrigin, $choices);
         }
 
@@ -232,6 +212,65 @@ class BackendController extends Controller
         $response->setData(['choices' => $exportManager->getSessionHandler()->getChoices()]);
 
         return $response;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function getParamsForSetChoices(Request $request)
+    {
+        $inputOrigin = $request->get('origin', null);
+        $inputSpecimens = $request->get('specimens', null);
+        $inputClassesName = $request->get('classesName', []);
+        $page = $request->get('page', null);
+        $selectedSpecimens = json_decode($request->get('selectedSpecimens', null));
+        $selectedClassName = $request->get('selectedClassName', null);
+        $type = json_decode($request->get('type', null));
+
+        return array(
+            $inputOrigin,
+            $inputSpecimens,
+            $inputClassesName,
+            $page,
+            $selectedSpecimens,
+            $selectedClassName,
+            $type
+        );
+    }
+
+    /**
+     * @param $inputSpecimens
+     * @param $diffs
+     * @param $page
+     * @param $maxItemPerPage
+     * @param $selectedSpecimens
+     * @param $items
+     * @return array
+     */
+    private function getItemsForSetChoices($inputSpecimens, $diffs, $page, $maxItemPerPage, $selectedSpecimens, $items)
+    {
+        switch ($inputSpecimens) {
+            case 'page':
+                $paginator = $this->get('knp_paginator');
+                $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
+                $items = $pagination->getItems();
+                break;
+            case 'allDatas':
+                $items = $diffs['datas'];
+                break;
+            case 'selectedSpecimens':
+                if (!is_null($selectedSpecimens) && is_array($selectedSpecimens)) {
+                    foreach ($selectedSpecimens as $specimenCode) {
+                        if (isset($diffs['datas'][$specimenCode])) {
+                            $items[$specimenCode] = $diffs['datas'][$specimenCode];
+                        }
+                    }
+                }
+                break;
+        }
+
+        return $items;
     }
 
     /**
@@ -266,6 +305,7 @@ class BackendController extends Controller
         $this->get('session')->clear();
         $response = new JsonResponse();
         $response->setData(['deleteChoices' => true]);
+
         return $response;
     }
 
@@ -287,6 +327,7 @@ class BackendController extends Controller
         $this->get('session')->clear();
         $response = new JsonResponse();
         $response->setData(['deleteDiffs' => true]);
+
         return $response;
     }
 

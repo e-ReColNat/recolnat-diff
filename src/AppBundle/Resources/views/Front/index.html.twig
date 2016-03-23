@@ -6,8 +6,6 @@
     {% if collections|length > 0 %}
         {% for collection in collections %}
             {% if (collection['diffHandler']|length == 0) %}
-                {{ 'label.searchDiffs' | trans }}
-
                 <a class="searchDiffButton btn btn-primary" role="button"
                    href="{{ path('searchDiff', {'institutionCode' : institution.institutionCode, 'collectionCode' : collection.collection.collectionCode}) }}">
                     <span class="glyphicon glyphicon-search"
@@ -53,16 +51,14 @@
                         steps = parseInt(evt.data);
                     });
                     source.addEventListener('step', function (evt) {
-                        console.log(evt);
                         data = jQuery.parseJSON(evt.data);
                         progress(parseInt(data.count) / steps * 100, progressbar, data.step);
                         if (parseInt(data.count) === steps) {
                             source.close();
+                            window.location.reload();
                         }
                     });
-                    source.addEventListener('close', function (evt) {
-                        source.close();
-                    });
+
                 } catch (e) {
                     console.log(e);
                 }

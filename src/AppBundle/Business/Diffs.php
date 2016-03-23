@@ -197,9 +197,10 @@ class Diffs extends \SplFileObject
                     if (isset($diffs['datas'][$specimenCode])) {
                         $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode];
                         // Rajout dans les classes si un specimen a des modifications dans des classes non sélectionnées
-                        foreach (array_keys($returnDiffs['datas'][$specimenCode]['classes']) as $className) {
+                        foreach (array_keys($diffs['datas'][$specimenCode]['classes']) as $className) {
                             if (!isset($returnDiffs['classes'][$className][$specimenCode])) {
-                                $returnDiffs['classes'][$className][] = $specimenCode;
+                                $returnDiffs['classes'][$className][$specimenCode] =
+                                    $diffs['datas'][$specimenCode]['classes'][$className]['fields'];
                             }
                         }
                     }
@@ -223,7 +224,7 @@ class Diffs extends \SplFileObject
             $returnDiffs['datas'] = [];
             $returnDiffs['classes'] = $diffs['classes'];
             foreach ($diffs['classes'] as $className => $specimensCode) {
-                foreach ($specimensCode as $specimenCode) {
+                foreach ($specimensCode as $specimenCode=>$datas) {
                     if (in_array($specimenCode, $selectedSpecimensCode)) {
                         $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode];
                     } else {
@@ -257,8 +258,7 @@ class Diffs extends \SplFileObject
             }
             foreach ($tempChoices as $className => $choiceSpecimenCode) {
                 foreach ($choiceSpecimenCode as $specimenCode => $comptFieldChoice) {
-                    if (isset($returnDiffs['classes'][$className]) && in_array($specimenCode,
-                            $returnDiffs['classes'][$className])
+                    if (isset($returnDiffs['classes'][$className]) && isset($returnDiffs['classes'][$className][$specimenCode])
                     ) {
                         $totalDiffFields = count($returnDiffs['datas'][$specimenCode]['classes'][$className]['fields']);
                         if ($totalDiffFields == $comptFieldChoice) {

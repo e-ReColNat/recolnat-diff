@@ -276,4 +276,16 @@ class DiffComputer
         return array_keys($this->diffs['datas']);
     }
 
+    /**
+     * @return array
+     */
+    public function getAllDatas()
+    {
+        return array_merge($this->getDiffs(),
+            [
+                'stats' => $this->getAllStats(),
+                'lonesomeRecords' => $this->getLonesomeRecords(),
+                'statsLonesomeRecords' => $this->getStatsLonesomeRecords()
+            ]);
+    }
 }
