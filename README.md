@@ -1,4 +1,4 @@
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/e-ReColNat/recolnat-diff/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/e-ReColNat/recolnat-diff/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/e-ReColNat/recolnat-diff/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/e-ReColNat/recolnat-diff/?branch=master) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/9912d656-fcc3-46d7-b414-3b243b3501b1/mini.png)](https://insight.sensiolabs.com/projects/9912d656-fcc3-46d7-b414-3b243b3501b1)
 
 # DWC-DIFF - eRecolnat
 Outil d'aide décisionnel des données exportés depuis eRecolnat
