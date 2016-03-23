@@ -453,7 +453,7 @@ class Specimen
     /**
      * Set hascoordinates
      *
-     * @param boolean $hascoordinates
+     * @param integer $hascoordinates
      *
      * @return Specimen
      */
@@ -467,17 +467,17 @@ class Specimen
     /**
      * Get hascoordinates
      *
-     * @return boolean
+     * @return integer
      */
     public function getHascoordinates()
     {
-        return (bool) $this->hascoordinates;
+        return $this->hascoordinates;
     }
 
     /**
      * Set hasmedia
      *
-     * @param boolean $hasmedia
+     * @param integer $hasmedia
      *
      * @return Specimen
      */
@@ -495,7 +495,7 @@ class Specimen
      */
     public function getHasmedia()
     {
-        return (bool) $this->hasmedia;
+        return $this->hasmedia;
     }
 
     /**

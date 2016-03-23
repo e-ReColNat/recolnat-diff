@@ -2,11 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\User\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\UserPrefsType;
+use AppBundle\Form\Type\LoginType;
 
 /**
  * Description of UserController
@@ -28,15 +31,15 @@ class UserController extends Controller
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
         return $this->render('@App/User/viewPrefs.html.twig', array(
-                    'institutionCode' => $institutionCode,
-                    'prefs' => $prefs,
+            'institutionCode' => $institutionCode,
+            'prefs' => $prefs,
         ));
     }
 
     /**
      * @Route("/user/{institutionCode}/prefs/edit", name="editPrefsUser")
      * @param Request $request
-     * @param string $institutionCode
+     * @param string  $institutionCode
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function editAction(Request $request, $institutionCode)
@@ -47,7 +50,7 @@ class UserController extends Controller
 
         $prefs = $user->getPrefs();
         $form = $this->createForm(UserPrefsType::class, $prefs);
-        
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -56,13 +59,26 @@ class UserController extends Controller
             $message = $translator->trans('prefs.saved', [], 'prefs');
             $user->savePrefs($prefs);
             $this->addFlash('success', $message);
-            return $this->redirectToRoute('viewPrefsUser', ['institutionCode'=>$institutionCode]);
+            return $this->redirectToRoute('viewPrefsUser', ['institutionCode' => $institutionCode]);
         }
-    
+
         return $this->render('@App/User/editPrefs.html.twig', array(
-                    'institutionCode' => $institutionCode,
-                    'form' => $form->createView(),
+            'institutionCode' => $institutionCode,
+            'form' => $form->createView(),
         ));
     }
 
+
+    /**
+     * @Route("/userlogout/", name="userlogout")
+     */
+    public function logoutAction()
+    {
+        $this->get('security.token_storage')->setToken(null);
+        $this->get('session')->invalidate();
+
+        $url = $this->getParameter('server_logout_url');
+
+        return $this->redirect($url.'?service=http://recolnat-diff.tld/app_dev.php');
+    }
 }

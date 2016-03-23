@@ -10,11 +10,14 @@
     <link rel="stylesheet" href="{{ asset('assets/AppBundle/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/AppBundle/css/simple-sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/AppBundle/css/recolnat.css') }}">
-    <link rel="shortcut icon" href="{{ asset('assets/AppBundle/images/favico.png') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ asset('assets/AppBundle/images/favico.png') }}" type="image/x-icon"/>
 </head>
 <body>
+
+{% block navbar %}
 <div id="parameters" class="hidden" data-institutioncode="{{ institutionCode is defined ? institutionCode:'' }}"
      data-collectioncode="{{ collectionCode is defined ? collectionCode:'' }}"></div>
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -26,7 +29,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a href="{{ path("index") }}" class="navbar-brand">Recolnat - Diffs</a>
-            {%  if app.environment=='dev' %}
+            {% if app.environment=='dev' %}
                 <p class="navbar-text bg-warning text-uppercase">{{ default_connection }}</p>
             {% endif %}
         </div>
@@ -38,13 +41,16 @@
                 </li>
                 <li><a href="#">{{ 'nav.profil' | trans }}</a></li>
                 <li><a href="#">{{ 'nav.aide' | trans }}</a></li>
+                <li><a href="{{ logout_path('main') }}">{{ 'login.logout' | trans({}, 'user') }}</a></li>
             </ul>
             {#<form class="navbar-form navbar-right">#}
-                {#<input type="text" placeholder="Search..." class="form-control">#}
+            {#<input type="text" placeholder="Search..." class="form-control">#}
             {#</form>#}
         </div>
     </div>
 </nav>
+{% endblock navbar %}
+
 {% block body %}{% endblock %}
 <div class="modal fade" id="spinnerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog">
@@ -77,13 +83,13 @@
     $(document).ready(function () {
         // Toast Messages
         {% for flash_type, flashes in app.session.flashbag.all %}
-            {% for flash_message in flashes %}
-                $.toaster({
-                    message: '{{ flash_message }}',
-                    priority: '{{ flash_type }}',
-                    title: '{{ ('label.' ~ flash_type) | trans }}'
-                });
-            {% endfor %}
+        {% for flash_message in flashes %}
+        $.toaster({
+            message: '{{ flash_message }}',
+            priority: '{{ flash_type }}',
+            title: '{{ ('label.' ~ flash_type) | trans }}'
+        });
+        {% endfor %}
         {% endfor %}
     });
 </script>

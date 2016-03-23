@@ -193,7 +193,7 @@ class Diffs extends \SplFileObject
                 }
             }
             foreach ($returnDiffs['classes'] as $className => $specimensCode) {
-                foreach ($specimensCode as $specimenCode) {
+                foreach ($specimensCode as $specimenCode => $datas) {
                     if (isset($diffs['datas'][$specimenCode])) {
                         $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode];
                         // Rajout dans les classes si un specimen a des modifications dans des classes non sélectionnées

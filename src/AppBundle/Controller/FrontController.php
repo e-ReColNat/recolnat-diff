@@ -16,15 +16,7 @@ class FrontController extends Controller
 {
 
     /**
-     * @Route("/", name="default")
-     */
-    public function defaultAction()
-    {
-        return $this->redirectToRoute('index');
-    }
-
-    /**
-     * @Route("/files", name="index")
+     * @Route("/", name="index")
      */
     public function indexAction()
     {

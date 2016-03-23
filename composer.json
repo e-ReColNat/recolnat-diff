@@ -27,11 +27,12 @@
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
-        "knplabs/knp-paginator-bundle" : "dev-master",
-        "friendsofsymfony/jsrouting-bundle": "dev-master",
         "oyejorge/less.php": "v1.7.0.10",
         "willdurand/js-translation-bundle": "^2.5",
-        "hoa/eventsource": "~3.0"
+        "hoa/eventsource": "~3.0",
+        "prayno/casauth-bundle": "^1.0",
+        "friendsofsymfony/jsrouting-bundle": "^1.6",
+        "knplabs/knp-paginator-bundle": "^2.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

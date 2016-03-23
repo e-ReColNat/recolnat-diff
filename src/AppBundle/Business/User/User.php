@@ -18,16 +18,6 @@ class User
     private $exportPath;
     private $maxItemPerPage;
 
-    /**
-     * User constructor.
-     * @param string $exportPath
-     * @param int    $maxItemPerPage
-     */
-    public function __construct($exportPath, $maxItemPerPage)
-    {
-        $this->exportPath = $exportPath;
-        $this->maxItemPerPage = $maxItemPerPage;
-    }
 
     /**
      * @param string $institutionCode
@@ -96,4 +86,57 @@ class User
         return realpath($this->exportPath).'/'.$this->institutionCode.'/';
     }
 
+    /**
+     * @return mixed
+     */
+    public function getInstitutionCode()
+    {
+        return $this->institutionCode;
+    }
+
+    /**
+     * @param mixed $institutionCode
+     * @return User
+     */
+    public function setInstitutionCode($institutionCode)
+    {
+        $this->institutionCode = $institutionCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExportPath()
+    {
+        return $this->exportPath;
+    }
+
+    /**
+     * @param string $exportPath
+     * @return User
+     */
+    public function setExportPath($exportPath)
+    {
+        $this->exportPath = $exportPath;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItemPerPage()
+    {
+        return $this->maxItemPerPage;
+    }
+
+    /**
+     * @param int $maxItemPerPage
+     * @return User
+     */
+    public function setMaxItemPerPage($maxItemPerPage)
+    {
+        $this->maxItemPerPage = $maxItemPerPage;
+        return $this;
+    }
 }

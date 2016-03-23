@@ -14,6 +14,26 @@
                 <source>file.stats.title</source> 
                 <target>Statistiques pour la collection %name%</target>
             </trans-unit>
+            <trans-unit id="4" approved="yes">
+                <source>login.welcome</source>
+                <target>Bienvenue sur l'interface d'export des données de e-Recolnat</target>
+            </trans-unit>
+            <trans-unit id="5" approved="yes">
+                <source>login.username</source>
+                <target>Identifiant</target>
+            </trans-unit>
+            <trans-unit id="6" approved="yes">
+                <source>login.password</source>
+                <target>Mot de passe</target>
+            </trans-unit>
+            <trans-unit id="7" approved="yes">
+                <source>login.button</source>
+                <target>Se connecter</target>
+            </trans-unit>
+            <trans-unit id="8" approved="yes">
+                <source>login.logout</source>
+                <target>Déconnection</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
