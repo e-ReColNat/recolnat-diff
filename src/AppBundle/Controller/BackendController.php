@@ -38,7 +38,6 @@ class BackendController extends Controller
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
-        $file = null;
         $file = $exportManager->export($type, $exportPrefs);
         $response = new JsonResponse();
         if (is_null($file)) {
@@ -77,7 +76,7 @@ class BackendController extends Controller
         $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
         $diffHandler->setCollectionCode($collectionCode);
 
-        $this->SearchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler);
+        $this->searchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler);
 
         $response->send();
     }
@@ -88,7 +87,7 @@ class BackendController extends Controller
      * @param $diffComputer
      * @param $diffHandler
      */
-    private function SearchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler)
+    private function searchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler)
     {
         $response->setCallback(function() use ($diffManager, $diffComputer, $diffHandler) {
             $server = new RecolnatServer();
