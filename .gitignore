@@ -31,6 +31,5 @@
 /composer.phar
 
 ### RECOLNAT SPECIFIC ###
-data/*
 src/AppBundle/Tests
-!data/.gitkeep
+src/AppBundle/Data/*

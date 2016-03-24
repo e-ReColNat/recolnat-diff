@@ -101,7 +101,6 @@ class CsvExporter extends AbstractExporter
      */
     private function createZipFile($zipFilename = 'csv.zip')
     {
-        //$fileExport = new Filesystem();
         $zipFilePath = $this->getExportDirPath().'/'.$zipFilename;
         $arrayFilesName = [];
         foreach ($this->getFiles() as $csvFile) {
@@ -110,7 +109,6 @@ class CsvExporter extends AbstractExporter
         }
         $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
         exec($zipCommand);
-        //$fileExport->chmod($zipFilePath, 0777);
 
         return $zipFilePath;
     }
@@ -140,7 +138,6 @@ class CsvExporter extends AbstractExporter
         $fileExport = new Filesystem();
         $fileName = $this->exportPath.'/'.strtolower($className).'.'.$extension;
         $fileExport->touch($fileName);
-        //$fileExport->chmod($fileName, 0777);
         $this->files[$className] = new \SplFileObject($fileName);
     }
 

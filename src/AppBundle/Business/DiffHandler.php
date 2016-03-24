@@ -18,7 +18,7 @@ class DiffHandler
      */
     protected $diffs = null;
 
-    protected $dirPath;
+    protected $institutionPath;
     protected $collectionCode;
 
     /**
@@ -27,7 +27,7 @@ class DiffHandler
      */
     public function __construct($dirPath)
     {
-        $this->dirPath = $dirPath;
+        $this->institutionPath = $dirPath;
     }
 
     /**
@@ -44,7 +44,7 @@ class DiffHandler
      */
     public function shouldSearchDiffs()
     {
-        return !is_file($this->getPath().'/'.Diffs::DIFF_FILENAME);
+        return !is_file($this->getCollectionPath().'/'.Diffs::DIFF_FILENAME);
     }
 
     /**
@@ -76,17 +76,11 @@ class DiffHandler
     /**
      * @return string
      */
-    public function getDirPath()
+    public function getInstitutionPath()
     {
-        return realpath($this->dirPath);
-    }
-
-    /**
-     * @return string
-     */
-    public function getPath()
-    {
-        return realpath($this->dirPath.'/'.$this->collectionCode);
+        $institutionPath = $this->institutionPath ;
+        $this->createDir($institutionPath) ;
+        return realpath($institutionPath);
     }
 
     /**
@@ -118,7 +112,7 @@ class DiffHandler
      */
     public function setChoicesFile()
     {
-        $this->choicesFile = new Choices($this->getPath());
+        $this->choicesFile = new Choices($this->getCollectionPath());
         return $this;
     }
 
@@ -127,7 +121,7 @@ class DiffHandler
      */
     public function setDiffsFile()
     {
-        $this->diffs = new Diffs($this->getPath());
+        $this->diffs = new Diffs($this->getCollectionPath());
         return $this;
     }
 
@@ -196,5 +190,25 @@ class DiffHandler
             return $choices;
         }
         return $choices;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCollectionPath()
+    {
+        $collectionPath = $this->getInstitutionPath().'/'.$this->collectionCode ;
+        $this->createDir($collectionPath) ;
+
+        return realpath($collectionPath);
+    }
+
+    /**
+     * @param string $dir
+     */
+    private function createDir($dir) {
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755);
+        }
     }
 }

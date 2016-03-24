@@ -99,7 +99,7 @@ class FrontController extends Controller
 
 
         return $this->render('@App/Front/viewFile.html.twig', array(
-            'statsManager'=>$statsManager,
+            'statsManager' => $statsManager,
             'collection' => $collection,
         ));
     }
@@ -247,7 +247,7 @@ class FrontController extends Controller
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,
             'specimensCode' => $specimensCode,
-            'exportManager' =>$exportManager,
+            'exportManager' => $exportManager,
         ));
     }
 

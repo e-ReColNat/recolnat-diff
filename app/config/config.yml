@@ -8,14 +8,12 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: fr
-    export_path: "%kernel.root_dir%/../data"
-    converter_path: "%kernel.root_dir%/../bin/talend_converter/converter/converter_run.sh"
+    export_path: "%kernel.root_dir%/../src/AppBundle/Data"
     maxitemperpage:
         - 5
         - 10
         - 20
         - 50
-    server_logout_url: http://localhost:8080/cas/logout
 
 framework:
     #esi:             ~
@@ -78,13 +76,6 @@ doctrine:
         types:
             rawid: AppBundle\Doctrine\Types\RawidType
         
-        # if using pdo_sqlite as your database driver:
-        #   1. add the path in parameters.yml
-        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml.dist
-        #   3. Uncomment next line:
-        #     path:     "%database_path%"
-
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         default_entity_manager: default
@@ -118,21 +109,14 @@ doctrine:
                 result_cache_driver: apc
                 query_cache_driver: apc
 
-# Swiftmailer Configuration
-#swiftmailer:
-#    transport: "%mailer_transport%"
-#    host:      "%mailer_host%"
-#    username:  "%mailer_user%"
-#    password:  "%mailer_password%"
-#    spool:     { type: memory }
-    
+
 knp_paginator:
     page_range: 5
     template:
          pagination: "@App/Front/helpers/paginator-bootstrap.html.twig"
 
 p_rayno_cas_auth:
-    server_login_url: https://localhost:8443/cas/
-    server_validation_url: https://localhost:8443/cas/serviceValidate
-    server_logout_url: https://localhost:8443/cas/logout
-    xml_namespace: cas
+    server_login_url: "%server_login_url%"
+    server_validation_url: "%server_validation_url%"
+    server_logout_url: "%server_logout_url%"
+    xml_namespace: "%xml_namespace%"

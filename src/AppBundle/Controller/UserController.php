@@ -76,6 +76,7 @@ class UserController extends Controller
 
         $url = $this->getParameter('server_logout_url');
 
+        // TODO : change url
         return $this->redirect($url.'?service=http://recolnat-diff.tld/app_dev.php');
     }
 }

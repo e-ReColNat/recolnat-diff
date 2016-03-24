@@ -4,6 +4,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\User\User;
+use AppBundle\Manager\DiffComputer;
+use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -64,17 +67,21 @@ class BackendController extends Controller
         $collection = $this->getDoctrine()->getManager()
             ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
 
+        $user = new User();
+        $user->setExportPath($this->getParameter('export_path'))->init($institutionCode);
         $diffManager = $this->get('diff.manager');
         $diffComputer = $this->get('diff.computer');
-        $diffManager->init($collection, $this->getParameter('export_path'));
-        $response = new StreamedResponse();
-
-        $response->headers->set('Content-Type', 'text/event-stream');
-        $response->headers->set('Cache-Control', 'no-cache');
         $diffManager->init($collection, $this->getParameter('export_path'));
 
         $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
         $diffHandler->setCollectionCode($collectionCode);
+
+        $response = new StreamedResponse();
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache');
+
+
 
         $this->searchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler);
 
@@ -82,10 +89,10 @@ class BackendController extends Controller
     }
 
     /**
-     * @param $response
-     * @param $diffManager
-     * @param $diffComputer
-     * @param $diffHandler
+     * @param StreamedResponse $response
+     * @param DiffManager      $diffManager
+     * @param DiffComputer     $diffComputer
+     * @param DiffHandler      $diffHandler
      */
     private function searchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler)
     {
@@ -239,12 +246,12 @@ class BackendController extends Controller
     }
 
     /**
-     * @param $inputSpecimens
-     * @param $diffs
-     * @param $page
-     * @param $maxItemPerPage
-     * @param $selectedSpecimens
-     * @param $items
+     * @param string  $inputSpecimens
+     * @param array   $diffs
+     * @param integer $page
+     * @param integer $maxItemPerPage
+     * @param array   $selectedSpecimens
+     * @param array   $items
      * @return array
      */
     private function getItemsForSetChoices($inputSpecimens, $diffs, $page, $maxItemPerPage, $selectedSpecimens, $items)
