@@ -1,11 +1,11 @@
 {
-    "name": "eRecolnat.diffs",
+    "name": "eRecolnat/diffs",
     "description" : "Outils d'aide à la décision pour l'export des différences, entre la base de eRecolnat et les collections naturalistes",
     "license": "proprietary",
     "type": "project",
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "Appbundle\\":""
         },
         "files": [
             "app/AppKernel.php"

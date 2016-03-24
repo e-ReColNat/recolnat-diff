@@ -18,7 +18,7 @@ class Choices extends \SplFileObject
     public function __construct($dirPath)
     {
         parent::__construct($dirPath.'/choices.json', 'c+');
-        chmod($this->getPathname(), 0755);
+        //chmod($this->getPathname(), 0755);
     }
 
     public function getContent()
@@ -34,7 +34,7 @@ class Choices extends \SplFileObject
     {
         $fs = new Filesystem();
         $fs->dumpFile($this->getPathname(), json_encode($choices, JSON_PRETTY_PRINT));
-        chmod($this->getPathname(), 0755);
+        //chmod($this->getPathname(), 0755);
     }
 
     public function deleteChoices()

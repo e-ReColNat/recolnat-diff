@@ -101,7 +101,7 @@ class DwcExporter extends AbstractExporter
         $fileExport = new Filesystem();
         $fileName = $this->getExportDirPath().'/meta.xml';
         $fileExport->touch($fileName);
-        $fileExport->chmod($fileName, 0777);
+        //$fileExport->chmod($fileName, 0777);
         file_put_contents($fileName, $this->generateXmlMeta());
 
         return $this->createZipFile();
@@ -129,7 +129,7 @@ class DwcExporter extends AbstractExporter
      */
     private function createZipFile()
     {
-        $fileExport = new Filesystem();
+        //$fileExport = new Filesystem();
         $zipFilePath = $this->getExportDirPath().'/dwc.zip';
         $arrayFilesName = [];
         $arrayFilesName[] = $this->getMetaFilepath().' ';
@@ -141,7 +141,7 @@ class DwcExporter extends AbstractExporter
 
             $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
             exec($zipCommand);
-            $fileExport->chmod($zipFilePath, 0777);
+            //$fileExport->chmod($zipFilePath, 0777);
         } else {
             throw new Exception('DWC-a can\'t be created !');
         }

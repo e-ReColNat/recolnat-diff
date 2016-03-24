@@ -10,7 +10,6 @@ namespace AppBundle\Tests\Units\Manager;
 
 require_once dirname(__DIR__).'/../../../../app/AppKernel.php';
 use atoum\AtoumBundle\Test\Units;
-use mageekguy\atoum;
 
 class GenericEntityManager extends Units\Test
 {

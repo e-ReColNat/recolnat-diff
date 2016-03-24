@@ -22,7 +22,7 @@ class Diffs extends \SplFileObject
             $this->searchDiffs = true;
         }
         parent::__construct($path, 'c+');
-        chmod($this->getPathname(), 0755);
+        //chmod($this->getPathname(), 0755);
     }
 
     /**
@@ -35,7 +35,7 @@ class Diffs extends \SplFileObject
 
             $responseJson = json_encode($diffs, JSON_PRETTY_PRINT);
             $fs->dumpFile($this->getPathname(), $responseJson);
-            chmod($this->getPathname(), 0755);
+            //chmod($this->getPathname(), 0755);
         }
     }
 
