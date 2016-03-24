@@ -5,7 +5,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "Appbundle\\":""
+            "AppBundle\\": "src/AppBundle"
         },
         "files": [
             "app/AppKernel.php"
