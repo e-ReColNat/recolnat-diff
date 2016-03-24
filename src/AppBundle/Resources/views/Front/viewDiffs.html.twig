@@ -1,12 +1,18 @@
 {% extends '@App/base.html.twig' %}
 
+{% set collectionCode = collection.collectioncode %}
+{% set institution = collection.institution %}
+{% set institutionCode = institution.institutioncode %}
+{% set choices = exportManager.sessionHandler.choicesForDisplay %}
+{% set selectedClassName = app.request.attributes.get('selectedClassName') %}
+
 {% block body %}
     {% set datas = pagination.items %}
     {% if diffs is not empty %}
         <div id="wrapper" class="toggled">
 
             <div id="sidebar-wrapper">
-                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}
+                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
             </div>
 
             <div id="page-content-wrapper">
@@ -21,10 +27,10 @@
                         <label for="maxItemPerPage"
                                style="font-size: 0.85em; font-weight: 500;">{{ 'label.maxItemPerPage' | trans }}</label>
                         <select name="maxItemPerPage" id="maxItemPerPage">
-                            <option value="5" {{ maxItemPerPage == 5 ? 'selected="true"':'' }}>5</option>
-                            <option value="10" {{ maxItemPerPage == 10 ? 'selected="true"':'' }}>10</option>
-                            <option value="20" {{ maxItemPerPage == 20 ? 'selected="true"':'' }}>20</option>
-                            <option value="50" {{ maxItemPerPage == 50 ? 'selected="true"':'' }}>50</option>
+                            <option value="5" {{ pagination.getItemNumberPerPage == 5 ? 'selected="true"':'' }}>5</option>
+                            <option value="10" {{ pagination.getItemNumberPerPage == 10 ? 'selected="true"':'' }}>10</option>
+                            <option value="20" {{ pagination.getItemNumberPerPage == 20 ? 'selected="true"':'' }}>20</option>
+                            <option value="50" {{ pagination.getItemNumberPerPage == 50 ? 'selected="true"':'' }}>50</option>
                         </select>
                     </div>
                 </div>

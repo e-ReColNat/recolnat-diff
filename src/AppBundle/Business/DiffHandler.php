@@ -36,7 +36,7 @@ class DiffHandler
     public function saveDiffs(array $diffs)
     {
         $this->setDiffsFile();
-        $this->getDiffs()->save($diffs);
+        $this->getDiffsFile()->save($diffs);
     }
 
     /**
@@ -53,7 +53,7 @@ class DiffHandler
      */
     public function getCTime()
     {
-        return $this->getDiffs()->getMTime();
+        return $this->getDiffsFile()->getMTime();
     }
 
     /**
@@ -62,7 +62,7 @@ class DiffHandler
      */
     public function getMTime()
     {
-        return $this->getChoices()->getMTime();
+        return $this->getChoicesFile()->getMTime();
     }
 
     /**
@@ -93,7 +93,7 @@ class DiffHandler
      *
      * @return Choices
      */
-    public function getChoices()
+    public function getChoicesFile()
     {
         if (is_null($this->choicesFile)) {
             $this->setChoicesFile();
@@ -105,7 +105,7 @@ class DiffHandler
      *
      * @return Diffs
      */
-    public function getDiffs()
+    public function getDiffsFile()
     {
         if (is_null($this->diffs)) {
             $this->setDiffsFile();
@@ -138,7 +138,7 @@ class DiffHandler
      */
     public function getLonesomeRecords($db = null, $selectedClassesNames = null)
     {
-        return $this->getDiffs()->getLonesomeRecords($db, $selectedClassesNames);
+        return $this->getDiffsFile()->getLonesomeRecords($db, $selectedClassesNames);
     }
 
     /**
@@ -148,7 +148,7 @@ class DiffHandler
      */
     public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
     {
-        return $this->getDiffs()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
+        return $this->getDiffsFile()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
     }
 
     /**

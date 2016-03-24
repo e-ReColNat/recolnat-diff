@@ -151,9 +151,9 @@ class ExportManager
                     'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
                 ]);
             $this->getDiffHandler()->saveDiffs($data);
-            $this->getDiffHandler()->getDiffs()->searchDiffs = false;
+            $this->getDiffHandler()->getDiffsFile()->searchDiffs = false;
         } else {
-            $data = $this->getDiffHandler()->getDiffs()->getData();
+            $data = $this->getDiffHandler()->getDiffsFile()->getData();
         }
         return $data;
     }
@@ -195,7 +195,7 @@ class ExportManager
             $this->sessionManager->clear();
         }
         $allDiffs = $this->sessionManager->get('diffs');
-        $diffs = $this->diffHandler->getDiffs()->filterResults($allDiffs, $classesName, $specimensWithChoices,
+        $diffs = $this->diffHandler->getDiffsFile()->filterResults($allDiffs, $classesName, $specimensWithChoices,
             $choicesToRemove);
         return $diffs;
     }
@@ -207,7 +207,7 @@ class ExportManager
     public function getDiffsBySpecimensCode($specimensCode)
     {
         $allDiffs = $this->sessionManager->get('diffs');
-        $diffs = $this->diffHandler->getDiffs()->filterBySpecimensCode($allDiffs, $specimensCode);
+        $diffs = $this->diffHandler->getDiffsFile()->filterBySpecimensCode($allDiffs, $specimensCode);
         return $diffs;
     }
 
@@ -296,7 +296,7 @@ class ExportManager
             $sessionChoices[] = $row;
         }
         $this->sessionManager->set('choices', $sessionChoices);
-        $this->diffHandler->getChoices()->save($sessionChoices);
+        $this->diffHandler->getChoicesFile()->save($sessionChoices);
     }
 
     /**
@@ -317,7 +317,7 @@ class ExportManager
         // ajout des nouveaux enregistrements de specimens complets
         // Un seul côté
         if ($this->exportPrefs->getSideForNewRecords() != 'both') {
-            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffs()->getLonesomeRecordsOrderedBySpecimenCodes(
+            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedBySpecimenCodes(
                 $this->exportPrefs->getSideForNewRecords());
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForNewRecords(),
                 array_keys($specimenCodesLonesomeRecords));
@@ -325,14 +325,14 @@ class ExportManager
             return $datas;
         } // des deux côtés
         else {
-            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffs()->getLonesomeRecordsOrderedBySpecimenCodes(
+            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedBySpecimenCodes(
                 'recolnat');
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
                 array_keys($specimenCodesLonesomeRecords));
             $datas = array_merge($datas, $datasNewRecords);
 
 
-            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffs()->getLonesomeRecordsOrderedBySpecimenCodes(
+            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedBySpecimenCodes(
                 'institution');
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('institution',
                 array_keys($specimenCodesLonesomeRecords));

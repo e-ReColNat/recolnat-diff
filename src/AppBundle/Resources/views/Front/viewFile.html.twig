@@ -1,11 +1,21 @@
 {% extends '@App/base.html.twig' %}
 
-{% set sumSpecimens = 0 %}
+{% set collectionCode = collection.collectioncode %}
+{% set institution = collection.institution %}
+{% set institutionCode = institution.institutioncode %}
+{% set stats = statsManager.getSortedStats %}
+{% set sumStats = statsManager.getSumStats %}
+{% set statsChoices = statsManager.getStatsChoices %}
+{% set statsLonesomeRecords = statsManager.getStatsLonesomeRecords %}
+{% set sumLonesomeRecords = statsManager.getSumLonesomeRecords %}
+
 {% block body %}
     {% include '@App/Front/partial/breadcrumb.html.twig' %}
-    <h1 class="page-header">{{ 'file.stats.title' | trans({'%name%' : institution.institutionCode ~ ' / '~ collectionCode},'user') }}
+    <h1 class="page-header">{{ 'file.stats.title' | trans({'%name%' : institutionCode ~ ' / '~ collection.collectionCode},'user') }}
         <small>
-            <a href="{{ path('stats', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">{{ 'stats.details'| trans }}</a>
+            <a href="{{ path('stats', {'collectionCode' : collectionCode, 'institutionCode':institutionCode}) }}">
+                {{ 'stats.details'| trans }}
+            </a>
         </small>
     </h1>
     {% if stats is not empty %}

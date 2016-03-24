@@ -1,4 +1,6 @@
 {% set page = 1 %}
+{% set choices = exportManager.sessionHandler.choices %}
+
 <ul class="nav sidebar-nav sidebar-choices">
     {% for specimenCode, datas in diffs.datas %}
         {% set classWithDiff = datas.classes %}

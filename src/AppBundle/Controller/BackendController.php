@@ -299,7 +299,7 @@ class BackendController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $diffHandler = $exportManager->getDiffHandler();
-        $choices = $diffHandler->getChoices();
+        $choices = $diffHandler->getChoicesFile();
         $choices->deleteChoices();
         $this->get('session')->clear();
         $response = new JsonResponse();
@@ -320,7 +320,7 @@ class BackendController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $diffHandler = $exportManager->getDiffHandler();
-        $diffs = $diffHandler->getDiffs();
+        $diffs = $diffHandler->getDiffsFile();
         $diffs->deleteChoices();
         $exportManager->launchDiffProcess();
         $this->get('session')->clear();

@@ -1,63 +1,65 @@
 {% if attribute(diffs.datas, specimenCode) is not empty %}
-<table class="diff table table-striped table-condensed">
-    <colgroup>
-        <col class="xsmall">
-        <col class="col-md-1">
-        <col class="col-md-5">
-        <col class="xsmall">
-        <col class="col-md-5">
-        <col class="xsmall">
-    </colgroup>
-    <thead>
+    <table class="diff table table-striped table-condensed">
+        <colgroup>
+            <col class="xsmall">
+            <col class="col-md-1">
+            <col class="col-md-5">
+            <col class="xsmall">
+            <col class="col-md-5">
+            <col class="xsmall">
+        </colgroup>
+        <thead>
         <tr>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
             <th colspan="2">Recolnat</th>
             <th colspan="2">Institution</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         {% set specimen = attribute(diffs.datas, specimenCode) %}
         {% for className, details in specimen.classes %}
             {% set relationId = details.id %}
-                {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}
-                {% set relationInstitution = relationById(specimenInstitution, className, relationId) %}
-                {% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
-                {% set rowspan = details.fields | length  +1 %}
-                    <tr data-classname="{{ className| lower }}" class="{{ className | lower }} light">
-                        <td class="diff-class" rowspan="{{rowspan}}" style="width: 10px !important;">
-                            <div>{{('label.' ~ className|lower ~ '.abbr') |trans({},'entity')|capitalize}}</div>
-                          </td>
-                        <td colspan="2">{{ relationToString }}</td>
-                        <td>
-                            <input type="radio" data-class="{{className}}" data-type='diff-entity' name="{{relationId}}" value="recolnat">
-                        </td>
-                        <td>&nbsp;</td>
-                        <td>
-                            <input type="radio" data-class="{{className}}" data-type='diff-entity' name="{{relationId}}" value="institution">
-                        </td>
-                    </tr>
-            
+            {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}
+            {% set relationInstitution = relationById(specimenInstitution, className, relationId) %}
+            {% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
+            {% set rowspan = details.fields | length  +1 %}
+            <tr data-classname="{{ className| lower }}" class="{{ className | lower }} light">
+                <td class="diff-class" rowspan="{{ rowspan }}" style="width: 10px !important;">
+                    <div>{{ ('label.' ~ className|lower ~ '.abbr') |trans({},'entity')|capitalize }}</div>
+                </td>
+                <td colspan="2">{{ relationToString }}</td>
+                <td>
+                    <input type="radio" data-class="{{ className }}" data-type='diff-entity' name="{{ relationId }}"
+                           value="recolnat">
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                    <input type="radio" data-class="{{ className }}" data-type='diff-entity' name="{{ relationId }}"
+                           value="institution">
+                </td>
+            </tr>
+
             {% for fieldName, datas in details.fields %}
-                    <tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
-                        <td>
-                            {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
-                        </td>
-                        <td>
-                            {{ fieldToString(relationRecolnat, fieldName)}}
-                        </td>
-                        <td>
-                            {% include '@App/Front/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}
-                        </td>
-                        <td>
-                            {{ fieldToString(relationInstitution, fieldName)}}
-                        </td>
-                        <td>
-                            {% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}
-                        </td>
-                    </tr>
-                {% endfor %}
+                <tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
+                    <td>
+                        {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
+                    </td>
+                    <td>
+                        {{ fieldToString(relationRecolnat, fieldName) }}
+                    </td>
+                    <td>
+                        {% include '@App/Front/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}
+                    </td>
+                    <td>
+                        {{ fieldToString(relationInstitution, fieldName) }}
+                    </td>
+                    <td>
+                        {% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}
+                    </td>
+                </tr>
+            {% endfor %}
         {% endfor %}
-    </tbody>
-</table>
+        </tbody>
+    </table>
 {% endif %}

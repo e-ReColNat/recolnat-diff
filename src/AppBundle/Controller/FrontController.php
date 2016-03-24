@@ -7,6 +7,7 @@ use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
 use Doctrine\ORM\AbstractQuery;
+use Knp\Component\Pager\Pagination\AbstractPagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -90,39 +91,16 @@ class FrontController extends Controller
         if (!is_null($request->query->get('reset', null))) {
             $this->get('session')->clear();
         }
-        /* @var $institution \AppBundle\Entity\Institution */
-        $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
-            ->findOneBy(['institutioncode' => $institutionCode]);
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+
+        $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
+            ->findOneBy(['collectioncode' => $collectionCode]);
 
         $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
 
-        $stats = $statsManager->getExpandedStats();
-        $sumStats = $statsManager->getSumStats();
-        $statsLonesomeRecords = $statsManager->getStatsLonesomeRecords();
-        $sortStats = function($a, $b) {
-            if ($a['diffs'] == $b['diffs']) {
-                return 0;
-            }
-
-            return ($a['diffs'] > $b['diffs']) ? -1 : 1;
-        };
-        uasort($stats, $sortStats);
-
-        $statsChoices = $statsManager->getStatsChoices();
-        $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
 
         return $this->render('@App/Front/viewFile.html.twig', array(
-            'diffHandler' => $exportManager->getDiffHandler(),
-            'institutionCode' => $institutionCode,
-            'collectionCode' => $collectionCode,
-            'stats' => $stats,
-            'sumStats' => $sumStats,
-            'statsChoices' => $statsChoices,
-            'institution' => $institution,
-            'statsLonesomeRecords' => $statsLonesomeRecords,
-            'sumLonesomeRecords' => $sumLonesomeRecords,
+            'statsManager'=>$statsManager,
+            'collection' => $collection,
         ));
     }
 
@@ -153,6 +131,9 @@ class FrontController extends Controller
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
+        $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
+            ->findOneBy(['collectioncode' => $collectionCode]);
+
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
         if ($request->get('_route') == 'choices') {
             $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesBySpecimenCode());
@@ -165,8 +146,11 @@ class FrontController extends Controller
             $specimensWithoutChoices);
 
         $paginator = $this->get('knp_paginator');
+        /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
+
+        dump($pagination->getItemNumberPerPage());
 
         $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
             AbstractQuery::HYDRATE_OBJECT);
@@ -174,17 +158,12 @@ class FrontController extends Controller
             'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewDiffs.html.twig', array(
-            'institutionCode' => $institutionCode,
-            'collectionCode' => $collectionCode,
+            'collection' => $collection,
             'diffs' => $diffs,
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,
             'pagination' => $pagination,
-            'choicesFacets' => $exportManager->getSessionHandler()->getChoices(),
-            'choices' => $exportManager->getSessionHandler()->getChoicesForDisplay(),
-            'maxItemPerPage' => $maxItemPerPage,
-            'selectedClassName' => $selectedClassName,
-            'type' => $request->get('_route'),
+            'exportManager' => $exportManager,
         ));
     }
 
@@ -209,6 +188,9 @@ class FrontController extends Controller
         $selectedClassName = 'all',
         $page = 1
     ) {
+        $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
+            ->findOneBy(['collectioncode' => $collectionCode]);
+
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -230,13 +212,9 @@ class FrontController extends Controller
         }
 
         return $this->render('@App/Front/viewLonesome.html.twig', array(
-            'institutionCode' => $institutionCode,
-            'collectionCode' => $collectionCode,
+            'collection' => $collection,
             'specimens' => $specimens,
             'pagination' => $pagination,
-            'maxItemPerPage' => $maxItemPerPage,
-            'selectedClassName' => $selectedClassName,
-            'db' => $db,
         ));
     }
 
@@ -250,6 +228,9 @@ class FrontController extends Controller
      */
     public function viewSpecimensAction($institutionCode, $collectionCode, $jsonSpecimensCode)
     {
+        $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
+            ->findOneBy(['collectioncode' => $collectionCode]);
+
         $specimensCode = json_decode($jsonSpecimensCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
@@ -261,14 +242,12 @@ class FrontController extends Controller
             'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
-            'institutionCode' => $institutionCode,
-            'collectionCode' => $collectionCode,
+            'collection' => $collection,
             'diffs' => $diffs,
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,
-            'choicesFacets' => $exportManager->getSessionHandler()->getChoices(),
-            'choices' => $exportManager->getSessionHandler()->getChoicesForDisplay(),
             'specimensCode' => $specimensCode,
+            'exportManager' =>$exportManager,
         ));
     }
 

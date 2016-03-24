@@ -203,12 +203,32 @@ class StatsManager
         return $stats;
     }
 
+    /**
+     * @return array
+     */
     public function getCondensedStats()
     {
         $stats = [];
         foreach ($this->getStats() as $className => $fields) {
             $stats[$className] = array_sum($fields);
         }
+        return $stats;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSortedStats()
+    {
+        $functionSortStats = function($a, $b) {
+            if ($a['diffs'] == $b['diffs']) {
+                return 0;
+            }
+
+            return ($a['diffs'] > $b['diffs']) ? -1 : 1;
+        };
+        $stats = $this->getExpandedStats();
+        uasort($stats, $functionSortStats);
         return $stats;
     }
 }

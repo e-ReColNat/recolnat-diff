@@ -1,4 +1,8 @@
 {% extends '@App/base.html.twig' %}
+{% set collectionCode = collection.collectioncode %}
+{% set institution = collection.institution %}
+{% set institutionCode = institution.institutioncode %}
+{% set choices = exportManager.sessionHandler.choicesForDisplay %}
 
 {% block body %}
     {% set datas = diffs.datas %}
@@ -6,7 +10,7 @@
         <div id="wrapper" class="toggled">
 
             <div id="sidebar-wrapper" >
-                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : specimensCode | length, 'currentPage' : 1, 'choices':choicesFacets} %}
+                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : specimensCode | length, 'currentPage' : 1} %}
             </div>
             <div id="page-content-wrapper">
                 {% include '@App/Front/partial/buttonHamburger.html.twig' %}
