@@ -23,7 +23,6 @@
 
 # PHPUnit
 /app/phpunit.xml
-/phpunit.xml
 
 # Build data
 /build/
@@ -31,43 +30,7 @@
 # Composer PHAR
 /composer.phar
 
-# Created by https://www.gitignore.io
-
-### Eclipse ###
-.metadata
-.gradle
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-
-# Eclipse Core
-.project
-
-# PDT-specific
-.buildpath
-
-### NETBEANS ###
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-nb-configuration.xml
-.nb-gradle/
-nbproject/*
-
-### PHPSTORM ###
-.idea/
-
 ### RECOLNAT SPECIFIC ###
 data/*
 src/AppBundle/Tests
 !data/.gitkeep
-!bin/talend_converter
-!bin/talend_converter/*
