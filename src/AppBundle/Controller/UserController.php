@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\UserPrefsType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of UserController
@@ -76,7 +77,6 @@ class UserController extends Controller
 
         $url = $this->getParameter('server_logout_url');
 
-        // TODO : change url
-        return $this->redirect($url.'?service=http://recolnat-diff.tld/app_dev.php');
+        return $this->redirect($url.'?service='.$this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL));
     }
 }
