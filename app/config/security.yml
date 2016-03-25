@@ -6,7 +6,7 @@ security:
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         cas:
-            id: prayno.cas_user_provider
+            id: app.security.recolnat_user_provider
 
     firewalls:
 

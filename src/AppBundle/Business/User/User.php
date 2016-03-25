@@ -2,14 +2,17 @@
 
 namespace AppBundle\Business\User;
 
+use AppBundle\Entity\Collection;
+use AppBundle\Entity\Institution;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Description of User
  *
  * @author tpateffoz
  */
-class User
+class User implements UserInterface
 {
 
     private $institutionCode;
@@ -17,6 +20,22 @@ class User
     private $prefs;
     private $exportPath;
 
+
+    private $username;
+    private $password;
+    private $salt;
+    private $roles;
+
+    /** @var  Institution */
+    private $institution;
+
+    public function __construct($username, $password, $salt, array $roles)
+    {
+        $this->username = $username;
+        $this->password = $password;
+        $this->salt = $salt;
+        $this->roles = $roles;
+    }
 
     /**
      * @param string $institutionCode
@@ -120,5 +139,47 @@ class User
         $this->exportPath = $exportPath;
         return $this;
     }
+
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function eraseCredentials()
+    {
+
+    }
+
+    /**
+     * @return Institution
+     */
+    public function getInstitution()
+    {
+        return $this->institution;
+    }
+
+    /**
+     * @param Institution $institution
+     */
+    public function setInstitution($institution)
+    {
+        $this->institution = $institution;
+    }
+
 
 }

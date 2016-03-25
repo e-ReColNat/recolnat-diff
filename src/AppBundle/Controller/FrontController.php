@@ -37,7 +37,7 @@ class FrontController extends Controller
             $collections[$collectionCode]['diffHandler'] = [];
             if (!$diffHandler->shouldSearchDiffs()) {
                 /* @var $exportManager \AppBundle\Manager\ExportManager */
-                $exportManager = $exportManager->init($institutionCode, $collectionCode);
+                $exportManager = $exportManager->init($this->getUser());
                 $collections[$collectionCode]['diffHandler'] = $exportManager->getFiles();
             }
         }

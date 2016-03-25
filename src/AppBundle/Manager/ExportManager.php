@@ -108,27 +108,31 @@ class ExportManager
      * @return $this
      * @throws \Exception
      */
-    public function init($institutionCode, $collectionCode)
+    public function init(User $user)
     {
+        $this->user = $user;
+        $this->institutionCode = $this->user->getInstitution()->getInstitutioncode();
+        // TODO REMOVE !!!!
+        $this->collectionCode='AIX';
+
         $em = $this->managerRegistry->getManager('default');
-        $this->collection = $em->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
+        $this->collection = $em->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $this->collectionCode]);
 
         if (is_null($this->collection)) {
-            throw new \Exception('Can\'t found the collection with collectionCode = '.$collectionCode);
+            throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
         }
 
-        $this->institutionCode = $institutionCode;
-        $this->collectionCode = $collectionCode;
-        $this->user = new User();
+
+
         $this->user->setExportPath($this->exportPath);
         $this->user->init($this->institutionCode);
 
-        if (!is_null($collectionCode)) {
+        if (!is_null($this->collectionCode)) {
 
             $this->diffManager->init($this->collection, $this->getExportDirPath());
 
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
-            $this->diffHandler->setCollectionCode($collectionCode);
+            $this->diffHandler->setCollectionCode($this->collectionCode);
             $data = $this->launchDiffProcess();
             $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
             $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
