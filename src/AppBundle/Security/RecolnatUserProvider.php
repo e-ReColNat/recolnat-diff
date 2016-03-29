@@ -30,7 +30,7 @@ class RecolnatUserProvider implements UserProviderInterface
     {
         if ($username) {
             $password = '...';
-            $salt = "";
+            $salt = '';
             $roles = ['ROLE_USER'];
 
             $institution = $this->managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode' => 'MHNAIX']);
