@@ -2,7 +2,6 @@
 
 namespace AppBundle;
 
-use AppBundle\DependencyInjection\Compiler\OverrideServiceCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

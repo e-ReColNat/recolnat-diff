@@ -30,7 +30,7 @@ class StatsManager
     {
         $this->user = $user;
         $this->collectionCode = $collectionCode;
-        $this->exportManager = $this->exportManager->init($user)->setCollectionCode($collectionCode);
+        $this->exportManager = $this->exportManager->init($this->user)->setCollectionCode($this->collectionCode);
         return $this;
     }
 

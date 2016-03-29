@@ -2,7 +2,6 @@
 
 namespace AppBundle\Business\User;
 
-use AppBundle\Entity\Collection;
 use AppBundle\Entity\Institution;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Security\Core\User\UserInterface;
