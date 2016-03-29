@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
-use AppBundle\Business\User\User;
 use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
@@ -24,15 +23,14 @@ class BackendController extends Controller
 {
 
     /**
-     * @Route("/{institutionCode}/{collectionCode}/export/{type}/", name="export", requirements={"type": "csv|dwc"})
+     * @Route("{collectionCode}/export/{type}/", name="export", requirements={"type": "csv|dwc"})
      * @param string  $type
      * @param Request $request
-     * @param string  $institutionCode
      * @param string  $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function exportAction($type, $institutionCode, $collectionCode, Request $request)
+    public function exportAction($type, $collectionCode, Request $request)
     {
         /** @var ExportPrefs $exportPrefs */
         $exportPrefs = unserialize($request->get('exportPrefs'));
@@ -40,7 +38,7 @@ class BackendController extends Controller
             throw new \Exception('parameters must be an instance of ExportPrefs');
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $file = $exportManager->export($type, $exportPrefs);
         $response = new JsonResponse();
         if (is_null($file)) {
@@ -57,18 +55,16 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/{institutionCode}/{collectionCode}/searchDiff/", name="searchDiff", options={"expose"=true})
-     * @param string $institutionCode
+     * @Route("{collectionCode}/searchDiff/", name="searchDiff", options={"expose"=true})
      * @param string $collectionCode
      * @return Response
      */
-    public function searchDiffAction($institutionCode, $collectionCode)
+    public function searchDiffAction($collectionCode)
     {
         $collection = $this->getDoctrine()->getManager()
             ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
 
-        $user = new User();
-        $user->setExportPath($this->getParameter('export_path'))->init($institutionCode);
+        $institutionCode = $this->getUser()->getInstitutionCode();
         $diffManager = $this->get('diff.manager');
         $diffComputer = $this->get('diff.computer');
         $diffManager->init($collection, $this->getParameter('export_path'));
@@ -80,7 +76,6 @@ class BackendController extends Controller
 
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
-
 
 
         $this->searchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler);
@@ -157,17 +152,16 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
+     * @Route("/setChoice/{collectionCode}", name="setChoice", options={"expose"=true})
      * @param Request $request
-     * @param string  $institutionCode
      * @param string  $collectionCode
      * @return JsonResponse
      */
-    public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
+    public function setChoiceAction(Request $request, $collectionCode)
     {
         $choices = $request->get('choices');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $exportManager->setChoices($choices);
 
         $response = new JsonResponse();
@@ -179,17 +173,17 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/setChoices/{institutionCode}/{collectionCode}", name="setChoices", options={"expose"=true})
+     * @Route("/setChoices/{collectionCode}", name="setChoices", options={"expose"=true})
      * @param Request $request
-     * @param string  $institutionCode
      * @param string  $collectionCode
      * @return JsonResponse
      */
-    public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
+    public function setChoicesAction(Request $request, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
+        $institutionCode = $this->getUser()->getInstitutionCode();
 
         list($inputOrigin, $inputSpecimens, $inputClassesName, $page, $selectedSpecimens, $selectedClassName, $type) =
             $this->getParamsForSetChoices($request);
@@ -295,16 +289,15 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/deleteChoices/{institutionCode}/{collectionCode}", name="deleteChoices", options={"expose"=true})
-     * @param string $institutionCode
+     * @Route("/deleteChoices/{collectionCode}", name="deleteChoices", options={"expose"=true})
      * @param string $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function deleteChoicesAction($institutionCode, $collectionCode)
+    public function deleteChoicesAction($collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $diffHandler = $exportManager->getDiffHandler();
         $choices = $diffHandler->getChoicesFile();
         $choices->deleteChoices();
@@ -316,16 +309,15 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/deleteDiffs/{institutionCode}/{collectionCode}", name="deleteDiffs", options={"expose"=true})
-     * @param string $institutionCode
+     * @Route("/deleteDiffs/{collectionCode}", name="deleteDiffs", options={"expose"=true})
      * @param string $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function deleteDiffsAction($institutionCode, $collectionCode)
+    public function deleteDiffsAction($collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $diffHandler = $exportManager->getDiffHandler();
         $diffs = $diffHandler->getDiffsFile();
         $diffs->deleteChoices();

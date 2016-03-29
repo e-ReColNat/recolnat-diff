@@ -149,7 +149,7 @@ $(document).ready(function () {
                 setChoice(choices, $(this), specimenCode);
             }
             $.ajax({
-                    url: Routing.generate('setChoice', {institutionCode: institutionCode, collectionCode: collectionCode}),
+                    url: Routing.generate('setChoice', { collectionCode: collectionCode}),
                     data: {'choices': choices},
                     method: "POST"
                 })
@@ -227,7 +227,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-                url: Routing.generate('setChoices', {institutionCode: institutionCode, collectionCode: collectionCode}),
+                url: Routing.generate('setChoices', { collectionCode: collectionCode}),
                 data: data,
                 method: "POST"
             })

@@ -78,8 +78,9 @@ class DiffHandler
      */
     public function getInstitutionPath()
     {
-        $institutionPath = $this->institutionPath ;
-        $this->createDir($institutionPath) ;
+        $institutionPath = $this->institutionPath;
+        $this->createDir($institutionPath);
+
         return realpath($institutionPath);
     }
 
@@ -92,6 +93,7 @@ class DiffHandler
         if (is_null($this->choicesFile)) {
             $this->setChoicesFile();
         }
+
         return $this->choicesFile;
     }
 
@@ -104,6 +106,7 @@ class DiffHandler
         if (is_null($this->diffs)) {
             $this->setDiffsFile();
         }
+
         return $this->diffs;
     }
 
@@ -113,6 +116,7 @@ class DiffHandler
     public function setChoicesFile()
     {
         $this->choicesFile = new Choices($this->getCollectionPath());
+
         return $this;
     }
 
@@ -122,6 +126,7 @@ class DiffHandler
     public function setDiffsFile()
     {
         $this->diffs = new Diffs($this->getCollectionPath());
+
         return $this;
     }
 
@@ -152,6 +157,7 @@ class DiffHandler
     public function setCollectionCode($collectionCode)
     {
         $this->collectionCode = $collectionCode;
+
         return $this;
     }
 
@@ -187,8 +193,10 @@ class DiffHandler
                     }
                 }
             }
+
             return $choices;
         }
+
         return $choices;
     }
 
@@ -197,8 +205,8 @@ class DiffHandler
      */
     public function getCollectionPath()
     {
-        $collectionPath = $this->getInstitutionPath().'/'.$this->collectionCode ;
-        $this->createDir($collectionPath) ;
+        $collectionPath = $this->getInstitutionPath().'/'.$this->collectionCode;
+        $this->createDir($collectionPath);
 
         return realpath($collectionPath);
     }
@@ -206,7 +214,8 @@ class DiffHandler
     /**
      * @param string $dir
      */
-    private function createDir($dir) {
+    private function createDir($dir)
+    {
         if (!is_dir($dir)) {
             mkdir($dir, 0755);
         }

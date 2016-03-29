@@ -103,36 +103,42 @@ class ExportManager
     }
 
     /**
-     * @param string $institutionCode
+     * @param User $user
+     * @return $this
+     * @throws \Exception
+     */
+    public function init(User $user)
+    {
+        $this->user = $user;
+        $this->institutionCode = $this->user->getInstitution()->getInstitutioncode();
+
+        $this->user->setExportPath($this->exportPath);
+        $this->user->init($this->institutionCode);
+
+        return $this;
+    }
+
+    /**
      * @param string $collectionCode
      * @return $this
      * @throws \Exception
      */
-    public function init($institutionCode, $collectionCode)
+    public function setCollectionCode($collectionCode)
     {
-        $em = $this->managerRegistry->getManager('default');
-        $this->collection = $em->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
-
-        if (is_null($this->collection)) {
-            throw new \Exception('Can\'t found the collection with collectionCode = '.$collectionCode);
-        }
-
-        $this->institutionCode = $institutionCode;
         $this->collectionCode = $collectionCode;
-        $this->user = new User();
-        $this->user->setExportPath($this->exportPath);
-        $this->user->init($this->institutionCode);
-
-        if (!is_null($collectionCode)) {
-
+        $this->collection = $this->managerRegistry->getManager('default')
+            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $this->collectionCode]);
+        if (is_null($this->collection)) {
+            throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
+        } else {
             $this->diffManager->init($this->collection, $this->getExportDirPath());
-
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
-            $this->diffHandler->setCollectionCode($collectionCode);
+            $this->diffHandler->setCollectionCode($this->collectionCode);
             $data = $this->launchDiffProcess();
             $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
             $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
         }
+
         return $this;
     }
 
@@ -155,6 +161,7 @@ class ExportManager
         } else {
             $data = $this->getDiffHandler()->getDiffsFile()->getData();
         }
+
         return $data;
     }
 
@@ -197,6 +204,7 @@ class ExportManager
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffsFile()->filterResults($allDiffs, $classesName, $specimensWithChoices,
             $choicesToRemove);
+
         return $diffs;
     }
 
@@ -208,6 +216,7 @@ class ExportManager
     {
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffsFile()->filterBySpecimensCode($allDiffs, $specimensCode);
+
         return $diffs;
     }
 
@@ -225,6 +234,7 @@ class ExportManager
         } elseif (!$session->has('maxItemPerPage')) {
             $session->set('maxItemPerPage', $this->maxItemPerPage);
         }
+
         return $session->get('maxItemPerPage');
     }
 
@@ -243,6 +253,7 @@ class ExportManager
             }
             closedir($handle);
         }
+
         return $returnDirs;
     }
 
@@ -322,6 +333,7 @@ class ExportManager
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForNewRecords(),
                 array_keys($specimenCodesLonesomeRecords));
             $datas = array_merge($datas, $datasNewRecords);
+
             return $datas;
         } // des deux côtés
         else {
@@ -337,6 +349,7 @@ class ExportManager
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('institution',
                 array_keys($specimenCodesLonesomeRecords));
             $datas = array_merge($datas, $datasNewRecords);
+
             return $datas;
         }
     }
@@ -380,6 +393,7 @@ class ExportManager
                 }
             }
         }
+
         return $datasWithChoices;
     }
 
@@ -418,6 +432,7 @@ class ExportManager
         $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForChoicesNotSet(),
             $specimenCodes);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
+
         return $datasWithChoices;
     }
 }

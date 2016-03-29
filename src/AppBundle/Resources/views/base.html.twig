@@ -13,8 +13,9 @@
 </head>
 <body>
 
+{% set institutionCode = app.user.institutionCode %}
 {% block navbar %}
-<div id="parameters" class="hidden" data-institutioncode="{{ institutionCode is defined ? institutionCode:'' }}"
+<div id="parameters" class="hidden" data-institutioncode="{{ institutionCode }}"
      data-collectioncode="{{ collectionCode is defined ? collectionCode:'' }}"></div>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">

@@ -10,6 +10,7 @@ namespace AppBundle\Tests\Units\Manager;
 
 
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\User\User;
 use atoum\AtoumBundle\Test\Units;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -55,7 +56,11 @@ class ExportManager extends Units\Test
             $this->container->get('diff.computer')
         );
 
-        $this->exportManager->init('MHNAIX', 'AIX');
+        $user = new User('fakeuser', '...','', ["ROLE_USER"]);
+        $institution = $managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode'=>'MHNAIX']);
+        $user->setExportPath($this->container->getParameter('export_path'));
+        $user->setInstitution($institution);
+        $this->exportManager->init($user)->setCollectionCode('AIX');
     }
 
     public function testGetDiffs()

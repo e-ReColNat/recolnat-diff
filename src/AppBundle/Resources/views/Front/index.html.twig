@@ -2,18 +2,11 @@
 
 {% set sumSpecimens = 0 %}
 {% block body %}
-    <h1 class="page-header">{{ 'welcome' | trans({'%name%' : institution.institutionCode},'user') }}</h1>
+    <h1 class="page-header">{{ 'welcome' | trans({'%name%' : institutionCode},'user') }}</h1>
     {% if collections|length > 0 %}
         {% for collection in collections %}
-            {% if (collection['diffHandler']|length == 0) %}
-                <a class="searchDiffButton btn btn-primary" role="button"
-                   href="{{ path('searchDiff', {'institutionCode' : institution.institutionCode, 'collectionCode' : collection.collection.collectionCode}) }}">
-                    <span class="glyphicon glyphicon-search"
-                          aria-hidden="true"></span> {{ 'label.searchDiffs' | trans }}
-                    - {{ collection.collection.collectionCode }}
-                </a>
-            {% else %}
-                <a href="{{ path('viewfile', {'collectionCode':collection['collection'].getCollectionCode, 'institutionCode':institution.getInstitutionCode }) }}">
+            {% if (collection['diffHandler']|length != 0) %}
+                <a href="{{ path('viewfile', {'collectionCode':collection['collection'].getCollectionCode}) }}">
                     {{ collection['collection'].getCollectionCode }}
                 </a>
                 <ul>
@@ -23,6 +16,12 @@
                     {% endfor %}
                 </ul>
             {% endif %}
+            <a class="searchDiffButton btn btn-primary" role="button"
+               href="{{ path('searchDiff', {'collectionCode' : collection.collection.collectionCode}) }}">
+                    <span class="glyphicon glyphicon-search"
+                          aria-hidden="true"></span> {{ 'label.searchDiffs' | trans }}
+                - {{ collection.collection.collectionCode }}
+            </a>
         {% endfor %}
     {% endif %}
     {% include "@App/Front/partial/searchDiffModal.html.twig" %}

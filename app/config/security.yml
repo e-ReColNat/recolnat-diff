@@ -6,13 +6,7 @@ security:
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         cas:
-            id: prayno.cas_user_provider
-#        in_memory:
-#            memory:
-#                users:
-#                    mhnaix:
-#                        password: 123456
-#                        roles: 'ROLE_USER'
+            id: app.security.recolnat_user_provider
 
     firewalls:
 
@@ -27,16 +21,11 @@ security:
             guard:
                 authenticators:
                     - prayno.cas_authenticator
-#            form_login:
-#                login_path: login
-#                check_path: login
-#                default_target_path: index
             logout:
                 path:   /logout
                 target: /userlogout
 
 #
     access_control:
-#        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER }
 

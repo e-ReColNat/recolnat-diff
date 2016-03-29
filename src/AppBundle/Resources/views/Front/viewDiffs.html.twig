@@ -2,7 +2,6 @@
 
 {% set collectionCode = collection.collectioncode %}
 {% set institution = collection.institution %}
-{% set institutionCode = institution.institutioncode %}
 {% set choices = exportManager.sessionHandler.choicesForDisplay %}
 {% set selectedClassName = app.request.attributes.get('selectedClassName') %}
 
@@ -68,10 +67,10 @@
                 {% endif %}
                 var url;
                 {% if app.request.attributes.get('_route') == 'lonesomes' %}
-                    url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
+                    url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
                 {% else %}
                     url = "{{ path(app.request.attributes.get('_route'),
-                {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
+                {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
                 {% endif %}
 
                 var maxItemPerPage = $maxItemPerPage.find(":selected").text();
