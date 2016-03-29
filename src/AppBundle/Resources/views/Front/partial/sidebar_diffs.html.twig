@@ -9,7 +9,7 @@
 
             {% set path='' %}
             {% if page != currentPage %}
-                {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) %}
+                {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
             {% endif %}
 
             <a href="{{ path }}#{{ specimenCode }}">{{ taxon }}</a>

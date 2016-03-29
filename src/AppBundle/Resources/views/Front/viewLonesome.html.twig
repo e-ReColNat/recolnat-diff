@@ -68,7 +68,7 @@
                     {% set selectedClassName = "all" %}
                 {% endif %}
 
-                var url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','institutionCode':institutionCode, 'selectedClassName' : selectedClassName}) }}";
+                var url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum', 'selectedClassName' : selectedClassName}) }}";
                 var maxItemPerPage = $maxItemPerPage.find(":selected").text();
                 localStorage.setItem('maxItemPerPage', maxItemPerPage);
                 jQuery(location).attr('href', url.replace('_itemNum', maxItemPerPage));

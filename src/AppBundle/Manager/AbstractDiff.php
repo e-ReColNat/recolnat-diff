@@ -92,18 +92,15 @@ abstract class AbstractDiff
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
                     ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
                 $event = $stopwatch->stop('recolnat');
-                dump('recolnat : '.$event->getDuration());
 
                 $stopwatch->start('insti');
                 $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
                     ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
                 $event = $stopwatch->stop('insti');
-                dump('insti : '.$event->getDuration());
 
                 $stopwatch->start('compare');
                 $this->compare();
                 $event = $stopwatch->stop('compare');
-                dump('compare : '.$event->getDuration());
             }
         }
         return $this;

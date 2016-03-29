@@ -1,10 +1,10 @@
 <ol class="breadcrumb col-sm-offset-1">
-    <li><a href="{{path('index', {'institutionCode':institutionCode})}}">{{institutionCode}}</a></li>
+    <li><a href="{{path('index')}}">{{institutionCode}}</a></li>
     
     {% if app.request.get('_route') =='viewfile' %}
     <li class="active">{{collectionCode}}</li>
     {% else %}
-    <li><a href="{{path('viewfile', {'collectionCode' : collectionCode, 'institutionCode':institutionCode})}}">{{collectionCode}}</a></li>
+    <li><a href="{{path('viewfile', {'collectionCode' : collectionCode, })}}">{{collectionCode}}</a></li>
     {% endif %}
     
     {% if app.request.get('_route') =='stats' %}

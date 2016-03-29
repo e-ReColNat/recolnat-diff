@@ -18,34 +18,26 @@ class UserController extends Controller
 {
 
     /**
-     * @Route("/user/{institutionCode}/prefs/view", name="viewPrefsUser")
-     * @param string $institutionCode
+     * @Route("/user/prefs/view", name="viewPrefsUser")
      * @return Response
      */
-    public function indexAction($institutionCode)
+    public function indexAction()
     {
-        /* @var $user \AppBundle\Business\User\User */
-        $user = $this->get('usermanager');
-        $user->init($institutionCode);
+        $user = $this->getUser();
         $prefs = $user->getPrefs();
         return $this->render('@App/User/viewPrefs.html.twig', array(
-            'institutionCode' => $institutionCode,
             'prefs' => $prefs,
         ));
     }
 
     /**
-     * @Route("/user/{institutionCode}/prefs/edit", name="editPrefsUser")
+     * @Route("/user/prefs/edit", name="editPrefsUser")
      * @param Request $request
-     * @param string  $institutionCode
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function editAction(Request $request, $institutionCode)
+    public function editAction(Request $request)
     {
-        /* @var $user \AppBundle\Business\User\User */
-        $user = $this->get('usermanager');
-        $user->init($institutionCode);
-
+        $user = $this->getUser();
         $prefs = $user->getPrefs();
         $form = $this->createForm(UserPrefsType::class, $prefs);
 
@@ -57,11 +49,10 @@ class UserController extends Controller
             $message = $translator->trans('prefs.saved', [], 'prefs');
             $user->savePrefs($prefs);
             $this->addFlash('success', $message);
-            return $this->redirectToRoute('viewPrefsUser', ['institutionCode' => $institutionCode]);
+            return $this->redirectToRoute('viewPrefsUser');
         }
 
         return $this->render('@App/User/editPrefs.html.twig', array(
-            'institutionCode' => $institutionCode,
             'form' => $form->createView(),
         ));
     }
