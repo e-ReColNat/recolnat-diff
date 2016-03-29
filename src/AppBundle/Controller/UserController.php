@@ -25,7 +25,7 @@ class UserController extends Controller
     public function indexAction($institutionCode)
     {
         /* @var $user \AppBundle\Business\User\User */
-        $user = $this->get('userManager');
+        $user = $this->get('usermanager');
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
         return $this->render('@App/User/viewPrefs.html.twig', array(
@@ -43,7 +43,7 @@ class UserController extends Controller
     public function editAction(Request $request, $institutionCode)
     {
         /* @var $user \AppBundle\Business\User\User */
-        $user = $this->get('userManager');
+        $user = $this->get('usermanager');
         $user->init($institutionCode);
 
         $prefs = $user->getPrefs();
@@ -77,6 +77,6 @@ class UserController extends Controller
 
         $url = $this->getParameter('server_logout_url');
 
-        return $this->redirect($url.'?service='.$this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL));
+        return $this->redirect($url.'?service='.urlencode($this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL)));
     }
 }

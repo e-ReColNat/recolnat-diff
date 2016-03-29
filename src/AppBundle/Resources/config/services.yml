@@ -11,28 +11,28 @@ services:
             recolnat_alias: "%database_user%"
             recolnat_diff_alias: "%database_user_diff%"
 
-    genericEntityManager:
+    genericentitymanager:
         class: AppBundle\Manager\GenericEntityManager
         arguments:
             managerRegistry: "@doctrine"
 
-    exportManager:
+    exportmanager:
         class: AppBundle\Manager\ExportManager
         arguments:
             managerRegistry: "@doctrine"
             exportPath: "%export_path%"
             sessionManager: "@session"
-            genericEntityManager: "@genericEntityManager"
+            genericEntityManager: "@genericentitymanager"
             diffManager: "@diff.manager"
             maxItemPerPage: "%knp_paginator.page_range%"
             diffComputer: "@diff.computer"
-    userManager:
+    usermanager:
         class: AppBundle\Business\User\User
         arguments:
             exportPath: "%export_path%"
             maxItemPerPage: "%knp_paginator.page_range%"
 
-    statsManager:
+    statsmanager:
         class: AppBundle\Business\StatsManager
         arguments:
             exportManager: "@exportmanager"
@@ -64,14 +64,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response}
 
-    app.login.listener:
-        class: AppBundle\Listener\LoginListener
-        arguments:
-            managerRegistry: "@doctrine"
-            tokenStorage: "@security.token_storage"
-        tags:
-            - { name: kernel.event_listener, event: security.interactive_login, method: onSecurityInteractiveLogin }
-
     # Security
     app.security.recolnat_user_provider:
         class: AppBundle\Security\RecolnatUserProvider
+        arguments:
+            managerRegistry: "@doctrine"
+            exportPath: "%export_path%"

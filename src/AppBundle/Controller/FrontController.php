@@ -21,29 +21,28 @@ class FrontController extends Controller
      */
     public function indexAction()
     {
-        $institutionCode = 'MHNAIX';
         /* @var $institution \AppBundle\Entity\Institution */
-        $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
-            ->findOneBy(['institutioncode' => $institutionCode]);
+        $institution = $this->getUser()->getInstitution();
 
+        dump($this->getUser());
         $collections = [];
-        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
-        $exportManager = $this->get('exportManager');
+        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institution->getInstitutioncode());
+        $exportManager = $this->get('exportmanager')->init($this->getUser());
+
         /** @var Collection $collection */
         foreach ($institution->getCollections() as $collection) {
             $collectionCode = $collection->getCollectioncode();
+            $exportManager->setCollectionCode($collectionCode);
             $collections[$collectionCode]['collection'] = $collection;
             $diffHandler->setCollectionCode($collectionCode);
             $collections[$collectionCode]['diffHandler'] = [];
             if (!$diffHandler->shouldSearchDiffs()) {
                 /* @var $exportManager \AppBundle\Manager\ExportManager */
-                $exportManager = $exportManager->init($this->getUser());
                 $collections[$collectionCode]['diffHandler'] = $exportManager->getFiles();
             }
         }
 
         return $this->render('@App/Front/index.html.twig', array(
-            'institution' => $institution,
             'collections' => $collections,
         ));
     }
@@ -56,16 +55,11 @@ class FrontController extends Controller
      */
     public function statsAction($collectionCode, $institutionCode)
     {
-        /* @var $institution \AppBundle\Entity\Institution */
-        $institution = $this->getDoctrine()->getRepository('AppBundle\Entity\Institution')
-            ->findOneBy(['institutioncode' => $institutionCode]);
-
-        /* @var $user \AppBundle\Business\User\User */
-        $user = $this->get('userManager');
+        $user = $this->getUser();
         $user->init($institutionCode);
         $prefs = $user->getPrefs();
 
-        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
+        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
 
         $statsBySimilarity = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $statsManager->getSumStats();
@@ -74,7 +68,6 @@ class FrontController extends Controller
             'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
             'stats' => $statsBySimilarity,
-            'institution' => $institution,
             'sumStats' => $sumStats,
         ));
     }
@@ -95,7 +88,7 @@ class FrontController extends Controller
         $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
             ->findOneBy(['collectioncode' => $collectionCode]);
 
-        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
+        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
 
 
         return $this->render('@App/Front/viewFile.html.twig', array(
@@ -128,7 +121,7 @@ class FrontController extends Controller
         $page = 1
     ) {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
@@ -192,7 +185,7 @@ class FrontController extends Controller
             ->findOneBy(['collectioncode' => $collectionCode]);
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         $lonesomesSpecimensBySpecimenCodes = $exportManager->getDiffHandler()->getLonesomeRecordsIndexedBySpecimenCode($db,
@@ -233,7 +226,7 @@ class FrontController extends Controller
 
         $specimensCode = json_decode($jsonSpecimensCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $diffs = $exportManager->getDiffsBySpecimensCode($specimensCode);
 
         $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
@@ -288,7 +281,7 @@ class FrontController extends Controller
      */
     public function setPrefsForExportAction(Request $request, $institutionCode, $collectionCode, $type)
     {
-        $statsManager = $this->get('statsManager')->init($institutionCode, $collectionCode);
+        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
 
         $exportPrefs = new ExportPrefs();
 

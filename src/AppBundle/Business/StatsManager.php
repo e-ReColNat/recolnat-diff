@@ -3,6 +3,7 @@
 namespace AppBundle\Business;
 
 
+use AppBundle\Business\User\User;
 use AppBundle\Manager\ExportManager;
 
 class StatsManager
@@ -14,6 +15,7 @@ class StatsManager
 
     private $institutionCode;
     private $collectionCode;
+    private $user;
 
     public function __construct(ExportManager $exportManager)
     {
@@ -21,15 +23,15 @@ class StatsManager
     }
 
     /**
-     * @param string $institutionCode
+     * @param User $user
      * @param string $collectionCode
      * @return $this
      */
-    public function init($institutionCode, $collectionCode)
+    public function init(User $user, $collectionCode)
     {
-        $this->institutionCode = $institutionCode;
+        $this->user = $user;
         $this->collectionCode = $collectionCode;
-        $this->exportManager = $this->exportManager->init($this->institutionCode, $this->collectionCode);
+        $this->exportManager = $this->exportManager->init($user)->setCollectionCode($collectionCode);
         return $this;
     }
 
@@ -163,7 +165,7 @@ class StatsManager
         $stats = [];
         foreach ($classesName as $className) {
             if (isset($diffs['classes'][$className]) && !empty($diffs['classes'][$className])) {
-                foreach ($diffs['classes'][$className] as $specimenCode) {
+                foreach ($diffs['classes'][$className] as $specimenCode=>$datas) {
                     if (isset($diffs['datas'][$specimenCode])) {
                         $details = $diffs['datas'][$specimenCode]['classes'][$className];
                         $taxon = $diffs['datas'][$specimenCode]['taxon'];

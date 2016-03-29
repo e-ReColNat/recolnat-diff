@@ -40,7 +40,7 @@ class BackendController extends Controller
             throw new \Exception('parameters must be an instance of ExportPrefs');
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $file = $exportManager->export($type, $exportPrefs);
         $response = new JsonResponse();
         if (is_null($file)) {
@@ -167,7 +167,7 @@ class BackendController extends Controller
     {
         $choices = $request->get('choices');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $exportManager->setChoices($choices);
 
         $response = new JsonResponse();
@@ -188,7 +188,7 @@ class BackendController extends Controller
     public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         list($inputOrigin, $inputSpecimens, $inputClassesName, $page, $selectedSpecimens, $selectedClassName, $type) =
@@ -304,7 +304,7 @@ class BackendController extends Controller
     public function deleteChoicesAction($institutionCode, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $diffHandler = $exportManager->getDiffHandler();
         $choices = $diffHandler->getChoicesFile();
         $choices->deleteChoices();
@@ -325,7 +325,7 @@ class BackendController extends Controller
     public function deleteDiffsAction($institutionCode, $collectionCode)
     {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportManager')->init($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $diffHandler = $exportManager->getDiffHandler();
         $diffs = $diffHandler->getDiffsFile();
         $diffs->deleteChoices();
