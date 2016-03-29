@@ -13,7 +13,6 @@ class StatsManager
      */
     public $exportManager;
 
-    private $institutionCode;
     private $collectionCode;
     private $user;
 

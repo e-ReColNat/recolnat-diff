@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
-use AppBundle\Business\User\User;
 use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
