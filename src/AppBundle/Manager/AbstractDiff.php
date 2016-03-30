@@ -103,8 +103,8 @@ abstract class AbstractDiff
      * @param string     $fieldName
      * @param string     $specimenCode
      * @param string     $id
-     * @param null|array $dataR
-     * @param null|array $dataI
+     * @param null|mixed $dataR
+     * @param null|mixed $dataI
      */
     private function addStat($fieldName, $specimenCode, $id, $dataR = null, $dataI = null)
     {
@@ -230,7 +230,7 @@ abstract class AbstractDiff
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
                 $dataR = $recordRecolnat[$fieldName];
                 $dataI = $recordInstitution[$fieldName];
-                if ($dataR instanceof \DateTime and $dataI instanceof \DateTime) {
+                if ($dataR instanceof \DateTime && $dataI instanceof \DateTime) {
                     /** @var \DateTime $dataR */
                     /** @var \DateTime $dataI */
                     if ($dataR->format('c') !== $dataI->format('c')) {
