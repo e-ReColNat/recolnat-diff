@@ -113,8 +113,6 @@ abstract class AbstractDiff
         }
         if (!isset($this->stats[$specimenCode])) {
             $this->stats[$specimenCode] = [];
-        }
-        if (!isset($this->stats[$specimenCode][$id])) {
             $this->stats[$specimenCode][$id] = [];
         }
         $this->stats[$specimenCode][$id][$fieldName] = [];
@@ -232,7 +230,13 @@ abstract class AbstractDiff
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
                 $dataR = $recordRecolnat[$fieldName];
                 $dataI = $recordInstitution[$fieldName];
-                if ($dataR !== $dataI) {
+                if ($dataR instanceof \DateTime and $dataI instanceof \DateTime) {
+                    /** @var \DateTime $dataR */
+                    /** @var \DateTime $dataI */
+                    if ($dataR->format('c') !== $dataI->format('c')) {
+                        $this->addStat($fieldName, $specimenCode, $idRecord, $dataR, $dataI);
+                    }
+                } elseif ($dataR !== $dataI) {
                     $this->addStat($fieldName, $specimenCode, $idRecord, $dataR, $dataI);
                 }
             }

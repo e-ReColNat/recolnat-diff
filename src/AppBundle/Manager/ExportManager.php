@@ -111,10 +111,10 @@ class ExportManager
     {
         $this->user = $user;
         $this->institutionCode = $this->user->getInstitution()->getInstitutioncode();
-
+/*
         $this->user->setExportPath($this->exportPath);
         $this->user->init($this->institutionCode);
-
+*/
         return $this;
     }
 
@@ -248,7 +248,7 @@ class ExportManager
         if ($handle = opendir($institutionDir)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != '.' && $entry != '..' && is_dir($institutionDir.$entry)) {
-                    $returnDirs[] = new DiffHandler($institutionDir);
+                    $returnDirs[] = new DiffHandler($institutionDir.$entry);
                 }
             }
             closedir($handle);
