@@ -20,7 +20,6 @@ services:
         class: AppBundle\Manager\ExportManager
         arguments:
             managerRegistry: "@doctrine"
-            exportPath: "%export_path%"
             sessionManager: "@session"
             genericEntityManager: "@genericentitymanager"
             diffManager: "@diff.manager"

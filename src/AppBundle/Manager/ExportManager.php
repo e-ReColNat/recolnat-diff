@@ -22,16 +22,8 @@ use AppBundle\Business\Exporter\CsvExporter;
 class ExportManager
 {
 
-    /**
-     * @var string
-     */
-    private $exportPath;
     /** @var Session */
     public $sessionManager;
-    /**
-     * @var string
-     */
-    private $institutionCode;
 
     /** @var $genericEntityManager GenericEntityManager */
     private $genericEntityManager;
@@ -77,7 +69,6 @@ class ExportManager
 
     /**
      * @param ManagerRegistry      $managerRegistry
-     * @param string               $exportPath
      * @param Session              $sessionManager
      * @param GenericEntityManager $genericEntityManager
      * @param DiffManager          $diffManager
@@ -86,7 +77,6 @@ class ExportManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
-        $exportPath,
         Session $sessionManager,
         GenericEntityManager $genericEntityManager,
         DiffManager $diffManager,
@@ -94,7 +84,6 @@ class ExportManager
         DiffComputer $diffComputer
     ) {
         $this->managerRegistry = $managerRegistry;
-        $this->exportPath = $exportPath;
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
         $this->diffManager = $diffManager;
@@ -110,7 +99,6 @@ class ExportManager
     public function init(User $user)
     {
         $this->user = $user;
-        $this->institutionCode = $this->user->getInstitution()->getInstitutioncode();
         return $this;
     }
 
