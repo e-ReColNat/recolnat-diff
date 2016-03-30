@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1459331383" clover="56fba137e89f3">
-  <project timestamp="1459331383" name="atoum code coverage">
+<coverage generated="1459331585" clover="56fba201adcca">
+  <project timestamp="1459331585" name="atoum code coverage">
     <package name="atoumCodeCoverage">
       <file name="FrontController.php" path="/home/tpateffoz/www/recolnat-diff/src/AppBundle/Controller/FrontController.php">
         <line num="25" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
@@ -237,6 +237,179 @@
         </class>
         <metrics complexity="0" elements="3" coveredelements="0" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="0" methods="1" coveredmethods="0" testduration="0" testfailures="0" testpasses="0" testruns="0" classes="1" loc="2" ncloc="2"/>
       </file>
+      <file name="ExportManager.php" path="/home/tpateffoz/www/recolnat-diff/src/AppBundle/Manager/ExportManager.php">
+        <line num="86" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="87" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="88" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="89" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="90" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="91" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="92" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="101" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="102" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="112" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="113" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="114" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="115" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="116" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="118" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="119" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="120" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="121" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="122" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="123" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="126" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="134" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="135" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="136" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="137" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="139" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="140" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="141" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="142" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="143" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="144" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="145" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="146" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="149" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="158" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="159" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="161" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="177" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="178" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="179" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="180" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="181" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="182" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="183" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="185" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="186" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="187" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="188" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="189" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="190" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="192" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="201" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="202" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="204" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="213" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="215" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="216" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="217" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="218" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="219" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="220" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="222" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="230" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="231" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="232" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="233" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="234" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="235" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="236" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="237" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="238" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="239" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="241" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="250" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="259" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="260" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="261" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="262" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="270" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="271" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="272" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="273" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="274" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="275" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="276" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="277" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="278" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="280" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="281" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="282" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="283" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="284" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="285" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="286" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="287" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="288" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="290" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="291" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="292" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="293" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="294" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="295" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="302" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="314" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="315" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="316" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="317" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="318" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="319" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="321" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="324" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="325" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="326" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="327" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="328" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="331" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="332" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="333" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="334" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="335" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="337" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="347" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="349" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="350" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="351" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="352" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="353" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="354" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="356" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="358" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="359" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="361" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="362" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="363" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="364" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="365" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="366" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="367" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="368" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="369" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="370" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="371" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="372" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="373" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="374" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="375" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="376" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="378" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="379" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="381" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="392" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="393" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="395" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="396" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="397" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="398" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="399" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="400" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="401" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="402" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="404" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="414" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="415" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="416" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="417" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="418" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <line num="420" type="stmt" complexity="0" count="1" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
+        <class name="ExportManager">
+          <metrics complexity="0" elements="184" coveredelements="66" conditionals="0" coveredconditionals="0" statements="167" coveredstatements="66" methods="17" coveredmethods="0" testduration="0" testfailures="0" testpasses="0" testruns="0"/>
+        </class>
+        <metrics complexity="0" elements="184" coveredelements="71" conditionals="0" coveredconditionals="0" statements="167" coveredstatements="66" methods="17" coveredmethods="5" testduration="0" testfailures="0" testpasses="0" testruns="0" classes="1" loc="167" ncloc="167"/>
+      </file>
       <file name="GenericEntityManager.php" path="/home/tpateffoz/www/recolnat-diff/src/AppBundle/Manager/GenericEntityManager.php">
         <line num="40" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
         <line num="41" type="stmt" complexity="0" count="0" falsecount="0" truecount="0" signature="" testduration="0" testsuccess="0"/>
@@ -319,8 +492,8 @@
         </class>
         <metrics complexity="0" elements="90" coveredelements="64" conditionals="0" coveredconditionals="0" statements="76" coveredstatements="56" methods="14" coveredmethods="8" testduration="0" testfailures="0" testpasses="0" testruns="0" classes="1" loc="76" ncloc="76"/>
       </file>
-      <metrics complexity="0" elements="337" coveredelements="64" conditionals="0" coveredconditionals="0" statements="293" coveredstatements="56" methods="44" coveredmethods="8" testduration="0" testfailures="0" testpasses="0" testruns="0" classes="4" loc="293" ncloc="293" files="4"/>
+      <metrics complexity="0" elements="521" coveredelements="135" conditionals="0" coveredconditionals="0" statements="460" coveredstatements="122" methods="61" coveredmethods="13" testduration="0" testfailures="0" testpasses="0" testruns="0" classes="5" loc="460" ncloc="460" files="5"/>
     </package>
-    <metrics complexity="0" elements="337" coveredelements="64" conditionals="0" coveredconditionals="0" statements="293" coveredstatements="56" methods="44" coveredmethods="8" testduration="0" testfailures="0" testpasses="0" testruns="0" classes="4" loc="293" ncloc="293" files="4" packages="1"/>
+    <metrics complexity="0" elements="521" coveredelements="135" conditionals="0" coveredconditionals="0" statements="460" coveredstatements="122" methods="61" coveredmethods="13" testduration="0" testfailures="0" testpasses="0" testruns="0" classes="5" loc="460" ncloc="460" files="5" packages="1"/>
   </project>
 </coverage>
