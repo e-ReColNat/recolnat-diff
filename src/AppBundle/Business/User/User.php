@@ -37,12 +37,14 @@ class User implements UserInterface
     }
 
     /**
-     * @param string $institutionCode
+     * @param Institution $institution
+     * @param string $exportPath
      * @return $this
      */
-    public function init($institutionCode)
+    public function init($institution, $exportPath)
     {
-        $this->institutionCode = $institutionCode;
+        $this->setInstitution($institution);
+        $this->setExportPath($exportPath);
         $this->createDir();
         $this->getPrefs();
         return $this;
@@ -178,6 +180,7 @@ class User implements UserInterface
     public function setInstitution($institution)
     {
         $this->institution = $institution;
+        $this->institutionCode = $institution->getInstitutioncode();
     }
 
 

@@ -36,8 +36,7 @@ class RecolnatUserProvider implements UserProviderInterface
             $institution = $this->managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode' => 'MHNAIX']);
 
             $user = new User($username, $password, $salt, $roles);
-            $user->setExportPath($this->exportPath);
-            $user->setInstitution($institution);
+            $user->init($institution, $this->exportPath);
 
             return $user;
         }

@@ -35,7 +35,6 @@ class DiffHandler
      */
     public function saveDiffs(array $diffs)
     {
-        $this->setDiffsFile();
         $this->getDiffsFile()->save($diffs);
     }
 
