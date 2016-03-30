@@ -36,7 +36,8 @@
 .chart rect.over {
   stroke: steelblue;
 }
-tr.specimen td {
+tr.specimen td,
+tr.specimen th {
   background-color: rgba(107, 94, 74, 0.5);
 }
 tr.specimen.light td,
@@ -109,7 +110,8 @@ tr.specimen td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.bibliography td {
+tr.bibliography td,
+tr.bibliography th {
   background-color: rgba(239, 190, 118, 0.5);
 }
 tr.bibliography.light td,
@@ -182,7 +184,8 @@ tr.bibliography td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.determination td {
+tr.determination td,
+tr.determination th {
   background-color: rgba(206, 165, 125, 0.5);
 }
 tr.determination.light td,
@@ -255,7 +258,8 @@ tr.determination td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.localisation td {
+tr.localisation td,
+tr.localisation th {
   background-color: rgba(255, 140, 121, 0.5);
 }
 tr.localisation.light td,
@@ -328,7 +332,8 @@ tr.localisation td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.recolte td {
+tr.recolte td,
+tr.recolte th {
   background-color: rgba(182, 93, 153, 0.5);
 }
 tr.recolte.light td,
@@ -401,7 +406,8 @@ tr.recolte td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.stratigraphy td {
+tr.stratigraphy td,
+tr.stratigraphy th {
   background-color: rgba(252, 186, 63, 0.5);
 }
 tr.stratigraphy.light td,
@@ -474,7 +480,8 @@ tr.stratigraphy td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.multimedia td {
+tr.multimedia td,
+tr.multimedia th {
   background-color: rgba(135, 189, 106, 0.5);
 }
 tr.multimedia.light td,
@@ -547,7 +554,8 @@ tr.multimedia td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.taxon td {
+tr.taxon td,
+tr.taxon th {
   background-color: rgba(146, 114, 74, 0.5);
 }
 tr.taxon.light td,
@@ -620,7 +628,8 @@ tr.taxon td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.diffs td {
+tr.diffs td,
+tr.diffs th {
   background-color: rgba(125, 155, 172, 0.5);
 }
 tr.diffs.light td,
@@ -781,4 +790,47 @@ table.diff caption {
 }
 #sidebar-wrapper > li:last-child {
   border-bottom: none;
+}
+/** TABLE WITH ROTATED HEADER
+see : http://jsfiddle.net/D2RLR/7569/ */
+.table-header-rotated td {
+  vertical-align: middle;
+  text-align: center;
+  border: none !important;
+}
+.table-header-rotated th {
+  border: none !important;
+}
+.table-header-rotated th.rotate {
+  height: 80px;
+  position: relative;
+  vertical-align: bottom;
+  padding: 0;
+  font-size: 12px;
+  line-height: 0.8;
+  border: none;
+}
+.table-header-rotated th.rotate > div {
+  position: relative;
+  top: 0px;
+  left: 40px;
+  /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
+  height: 100%;
+  transform: skew(-45deg, 0deg);
+}
+.table-header-rotated th.rotate span {
+  transform: skew(45deg, 0deg) rotate(315deg);
+  position: absolute;
+  bottom: 30px;
+  /* 40 cos(45) = 28 with an additional 2px margin*/
+  left: -25px;
+  /*Because it looked good, but there is probably a mathematical link here as well*/
+  display: inline-block;
+  width: 85px;
+  /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
+  text-align: left;
+}
+.table-header-rotated th:first-of-type,
+.table-header-rotated td:first-of-type {
+  text-align: left;
 }

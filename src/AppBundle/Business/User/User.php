@@ -183,5 +183,9 @@ class User implements UserInterface
         $this->institutionCode = $institution->getInstitutioncode();
     }
 
+    public function __toString()
+    {
+        return $this->getUsername();
+    }
 
 }
