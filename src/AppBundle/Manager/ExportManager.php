@@ -111,10 +111,6 @@ class ExportManager
     {
         $this->user = $user;
         $this->institutionCode = $this->user->getInstitution()->getInstitutioncode();
-/*
-        $this->user->setExportPath($this->exportPath);
-        $this->user->init($this->institutionCode);
-*/
         return $this;
     }
 
