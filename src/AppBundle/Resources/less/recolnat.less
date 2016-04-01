@@ -83,7 +83,7 @@
   tr.@{color} td.highlight{border: 1px double darken(@@color,@fadeTdBackground-dark);}
 
 
-  #sidebar-wrapper ul li.@{color} {
+  .sidebar-wrapper ul li.@{color} {
     background-color: fade(@@color,@fadeTdBackground);
   }
   .chart {
@@ -240,29 +240,31 @@ table.diff {
 }
 
 /** SIDEBAR **/
-#sidebar-wrapper ul.choices {
-  font-size : 85%;
-  list-style: outside none none;
-  padding-left : 0;
-}
-#sidebar-wrapper ul li div {
-  margin-left : 10px;
-}
+.sidebar-wrapper {
+  ul.choices {
+    font-size: 85%;
+    list-style: outside none none;
+    padding-left: 0;
+  }
+  ul li div {
+    margin-left: 10px;
+  }
 
-#sidebar-wrapper> li > a {
-  padding : 5px 5px 3px 5px;
-}
-#sidebar-wrapper> li:hover {
-  background-color: #eee;
-}
-#sidebar-wrapper .nav > li {
-  border-bottom: 1px solid #ddd;
-}
-#sidebar-wrapper .nav> li > a{
-  padding: 0 ;
-}
-#sidebar-wrapper> li:last-child {
-  border-bottom: none;
+  > li > a {
+    padding: 5px 5px 3px 5px;
+  }
+  > li:hover {
+    background-color: #eee;
+  }
+  .nav > li {
+    border-bottom: 1px solid #ddd;
+  }
+  .nav > li > a {
+    padding: 0;
+  }
+  > li:last-child {
+    border-bottom: none;
+  }
 }
 
 /** TABLE WITH ROTATED HEADER
@@ -305,4 +307,29 @@ see : http://jsfiddle.net/D2RLR/7569/ */
 .table-header-rotated th:first-of-type,.table-header-rotated td:first-of-type{
   text-align:left;
 
+}
+
+/** FILTERS **/
+.btn-filters {
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  display : block;
+  z-index: 990;
+  margin-bottom: 8px;
+  margin-right: 15px;
+  margin-top: 8px;
+  padding: 9px 10px;
+}
+.filters {
+  position: fixed;
+  top: 90px;
+  left:0;
+  right:0;
+  margin: 15px 30px;
+  z-index: 989;
+  padding: 35px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow:  inset 0 0 3px 3px #ccc;
 }

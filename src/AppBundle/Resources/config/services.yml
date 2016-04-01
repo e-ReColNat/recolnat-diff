@@ -47,6 +47,7 @@ services:
         arguments:
             doctrine: "@doctrine"
             translator: "@translator"
+            urlRecolnat: "%url_recolnat%"
         public: false
         tags:
             - { name: twig.extension }

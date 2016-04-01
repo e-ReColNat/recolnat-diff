@@ -29,3 +29,5 @@ parameters:
     server_logout_url: https://localhost:8443/cas/logout
     xml_namespace: cas
     request_options:
+
+    url_recolnat: https://explore.recolnat.org/#/specimen/

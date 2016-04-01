@@ -115,7 +115,7 @@ $(document).ready(function () {
             $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimen'));
         }
         else {
-            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimens').replace('%count%', Math.toString(nbSelectedSpecimens)));
+            $linkSelectedSpecimen.html(Translator.trans('viewSelectedSpecimens').replace('%count%', nbSelectedSpecimens));
         }
     }
 
@@ -145,6 +145,7 @@ $(document).ready(function () {
         setLinkViewSelected();
     });
 });
+
 /***********************************************************************************
  * Add Array.indexOf                                                                *
  ***********************************************************************************/

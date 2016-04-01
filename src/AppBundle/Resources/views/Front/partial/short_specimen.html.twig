@@ -15,8 +15,8 @@
         </div>
     </div>
     <div class="col-sm-8">
-        {% include '@App/Front/helpers/linkSpecimenFull.html.twig' %}
-        <span class="row">
+        {{ getFullLink(specimen, collection, taxon) |raw }}
+        <div class="row">
             <div class="col-sm-6">
                     {{printLabelAndField(taxon, 'taxon', 'family', false, '<br />')|raw}}
                     {{printLabelAndField(taxon, 'taxon', 'genus', false, '<br />')|raw}}
@@ -33,6 +33,6 @@
                     {{printLabelAndField(recolte, 'recolte', 'eventdate', false, '<br />')|raw}}
                 {% endif %}
             </div>
-        </span>
+        </div>
     </div>
 </div>

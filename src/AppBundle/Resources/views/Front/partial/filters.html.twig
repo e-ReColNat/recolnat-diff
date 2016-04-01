@@ -1,5 +1,12 @@
 {% set classesName = {1:'specimen',2:'bibliography',3:'determination',4:'localisation',5:'recolte',6:'stratigraphy',7:'taxon', 8 : 'multimedia'} %}
-<div class="well">
+<button class="btn btn-primary btn-filters" type="button" data-toggle="collapse" data-target=".filters"
+        aria-expanded="false" aria-controls="collapseFilters">
+    <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+    {{ 'filtres'|trans }}
+</button>
+
+<div class="collapse filters">
+    <h3>{{ 'selection.lot'|trans }}</h3>
     <form id="form-filters" class="form-horizontal">
         <div class="form-group filter-origin">
             <fieldset>

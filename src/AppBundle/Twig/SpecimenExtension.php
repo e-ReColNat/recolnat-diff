@@ -8,6 +8,7 @@ use AppBundle\Entity\Recolte;
 use AppBundle\Entity\Specimen;
 use AppBundle\Entity\Stratigraphy;
 use AppBundle\Entity\Taxon;
+use AppBundle\Entity\Collection as rCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
@@ -20,11 +21,13 @@ class SpecimenExtension extends \Twig_Extension
 
     protected $doctrine;
     protected $translator;
+    protected $urlRecolnat;
 
-    public function __construct(RegistryInterface $doctrine, DataCollectorTranslator $translator)
+    public function __construct(RegistryInterface $doctrine, DataCollectorTranslator $translator, $urlRecolnat)
     {
         $this->doctrine = $doctrine;
         $this->translator = $translator;
+        $this->urlRecolnat = $urlRecolnat;
     }
 
     public function getFunctions()
@@ -37,7 +40,59 @@ class SpecimenExtension extends \Twig_Extension
             new \Twig_SimpleFunction('getTaxon', array($this, 'getTaxon')),
             new \Twig_SimpleFunction('printLabelAndField', array($this, 'printLabelAndField')),
             new \Twig_SimpleFunction('getFieldLabel', array($this, 'getFieldLabel')),
+            new \Twig_SimpleFunction('getLink', array($this, 'getLink')),
+            new \Twig_SimpleFunction('getFullLink', array($this, 'getFullLink')),
         );
+    }
+
+    /**
+     * @param Specimen           $specimen
+     * @param rCollection $collection
+     * @param Taxon|null         $taxon
+     * @param string             $target
+     * @return string
+     */
+    public function getFullLink(Specimen $specimen,rCollection $collection,Taxon $taxon = null,$target = '_blank')
+    {
+        $text = '';
+        if (!is_null($taxon)) {
+            !empty($taxon->getFamily()) ? $text .= '<span><span>'.$taxon->getFamily().'</span> / </span>' : '';
+            !empty($taxon->getGenus()) ? $text .= '<span><i><span>'.$taxon->getGenus().'</span></i> / </span>' : '';
+            !empty($taxon->getScientificname()) ? $text .= '<span><i><span>'.$taxon->getScientificname().'</span></i> / </span>' : '';
+            !empty($taxon->getScientificnameauthorship()) ? $text .= '<span><i><span>'.$taxon->getScientificnameauthorship().'</span></i> / </span>' : '';
+            !empty($specimen->getCatalognumber()) ? $text .= '<span>'.$specimen->getCatalognumber().'</span>' : '';
+        } else {
+            $text = $this->translator->trans('label.notaxon');
+        }
+
+        return sprintf('<a href="%s" target="%s">%s</a>', $this->getLink($specimen, $collection), $target, $text);
+    }
+
+    /**
+     * @param Specimen           $specimen
+     * @param rCollection $collection
+     * @return string
+     */
+    public function getLink(Specimen $specimen, rCollection $collection)
+    {
+        $type = null;
+        switch (strtolower($collection->getType())) {
+            case 'h':
+            case 'b':
+                $type = 'botanique';
+                break;
+            case 'z':
+                $type = 'zoologie';
+                break;
+            case 'p':
+                $type = 'paleontologie';
+                break;
+            case 'g':
+                $type = 'geographie';
+                break;
+        }
+
+        return sprintf('%s%s/%s', $this->urlRecolnat, $type, strtoupper($specimen->getOccurrenceid()));
     }
 
     /**
