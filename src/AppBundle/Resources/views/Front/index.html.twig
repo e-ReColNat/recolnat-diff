@@ -8,9 +8,13 @@
             {% for collection in collections %}
                 <div class="row">
                     {% if (collection['diffHandler']|length != 0) %}
-                        <a class="col-sm-2" href="{{ path('viewfile', {'collectionCode':collection['collection'].getCollectionCode}) }}">
-                            {{ collection['collection'].getCollectionCode }}
-                        </a>
+                        <div class="col-sm-2">
+                            {{ 'label.collection' | trans }} :
+
+                            <a href="{{ path('viewfile', {'collectionCode':collection['collection'].getCollectionCode}) }}">
+                                {{ collection['collection'].getCollectionCode }}
+                            </a>
+                        </div>
                         <ul class="col-sm-3">
                             {% for diffHandler in collection['diffHandler'] %}
                                 <li>{{ 'fichier.creele'|trans({'%date%': diffHandler.getCTime|date("d/m/Y"), '%heure%' :diffHandler.getCTime|date("H:i:s")}) }}</li>

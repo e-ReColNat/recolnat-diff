@@ -368,7 +368,7 @@
             </trans-unit>
             <trans-unit id="92" approved="yes">
                 <source>label.stratigraphy.fields.group</source> 
-                <target state="translated">Group</target> 
+                <target state="translated">Groupe</target>
             </trans-unit>
             <trans-unit id="93" approved="yes">
                 <source>label.stratigraphy.fields.highestbiostratigraphiczone</source> 
@@ -665,6 +665,10 @@
             <trans-unit id="166" approved="yes">
                 <source>label.multimedia.abbr</source>
                 <target state="translated">multi.</target>
+            </trans-unit>
+            <trans-unit id="167" approved="yes">
+                <source>label.stratigraphy.fields.group_</source>
+                <target state="translated">Groupe</target>
             </trans-unit>
         </body>
     </file>

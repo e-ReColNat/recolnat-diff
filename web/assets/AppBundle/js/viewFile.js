@@ -33,16 +33,18 @@ var optParams = {
     'collectionCode' : collectionCode
 };
 var bar;
+console.log(datas);
 for (var itkeys = 0; itkeys < keys.length; itkeys++) {
     var selectedDatas = datas.map(function (obj) {
         return obj[keys[itkeys]];
     });
     if (keys[itkeys] != 'name') {
+        console.log(selectedDatas);
         bar = groupBar
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {
-                var decalY = 7 * i * barHeight + ((itkeys)*20);
+                var decalY = 8 * i * barHeight + ((itkeys)*20) + 10;
                 return "translate(10," + decalY + ")";
             });
 
@@ -85,23 +87,22 @@ for (var itkeys = 0; itkeys < keys.length; itkeys++) {
             });
     }
     else {
-
         bar = groupBar
             .data(selectedDatas)
             .enter().append("g")
             .attr("transform", function (d, i) {
-                var decalY = 7 * i * barHeight + ((itkeys)*20);
+                var decalY = 8 * i * barHeight + ((itkeys)*20);
                 return "translate(10," + decalY + ")";
             });
 
         bar.append("text")
             .attr("x", function (d) {
-                return 400 /2;
+                return 400 / 2;
             })
             .attr("class", function(d,i){
                 return "title "+datas[i].name;
             })
-            .attr("y", barHeight / 2)
+            .attr("y", barHeight )
             .attr("dy", ".35em")
             .text(function (d, i) {
                 return Translator.transChoice('label.'+datas[i].name, 2, {}, 'entity');

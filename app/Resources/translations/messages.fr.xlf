@@ -314,6 +314,10 @@
                 <source>label.searchDiffs</source>
                 <target>Rechercher les différences</target>
             </trans-unit>
+            <trans-unit id="79">
+                <source>label.collection</source>
+                <target>Collection</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

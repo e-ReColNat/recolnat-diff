@@ -65,16 +65,8 @@
 @fadeTdBackground-lighter: 30%;
 @fadeTdBackground-dark: 30%;
 
-/** CHARTS **/
-.chart rect {
-  fill: steelblue;
-  cursor: pointer;
-  stroke: black;
-  stroke-width: 0.5;
-}
-.chart rect.over {
-  stroke: steelblue;
-}
+
+/** Couleurs des classes **/
 
 .setColor(@color) {
   tr.@{color} td, tr.@{color} th{ background-color: fade(@@color,@fadeTdBackground);}
@@ -92,7 +84,8 @@
     }
     text.title.@{color} {
       fill: @@color;
-      text-transform: capitalize;
+      text-transform: uppercase;
+      font-size: 1.3em;
     }
   }
   .label.@{color} {

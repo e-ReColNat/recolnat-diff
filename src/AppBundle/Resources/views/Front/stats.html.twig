@@ -7,9 +7,9 @@
     {% if stats is not empty %}
         {% set countDiffs = 0 %}
         {% set flagPareto = 0 %}
+        {% set emptyField = 'empty.field' | trans %}
         <table class="table table-bordered table-condensed table-striped diffs" style="table-layout: fixed; ">
             <colgroup>
-                <col style="width: 5%">
                 <col style="width: 10%">
                 <col style="width: 16%">
                 <col style="width: 2%">
@@ -20,7 +20,6 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th>#</th>
                     <th>{{'className' | trans}}</th>
                     <th>{{'fieldName' | trans}}</th>
                     <th colspan="2">Recolnat</th>
@@ -42,19 +41,18 @@
                 {% endif %}
                 
                 <tr class="{{classTr}} {{data.className|lower}} lighter">
-                    <td>{{ loop.index}} - {{countDiffs}}</td>
                     <td>{{data.className}}</td>
                     <td>{{('label.'~(data.className | lower) ~'.fields.'~data.fieldName) | trans({}, 'entity')}}</td>
 
                     <td>
                         <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="recolnat">
                     </td>
-                    <td>{{data.datas.recolnat is not empty ? data.datas.recolnat : 'empty.field' | trans}}</td>
+                    <td>{{data.datas.recolnat is not empty ? data.datas.recolnat : emptyField}}</td>
 
                     <td>
                         <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="institution">
                     </td>
-                    <td>{{data.datas.institution is not empty ? data.datas.institution : 'empty.field' | trans}}</td>
+                    <td>{{data.datas.institution is not empty ? data.datas.institution : emptyField}}</td>
                     <td>
                         {{data.specimensCode | length}}
                         <span class="hidden" rel="{{md5key}}">

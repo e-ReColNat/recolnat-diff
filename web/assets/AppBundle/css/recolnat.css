@@ -26,16 +26,7 @@
 @taxon : arken(spin(@specimen, -10), 30%);
 @determination: lighten(spin(@specimen, 10), 40%);
 @diffs : rgb(125, 155, 172);*/
-/** CHARTS **/
-.chart rect {
-  fill: steelblue;
-  cursor: pointer;
-  stroke: black;
-  stroke-width: 0.5;
-}
-.chart rect.over {
-  stroke: steelblue;
-}
+/** Couleurs des classes **/
 tr.specimen td,
 tr.specimen th {
   background-color: rgba(107, 94, 74, 0.5);
@@ -59,7 +50,8 @@ tr.specimen td.highlight {
 }
 .chart text.title.specimen {
   fill: #6b5e4a;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.specimen {
   background-color: #6b5e4a;
@@ -133,7 +125,8 @@ tr.bibliography td.highlight {
 }
 .chart text.title.bibliography {
   fill: #efbe76;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.bibliography {
   background-color: #efbe76;
@@ -207,7 +200,8 @@ tr.determination td.highlight {
 }
 .chart text.title.determination {
   fill: #cea57d;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.determination {
   background-color: #cea57d;
@@ -281,7 +275,8 @@ tr.localisation td.highlight {
 }
 .chart text.title.localisation {
   fill: #ff8c79;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.localisation {
   background-color: #ff8c79;
@@ -355,7 +350,8 @@ tr.recolte td.highlight {
 }
 .chart text.title.recolte {
   fill: #b65d99;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.recolte {
   background-color: #b65d99;
@@ -429,7 +425,8 @@ tr.stratigraphy td.highlight {
 }
 .chart text.title.stratigraphy {
   fill: #fcba3f;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.stratigraphy {
   background-color: #fcba3f;
@@ -503,7 +500,8 @@ tr.multimedia td.highlight {
 }
 .chart text.title.multimedia {
   fill: #87bd6a;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.multimedia {
   background-color: #87bd6a;
@@ -577,7 +575,8 @@ tr.taxon td.highlight {
 }
 .chart text.title.taxon {
   fill: #92724a;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.taxon {
   background-color: #92724a;
@@ -651,7 +650,8 @@ tr.diffs td.highlight {
 }
 .chart text.title.diffs {
   fill: #7d9bac;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.diffs {
   background-color: #7d9bac;

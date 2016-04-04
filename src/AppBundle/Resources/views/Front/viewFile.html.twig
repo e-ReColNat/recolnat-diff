@@ -9,181 +9,185 @@
 {% set sumLonesomeRecords = statsManager.getSumLonesomeRecords %}
 
 {% block body %}
-    {% include '@App/Front/partial/breadcrumb.html.twig' %}
-    <h1 class="page-header">
-        {{ 'file.stats.title' | trans({'%name%' : institutionCode ~ ' / '~ collection.collectionCode},'user') }}
-    </h1>
+    <div class="container-fluid">
+        {% include '@App/Front/partial/breadcrumb.html.twig' %}
+        <h1 class="page-header">
+            {{ 'file.stats.title' | trans({'%name%' : institutionCode ~ ' / '~ collection.collectionCode},'user') }}
+        </h1>
 
-    {% if stats is not empty %}
-        <div class="row">
-            <div class="col-sm-8">
-                <table class="table table-header-rotated">
-                    <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th class="rotate">
-                            <div><span>{{ 'header.nb.specimens' | trans }}</span></div>
-                        </th>
-                        <th class="rotate">
-                            <div><span>{{ 'header.nb.differences' | trans }}</span></div>
-                        </th>
-                        <th class="rotate">
-                            <div><span>{{ 'header.nb.reste' | trans }}</span></div>
-                        </th>
-                        <th class="rotate">
-                            <div><span>{{ 'header.nb.choix' | trans }}</span></div>
-                        </th>
-                        <th class="rotate">
-                            <div><span>{{ 'header.lonesomeRecords.recolnat' | trans }}</span></div>
-                        </th>
-                        <th class="rotate">
-                            <div><span>{{ 'header.lonesomeRecords.institution' | trans }}</span></div>
-                        </th>
+        {% if stats is not empty %}
+            <table class="table table-header-rotated">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th class="rotate">
+                        <div><span>{{ 'header.nb.specimens' | trans }}</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>{{ 'header.nb.differences' | trans }}</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>{{ 'header.nb.reste' | trans }}</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>{{ 'header.nb.choix' | trans }}</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>{{ 'header.lonesomeRecords.recolnat' | trans }}</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>{{ 'header.lonesomeRecords.institution' | trans }}</span></div>
+                    </th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for className, detailedStats in stats %}
+                    <tr class="{{ className|lower }}">
+                        <th class="row-header col-sm-2">{{ ('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize }}</th>
+                        {% set transClass=('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity') %}
+                        <td class="col-sm-1">
+                            {% if detailedStats.specimens > 0 %}
+                                <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
+                                    {{ detailedStats.specimens }}
+                                </a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="col-sm-1">
+                            {% if detailedStats.diffs > 0 %}
+                                <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
+                                    {{ detailedStats.diffs }}
+                                </a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="col-sm-1">
+                            {% set nbTodos = attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs %}
+                            {% if nbTodos > 0 %}
+                                <a href="{{ path('todos', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
+                                    {{ nbTodos }}
+                                </a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="col-sm-1">
+                            {% set nbChoices = attribute(statsChoices, className) is defined ? attribute(statsChoices, className) : 0 %}
+                            {% if nbChoices > 0 %}
+                                <a href="{{ path('choices', {'collectionCode':collectionCode,'selectedClassName':className|lower}) }}"
+                                   title="">
+                                    {{ nbChoices }}
+                                </a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="col-sm-1">
+                            {% if attribute(statsLonesomeRecords, className)['recolnat'] > 0 %}
+                                <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
+                                    {{ attribute(statsLonesomeRecords, className)['recolnat'] }}
+                                </a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="col-sm-1">
+                            {% if attribute(statsLonesomeRecords, className)['institution'] > 0 %}
+                                <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
+                                    {{ attribute(statsLonesomeRecords, className)['institution'] }}
+                                </a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        {% if loop.first %}
+                            <td class="col-sm-5" rowspan="{{ loop.length + 1 }}"
+                                style="background-color: transparent;text-align:right">
+                                <p>
+                                    <a href="{{ path('stats', {'collectionCode' : collectionCode}) }}"
+                                       class="btn btn-default"
+                                       role="button">
+                                        {{ 'stats.details'| trans }}
+                                    </a>
+                                </p>
+                                <p>
+                                    <a data-toggle="modal"
+                                       href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode}) }}"
+                                       class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
+                                        {{ 'downloadDwc'|trans }}
+                                    </a>
+                                </p>
+                                <p>
+                                    <a data-toggle="modal"
+                                       href="{{ path('setPrefsForExport', {'type':'csv', 'collectionCode' : collectionCode}) }}"
+                                       class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
+                                        {{ 'downloadCsv'|trans }}
+                                    </a>
+                                </p>
+                                <p>
+                                    <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode}) }}"
+                                       class="delete deleteChoices btn btn-default" role="button">
+                                        {{ 'delete.choices'|trans }}
+                                    </a>
+                                </p>
+                                <p>
+                                    <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode}) }}"
+                                       class="delete deleteDiffs btn btn-default" role="button">
+                                        {{ 'delete.diffs'|trans }}
+                                    </a>
+                                </p>
+                                <p>
+                                    {% if app.environment=='dev' %}
+                                        <a href="{{ path('generateDiff', {'collectionCode' : collectionCode, 'compt' : 5}) }}"
+                                           class="btn btn-default" role="button">Generate diff</a>
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for className, detailedStats in stats %}
-                        <tr class="{{ className|lower }}">
-                            <th class="row-header col-sm-1">{{ ('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize }}</th>
-                            {% set transClass=('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity') %}
-                            <td class="col-sm-1">
-                                {% if detailedStats.specimens > 0 %}
-                                    <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
-                                        {{ detailedStats.specimens }}
-                                    </a>
-                                {% else %}
-                                    0
-                                {% endif %}
-                            </td>
-                            <td class="col-sm-1">
-                                {% if detailedStats.diffs > 0 %}
-                                    <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
-                                        {{ detailedStats.diffs }}
-                                    </a>
-                                {% else %}
-                                    0
-                                {% endif %}
-                            </td>
-                            <td class="col-sm-1">
-                                {% set nbTodos = attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs %}
-                                {% if nbTodos > 0 %}
-                                    <a href="{{ path('todos', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
-                                        {{ nbTodos }}
-                                    </a>
-                                {% else %}
-                                    0
-                                {% endif %}
-                            </td>
-                            <td class="col-sm-1">
-                                {% set nbChoices = attribute(statsChoices, className) is defined ? attribute(statsChoices, className) : 0 %}
-                                {% if nbChoices > 0 %}
-                                    <a href="{{ path('choices', {'collectionCode':collectionCode,'selectedClassName':className|lower}) }}"
-                                       title="">
-                                        {{ nbChoices }}
-                                    </a>
-                                {% else %}
-                                    0
-                                {% endif %}
-                            </td>
-                            <td class="col-sm-1">
-                                {% if attribute(statsLonesomeRecords, className)['recolnat'] > 0 %}
-                                    <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
-                                        {{ attribute(statsLonesomeRecords, className)['recolnat'] }}
-                                    </a>
-                                {% else %}
-                                    0
-                                {% endif %}
-                            </td>
-                            <td class="col-sm-1">
-                                {% if attribute(statsLonesomeRecords, className)['institution'] > 0 %}
-                                    <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
-                                        {{ attribute(statsLonesomeRecords, className)['institution'] }}
-                                    </a>
-                                {% else %}
-                                    0
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    <tr>
-                        <td>{{ 'label.total' | trans }}</td>
-                        <td>
-                            <a href="{{ path('diffs', {'collectionCode':collectionCode}) }}">
-                                {{ sumStats.specimens }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ path('diffs', {'collectionCode':collectionCode}) }}">
-                                {{ sumStats.diffs }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ path('todos', {'collectionCode':collectionCode}) }}">
-                                {{ sumStats.diffs - statsChoices.sum }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ path('choices', {'collectionCode':collectionCode}) }}">
-                                {{ statsChoices.sum }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode}) }}">
-                                {{ sumLonesomeRecords.recolnat }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode}) }}">
-                                {{ sumLonesomeRecords.institution }}
-                            </a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-sm-4">
-                <p>
-                    <a href="{{ path('stats', {'collectionCode' : collectionCode}) }}" class="btn btn-default"
-                       role="button">
-                        {{ 'stats.details'| trans }}
-                    </a>
-                </p>
-                <p>
-                    <a data-toggle="modal"
-                       href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode}) }}"
-                       class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
-                        {{ 'downloadDwc'|trans }}
-                    </a>
-                </p>
-                <p>
-                    <a data-toggle="modal"
-                       href="{{ path('setPrefsForExport', {'type':'csv', 'collectionCode' : collectionCode}) }}"
-                       class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
-                        {{ 'downloadCsv'|trans }}
-                    </a>
-                </p>
-                <p>
-                    <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode}) }}"
-                       class="delete deleteChoices btn btn-default" role="button">
-                        {{ 'delete.choices'|trans }}
-                    </a>
-                </p>
-                <p>
-                    <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode}) }}"
-                       class="delete deleteDiffs btn btn-default" role="button">
-                        {{ 'delete.diffs'|trans }}
-                    </a>
-                </p>
-                <p>
-                    {% if app.environment=='dev' %}
-                        <a href="{{ path('generateDiff', {'collectionCode' : collectionCode, 'compt' : 5}) }}"
-                           class="btn btn-default" role="button">Generate diff</a>
-                    {% endif %}
-                </p>
-            </div>
-        </div>
-    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td>{{ 'label.total' | trans }}</td>
+                    <td>
+                        <a href="{{ path('diffs', {'collectionCode':collectionCode}) }}">
+                            {{ sumStats.specimens }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('diffs', {'collectionCode':collectionCode}) }}">
+                            {{ sumStats.diffs }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('todos', {'collectionCode':collectionCode}) }}">
+                            {{ sumStats.diffs - statsChoices.sum }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('choices', {'collectionCode':collectionCode}) }}">
+                            {{ statsChoices.sum }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode}) }}">
+                            {{ sumLonesomeRecords.recolnat }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode}) }}">
+                            {{ sumLonesomeRecords.institution }}
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
+
+        {% endif %}
+    </div>
     {% include '@App/Front/partial/modal.html.twig' %}
 
     <svg class="chart"></svg>
