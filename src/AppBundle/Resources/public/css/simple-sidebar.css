@@ -18,21 +18,28 @@
     padding-left: 200px;
 }
 
-#sidebar-wrapper {
+.sidebar-wrapper  {
     z-index: 990;
     position: fixed;
-    left: 200px;
+
     width: 0;
     height: 100%;
-    margin-left: -200px;
+
     overflow-y: auto;
     -webkit-transition: all 1.0s ease;
     -moz-transition: all 1.0s ease;
     -o-transition: all 1.0s ease;
     transition: all 1.0s ease;
 }
-
-#wrapper.toggled #sidebar-wrapper {
+.sidebar-wrapper-left {
+    left: 200px;
+    margin-left: -200px;
+}
+.sidebar-wrapper-right {
+    right: 200px;
+    margin-right: -200px;
+}
+#wrapper.toggled .sidebar-wrapper  {
     width: 250px;
 }
 
@@ -47,12 +54,12 @@
     margin-right: -250px;
 }
 
-
-#sidebar-wrapper.collapsing {
+.sidebar-wrapper .collapsing {
     max-height: none;
-      overflow-y: hidden;
+    overflow-y: hidden;
 }
-@media(min-width:768px) {
+
+@media (min-width: 768px) {
     #wrapper {
         padding-left: 250px;
     }
@@ -61,11 +68,11 @@
         padding-left: 0;
     }
 
-    #sidebar-wrapper {
+    .sidebar-wrapper  {
         width: 250px;
     }
 
-    #wrapper.toggled #sidebar-wrapper {
+    #wrapper.toggled .sidebar-wrapper  {
         width: 0;
     }
 
@@ -77,73 +84,91 @@
         position: relative;
         margin-right: 0;
     }
+
     /*#menu-toggle.collapsed{
         display:block!important;    
     }*/
-    #menu-toggle{
-        display:block!important;    
+    #menu-toggle {
+        display: block !important;
     }
-    #menu-toggle.collapse.in{
-        display:block!important;    
-        height:auto!important;
-        overflow:visible!important;
+
+    #menu-toggle.collapse.in {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
     }
-    #menu-toggle.collapsed{
-        background:#fff;    
+
+    #menu-toggle.collapsed {
+        background: #fff;
     }
-    #menu-toggle .icon-bar{
-        background:#000;    
+
+    #menu-toggle .icon-bar {
+        background: #000;
     }
-  .navbar-toggle .icon-bar {
-    width: 22px;
-    transition: all 0.2s;
-  }
-  .navbar-toggle .top-bar {
-    transform: rotate(45deg);
-    transform-origin: 10% 10%;
-  }
-  .navbar-toggle .middle-bar {
-    opacity: 0;
-  }
-  .navbar-toggle:not(.collapsed) .middle-bar {
-    transform: translateX(-22px)
-  }
-  .bottom-bar {
-    transform: rotate(-45deg);
-    transform-origin: 10% 90%;
-  }
-   .navbar-toggle.collapsed .top-bar {
-    transform: rotate(0deg);
-  }
-  .navbar-toggle.collapsed .middle-bar {
-    opacity: 1;
-  }
-  .navbar-toggle.collapsed .bottom-bar {
-    transform: rotate(0deg);
-  }
-  
-*::after, *::before {
-    box-sizing: border-box;
-}
-*::after, *::before {
-    box-sizing: border-box;
-}
-#menu-toggle.collapsed {
-    background: #fff none repeat scroll 0 0;
-}
-#menu-toggle {
-    display: block !important;
-}
-#menu-toggle {
-    position : fixed ;
-    top : 50px;
-    transition: all 1s;
-    z-index : 990;
-}
-#menu-toggle.collapsed {
-    left :10px;
-}
-#menu-toggle:not(.collapsed) {
-    left :200px;
-}
+
+    .navbar-toggle .icon-bar {
+        width: 22px;
+        transition: all 0.2s;
+    }
+
+    .navbar-toggle .top-bar {
+        transform: rotate(45deg);
+        transform-origin: 10% 10%;
+    }
+
+    .navbar-toggle .middle-bar {
+        opacity: 0;
+    }
+
+    .navbar-toggle:not(.collapsed) .middle-bar {
+        transform: translateX(-22px)
+    }
+
+    .bottom-bar {
+        transform: rotate(-45deg);
+        transform-origin: 10% 90%;
+    }
+
+    .navbar-toggle.collapsed .top-bar {
+        transform: rotate(0deg);
+    }
+
+    .navbar-toggle.collapsed .middle-bar {
+        opacity: 1;
+    }
+
+    .navbar-toggle.collapsed .bottom-bar {
+        transform: rotate(0deg);
+    }
+
+    *::after, *::before {
+        box-sizing: border-box;
+    }
+
+    *::after, *::before {
+        box-sizing: border-box;
+    }
+
+    #menu-toggle.collapsed {
+        background: #fff none repeat scroll 0 0;
+    }
+
+    #menu-toggle {
+        display: block !important;
+    }
+
+    #menu-toggle {
+        position: fixed;
+        top: 50px;
+        transition: all 1s;
+        z-index: 990;
+    }
+
+    #menu-toggle.collapsed {
+        left: 10px;
+    }
+
+    #menu-toggle:not(.collapsed) {
+        left: 200px;
+    }
 }

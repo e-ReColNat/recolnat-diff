@@ -10,7 +10,7 @@
     {% if diffs is not empty %}
         <div id="wrapper" class="toggled">
 
-            <div id="sidebar-wrapper">
+            <div class="sidebar-wrapper sidebar-wrapper-left">
                 {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
             </div>
 
@@ -63,7 +63,7 @@
             }
             $maxItemPerPage.change(function () {
                 {% if selectedClassName is not defined %}
-                {% set selectedClassName = "all" %}
+                    {% set selectedClassName = "all" %}
                 {% endif %}
                 var url;
                 {% if app.request.attributes.get('_route') == 'lonesomes' %}

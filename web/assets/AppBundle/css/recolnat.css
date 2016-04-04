@@ -26,17 +26,9 @@
 @taxon : arken(spin(@specimen, -10), 30%);
 @determination: lighten(spin(@specimen, 10), 40%);
 @diffs : rgb(125, 155, 172);*/
-/** CHARTS **/
-.chart rect {
-  fill: steelblue;
-  cursor: pointer;
-  stroke: black;
-  stroke-width: 0.5;
-}
-.chart rect.over {
-  stroke: steelblue;
-}
-tr.specimen td {
+/** Couleurs des classes **/
+tr.specimen td,
+tr.specimen th {
   background-color: rgba(107, 94, 74, 0.5);
 }
 tr.specimen.light td,
@@ -50,7 +42,7 @@ li.specimen.lighter {
 tr.specimen td.highlight {
   border: 1px double #110f0b;
 }
-#sidebar-wrapper ul li.specimen {
+.sidebar-wrapper ul li.specimen {
   background-color: rgba(107, 94, 74, 0.5);
 }
 .chart rect.specimen {
@@ -58,7 +50,8 @@ tr.specimen td.highlight {
 }
 .chart text.title.specimen {
   fill: #6b5e4a;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.specimen {
   background-color: #6b5e4a;
@@ -109,7 +102,8 @@ tr.specimen td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.bibliography td {
+tr.bibliography td,
+tr.bibliography th {
   background-color: rgba(239, 190, 118, 0.5);
 }
 tr.bibliography.light td,
@@ -123,7 +117,7 @@ li.bibliography.lighter {
 tr.bibliography td.highlight {
   border: 1px double #b77515;
 }
-#sidebar-wrapper ul li.bibliography {
+.sidebar-wrapper ul li.bibliography {
   background-color: rgba(239, 190, 118, 0.5);
 }
 .chart rect.bibliography {
@@ -131,7 +125,8 @@ tr.bibliography td.highlight {
 }
 .chart text.title.bibliography {
   fill: #efbe76;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.bibliography {
   background-color: #efbe76;
@@ -182,7 +177,8 @@ tr.bibliography td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.determination td {
+tr.determination td,
+tr.determination th {
   background-color: rgba(206, 165, 125, 0.5);
 }
 tr.determination.light td,
@@ -196,7 +192,7 @@ li.determination.lighter {
 tr.determination td.highlight {
   border: 1px double #815931;
 }
-#sidebar-wrapper ul li.determination {
+.sidebar-wrapper ul li.determination {
   background-color: rgba(206, 165, 125, 0.5);
 }
 .chart rect.determination {
@@ -204,7 +200,8 @@ tr.determination td.highlight {
 }
 .chart text.title.determination {
   fill: #cea57d;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.determination {
   background-color: #cea57d;
@@ -255,7 +252,8 @@ tr.determination td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.localisation td {
+tr.localisation td,
+tr.localisation th {
   background-color: rgba(255, 140, 121, 0.5);
 }
 tr.localisation.light td,
@@ -269,7 +267,7 @@ li.localisation.lighter {
 tr.localisation td.highlight {
   border: 1px double #df2000;
 }
-#sidebar-wrapper ul li.localisation {
+.sidebar-wrapper ul li.localisation {
   background-color: rgba(255, 140, 121, 0.5);
 }
 .chart rect.localisation {
@@ -277,7 +275,8 @@ tr.localisation td.highlight {
 }
 .chart text.title.localisation {
   fill: #ff8c79;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.localisation {
   background-color: #ff8c79;
@@ -328,7 +327,8 @@ tr.localisation td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.recolte td {
+tr.recolte td,
+tr.recolte th {
   background-color: rgba(182, 93, 153, 0.5);
 }
 tr.recolte.light td,
@@ -342,7 +342,7 @@ li.recolte.lighter {
 tr.recolte td.highlight {
   border: 1px double #542645;
 }
-#sidebar-wrapper ul li.recolte {
+.sidebar-wrapper ul li.recolte {
   background-color: rgba(182, 93, 153, 0.5);
 }
 .chart rect.recolte {
@@ -350,7 +350,8 @@ tr.recolte td.highlight {
 }
 .chart text.title.recolte {
   fill: #b65d99;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.recolte {
   background-color: #b65d99;
@@ -401,7 +402,8 @@ tr.recolte td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.stratigraphy td {
+tr.stratigraphy td,
+tr.stratigraphy th {
   background-color: rgba(252, 186, 63, 0.5);
 }
 tr.stratigraphy.light td,
@@ -415,7 +417,7 @@ li.stratigraphy.lighter {
 tr.stratigraphy td.highlight {
   border: 1px double #a06902;
 }
-#sidebar-wrapper ul li.stratigraphy {
+.sidebar-wrapper ul li.stratigraphy {
   background-color: rgba(252, 186, 63, 0.5);
 }
 .chart rect.stratigraphy {
@@ -423,7 +425,8 @@ tr.stratigraphy td.highlight {
 }
 .chart text.title.stratigraphy {
   fill: #fcba3f;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.stratigraphy {
   background-color: #fcba3f;
@@ -474,7 +477,8 @@ tr.stratigraphy td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.multimedia td {
+tr.multimedia td,
+tr.multimedia th {
   background-color: rgba(135, 189, 106, 0.5);
 }
 tr.multimedia.light td,
@@ -488,7 +492,7 @@ li.multimedia.lighter {
 tr.multimedia td.highlight {
   border: 1px double #3f622c;
 }
-#sidebar-wrapper ul li.multimedia {
+.sidebar-wrapper ul li.multimedia {
   background-color: rgba(135, 189, 106, 0.5);
 }
 .chart rect.multimedia {
@@ -496,7 +500,8 @@ tr.multimedia td.highlight {
 }
 .chart text.title.multimedia {
   fill: #87bd6a;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.multimedia {
   background-color: #87bd6a;
@@ -547,7 +552,8 @@ tr.multimedia td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.taxon td {
+tr.taxon td,
+tr.taxon th {
   background-color: rgba(146, 114, 74, 0.5);
 }
 tr.taxon.light td,
@@ -561,7 +567,7 @@ li.taxon.lighter {
 tr.taxon td.highlight {
   border: 1px double #2c2317;
 }
-#sidebar-wrapper ul li.taxon {
+.sidebar-wrapper ul li.taxon {
   background-color: rgba(146, 114, 74, 0.5);
 }
 .chart rect.taxon {
@@ -569,7 +575,8 @@ tr.taxon td.highlight {
 }
 .chart text.title.taxon {
   fill: #92724a;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.taxon {
   background-color: #92724a;
@@ -620,7 +627,8 @@ tr.taxon td.highlight {
   background-color: transparent;
   cursor: not-allowed;
 }
-tr.diffs td {
+tr.diffs td,
+tr.diffs th {
   background-color: rgba(125, 155, 172, 0.5);
 }
 tr.diffs.light td,
@@ -634,7 +642,7 @@ li.diffs.lighter {
 tr.diffs td.highlight {
   border: 1px double #384c58;
 }
-#sidebar-wrapper ul li.diffs {
+.sidebar-wrapper ul li.diffs {
   background-color: rgba(125, 155, 172, 0.5);
 }
 .chart rect.diffs {
@@ -642,7 +650,8 @@ tr.diffs td.highlight {
 }
 .chart text.title.diffs {
   fill: #7d9bac;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  font-size: 1.3em;
 }
 .label.diffs {
   background-color: #7d9bac;
@@ -759,26 +768,93 @@ table.diff caption {
   border-bottom: none;
 }
 /** SIDEBAR **/
-#sidebar-wrapper ul.choices {
+.sidebar-wrapper ul.choices {
   font-size: 85%;
   list-style: outside none none;
   padding-left: 0;
 }
-#sidebar-wrapper ul li div {
+.sidebar-wrapper ul li div {
   margin-left: 10px;
 }
-#sidebar-wrapper > li > a {
+.sidebar-wrapper > li > a {
   padding: 5px 5px 3px 5px;
 }
-#sidebar-wrapper > li:hover {
+.sidebar-wrapper > li:hover {
   background-color: #eee;
 }
-#sidebar-wrapper .nav > li {
+.sidebar-wrapper .nav > li {
   border-bottom: 1px solid #ddd;
 }
-#sidebar-wrapper .nav > li > a {
-  padding: 0 ;
+.sidebar-wrapper .nav > li > a {
+  padding: 0;
 }
-#sidebar-wrapper > li:last-child {
+.sidebar-wrapper > li:last-child {
   border-bottom: none;
+}
+/** TABLE WITH ROTATED HEADER
+see : http://jsfiddle.net/D2RLR/7569/ */
+.table-header-rotated td {
+  vertical-align: middle;
+  text-align: center;
+  border: none !important;
+}
+.table-header-rotated th {
+  border: none !important;
+}
+.table-header-rotated th.rotate {
+  height: 80px;
+  position: relative;
+  vertical-align: bottom;
+  padding: 0;
+  font-size: 12px;
+  line-height: 0.8;
+  border: none;
+}
+.table-header-rotated th.rotate > div {
+  position: relative;
+  top: 0px;
+  left: 40px;
+  /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
+  height: 100%;
+  transform: skew(-45deg, 0deg);
+}
+.table-header-rotated th.rotate span {
+  transform: skew(45deg, 0deg) rotate(315deg);
+  position: absolute;
+  bottom: 30px;
+  /* 40 cos(45) = 28 with an additional 2px margin*/
+  left: -25px;
+  /*Because it looked good, but there is probably a mathematical link here as well*/
+  display: inline-block;
+  width: 85px;
+  /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
+  text-align: left;
+}
+.table-header-rotated th:first-of-type,
+.table-header-rotated td:first-of-type {
+  text-align: left;
+}
+/** FILTERS **/
+.btn-filters {
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  display: block;
+  z-index: 990;
+  margin-bottom: 8px;
+  margin-right: 15px;
+  margin-top: 8px;
+  padding: 9px 10px;
+}
+.filters {
+  position: fixed;
+  top: 90px;
+  left: 0;
+  right: 0;
+  margin: 15px 30px;
+  z-index: 989;
+  padding: 35px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: inset 0 0 3px 3px #ccc;
 }

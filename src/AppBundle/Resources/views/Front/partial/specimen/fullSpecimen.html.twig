@@ -1,87 +1,89 @@
-<section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenCode}}" data-specimencode="{{specimenCode}}">
-    {% if app.request.attributes.get('_route') != 'lonesomes' %}
-        {% set specimen = attribute(specimensRecolnat, specimenCode) | first %}
-        {% set specimenRecolnat = attribute(specimensRecolnat, specimenCode) | first %}
-        {% set specimenInstitution = attribute(specimensInstitution, specimenCode) | first %}
+{% if db is not defined %}
+    {% set db = 'recolnat' %}
+{% endif %}
+{% if app.request.attributes.get('_route') != 'lonesomes' %}
+    {% set specimen = attribute(specimensRecolnat, specimenCode) | first %}
+    {% set specimenRecolnat = attribute(specimensRecolnat, specimenCode) | first %}
+    {% set specimenInstitution = attribute(specimensInstitution, specimenCode) | first %}
+{% endif %}
 
-        {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
-    {% else %}
-        {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
-    {%  endif %}
+{#<section class="well{{ loop.index is odd ? ' odd' : '' }} specimen" id="{{specimenCode}}" data-specimencode="{{specimenCode}}">#}
+<div class="panel panel-default specimen" id="{{ specimenCode }}" data-specimencode="{{ specimenCode }}">
+    <div class="panel-heading">
+            {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimen} %}
+    </div>
+    <div class="panel-body">
+        <ul class="nav nav-tabs" id="tabs">
+            <li role="presentation" class="diffs active">
+                <a href="#{{ loop.index }}-diffs" data-toggle="tab">
+                    {% if app.request.attributes.get('_route') != 'lonesomes' %}
+                        {{ 'tab.diffs'| trans }}
+                    {% else %}
+                        {{ 'tab.lonesomes'| trans }}
+                    {% endif %}
 
-    {% if db is not defined %}
-        {% set db = 'recolnat' %}
-    {% endif %}
-    
-    <ul class="nav nav-tabs"  id="tabs">
-        <li role="presentation" class="diffs active">
-            <a href="#{{loop.index}}-diffs" data-toggle="tab">
+                </a>
+            </li>
+            <li class="specimen">
+                <a href="#{{ loop.index }}-specimen" data-toggle="tab"
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'specimen'}) }}">
+                    {{ 'tab.specimen'| trans }}
+                </a>
+            </li>
+            <li class="determination {{ specimen.determinations | length == 0 ? 'disabled' : '' }}">
+                <a href="#{{ loop.index }}-deter" data-toggle="tab"
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'determination'}) }}">
+                    {{ 'tab.determination'| trans }} <span class="badge">{{ specimen.determinations|length }}</span>
+                </a>
+            </li>
+            <li class="recolte">
+                <a href="#{{ loop.index }}-recolte" data-toggle="tab"
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'recolte'}) }}">
+                    {{ 'tab.recolte'| trans }}
+                </a>
+            </li>
+            <li class="multimedia {{ specimen.multimedias | length == 0 ? 'disabled' : '' }}">
+                <a href="#{{ loop.index }}-multimedia" data-toggle="tab" d
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'multimedia'}) }}">
+                    {{ 'tab.multimedia'| trans }} <span class="badge">{{ specimen.multimedias|length }}</span>
+                </a>
+            </li>
+            <li class="bibliography {{ specimen.bibliographies | length == 0 ? 'disabled' : '' }}">
+                <a href="#{{ loop.index }}-biblio" data-toggle="tab"
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'bibliography'}) }}">
+                    {{ 'tab.bibliography'| trans }} <span class="badge">{{ specimen.bibliographies|length }}</span>
+                </a>
+            </li>
+            <li class="stratigraphy {{ specimen.stratigraphy | length == 0 ? 'disabled' : '' }}">
+                <a href="#{{ loop.index }}-strati" data-toggle="tab"
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'stratigraphy'}) }}">
+                    {{ 'tab.stratigraphy'| trans }}
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active diffs" id="{{ loop.index }}-diffs">
                 {% if app.request.attributes.get('_route') != 'lonesomes' %}
-                    {{'tab.diffs'| trans}}
+                    {% include '@App/Front/partial/specimen/short_diff_specimen.html.twig' %}
                 {% else %}
-                    {{'tab.lonesomes'| trans}}
-                {%  endif %}
-
-            </a>
-        </li>
-        <li class="specimen">
-            <a href="#{{loop.index}}-specimen" data-toggle="tab"
-               data-tab-remote="{{path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'specimen'})}}">
-                {{'tab.specimen'| trans}}
-            </a>
-        </li>
-        <li class="determination {{specimen.determinations | length == 0 ? 'disabled' : ''}}">
-            <a href="#{{loop.index}}-deter" data-toggle="tab"
-               data-tab-remote="{{path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'determination'})}}">
-                {{'tab.determination'| trans}} <span class="badge">{{specimen.determinations|length}}</span>
-            </a>
-        </li>
-        <li class="recolte">
-            <a href="#{{loop.index}}-recolte" data-toggle="tab"
-               data-tab-remote="{{path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'recolte'})}}">
-                {{'tab.recolte'| trans}}
-            </a>
-        </li>
-        <li  class="multimedia {{specimen.multimedias | length == 0 ? 'disabled' : ''}}" >
-            <a href="#{{loop.index}}-multimedia" data-toggle="tab" d
-               data-tab-remote="{{path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'multimedia'})}}">
-                {{'tab.multimedia'| trans}} <span class="badge">{{specimen.multimedias|length}}</span>
-            </a>
-        </li>
-        <li  class="bibliography {{specimen.bibliographies | length == 0 ? 'disabled' : ''}}">
-            <a href="#{{loop.index}}-biblio" data-toggle="tab"
-               data-tab-remote="{{path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'bibliography'})}}">
-                {{'tab.bibliography'| trans}} <span class="badge">{{specimen.bibliographies|length}}</span>
-            </a>
-        </li>
-        <li class="stratigraphy {{specimen.stratigraphy | length == 0 ? 'disabled' : ''}}">
-            <a href="#{{loop.index}}-strati" data-toggle="tab"
-               data-tab-remote="{{path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'specimenCode': specimenCode, 'type':'stratigraphy'})}}">
-                {{'tab.stratigraphy'| trans}}
-            </a>
-        </li>
-    </ul>   
-
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade in active diffs" id="{{loop.index}}-diffs">
-            {% if app.request.attributes.get('_route') != 'lonesomes' %}
-                {% include '@App/Front/partial/specimen/short_diff_specimen.html.twig' %}
-            {% else %}
-                {% include '@App/Front/partial/specimen/short_lonesomes_specimen.html.twig' %}
-            {% endif %}
-        </div>
-        <div role="tabpanel" class="tab-pane fade specimen" id="{{loop.index}}-specimen">
-        </div>
-        <div role="tabpanel" class="tab-pane fade determination" id="{{loop.index}}-deter">
-        </div>
-        <div role="tabpanel" class="tab-pane fade recolte" id="{{loop.index}}-recolte">
-        </div>
-        <div role="tabpanel" class="tab-pane fade multimedia" id="{{loop.index}}-multimedia">
-        </div>
-        <div role="tabpanel" class="tab-pane fade bibliography" id="{{loop.index}}-biblio">
-        </div>
-        <div role="tabpanel" class="tab-pane fade stratigraphy" id="{{loop.index}}-strati">
+                    {% include '@App/Front/partial/specimen/short_lonesomes_specimen.html.twig' %}
+                {% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane fade specimen" id="{{ loop.index }}-specimen">
+            </div>
+            <div role="tabpanel" class="tab-pane fade determination" id="{{ loop.index }}-deter">
+            </div>
+            <div role="tabpanel" class="tab-pane fade recolte" id="{{ loop.index }}-recolte">
+            </div>
+            <div role="tabpanel" class="tab-pane fade multimedia" id="{{ loop.index }}-multimedia">
+            </div>
+            <div role="tabpanel" class="tab-pane fade bibliography" id="{{ loop.index }}-biblio">
+            </div>
+            <div role="tabpanel" class="tab-pane fade stratigraphy" id="{{ loop.index }}-strati">
+            </div>
         </div>
     </div>
+    {#</section>#}
+</div>
 
-</section>

@@ -18,6 +18,8 @@ class FrontController extends Controller
 
     /**
      * @Route("/", name="index")
+     * @return Response
+     * @throws \Exception
      */
     public function indexAction()
     {
@@ -53,8 +55,7 @@ class FrontController extends Controller
      */
     public function statsAction($collectionCode)
     {
-        $user = $this->getUser();
-        $prefs = $user->getPrefs();
+        $prefs = $this->getUser()->getPrefs();
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
 
@@ -107,12 +108,8 @@ class FrontController extends Controller
      * @param int     $page
      * @return Response
      */
-    public function diffsAction(
-        Request $request,
-        $collectionCode,
-        $selectedClassName = 'all',
-        $page = 1
-    ) {
+    public function diffsAction(Request $request, $collectionCode, $selectedClassName = 'all', $page = 1)
+    {
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -163,13 +160,8 @@ class FrontController extends Controller
      * @param string  $db
      * @return Response
      */
-    public function viewLoneSomeAction(
-        Request $request,
-        $collectionCode,
-        $db,
-        $selectedClassName = 'all',
-        $page = 1
-    ) {
+    public function viewLoneSomeAction(Request $request, $collectionCode, $db, $selectedClassName = 'all', $page = 1)
+    {
         $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
             ->findOneBy(['collectioncode' => $collectionCode]);
 
