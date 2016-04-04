@@ -13,8 +13,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Intl\Locale;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SpecimenExtension extends \Twig_Extension
 {
@@ -23,7 +23,7 @@ class SpecimenExtension extends \Twig_Extension
     protected $translator;
     protected $urlRecolnat;
 
-    public function __construct(RegistryInterface $doctrine, DataCollectorTranslator $translator, $urlRecolnat)
+    public function __construct(RegistryInterface $doctrine, TranslatorInterface $translator, $urlRecolnat)
     {
         $this->doctrine = $doctrine;
         $this->translator = $translator;
