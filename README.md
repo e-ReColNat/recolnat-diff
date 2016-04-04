@@ -84,7 +84,7 @@ voir http://php.net/manual/en/oci8.installation.php section Installing OCI8 from
     }    
     
 ### Droits sur les répertoires
-Le serveur doit avoir des droits de lecture et écriture dans le répertoire data/
+Le serveur doit avoir des droits de lecture et écriture dans le répertoire src/AppBundle/Data/
 
 ### Installation
 à la racine du site
