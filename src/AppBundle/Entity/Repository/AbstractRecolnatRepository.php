@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
@@ -27,12 +28,16 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     const ENTITY_PREFIX = 'AppBundle\\Entity\\';
 
     /**
-     *
-     * @param array $specimenCodes
-     * @param       $hydratationMode int
+     * @param Collection $collection
+     * @param array      $specimenCodes
+     * @param            $hydratationMode int
      * @return array
      */
-    abstract public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY);
+    abstract public function findBySpecimenCodes(
+        Collection $collection,
+        $specimenCodes,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    );
 
     abstract public function findBySpecimenCodeUnordered($specimenCodes);
 
@@ -92,11 +97,11 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         if (count($resultsSet)) {
             foreach ($resultsSet as $resultRow) {
                 if (!empty($resultRow)) {
-                    if (is_array($resultRow[0])) {
-                        $specimenCode = $resultRow['specimencode'];
-                        $orderResultSet[$specimenCode][$resultRow[0][$identifierName]] = $resultRow[0];
+                    if (is_array($resultRow)) {
+                        $specimenCode = $resultRow['catalogNumber'];
+                        $orderResultSet[$specimenCode][$resultRow[$identifierName]] = $resultRow;
                     } else {
-                        $orderResultSet[$resultRow['specimencode']][$resultRow[0]->{'get'.$identifierName}()] = $resultRow[0];
+                        $orderResultSet[$resultRow->getCatalogNumber()][$resultRow->{'get'.$identifierName}()] = $resultRow;
                     }
                 }
             }
@@ -106,21 +111,23 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     }
 
     /**
+     * @param Collection   $collection
      * @param QueryBuilder $qb
-     * @param array        $specimenCodes
+     * @param array        $catalogNumbers
      * @param string       $alias
      */
-    protected function setSpecimenCodesWhereClause(QueryBuilder &$qb, $specimenCodes, $alias = 's')
-    {
-
-        list($catalogNumbers, $institutionCode, $collectionCode) = $this->splitSpecimenCodes($specimenCodes);
-
+    protected function setSpecimenCodesWhereClause(
+        Collection $collection,
+        QueryBuilder &$qb,
+        $catalogNumbers,
+        $alias = 's'
+    ) {
         $qb->andWhere(sprintf('%s.institutioncode = :institutionCode', $alias))
             ->andWhere(sprintf('%s.collectioncode = :collectionCode', $alias))
             ->andWhere($qb->expr()->in(sprintf('%s.catalognumber', $alias), ':catalogNumbers'))
             ->setParameters([
-                'institutionCode' => $institutionCode,
-                'collectionCode' => $collectionCode,
+                'institutionCode' => $collection->getInstitution()->getInstitutioncode(),
+                'collectionCode' => $collection->getCollectioncode(),
                 'catalogNumbers' => $catalogNumbers,
             ]);
     }

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Entity\Collection;
+use AppBundle\Entity\Specimen;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
@@ -75,11 +77,12 @@ abstract class AbstractDiff
     }
 
     /**
-     * @param string $class
-     * @param array  $specimenCodes
+     * @param Collection $collection
+     * @param string     $class
+     * @param array      $specimenCodes
      * @return $this
      */
-    public function init($class, $specimenCodes)
+    public function init(Collection $collection, $class, $specimenCodes)
     {
         $this->class = $class;
         $this->classFullName = 'AppBundle:'.ucfirst($class);
@@ -87,10 +90,10 @@ abstract class AbstractDiff
         if (count($arrayChunkSpecimenCodes)) {
             foreach ($arrayChunkSpecimenCodes as $chunkSpecimenCodes) {
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
-                    ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
+                    ->findBySpecimenCodes($collection, $chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
 
                 $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
-                    ->findBySpecimenCodes($chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
+                    ->findBySpecimenCodes($collection, $chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
 
                 $this->compare();
             }
@@ -111,13 +114,14 @@ abstract class AbstractDiff
         if (!isset($this->fields[$fieldName])) {
             $this->fields[$fieldName] = 0;
         }
-        if (!isset($this->stats[$specimenCode])) {
-            $this->stats[$specimenCode] = [];
-            $this->stats[$specimenCode][$id] = [];
+        $catalogNumber = Specimen::explodeSpecimenCode($specimenCode);
+        if (!isset($this->stats[$catalogNumber])) {
+            $this->stats[$catalogNumber] = [];
+            $this->stats[$catalogNumber][$id] = [];
         }
-        $this->stats[$specimenCode][$id][$fieldName] = [];
-        $this->stats[$specimenCode][$id][$fieldName]['recolnat'] = $dataR;
-        $this->stats[$specimenCode][$id][$fieldName]['institution'] = $dataI;
+        $this->stats[$catalogNumber][$id][$fieldName] = [];
+        $this->stats[$catalogNumber][$id][$fieldName]['recolnat'] = $dataR;
+        $this->stats[$catalogNumber][$id][$fieldName]['institution'] = $dataI;
         $this->fields[$fieldName]++;
     }
 
@@ -257,7 +261,7 @@ abstract class AbstractDiff
             $id = $record->{$this->getIdSetter()}();
         }
         if (!is_null($id)) {
-            $this->lonesomeRecords[$db][] = ['specimenCode' => $specimenCode, 'id' => $id];
+            $this->lonesomeRecords[$db][] = ['code' => Specimen::explodeSpecimenCode($specimenCode), 'id' => $id];
         }
     }
 

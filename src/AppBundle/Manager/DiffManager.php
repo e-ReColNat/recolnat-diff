@@ -64,8 +64,6 @@ class DiffManager
     protected $recolnatAlias;
     protected $recolnatDiffAlias;
 
-    protected $exportDirPath;
-
     /**
      * DiffManager constructor.
      * @param ManagerRegistry $managerRegistry
@@ -85,22 +83,10 @@ class DiffManager
 
     /**
      * @param Collection $collection
-     * @param string     $exportDirPath
      */
-    public function init(Collection $collection, $exportDirPath)
+    public function init(Collection $collection)
     {
         $this->collection = $collection;
-        $this->exportDirPath = $exportDirPath;
-        $this->createDir();
-    }
-
-    private function createDir()
-    {
-        $fs = new Filesystem();
-
-        if (!$fs->exists($this->exportDirPath)) {
-            $fs->mkdir($this->exportDirPath, 0777);
-        }
     }
 
     /**

@@ -10,7 +10,7 @@ class MultimediaRepository extends AbstractRecolnatRepository
 
     /**
      * @param string $id
-     * @param int   $fetchMode
+     * @param int    $fetchMode
      * @return array|object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -41,19 +41,24 @@ class MultimediaRepository extends AbstractRecolnatRepository
 
 
     /**
-     * @param array $specimenCodes
-     * @param $hydratationMode int
+     * @param Collection $collection
+     * @param array      $specimenCodes
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findBySpecimenCodes(
+        Collection $collection,
+        $specimenCodes,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('m')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->from('AppBundle\Entity\Multimedia', 'm')
             ->innerJoin('m.specimens', 's')
             ->orderBy('m.identifier', 'ASC');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'multimediaid');
     }
 
@@ -69,6 +74,7 @@ class MultimediaRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Multimedia', 'm')
             ->join('AppBundle\Entity\Specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -84,11 +90,12 @@ class MultimediaRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Multimedia', 'm')
             ->andWhere($qb->expr()->in('m.multimediaid', $ids));
         $qb->setParameter('ids', $ids, 'rawid');
+
         return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param array  $datas
+     * @param array $datas
      * @param string $id
      * @return mixed
      */
@@ -98,6 +105,7 @@ class MultimediaRepository extends AbstractRecolnatRepository
 
         $qb->where('a.multimediaid = HEXTORAW(:id)')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
     }
 

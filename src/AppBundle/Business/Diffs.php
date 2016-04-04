@@ -190,15 +190,15 @@ class Diffs extends \SplFileObject
                     $returnDiffs['classes'][$className] = $diffs['classes'][$className];
                 }
             }
-            foreach ($returnDiffs['classes'] as $className => $specimensCode) {
-                foreach ($specimensCode as $specimenCode => $datas) {
-                    if (isset($diffs['datas'][$specimenCode])) {
-                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode];
+            foreach ($returnDiffs['classes'] as $className => $catalogNumbers) {
+                foreach ($catalogNumbers as $catalogNumber) {
+                    if (isset($diffs['datas'][$catalogNumber])) {
+                        $returnDiffs['datas'][$catalogNumber] = $diffs['datas'][$catalogNumber];
                         // Rajout dans les classes si un specimen a des modifications dans des classes non sélectionnées
-                        foreach (array_keys($diffs['datas'][$specimenCode]['classes']) as $className) {
-                            if (!isset($returnDiffs['classes'][$className][$specimenCode])) {
-                                $returnDiffs['classes'][$className][$specimenCode] =
-                                    $diffs['datas'][$specimenCode]['classes'][$className]['fields'];
+                        foreach (array_keys($diffs['datas'][$catalogNumber]['classes']) as $className) {
+                            if (!isset($returnDiffs['classes'][$className][$catalogNumber])) {
+                                $returnDiffs['classes'][$className][$catalogNumber] =
+                                    $diffs['datas'][$catalogNumber]['classes'][$className]['fields'];
                             }
                         }
                     }

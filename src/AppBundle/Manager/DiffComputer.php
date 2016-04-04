@@ -2,6 +2,8 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Entity\Collection;
+use AppBundle\Entity\Specimen;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
@@ -32,6 +34,10 @@ class DiffComputer
      */
     protected $managerRegistry;
 
+    /**
+     * @var Collection
+     */
+    protected $collection;
 
     protected $diffs = [];
     protected $lonesomeRecords = [];
@@ -69,18 +75,21 @@ class DiffComputer
     }
 
     /**
-     * @param array $specimenCodes
+     * @param Collection $collection
+     * @param array      $specimenCodes
      * @return $this
      */
-    public function init($specimenCodes)
+    public function init(Collection $collection, $specimenCodes)
     {
         $this->setSpecimenCodes($specimenCodes);
+        $this->collection = $collection;
         if (count($this->specimenCodes) > 0) {
             foreach ($this->classOrder as $className) {
                 $this->computeClassname($className);
             }
         }
         $this->diffs['classes'] = $this->classes;
+
         return $this;
     }
 
@@ -103,7 +112,7 @@ class DiffComputer
             $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
             /* @var $diffClassManager \AppBundle\Manager\AbstractDiff */
             $diffClassManager = new $nameDiffClassManager($this->managerRegistry, $this->maxNbSpecimenPerPass);
-            $diffClassManager->init($className, $specimensCode);
+            $diffClassManager->init($this->collection, $className, $specimensCode);
             $this->setDiffs($className, $diffClassManager->getStats());
             $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
             $this->computeDiffs($className);
@@ -129,21 +138,22 @@ class DiffComputer
         }
     }
 
-    private function getTaxon($specimenCode)
+    private function getTaxon($catalogNumber)
     {
-        if (isset($this->taxons[$specimenCode])) {
-            return $this->taxons[$specimenCode];
+        if (isset($this->taxons[$catalogNumber])) {
+            return $this->taxons[$catalogNumber];
         }
+
         return null;
     }
 
     /**
-     * @param string $specimenCode
+     * @param string $catalogNumber
      */
-    private function setTaxon($specimenCode)
+    private function setTaxon($catalogNumber)
     {
-        if (!isset($this->diffs['datas'][$specimenCode]['taxon'])) {
-            $this->diffs['datas'][$specimenCode]['taxon'] = $this->getTaxon($specimenCode);
+        if (!isset($this->diffs['datas'][$catalogNumber]['taxon'])) {
+            $this->diffs['datas'][$catalogNumber]['taxon'] = $this->getTaxon($catalogNumber);
         }
     }
 
@@ -155,16 +165,17 @@ class DiffComputer
         $this->stats[$className] = [];
         if (isset($this->diffs['classes'][$className])) {
             foreach ($this->diffs['classes'][$className] as $specimenCode => $rows) {
-                $this->setTaxon($specimenCode);
-                if (!isset($this->diffs['datas'][$specimenCode])) {
-                    $this->diffs['datas'][$specimenCode] = [];
-                    $this->diffs['datas'][$specimenCode]['classes'] = [];
-                    $this->diffs['datas'][$specimenCode]['classes'][$className] = [];
+                $catalogNumber = Specimen::explodeSpecimenCode($specimenCode);
+                $this->setTaxon($catalogNumber);
+                if (!isset($this->diffs['datas'][$catalogNumber])) {
+                    $this->diffs['datas'][$catalogNumber] = [];
+                    $this->diffs['datas'][$catalogNumber]['classes'] = [];
+                    $this->diffs['datas'][$catalogNumber]['classes'][$className] = [];
                 }
                 foreach ($rows as $recordId => $fields) {
                     $this->setStatsForClass($className, $fields);
-                    $this->diffs['datas'][$specimenCode]['classes'][$className]['fields'] = $fields;
-                    $this->diffs['datas'][$specimenCode]['classes'][$className]['id'] = $recordId;
+                    $this->diffs['datas'][$catalogNumber]['classes'][$className]['fields'] = $fields;
+                    $this->diffs['datas'][$catalogNumber]['classes'][$className]['id'] = $recordId;
                 }
             }
         }
@@ -202,6 +213,7 @@ class DiffComputer
         if (null !== $className) {
             return $this->diffs[$className];
         }
+
         return $this->diffs;
     }
 
@@ -236,18 +248,18 @@ class DiffComputer
             $specimenCodesNewSpecimenRecords = [];
             if ($className != 'Specimen') {
                 $specimenCodesNewSpecimenRecords = array_column($this->lonesomeRecords['Specimen'][$db],
-                    'specimenCode');
+                    'code');
             }
 
             foreach ($items as $lonesomeRecord) {
-                if ($className == 'Specimen' || !in_array($lonesomeRecord['specimenCode'],
+                if ($className == 'Specimen' || !in_array($lonesomeRecord['code'],
                         $specimenCodesNewSpecimenRecords)
                 ) {
                     $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
-                    if (!isset($this->statsLonesomeRecords[$lonesomeRecord['specimenCode']])) {
-                        $this->statsLonesomeRecords[$lonesomeRecord['specimenCode']] = [];
+                    if (!isset($this->statsLonesomeRecords[$lonesomeRecord['code']])) {
+                        $this->statsLonesomeRecords[$lonesomeRecord['code']] = [];
                     }
-                    $this->statsLonesomeRecords[$lonesomeRecord['specimenCode']][] = [
+                    $this->statsLonesomeRecords[$lonesomeRecord['code']][] = [
                         'class' => $className,
                         'id' => $lonesomeRecord['id'],
                         'db' => $db

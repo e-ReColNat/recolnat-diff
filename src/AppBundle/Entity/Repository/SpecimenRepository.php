@@ -38,12 +38,13 @@ class SpecimenRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
             ->where($qb->expr()->in('s.occurrenceid', ':ids'));
         $qb->setParameter('ids', $ids, 'rawid');
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param string $id
-     * @param int   $fetchMode
+     * @param int    $fetchMode
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -53,11 +54,12 @@ class SpecimenRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param $specimenCode
+     * @param Collection $collection ,
+     * @param string     $specimenCode
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneBySpecimenCode($specimenCode)
+    public function findOneBySpecimenCode(Collection $collection, $specimenCode)
     {
         $qb = $this->createQueryBuilder('s');
         $qb
@@ -69,7 +71,8 @@ class SpecimenRepository extends AbstractRecolnatRepository
             ->leftJoin('s.stratigraphy', 'st')
             ->leftJoin('s.recolte', 'r')
             ->leftJoin('r.localisation', 'l');
-        $this->setSpecimenCodesWhereClause($qb, [$specimenCode]);
+        $this->setSpecimenCodesWhereClause($collection, $qb, [$specimenCode]);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -85,6 +88,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
         $qb
             ->select('s');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery()->getResult();
     }
 
@@ -107,17 +111,21 @@ class SpecimenRepository extends AbstractRecolnatRepository
             ->leftJoin('s.recolte', 'r')
             ->leftJoin('r.localisation', 'l');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery()->getArrayResult();
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @param $hydratationMode int
+     * @param Collection $collection
+     * @param array      $specimenCodes
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findBySpecimenCodes(
+        Collection $collection,
+        $specimenCodes,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->createQueryBuilder('s');
 
         $qb
@@ -128,11 +136,12 @@ class SpecimenRepository extends AbstractRecolnatRepository
             ->leftJoin('s.multimedias', 'm')
             ->leftJoin('s.stratigraphy', 'st')
             ->leftJoin('s.recolte', 'r')
-            ->leftJoin('r.localisation', 'l')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+            ->leftJoin('r.localisation', 'l');
+        //->addSelect($this->getExprConcatSpecimenCode().' as specimencode');
+        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
         $query = $qb->getQuery();
-        $query->useResultCache(true, 300);
+
+        //$query->useResultCache(true, 300);
         return $this->orderResultSetBySpecimenCode($query->getResult($hydratationMode), 'occurrenceid');
     }
 
@@ -148,11 +157,12 @@ class SpecimenRepository extends AbstractRecolnatRepository
         $qb
             ->select('s');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery();
     }
 
     /**
-     * @param array  $datas
+     * @param array $datas
      * @param string $id
      * @return mixed
      */
@@ -162,6 +172,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
 
         $qb->where('a.occurrenceid = HEXTORAW(:id)')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
     }
 }

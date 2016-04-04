@@ -40,12 +40,13 @@ class DeterminationRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Determination', 'd', 'd.identificationid')
             ->andWhere($qb->expr()->in('d.identificationid', $ids));
         $qb->setParameter('ids', $ids, 'rawid');
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param string $id
-     * @param int   $fetchMode
+     * @param int    $fetchMode
      * @return array|object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -75,24 +76,29 @@ class DeterminationRepository extends AbstractRecolnatRepository
             ->select('d')
             ->join('d.specimen', 's');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery()->getResult();
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @param $hydratationMode int
+     * @param Collection $collection
+     * @param array      $specimenCodes
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findBySpecimenCodes(
+        Collection $collection,
+        $specimenCodes,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->createQueryBuilder('d');
 
         $qb
             ->select('d')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'identificationid');
     }
 
@@ -109,11 +115,12 @@ class DeterminationRepository extends AbstractRecolnatRepository
             ->select('d')
             ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
         $qb->setParameter('occurrenceid', $occurrenceId, 'rawid');
+
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getOneOrNullResult(), 'identificationid');
     }
 
     /**
-     * @param array  $datas
+     * @param array $datas
      * @param string $id
      * @return mixed
      */
@@ -123,6 +130,7 @@ class DeterminationRepository extends AbstractRecolnatRepository
 
         $qb->where('a.identificationid = HEXTORAW(:id)')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
     }
 }

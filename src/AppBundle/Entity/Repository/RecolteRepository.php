@@ -33,12 +33,13 @@ class RecolteRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Recolte', 'r', 'r.eventid')
             ->andWhere($qb->expr()->in('r.eventid', $ids));
         $qb->setParameter('ids', $ids, 'rawid');
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param string $id
-     * @param int   $fetchMode
+     * @param int    $fetchMode
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -60,29 +61,34 @@ class RecolteRepository extends AbstractRecolnatRepository
             ->join('AppBundle\Entity\Specimen', 's')
             ->andWhere('s.recolte = r.eventid');
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery()->getResult();
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @param $hydratationMode int
+     * @param Collection $collection
+     * @param array      $specimenCodes
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findBySpecimenCodes(
+        Collection $collection,
+        $specimenCodes,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->createQueryBuilder('r');
 
         $qb
             ->select('r')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->join('r.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'eventid');
     }
 
     /**
-     * @param array  $datas
+     * @param array $datas
      * @param string $id
      * @return mixed
      */
@@ -92,6 +98,7 @@ class RecolteRepository extends AbstractRecolnatRepository
 
         $qb->where('a.eventid = HEXTORAW(:id)')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
     }
 }

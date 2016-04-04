@@ -115,7 +115,7 @@ class ExportManager
         if (is_null($this->collection)) {
             throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
         } else {
-            $this->diffManager->init($this->collection, $this->getExportDirPath());
+            $this->diffManager->init($this->collection);
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
             $this->diffHandler->setCollectionCode($this->collectionCode);
             $data = $this->launchDiffProcess();
@@ -133,13 +133,8 @@ class ExportManager
     {
         if ($this->getDiffHandler()->shouldSearchDiffs()) {
             $diffs = $this->diffManager->searchDiffs();
-            $diffComputer = $this->diffComputer->init($diffs);
-            $data = array_merge($diffComputer->getDiffs(),
-                [
-                    'stats' => $diffComputer->getAllStats(),
-                    'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
-                    'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
-                ]);
+            $diffComputer = $this->diffComputer->init($this->collection, $diffs);
+            $data = $diffComputer->getAllDatas();
             $this->getDiffHandler()->saveDiffs($data);
             $this->getDiffHandler()->getDiffsFile()->searchDiffs = false;
         } else {

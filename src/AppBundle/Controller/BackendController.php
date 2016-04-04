@@ -67,7 +67,7 @@ class BackendController extends Controller
         $institutionCode = $this->getUser()->getInstitutionCode();
         $diffManager = $this->get('diff.manager');
         $diffComputer = $this->get('diff.computer');
-        $diffManager->init($collection, $this->getParameter('export_path'));
+        $diffManager->init($collection);
 
         $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
         $diffHandler->setCollectionCode($collectionCode);

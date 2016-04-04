@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class FrontController extends Controller
 {
@@ -110,6 +111,8 @@ class FrontController extends Controller
      */
     public function diffsAction(Request $request, $collectionCode, $selectedClassName = 'all', $page = 1)
     {
+        $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
+            ->findOneBy(['collectioncode' => $collectionCode]);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -133,10 +136,10 @@ class FrontController extends Controller
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $specimensCode = array_keys($pagination->getItems());
 
-        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
+        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($collection, $specimensCode,
             AbstractQuery::HYDRATE_OBJECT);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-            'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
+            'diff')->findBySpecimenCodes($collection, $specimensCode, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewDiffs.html.twig', array(
             'collection' => $collection,
@@ -226,19 +229,20 @@ class FrontController extends Controller
     /**
      * @Route("{collectionCode}/specimen/tab/{specimenCode}/{type}/{db}",
      *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
+     * @ParamConverter("collection", options={"mapping": {"collectionCode": "collectioncode"}})
      * @param string $specimenCode
      * @param string $type
      * @param string $db
      * @return Response
      */
-    public function viewSpecimenTabAction($specimenCode, $type, $db)
+    public function viewSpecimenTabAction(Collection $collection, $specimenCode, $type, $db)
     {
         if ($db == 'recolnat') {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')
-                ->findOneBySpecimenCode($specimenCode);
+                ->findOneBySpecimenCode($collection, $specimenCode);
         } else {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-                'diff')->findOneBySpecimenCode($specimenCode);
+                'diff')->findOneBySpecimenCode($collection, $specimenCode);
         }
 
         $template = 'tab-'.strtolower($type).'.html.twig';

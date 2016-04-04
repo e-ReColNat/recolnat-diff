@@ -40,12 +40,13 @@ class LocalisationRepository extends AbstractRecolnatRepository
             ->where('l.locationid IN (:ids)')
             ->setParameter('ids', $ids)
             ->getQuery();
+
         return $query->getResult();
     }
 
     /**
      * @param string $id
-     * @param int   $fetchMode
+     * @param int    $fetchMode
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -70,17 +71,21 @@ class LocalisationRepository extends AbstractRecolnatRepository
             ->andWhere('r.localisation = l.locationid');
 
         $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+
         return $qb->getQuery()->getResult();
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @param $hydratationMode int
+     * @param Collection $collection
+     * @param array      $specimenCodes
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findBySpecimenCodes(
+        Collection $collection,
+        $specimenCodes,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
@@ -90,12 +95,13 @@ class LocalisationRepository extends AbstractRecolnatRepository
             ->andWhere('s.recolte = r.eventid')
             ->andWhere('r.localisation = l.locationid');
 
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'locationid');
     }
 
     /**
-     * @param array  $datas
+     * @param array $datas
      * @param string $id
      * @return mixed
      */
@@ -105,6 +111,7 @@ class LocalisationRepository extends AbstractRecolnatRepository
 
         $qb->where('a.locationid = :id')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
     }
 }

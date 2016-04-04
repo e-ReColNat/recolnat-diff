@@ -46,13 +46,13 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Specimen           $specimen
+     * @param Specimen    $specimen
      * @param rCollection $collection
-     * @param Taxon|null         $taxon
-     * @param string             $target
+     * @param Taxon|null  $taxon
+     * @param string      $target
      * @return string
      */
-    public function getFullLink(Specimen $specimen,rCollection $collection,Taxon $taxon = null,$target = '_blank')
+    public function getFullLink(Specimen $specimen, rCollection $collection, Taxon $taxon = null, $target = '_blank')
     {
         $text = '';
         if (!is_null($taxon)) {
@@ -69,7 +69,7 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Specimen           $specimen
+     * @param Specimen    $specimen
      * @param rCollection $collection
      * @return string
      */

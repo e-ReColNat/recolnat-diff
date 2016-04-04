@@ -86,12 +86,12 @@ class TaxonRepository extends AbstractRecolnatRepository
     }
 
     /**
-     *
-     * @param array   $specimenCodes
-     * @param integer $hydratationMode
+     * @param Collection $collection
+     * @param array      $specimenCodes
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
+    public function findBySpecimenCodes(Collection $collection, $specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
     {
         $qb = $this->createQueryBuilder('t');
 
@@ -100,7 +100,7 @@ class TaxonRepository extends AbstractRecolnatRepository
             ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
             ->innerJoin('t.determination', 'd')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
 
         return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'taxonid');
     }
