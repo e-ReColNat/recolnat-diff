@@ -117,12 +117,9 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
-            ->findOneBy(['collectioncode' => $collectionCode]);
-
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
         if ($request->get('_route') == 'choices') {
-            $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesBySpecimenCode());
+            $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesByCatalogNumber());
         }
         if ($request->get('_route') == 'todos') {
             $specimensWithoutChoices = $exportManager->sessionHandler->getChoices();
@@ -134,12 +131,12 @@ class FrontController extends Controller
         $paginator = $this->get('knp_paginator');
         /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
-        $specimensCode = array_keys($pagination->getItems());
+        $catalogNumbers = array_keys($pagination->getItems());
 
-        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($collection, $specimensCode,
+        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection, $catalogNumbers,
             AbstractQuery::HYDRATE_OBJECT);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-            'diff')->findBySpecimenCodes($collection, $specimensCode, AbstractQuery::HYDRATE_OBJECT);
+            'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewDiffs.html.twig', array(
             'collection' => $collection,
@@ -172,20 +169,20 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensBySpecimenCodes = $exportManager->getDiffHandler()->getLonesomeRecordsIndexedBySpecimenCode($db,
+        $lonesomesSpecimensByCatalogNumbers = $exportManager->getDiffHandler()->getLonesomeRecordsIndexedByCatalogNumber($db,
             $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate($lonesomesSpecimensBySpecimenCodes, $page, $maxItemPerPage);
-        $specimensCode = array_keys($pagination->getItems());
+        $pagination = $paginator->paginate($lonesomesSpecimensByCatalogNumbers, $page, $maxItemPerPage);
+        $catalogNumbers = array_keys($pagination->getItems());
 
 
         if ($db == 'recolnat') {
-            $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
+            $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection, $catalogNumbers,
                 AbstractQuery::HYDRATE_OBJECT);
         } else {
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-                'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
+                'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
         }
 
         return $this->render('@App/Front/viewLonesome.html.twig', array(
@@ -196,60 +193,60 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/specimens/view/{jsonSpecimensCode}", name="viewSpecimens", options={"expose"=true})
+     * @Route("{collectionCode}/specimens/view/{jsonCatalogNumbers}", name="viewSpecimens", options={"expose"=true})
      * @param string $collectionCode
-     * @param string $jsonSpecimensCode
+     * @param string $jsonCatalogNumbers
      * @return Response
      */
-    public function viewSpecimensAction($collectionCode, $jsonSpecimensCode)
+    public function viewSpecimensAction($collectionCode, $jsonCatalogNumbers)
     {
         $collection = $this->getDoctrine()->getRepository('AppBundle\Entity\Collection')
             ->findOneBy(['collectioncode' => $collectionCode]);
 
-        $specimensCode = json_decode($jsonSpecimensCode);
+        $catalogNumbers = json_decode($jsonCatalogNumbers);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
-        $diffs = $exportManager->getDiffsBySpecimensCode($specimensCode);
+        $diffs = $exportManager->getDiffsByCatalogNumbers($catalogNumbers);
 
-        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findBySpecimenCodes($specimensCode,
+        $specimensRecolnat = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection, $catalogNumbers,
             AbstractQuery::HYDRATE_OBJECT);
         $specimensInstitution = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-            'diff')->findBySpecimenCodes($specimensCode, AbstractQuery::HYDRATE_OBJECT);
+            'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'collection' => $collection,
             'diffs' => $diffs,
             'specimensRecolnat' => $specimensRecolnat,
             'specimensInstitution' => $specimensInstitution,
-            'specimensCode' => $specimensCode,
+            'catalogNumbers' => $catalogNumbers,
             'exportManager' => $exportManager,
         ));
     }
 
     /**
-     * @Route("{collectionCode}/specimen/tab/{specimenCode}/{type}/{db}",
+     * @Route("{collectionCode}/specimen/tab/{catalogNumber}/{type}/{db}",
      *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
      * @ParamConverter("collection", options={"mapping": {"collectionCode": "collectioncode"}})
-     * @param string $specimenCode
+     * @param string $catalogNumber
      * @param string $type
      * @param string $db
      * @return Response
      */
-    public function viewSpecimenTabAction(Collection $collection, $specimenCode, $type, $db)
+    public function viewSpecimenTabAction(Collection $collection, $catalogNumber, $type, $db)
     {
         if ($db == 'recolnat') {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')
-                ->findOneBySpecimenCode($collection, $specimenCode);
+                ->findOneByCatalogNumber($collection, $catalogNumber);
         } else {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-                'diff')->findOneBySpecimenCode($collection, $specimenCode);
+                'diff')->findOneByCatalogNumber($collection, $catalogNumber);
         }
 
         $template = 'tab-'.strtolower($type).'.html.twig';
 
         return $this->render('@App/Front/partial/specimen/'.$template, array(
             'specimen' => $specimen,
-            'specimenCode' => $specimenCode,
+            'catalogNumber' => $catalogNumber,
         ));
     }
 

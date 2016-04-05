@@ -18,32 +18,32 @@ class ExportExtension extends \Twig_Extension
 
     /**
      * Retourne le nombre de différence trouvées entre les deux bases pour un couple Spécimen / Class
-     * @param array $stats
+     * @param array  $stats
      * @param string $className
-     * @param string $specimenCode
+     * @param string $catalogNumber
      * @return int
      */
-    public function getCountDiffs($stats, $className, $specimenCode)
+    public function getCountDiffs($stats, $className, $catalogNumber)
     {
-        if (isset($stats['datas'][$specimenCode]['classes'][$className])) {
-            return count($stats['datas'][$specimenCode]['classes'][$className]['fields']);
+        if (isset($stats['datas'][$catalogNumber]['classes'][$className])) {
+            return count($stats['datas'][$catalogNumber]['classes'][$className]['fields']);
         }
         return 0;
     }
 
     /**
      * Retourne le nombre des choix par l'utilisateur dans les diffs
-     * @param array $choices
+     * @param array  $choices
      * @param string $className
-     * @param string $specimenCode
+     * @param string $catalogNumber
      * @return integer
      */
-    public function getCountChoices($choices, $specimenCode, $className)
+    public function getCountChoices($choices, $catalogNumber, $className)
     {
         $countChoices = 0;
         if (is_array($choices) && count($choices) > 0) {
             foreach ($choices as $choice) {
-                if ($choice['specimenCode'] == $specimenCode && $choice['className'] == $className) {
+                if ($choice['catalogNumber'] == $catalogNumber && $choice['className'] == $className) {
                     $countChoices++;
                 }
             }

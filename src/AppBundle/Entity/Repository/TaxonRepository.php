@@ -68,11 +68,11 @@ class TaxonRepository extends AbstractRecolnatRepository
     }
 
     /**
-     *
-     * @param array $specimenCodes
+     * @param Collection $collection
+     * @param array      $catalogNumbers
      * @return array
      */
-    public function findBySpecimenCodeUnordered($specimenCodes)
+    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
         $qb = $this->createQueryBuilder('t');
 
@@ -80,29 +80,32 @@ class TaxonRepository extends AbstractRecolnatRepository
             ->select('t')
             ->innerJoin('t.determination', 'd')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Collection $collection
-     * @param array      $specimenCodes
+     * @param array      $catalogNumbers
      * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes(Collection $collection, $specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findByCatalogNumbers(
+        Collection $collection,
+        $catalogNumbers,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->createQueryBuilder('t');
 
         $qb
             ->select('t')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->innerJoin('t.determination', 'd')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'taxonid');
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'taxonid');
     }
 
     /**
@@ -125,33 +128,33 @@ class TaxonRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param array|string $specimensCode
+     * @param Collection   $collection
+     * @param array|string $catalogNumbers
      * @return array
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findBestTaxonsBySpecimenCode($specimensCode)
+    public function findBestTaxonsByCatalogNumbers(Collection $collection, $catalogNumbers)
     {
-        if (!is_array($specimensCode)) {
-            $specimensCode = [$specimensCode];
+        if (!is_array($catalogNumbers)) {
+            $catalogNumbers = [$catalogNumbers];
         }
-
-        list($catalogNumbers, $institutionCode, $collectionCode) = $this->splitSpecimenCodes($specimensCode);
 
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('scientificname', 'scientificname');
         $rsm->addScalarResult('scientificnameauthorship', 'scientificnameauthorship');
-        $rsm->addScalarResult('specimenCode', 'specimenCode');
+        $rsm->addScalarResult('catalognumber', 'catalognumber');
         $nativeSqlTaxon = '
         WITH FirstIDentified AS (
            SELECT First_Value(t.taxonid) OVER (PARTITION BY catalognumber ORDER BY identificationverifstatus) First,
-           t.taxonid, t.scientificname, t.scientificnameauthorship, s.institutioncode || \'#\' || s.collectioncode || \'#\' || s.catalognumber AS specimencode
+           t.taxonid, t.scientificname, t.scientificnameauthorship,
+           s.catalognumber
            FROM Taxons t
            JOIN Determinations d ON t.taxonid = d.taxonid
            JOIN Specimens s on d.occurrenceid = s.occurrenceid
-           WHERE s.institutioncode = :institutionCode AND s.collectioncode = :collectionCode AND
+           WHERE s.collectioncode = :collectionCode AND
            s.catalognumber IN (:catalogNumbers)
         )
-        SELECT specimenCode, scientificname, scientificnameauthorship FROM FirstIdentified
+        SELECT catalognumber, scientificname, scientificnameauthorship FROM FirstIdentified
         WHERE taxonid = First
         ';
 
@@ -160,8 +163,8 @@ class TaxonRepository extends AbstractRecolnatRepository
         $results = $this->getEntityManager()->getConnection()->executeQuery(
             $nativeSqlTaxon,
             [
-                'institutionCode' => $institutionCode,
-                'collectionCode' => $collectionCode,
+                //'institutionCode' => $institutionCode,
+                'collectionCode' => $collection->getCollectioncode(),
                 'catalogNumbers' => $catalogNumbers
             ],
             [
@@ -172,7 +175,7 @@ class TaxonRepository extends AbstractRecolnatRepository
         $formattedResult = [];
         if (count($results)) {
             foreach ($results as $values) {
-                $formattedResult[$values['SPECIMENCODE']] = Taxon::toString($values['SCIENTIFICNAME'],
+                $formattedResult[$values['CATALOGNUMBER']] = Taxon::toString($values['SCIENTIFICNAME'],
                     $values['SCIENTIFICNAMEAUTHORSHIP']);
             }
         }

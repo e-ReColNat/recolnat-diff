@@ -1,4 +1,4 @@
-{% if attribute(diffs.datas, specimenCode) is not empty %}
+{% if attribute(diffs.datas, catalogNumber) is not empty %}
     <table class="diff table table-striped table-condensed">
         <colgroup>
             <col class="xsmall">
@@ -17,7 +17,7 @@
         </tr>
         </thead>
         <tbody>
-        {% set specimen = attribute(diffs.datas, specimenCode) %}
+        {% set specimen = attribute(diffs.datas, catalogNumber) %}
         {% for className, details in specimen.classes %}
             {% set relationId = details.id %}
             {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}

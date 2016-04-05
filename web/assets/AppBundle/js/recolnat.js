@@ -103,7 +103,7 @@ $(document).ready(function () {
         var url = Routing.generate('viewSpecimens', {
             institutionCode: institutionCode,
             collectionCode: collectionCode,
-            jsonSpecimensCode: localStorage.getItem('selectedSpecimens')
+            jsonCatalogNumbers: localStorage.getItem('selectedSpecimens')
         });
         if (nbSelectedSpecimens == 0) {
             $linkSelectedSpecimen.attr("href", url).addClass("hidden");

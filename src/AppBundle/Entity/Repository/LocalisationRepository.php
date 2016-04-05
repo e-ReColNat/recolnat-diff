@@ -56,11 +56,11 @@ class LocalisationRepository extends AbstractRecolnatRepository
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return array
      */
-    public function findBySpecimenCodeUnordered($specimenCodes)
+    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
@@ -70,38 +70,38 @@ class LocalisationRepository extends AbstractRecolnatRepository
             ->andWhere('s.recolte = r.eventid')
             ->andWhere('r.localisation = l.locationid');
 
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Collection $collection
-     * @param array      $specimenCodes
+     * @param array      $catalogNumbers
      * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes(
+    public function findByCatalogNumbers(
         Collection $collection,
-        $specimenCodes,
+        $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->from('AppBundle\Entity\Specimen', 's')
             ->from('AppBundle\Entity\Recolte', 'r')
             ->from('AppBundle\Entity\Localisation', 'l')
             ->andWhere('s.recolte = r.eventid')
             ->andWhere('r.localisation = l.locationid');
 
-        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'locationid');
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'locationid');
     }
 
     /**
-     * @param array $datas
+     * @param array  $datas
      * @param string $id
      * @return mixed
      */

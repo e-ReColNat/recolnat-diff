@@ -66,37 +66,41 @@ class BibliographyRepository extends AbstractRecolnatRepository
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findBySpecimenCodeUnordered($specimenCodes)
+    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b')
             ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
      * @param Collection $collection
-     * @param array      $specimenCodes
+     * @param array      $catalogNumbers
      * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes(Collection $collection, $specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findByCatalogNumbers(
+        Collection $collection,
+        $catalogNumbers,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'referenceid');
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'referenceid');
     }
 
     /**

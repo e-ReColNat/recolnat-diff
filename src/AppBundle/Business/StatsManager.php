@@ -164,10 +164,10 @@ class StatsManager
         $stats = [];
         foreach ($classesName as $className) {
             if (isset($diffs['classes'][$className]) && !empty($diffs['classes'][$className])) {
-                foreach ($diffs['classes'][$className] as $specimenCode=>$datas) {
-                    if (isset($diffs['datas'][$specimenCode])) {
-                        $details = $diffs['datas'][$specimenCode]['classes'][$className];
-                        $taxon = $diffs['datas'][$specimenCode]['taxon'];
+                foreach ($diffs['classes'][$className] as $catalogNumber) {
+                    if (isset($diffs['datas'][$catalogNumber])) {
+                        $details = $diffs['datas'][$catalogNumber]['classes'][$className];
+                        $taxon = $diffs['datas'][$catalogNumber]['taxon'];
                         foreach ($details['fields'] as $fieldName => $datas) {
                             // Traitement des dates
                             if (is_array($datas['recolnat']) && isset($datas['recolnat']['date'])) {
@@ -183,11 +183,11 @@ class StatsManager
                                 [$className, $fieldName, $datas['recolnat'], $datas['institution']]));
 
                             if (!isset($stats[$concatDatas])) {
-                                $stats[$concatDatas] = ['taxons' => [], 'specimensCode' => []];
+                                $stats[$concatDatas] = ['taxons' => [], 'catalogNumbers' => []];
                             }
 
-                            $stats[$concatDatas]['specimensCode'][$specimenCode] = $details['id'];
-                            $stats[$concatDatas]['taxons'][$specimenCode] = $taxon;
+                            $stats[$concatDatas]['catalogNumbers'][$catalogNumber] = $details['id'];
+                            $stats[$concatDatas]['taxons'][$catalogNumber] = $taxon;
                             $stats[$concatDatas]['datas'] = $datas;
                             $stats[$concatDatas]['className'] = $className;
                             $stats[$concatDatas]['fieldName'] = $fieldName;
@@ -197,8 +197,8 @@ class StatsManager
             }
         }
         uasort($stats, function($a, $b) {
-            $a = count($a['specimensCode']);
-            $b = count($b['specimensCode']);
+            $a = count($a['catalogNumbers']);
+            $b = count($b['catalogNumbers']);
             return ($a == $b) ? 0 : (($a > $b) ? -1 : 1);
         });
         return $stats;

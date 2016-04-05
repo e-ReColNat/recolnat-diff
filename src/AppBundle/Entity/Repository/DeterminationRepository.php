@@ -66,40 +66,40 @@ class DeterminationRepository extends AbstractRecolnatRepository
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return array
      */
-    public function findBySpecimenCodeUnordered($specimenCodes)
+    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('d')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Collection $collection
-     * @param array      $specimenCodes
+     * @param array      $catalogNumbers
      * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes(
+    public function findByCatalogNumbers(
         Collection $collection,
-        $specimenCodes,
+        $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
         $qb = $this->createQueryBuilder('d');
 
         $qb
             ->select('d')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'identificationid');
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'identificationid');
     }
 
     /**
@@ -116,11 +116,11 @@ class DeterminationRepository extends AbstractRecolnatRepository
             ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
         $qb->setParameter('occurrenceid', $occurrenceId, 'rawid');
 
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getOneOrNullResult(), 'identificationid');
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getOneOrNullResult(), 'identificationid');
     }
 
     /**
-     * @param array $datas
+     * @param array  $datas
      * @param string $id
      * @return mixed
      */

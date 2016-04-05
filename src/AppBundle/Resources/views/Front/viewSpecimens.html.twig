@@ -8,7 +8,7 @@
     {% if datas is not empty %}
         <div id="wrapper" class="toggled">
             <div id="sidebar-wrapper">
-                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : specimensCode | length, 'currentPage' : 1} %}
+                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : catalogNumbers | length, 'currentPage' : 1} %}
             </div>
             <div id="page-content-wrapper">
                 {% include '@App/Front/partial/buttonHamburger.html.twig' %}
@@ -16,7 +16,7 @@
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}"
                      data-selectedclassname="{{ selectedClassName is defined ? selectedClassName : '' }}">
                     {% include '@App/Front/partial/filters.html.twig' with { 'currentPage':1} %}
-                    {% for specimenCode, classWithDiff in datas %}
+                    {% for catalogNumber, classWithDiff in datas %}
                         {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' %}
                     {% endfor %}
 

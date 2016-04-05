@@ -144,9 +144,9 @@ class DiffHandler
      * @param null|string $selectedClassName
      * @return array
      */
-    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
+    public function getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName = null)
     {
-        return $this->getDiffsFile()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
+        return $this->getDiffsFile()->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
     }
 
     /**
@@ -171,9 +171,9 @@ class DiffHandler
     public static function formatItemsToChoices($items, $diffs, $inputClassesName, $inputOrigin, $choices)
     {
         if (count($items) > 0) {
-            foreach ($items as $specimenCode => $row) {
+            foreach ($items as $catalogNumber => $row) {
                 foreach ($row['classes'] as $className => $data) {
-                    $rowClass = $diffs['datas'][$specimenCode]['classes'][$className];
+                    $rowClass = $diffs['datas'][$catalogNumber]['classes'][$className];
                     $relationId = $rowClass['id'];
                     foreach ($rowClass['fields'] as $fieldName => $rowFields) {
                         $doUpdate = false;
@@ -186,7 +186,7 @@ class DiffHandler
                                 'fieldName' => $fieldName,
                                 'relationId' => $relationId,
                                 'choice' => $inputOrigin,
-                                'specimenCode' => $specimenCode,
+                                'catalogNumber' => $catalogNumber,
                             ];
                         }
                     }

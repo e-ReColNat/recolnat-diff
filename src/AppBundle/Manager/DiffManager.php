@@ -94,11 +94,11 @@ class DiffManager
      */
     public function searchDiffs()
     {
-        $specimenCodes = [];
+        $catalogNumber = [];
         foreach ($this->entitiesName as $entityName) {
-            $specimenCodes[$entityName] = $this->getDiff($entityName);
+            $catalogNumber[$entityName] = $this->getDiff($entityName);
         }
-        return $specimenCodes;
+        return $catalogNumber;
     }
 
     /**
@@ -122,7 +122,7 @@ class DiffManager
             //'AppBundle:Taxon' => ' /*+ INDEX(DETERMINATIONS DETER_TAX_IDX_FK) */ '
         ];
         isset ($forceIndex[$fullClassName]) ? $strForceIndex = $forceIndex[$fullClassName] : $strForceIndex = '';
-        $identifier = 'specimenCode';
+        $identifier = 'cn as catalognumber';
         $strQuery = 'SELECT '.$identifier.' FROM ';
         $arrayFields = $this->formatFieldsName($metadata, $aliasDb1, $aliasDb2);
         $strFromClauseDb1 = $this->getFromClause($fullClassName, $aliasDb1, $inversed);
@@ -146,9 +146,7 @@ class DiffManager
      */
     private function getSpecimenUniqueIdClause($alias)
     {
-        return sprintf(' %s.institutioncode||\'#\'||%s.collectioncode||\'#\'||%s.catalognumber as specimenCode ',
-            $alias, $alias,
-            $alias);
+        return sprintf(' %s.catalognumber as cn', $alias);
     }
 
     /**

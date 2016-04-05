@@ -29,17 +29,23 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
     /**
      * @param Collection $collection
-     * @param array      $specimenCodes
-     * @param            $hydratationMode int
+     * @param array      $catalogNumbers
+     * @param int        $hydratationMode int
      * @return array
+     * @internal param array $specimenCodes
      */
-    abstract public function findBySpecimenCodes(
+    abstract public function findByCatalogNumbers(
         Collection $collection,
-        $specimenCodes,
+        $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     );
 
-    abstract public function findBySpecimenCodeUnordered($specimenCodes);
+    /**
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return mixed
+     */
+    abstract public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers);
 
     /**
      * @param Collection $collection
@@ -72,9 +78,9 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      */
     abstract public function update(array $datas, $id);
 
-    public static function getExprConcatSpecimenCode($alias = 's')
+    public static function getExprCatalogNumber($alias = 's')
     {
-        $concatFields = array(
+        /*$concatFields = array(
             sprintf('%s.institutioncode', $alias),
             "'#'",
             sprintf('%s.collectioncode', $alias),
@@ -82,7 +88,8 @@ abstract class AbstractRecolnatRepository extends EntityRepository
             sprintf('%s.catalognumber', $alias),
         );
 
-        return new Expr\Func('CONCAT', $concatFields);
+        return new Expr\Func('CONCAT', $concatFields);*/
+        return sprintf('%s.catalognumber', $alias);
     }
 
 
@@ -91,15 +98,22 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      * @param string $identifierName
      * @return array
      */
-    protected function orderResultSetBySpecimenCode($resultsSet, $identifierName)
+    protected function orderResultSetByCatalogNumber($resultsSet, $identifierName)
     {
         $orderResultSet = [];
         if (count($resultsSet)) {
             foreach ($resultsSet as $resultRow) {
                 if (!empty($resultRow)) {
                     if (is_array($resultRow)) {
-                        $specimenCode = $resultRow['catalogNumber'];
-                        $orderResultSet[$specimenCode][$resultRow[$identifierName]] = $resultRow;
+                        // Pour les résultats ne venant pas de specimenrepository
+                        // le tableau a une dimension supplémentaire
+                        // TODO : trouver comment résoudre ce problème
+                        $row = $resultRow;
+                        if (!isset($resultRow[$identifierName])) {
+                            $row = $resultRow[0];
+                        }
+                        $catalogNumber = $resultRow['catalognumber'];
+                        $orderResultSet[$catalogNumber][$row[$identifierName]] = $row;
                     } else {
                         $orderResultSet[$resultRow->getCatalogNumber()][$resultRow->{'get'.$identifierName}()] = $resultRow;
                     }

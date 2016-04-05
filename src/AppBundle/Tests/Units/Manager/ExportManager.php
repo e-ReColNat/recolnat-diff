@@ -86,7 +86,7 @@ class ExportManager extends Units\Test
 
     public function testGetDiffsBySpecimensCode()
     {
-        $this->if($diff = $this->exportManager->getDiffsBySpecimensCode($this->specimenCodes))
+        $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->specimenCodes))
             ->array($diff);
     }
 }

@@ -79,21 +79,21 @@ abstract class AbstractDiff
     /**
      * @param Collection $collection
      * @param string     $class
-     * @param array      $specimenCodes
+     * @param array      $catalogNumber
      * @return $this
      */
-    public function init(Collection $collection, $class, $specimenCodes)
+    public function init(Collection $collection, $class, $catalogNumber)
     {
         $this->class = $class;
         $this->classFullName = 'AppBundle:'.ucfirst($class);
-        $arrayChunkSpecimenCodes = array_chunk($specimenCodes, $this->maxNbSpecimenPerPass);
-        if (count($arrayChunkSpecimenCodes)) {
-            foreach ($arrayChunkSpecimenCodes as $chunkSpecimenCodes) {
+        $arrayChunkCatalogNumbers = array_chunk($catalogNumber, $this->maxNbSpecimenPerPass);
+        if (count($arrayChunkCatalogNumbers)) {
+            foreach ($arrayChunkCatalogNumbers as $chunkCatalogNumbers) {
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
-                    ->findBySpecimenCodes($collection, $chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
+                    ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
                 $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
-                    ->findBySpecimenCodes($collection, $chunkSpecimenCodes, AbstractQuery::HYDRATE_ARRAY);
+                    ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
                 $this->compare();
             }
@@ -104,17 +104,16 @@ abstract class AbstractDiff
 
     /**
      * @param string     $fieldName
-     * @param string     $specimenCode
+     * @param string     $catalogNumber
      * @param string     $id
      * @param null|mixed $dataR
      * @param null|mixed $dataI
      */
-    private function addStat($fieldName, $specimenCode, $id, $dataR = null, $dataI = null)
+    private function addStat($fieldName, $catalogNumber, $id, $dataR = null, $dataI = null)
     {
         if (!isset($this->fields[$fieldName])) {
             $this->fields[$fieldName] = 0;
         }
-        $catalogNumber = Specimen::explodeSpecimenCode($specimenCode);
         if (!isset($this->stats[$catalogNumber])) {
             $this->stats[$catalogNumber] = [];
             $this->stats[$catalogNumber][$id] = [];
@@ -161,24 +160,24 @@ abstract class AbstractDiff
         $fieldNames = $metadata->getFieldNames();
         $filteredRecords = $this->getFilteredRecords();
         // Traitement des enregistrements communs aux deux bases
-        foreach ($filteredRecords['common'] as $specimenCode => $item) {
+        foreach ($filteredRecords['common'] as $catalogNumber => $item) {
             foreach ($item as $id) {
-                $this->compareFields($id, $fieldNames, $specimenCode);
+                $this->compareFields($id, $fieldNames, $catalogNumber);
             }
         }
 
         // Traitement des enregistrements restants de recolnat
-        foreach ($filteredRecords['recolnat'] as $specimenCode => $item) {
+        foreach ($filteredRecords['recolnat'] as $catalogNumber => $item) {
             foreach ($item as $id) {
-                $record = $this->recordsRecolnat[$specimenCode][$id];
-                $this->setLonesomeRecord('recolnat', $record, $specimenCode);
+                $record = $this->recordsRecolnat[$catalogNumber][$id];
+                $this->setLonesomeRecord('recolnat', $record, $catalogNumber);
             }
         }
         // Traitement des enregistrements restants de l'institution
-        foreach ($filteredRecords['institution'] as $specimenCode => $item) {
+        foreach ($filteredRecords['institution'] as $catalogNumber => $item) {
             foreach ($item as $id) {
-                $record = $this->recordsInstitution[$specimenCode][$id];
-                $this->setLonesomeRecord('institution', $record, $specimenCode);
+                $record = $this->recordsInstitution[$catalogNumber][$id];
+                $this->setLonesomeRecord('institution', $record, $catalogNumber);
             }
         }
     }
@@ -189,31 +188,31 @@ abstract class AbstractDiff
     private function getFilteredRecords()
     {
         $arrayRecords = ['common' => [], 'recolnat' => [], 'institution' => []];
-        foreach ($this->recordsRecolnat as $specimenCode => $item) {
-            if (isset($this->recordsInstitution[$specimenCode])) {
+        foreach ($this->recordsRecolnat as $catalogNumber => $item) {
+            if (isset($this->recordsInstitution[$catalogNumber])) {
                 foreach ($item as $id => $record) {
-                    if (isset($this->recordsInstitution[$specimenCode][$id])) {
-                        $arrayRecords['common'][$specimenCode][] = $id;
+                    if (isset($this->recordsInstitution[$catalogNumber][$id])) {
+                        $arrayRecords['common'][$catalogNumber][] = $id;
                     } else {
-                        $arrayRecords['recolnat'][$specimenCode][] = $id;
+                        $arrayRecords['recolnat'][$catalogNumber][] = $id;
                     }
                 }
             } else {
                 foreach ($item as $id => $record) {
-                    $arrayRecords['recolnat'][$specimenCode][] = $id;
+                    $arrayRecords['recolnat'][$catalogNumber][] = $id;
                 }
             }
         }
-        foreach ($this->recordsInstitution as $specimenCode => $item) {
-            if (isset($this->recordsRecolnat[$specimenCode])) {
+        foreach ($this->recordsInstitution as $catalogNumber => $item) {
+            if (isset($this->recordsRecolnat[$catalogNumber])) {
                 foreach ($item as $id => $record) {
-                    if (!isset($this->recordsRecolnat[$specimenCode][$id])) {
-                        $arrayRecords['institution'][$specimenCode][] = $id;
+                    if (!isset($this->recordsRecolnat[$catalogNumber][$id])) {
+                        $arrayRecords['institution'][$catalogNumber][] = $id;
                     }
                 }
             } else {
                 foreach ($item as $id => $record) {
-                    $arrayRecords['institution'][$specimenCode][] = $id;
+                    $arrayRecords['institution'][$catalogNumber][] = $id;
                 }
             }
         }
@@ -224,12 +223,12 @@ abstract class AbstractDiff
     /**
      * @param string $idRecord
      * @param array  $fieldNames
-     * @param string $specimenCode
+     * @param string $catalogNumber
      */
-    private function compareFields($idRecord, $fieldNames, $specimenCode)
+    private function compareFields($idRecord, $fieldNames, $catalogNumber)
     {
-        $recordRecolnat = $this->recordsRecolnat[$specimenCode][$idRecord];
-        $recordInstitution = $this->recordsInstitution[$specimenCode][$idRecord];
+        $recordRecolnat = $this->recordsRecolnat[$catalogNumber][$idRecord];
+        $recordInstitution = $this->recordsInstitution[$catalogNumber][$idRecord];
         foreach ($fieldNames as $fieldName) {
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
                 $dataR = $recordRecolnat[$fieldName];
@@ -238,10 +237,10 @@ abstract class AbstractDiff
                     /** @var \DateTime $dataR */
                     /** @var \DateTime $dataI */
                     if ($dataR->format('c') !== $dataI->format('c')) {
-                        $this->addStat($fieldName, $specimenCode, $idRecord, $dataR, $dataI);
+                        $this->addStat($fieldName, $catalogNumber, $idRecord, $dataR, $dataI);
                     }
                 } elseif ($dataR !== $dataI) {
-                    $this->addStat($fieldName, $specimenCode, $idRecord, $dataR, $dataI);
+                    $this->addStat($fieldName, $catalogNumber, $idRecord, $dataR, $dataI);
                 }
             }
         }
@@ -250,9 +249,9 @@ abstract class AbstractDiff
     /**
      * @param string $db
      * @param mixed  $record
-     * @param string $specimenCode
+     * @param string $catalogNumber
      */
-    private function setLonesomeRecord($db, $record, $specimenCode)
+    private function setLonesomeRecord($db, $record, $catalogNumber)
     {
         $id = null;
         if (is_array($record)) {
@@ -261,7 +260,7 @@ abstract class AbstractDiff
             $id = $record->{$this->getIdSetter()}();
         }
         if (!is_null($id)) {
-            $this->lonesomeRecords[$db][] = ['code' => Specimen::explodeSpecimenCode($specimenCode), 'id' => $id];
+            $this->lonesomeRecords[$db][] = ['code' => $catalogNumber, 'id' => $id];
         }
     }
 

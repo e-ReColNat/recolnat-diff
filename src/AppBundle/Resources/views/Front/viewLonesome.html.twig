@@ -36,7 +36,7 @@
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
                     {% include '@App/Front/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
-                    {% for specimenCode, records in specimens %}
+                    {% for catalogNumber, records in specimens %}
                         {% for occurrenceid, specimen in records %}
                             {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' with {'loop' : loop.parent.loop} %}
                         {% endfor %}

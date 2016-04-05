@@ -49,46 +49,46 @@ class RecolteRepository extends AbstractRecolnatRepository
     }
 
     /**
-     *
-     * @param array $specimenCodes
+     * @param Collection $collection
+     * @param array      $catalogNumbers
      * @return array
      */
-    public function findBySpecimenCodeUnordered($specimenCodes)
+    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('r')
             ->from('AppBundle\Entity\Recolte', 'r')
             ->join('AppBundle\Entity\Specimen', 's')
             ->andWhere('s.recolte = r.eventid');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Collection $collection
-     * @param array      $specimenCodes
+     * @param array      $catalogNumbers
      * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes(
+    public function findByCatalogNumbers(
         Collection $collection,
-        $specimenCodes,
+        $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
         $qb = $this->createQueryBuilder('r');
 
         $qb
             ->select('r')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->join('r.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'eventid');
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'eventid');
     }
 
     /**
-     * @param array $datas
+     * @param array  $datas
      * @param string $id
      * @return mixed
      */

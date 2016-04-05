@@ -45,8 +45,10 @@ class Diffs extends \SplFileObject
         $fs = new Filesystem();
         if ($fs->exists($this->getPathname())) {
             $fileContent = json_decode(file_get_contents($this->getPathname()), true);
+
             return $fileContent;
         }
+
         return array();
     }
 
@@ -86,6 +88,7 @@ class Diffs extends \SplFileObject
                 }
             }
         }
+
         return $returnLonesomes;
     }
 
@@ -94,26 +97,26 @@ class Diffs extends \SplFileObject
      * @param string|null $selectedClassName
      * @return array
      */
-    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
+    public function getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName = null)
     {
-        $lonesomeRecordsBySpecimenCodes = [];
+        $lonesomeRecordsByCatalogNumbers = [];
         $specimenLonesomeRecords = $this->getLonesomeRecords($db, 'specimen');
-        $refSpecimenCode = array_column($specimenLonesomeRecords['Specimen'][$db], 'specimenCode');
+        $refCatalogNumber = array_column($specimenLonesomeRecords['Specimen'][$db], 'catalogNumber');
         $fullLonesomeRecords = $this->getLonesomeRecords($db, $selectedClassName);
 
         if (!empty($fullLonesomeRecords)) {
             foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
                 foreach ($lonesomeRecords[$db] as $item) {
-                    // Si le specimencode de l'enregistrement est dans la liste des specimens de ref c'est que tous les
+                    // Si le catalogNumber de l'enregistrement est dans la liste des specimens de ref c'est que tous les
                     // enregistrements correspondant à ce specimen code sont nouveaux
                     // puisque le specimen n'est pas dans l'autre base
-                    if (!in_array($item['specimenCode'], $refSpecimenCode) || $selectedClassName == 'specimen') {
-                        $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
+                    if (!in_array($item['code'], $refCatalogNumber) || $selectedClassName == 'specimen') {
+                        $lonesomeRecordsByCatalogNumbers[$item['code']][] = [
                             'className' => $className,
                             'id' => $item['id']
                         ];
                     } elseif ($selectedClassName == 'all') {
-                        $lonesomeRecordsBySpecimenCodes[$item['specimenCode']][] = [
+                        $lonesomeRecordsByCatalogNumbers[$item['code']][] = [
                             'className' => $className,
                             'id' => $item['id']
                         ];
@@ -123,29 +126,31 @@ class Diffs extends \SplFileObject
             }
         }
 
-        return $lonesomeRecordsBySpecimenCodes;
+        return $lonesomeRecordsByCatalogNumbers;
     }
 
 
     /**
      * retourne les nouveaux enregistrements pour un specimen code et une base
-     * @param string      $specimenCode
+     * @param string      $catalogNumber
      * @param null|string $db
      * @return array
      */
-    public function getLonesomeRecordsForSpecimenCode($specimenCode, $db = null)
+    public function getLonesomeRecordsForCatalogNumber($catalogNumber, $db = null)
     {
-        if (isset($this->getData()['statsLonesomeRecords'][$specimenCode])) {
+        if (isset($this->getData()['statsLonesomeRecords'][$catalogNumber])) {
             if (is_null($db)) {
-                return $this->getData()['statsLonesomeRecords'][$specimenCode];
+                return $this->getData()['statsLonesomeRecords'][$catalogNumber];
             } else {
-                $lonesomeRecords = $this->getData()['statsLonesomeRecords'][$specimenCode];
+                $lonesomeRecords = $this->getData()['statsLonesomeRecords'][$catalogNumber];
+
                 return array_filter($lonesomeRecords, function($el) use ($db) {
                     return $el['db'] == $db;
                 });
             }
 
         }
+
         return [];
     }
 
@@ -155,11 +160,12 @@ class Diffs extends \SplFileObject
      * @param string      $db
      * @return array
      */
-    public function getLonesomeRecordsOrderedBySpecimenCodes($db, $className = null)
+    public function getLonesomeRecordsOrderedByCatalogNumbers($db, $className = null)
     {
         if (!is_null($className)) {
             $className = ucfirst(strtolower($className));
         }
+
         return array_filter($this->getData()['statsLonesomeRecords'], function($items) use ($db, $className) {
             $itemsFiltered = array_filter($items, function($item) use ($db, $className) {
                 if (is_null($className)) {
@@ -168,6 +174,7 @@ class Diffs extends \SplFileObject
                     return $item['db'] == $db && $item['class'] == $className;
                 }
             });
+
             return count($itemsFiltered) > 0;
         });
     }
@@ -205,32 +212,37 @@ class Diffs extends \SplFileObject
                 }
             }
         }
+
         return $returnDiffs;
     }
 
     /**
-     * renvoie les résultats dont le specimenCode fait partie de $selectedSpecimensCode
+     * renvoie les résultats dont le catalogNumber fait partie de $selectedCatalogNumbers
      * @param array $diffs
-     * @param array $selectedSpecimensCode
+     * @param array $selectedCatalogNumbers
      * @return array
      */
-    public function filterBySpecimensCode($diffs, array $selectedSpecimensCode = [])
+    public function filterByCatalogNumbers($diffs, array $selectedCatalogNumbers = [])
     {
         $returnDiffs = $diffs;
-        if (count($selectedSpecimensCode) > 0) {
+        if (count($selectedCatalogNumbers) > 0) {
             // Remise des datas à zero
             $returnDiffs['datas'] = [];
-            $returnDiffs['classes'] = $diffs['classes'];
-            foreach ($diffs['classes'] as $className => $specimensCode) {
-                foreach ($specimensCode as $specimenCode=>$datas) {
-                    if (in_array($specimenCode, $selectedSpecimensCode)) {
-                        $returnDiffs['datas'][$specimenCode] = $diffs['datas'][$specimenCode];
-                    } else {
-                        unset($returnDiffs['classes'][$className][$specimenCode]);
+            $returnDiffs['classes'] = [];
+            foreach ($diffs['classes'] as $className => $catalogNumbers) {
+                foreach ($selectedCatalogNumbers as $selectedCatalogNumber) {
+                    if (isset($diffs['datas'][$selectedCatalogNumber]) &&
+                        isset($diffs['classes'][$className][$selectedCatalogNumber])) {
+                        $returnDiffs['datas'][$selectedCatalogNumber] = $diffs['datas'][$selectedCatalogNumber];
+                        if (!isset($returnDiffs['classes'][$className])) {
+                            $returnDiffs['classes'][$className]=[];
+                        }
+                        $returnDiffs['classes'][$className][]=$selectedCatalogNumber;
                     }
                 }
             }
         }
+
         return $returnDiffs;
     }
 
@@ -249,29 +261,30 @@ class Diffs extends \SplFileObject
                 if (!isset($tempChoices[$choice['className']])) {
                     $tempChoices[$choice['className']] = [];
                 }
-                if (!isset($tempChoices[$choice['className']][$choice['specimenCode']])) {
-                    $tempChoices[$choice['className']][$choice['specimenCode']] = 0;
+                if (!isset($tempChoices[$choice['className']][$choice['catalogNumber']])) {
+                    $tempChoices[$choice['className']][$choice['catalogNumber']] = 0;
                 }
-                $tempChoices[$choice['className']][$choice['specimenCode']]++;
+                $tempChoices[$choice['className']][$choice['catalogNumber']]++;
             }
-            foreach ($tempChoices as $className => $choiceSpecimenCode) {
-                foreach ($choiceSpecimenCode as $specimenCode => $comptFieldChoice) {
-                    if (isset($returnDiffs['classes'][$className]) && isset($returnDiffs['classes'][$className][$specimenCode])
+            foreach ($tempChoices as $className => $choiceCatalogNumber) {
+                foreach ($choiceCatalogNumber as $catalogNumber => $comptFieldChoice) {
+                    if (isset($returnDiffs['classes'][$className]) && isset($returnDiffs['classes'][$className][$catalogNumber])
                     ) {
-                        $totalDiffFields = count($returnDiffs['datas'][$specimenCode]['classes'][$className]['fields']);
+                        $totalDiffFields = count($returnDiffs['datas'][$catalogNumber]['classes'][$className]['fields']);
                         if ($totalDiffFields == $comptFieldChoice) {
-                            if (($key = array_search($specimenCode, $returnDiffs['classes'][$className])) !== false) {
+                            if (($key = array_search($catalogNumber, $returnDiffs['classes'][$className])) !== false) {
                                 unset($returnDiffs['classes'][$className][$key]);
                             }
-                            unset($returnDiffs['datas'][$specimenCode]['classes'][$className]);
-                            if (isset($returnDiffs['datas'][$specimenCode]) && count($returnDiffs['datas'][$specimenCode]['classes']) == 0) {
-                                unset($returnDiffs['datas'][$specimenCode]);
+                            unset($returnDiffs['datas'][$catalogNumber]['classes'][$className]);
+                            if (isset($returnDiffs['datas'][$catalogNumber]) && count($returnDiffs['datas'][$catalogNumber]['classes']) == 0) {
+                                unset($returnDiffs['datas'][$catalogNumber]);
                             }
                         }
                     }
                 }
             }
         }
+
         return $returnDiffs;
     }
 
@@ -279,19 +292,20 @@ class Diffs extends \SplFileObject
      * filtre les résultats
      * @param array $diffs
      * @param array $classesName
-     * @param array $selectedSpecimensCode
+     * @param array $selectedCatalogNumbers
      * @param array $choicesToRemove
      * @return array
      */
     public function filterResults(
         $diffs,
         array $classesName = [],
-        array $selectedSpecimensCode = [],
+        array $selectedCatalogNumbers = [],
         array $choicesToRemove = []
     ) {
         $returnDiffs = $this->filterByClassesName($diffs, $classesName);
-        $returnDiffs = $this->filterBySpecimensCode($returnDiffs, $selectedSpecimensCode);
+        $returnDiffs = $this->filterByCatalogNumbers($returnDiffs, $selectedCatalogNumbers);
         $returnDiffs = $this->filterByChoicesDone($returnDiffs, $choicesToRemove);
+
         return $returnDiffs;
     }
 
