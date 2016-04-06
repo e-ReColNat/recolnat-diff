@@ -7,7 +7,6 @@ use AppBundle\Entity\Repository\AbstractRecolnatRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Description of DiffManager

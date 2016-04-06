@@ -16,7 +16,7 @@ class DiffHandler
     /*
      * @var Diffs
      */
-    protected $diffs = null;
+    protected $diffsFile = null;
 
     protected $institutionPath;
     protected $collectionCode;
@@ -43,7 +43,7 @@ class DiffHandler
      */
     public function shouldSearchDiffs()
     {
-        return !is_file($this->getCollectionPath().'/'.Diffs::DIFF_FILENAME);
+        return !is_file($this->getCollectionPath().Diffs::DIFF_FILENAME);
     }
 
     /**
@@ -102,11 +102,11 @@ class DiffHandler
      */
     public function getDiffsFile()
     {
-        if (is_null($this->diffs)) {
+        if (is_null($this->diffsFile)) {
             $this->setDiffsFile();
         }
 
-        return $this->diffs;
+        return $this->diffsFile;
     }
 
     /**
@@ -124,7 +124,7 @@ class DiffHandler
      */
     public function setDiffsFile()
     {
-        $this->diffs = new Diffs($this->getCollectionPath());
+        $this->diffsFile = new Diffs($this->getCollectionPath());
 
         return $this;
     }

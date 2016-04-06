@@ -1,7 +1,6 @@
 <?php
 namespace AppBundle\Entity\Repository;
 
-use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
@@ -80,15 +79,6 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
     public static function getExprCatalogNumber($alias = 's')
     {
-        /*$concatFields = array(
-            sprintf('%s.institutioncode', $alias),
-            "'#'",
-            sprintf('%s.collectioncode', $alias),
-            "'#'",
-            sprintf('%s.catalognumber', $alias),
-        );
-
-        return new Expr\Func('CONCAT', $concatFields);*/
         return sprintf('%s.catalognumber', $alias);
     }
 
@@ -105,9 +95,6 @@ abstract class AbstractRecolnatRepository extends EntityRepository
             foreach ($resultsSet as $resultRow) {
                 if (!empty($resultRow)) {
                     if (is_array($resultRow)) {
-                        // Pour les résultats ne venant pas de specimenrepository
-                        // le tableau a une dimension supplémentaire
-                        // TODO : trouver comment résoudre ce problème
                         $row = $resultRow;
                         if (!isset($resultRow[$identifierName])) {
                             $row = $resultRow[0];

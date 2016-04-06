@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Repository;
 
-use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
 

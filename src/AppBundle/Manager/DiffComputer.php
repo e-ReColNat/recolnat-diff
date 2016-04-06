@@ -3,7 +3,6 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
-use AppBundle\Entity\Specimen;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
@@ -88,7 +87,6 @@ class DiffComputer
                 $this->computeClassname($className);
             }
         }
-        $this->diffs['classes'] = $this->classes;
 
         return $this;
     }
@@ -118,6 +116,7 @@ class DiffComputer
             $this->computeDiffs($className);
             unset($diffClassManager);
         }
+        $this->diffs['classes'] = $this->classes;
     }
 
     private function setTaxons()
@@ -299,4 +298,13 @@ class DiffComputer
                 'statsLonesomeRecords' => $this->getStatsLonesomeRecords()
             ]);
     }
+
+    /**
+     * @param Collection $collection
+     */
+    public function setCollection($collection)
+    {
+        $this->collection = $collection;
+    }
+
 }

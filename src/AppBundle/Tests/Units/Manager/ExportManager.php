@@ -55,8 +55,8 @@ class ExportManager extends Units\Test
             $this->container->get('diff.computer')
         );
 
-        $user = new User('fakeuser', '...','', ["ROLE_USER"]);
-        $institution = $managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode'=>'MHNAIX']);
+        $user = new User('fakeuser', '...', '', ["ROLE_USER"]);
+        $institution = $managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode' => 'MHNAIX']);
         $user->setExportPath($this->container->getParameter('export_path'));
         $user->setInstitution($institution);
         $this->exportManager->init($user)->setCollectionCode('AIX');

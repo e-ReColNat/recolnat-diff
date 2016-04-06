@@ -232,12 +232,13 @@ class Diffs extends \SplFileObject
             foreach ($diffs['classes'] as $className => $catalogNumbers) {
                 foreach ($selectedCatalogNumbers as $selectedCatalogNumber) {
                     if (isset($diffs['datas'][$selectedCatalogNumber]) &&
-                        isset($diffs['classes'][$className][$selectedCatalogNumber])) {
+                        isset($diffs['classes'][$className][$selectedCatalogNumber])
+                    ) {
                         $returnDiffs['datas'][$selectedCatalogNumber] = $diffs['datas'][$selectedCatalogNumber];
                         if (!isset($returnDiffs['classes'][$className])) {
-                            $returnDiffs['classes'][$className]=[];
+                            $returnDiffs['classes'][$className] = [];
                         }
-                        $returnDiffs['classes'][$className][]=$selectedCatalogNumber;
+                        $returnDiffs['classes'][$className][] = $selectedCatalogNumber;
                     }
                 }
             }
@@ -276,7 +277,9 @@ class Diffs extends \SplFileObject
                                 unset($returnDiffs['classes'][$className][$key]);
                             }
                             unset($returnDiffs['datas'][$catalogNumber]['classes'][$className]);
-                            if (isset($returnDiffs['datas'][$catalogNumber]) && count($returnDiffs['datas'][$catalogNumber]['classes']) == 0) {
+                            if (isset($returnDiffs['datas'][$catalogNumber]) &&
+                                count($returnDiffs['datas'][$catalogNumber]['classes']) == 0
+                            ) {
                                 unset($returnDiffs['datas'][$catalogNumber]);
                             }
                         }

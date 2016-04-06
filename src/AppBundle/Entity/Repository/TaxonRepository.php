@@ -48,8 +48,8 @@ class TaxonRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param array $id
-     * @param int   $fetchMode
+     * @param string $id
+     * @param int    $fetchMode
      * @return array|object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -163,7 +163,6 @@ class TaxonRepository extends AbstractRecolnatRepository
         $results = $this->getEntityManager()->getConnection()->executeQuery(
             $nativeSqlTaxon,
             [
-                //'institutionCode' => $institutionCode,
                 'collectionCode' => $collection->getCollectioncode(),
                 'catalogNumbers' => $catalogNumbers
             ],

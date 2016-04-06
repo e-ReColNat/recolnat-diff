@@ -33,6 +33,10 @@ class GenericEntityManager extends Units\Test
      */
     protected $container;
 
+    protected $collection;
+    protected $collectionCode='AIX';
+
+
     public function beforeTestMethod($method)
     {
         $this->kernel = new \AppKernel('test', true);
@@ -41,6 +45,8 @@ class GenericEntityManager extends Units\Test
         // Store the container and the entity manager in test case properties
         $this->container = $this->kernel->getContainer();
         $managerRegistry = $this->container->get('doctrine');
+        $this->collection = $managerRegistry->getRepository('AppBundle:Collection')
+            ->findOneBy(['collectioncode' => $this->collectionCode]);
 
         $this->genericEntityManager = new \AppBundle\Manager\GenericEntityManager($managerRegistry);
     }
@@ -54,7 +60,7 @@ class GenericEntityManager extends Units\Test
 
     public function testGetEntitiesByCatalogNumbers()
     {
-        $specimens = $this->genericEntityManager->getEntitiesByCatalogNumbers('recolnat', 'specimen',
+        $specimens = $this->genericEntityManager->getEntitiesByCatalogNumbers('recolnat', $this->collection, 'specimen',
             $this->catalogNumbers);
         $this->array(
             $specimens
@@ -95,6 +101,7 @@ class GenericEntityManager extends Units\Test
     public function testGetEntitiesLinkedToSpecimens()
     {
         $this->if($entities = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
+            $this->collection,
             $this->catalogNumbers))
             ->array($entities)->sizeOf($entities)->isEqualTo(2);
 
@@ -102,7 +109,7 @@ class GenericEntityManager extends Units\Test
 
     public function testFormatArraySpecimen()
     {
-        $entities = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $this->catalogNumbers);
+        $entities = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $this->collection, $this->catalogNumbers);
         foreach ($entities as $entity) {
             $this->if($formatEntities = $this->genericEntityManager->formatArraySpecimen($entity))
                 ->array($formatEntities)

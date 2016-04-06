@@ -3,7 +3,6 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
-use AppBundle\Entity\Specimen;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;

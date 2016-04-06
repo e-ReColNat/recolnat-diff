@@ -4,7 +4,6 @@ namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Query;
 
 /**
  * SpecimenRepository
@@ -61,19 +60,9 @@ class SpecimenRepository extends AbstractRecolnatRepository
      */
     public function findOneByCatalogNumber(Collection $collection, $catalogNumber)
     {
-        $qb = $this->createQueryBuilder('s');
-        $qb
-            ->select('s, b, d, t, m, st, r, l')
-            ->leftJoin('s.bibliographies', 'b')
-            ->leftJoin('s.determinations', 'd')
-            ->leftJoin('d.taxon', 't')
-            ->leftJoin('s.multimedias', 'm')
-            ->leftJoin('s.stratigraphy', 'st')
-            ->leftJoin('s.recolte', 'r')
-            ->leftJoin('r.localisation', 'l');
-        $this->setSpecimenCodesWhereClause($collection, $qb, [$catalogNumber]);
+        $query = $this->getQbForFindByCatalogNumber($collection, [$catalogNumber]);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $query->getOneOrNullResult();
     }
 
     /**
@@ -83,20 +72,9 @@ class SpecimenRepository extends AbstractRecolnatRepository
      */
     public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
-        $qb = $this->createQueryBuilder('s');
+        $query = $this->getQbForFindByCatalogNumber($collection, $catalogNumbers);
 
-        $qb
-            ->select('s, b, d, t, m, st, r, l')
-            ->leftJoin('s.bibliographies', 'b')
-            ->leftJoin('s.determinations', 'd')
-            ->leftJoin('d.taxon', 't')
-            ->leftJoin('s.multimedias', 'm')
-            ->leftJoin('s.stratigraphy', 'st')
-            ->leftJoin('s.recolte', 'r')
-            ->leftJoin('r.localisation', 'l');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $qb->getQuery()->getArrayResult();
+        return $query->getArrayResult();
     }
 
     /**
@@ -110,6 +88,36 @@ class SpecimenRepository extends AbstractRecolnatRepository
         $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
+        $query = $this->getQbForFindByCatalogNumber($collection, $catalogNumbers);
+
+        $query->useResultCache(true, 300);
+
+        return $this->orderResultSetByCatalogNumber($query->getResult($hydratationMode), 'occurrenceid');
+    }
+
+
+    /**
+     * @param array  $datas
+     * @param string $id
+     * @return mixed
+     */
+    public function update(array $datas, $id)
+    {
+        $qb = $this->createUpdateQuery($datas);
+
+        $qb->where('a.occurrenceid = HEXTORAW(:id)')
+            ->setParameter('id', $id);
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return \Doctrine\ORM\Query
+     */
+    public function getQbForFindByCatalogNumber(Collection $collection, $catalogNumbers)
+    {
         $qb = $this->createQueryBuilder('s');
 
         $qb
@@ -124,23 +132,6 @@ class SpecimenRepository extends AbstractRecolnatRepository
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
         $query = $qb->getQuery();
 
-        $query->useResultCache(true, 300);
-        return $this->orderResultSetByCatalogNumber($query->getResult($hydratationMode), 'occurrenceid');
-    }
-
-
-    /**
-     * @param array $datas
-     * @param string $id
-     * @return mixed
-     */
-    public function update(array $datas, $id)
-    {
-        $qb = $this->createUpdateQuery($datas);
-
-        $qb->where('a.occurrenceid = HEXTORAW(:id)')
-            ->setParameter('id', $id);
-
-        return $qb->getQuery()->execute();
+        return $query;
     }
 }
