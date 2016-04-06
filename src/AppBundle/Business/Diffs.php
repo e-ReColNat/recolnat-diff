@@ -229,12 +229,12 @@ class Diffs extends \SplFileObject
             // Remise des datas à zero
             $returnDiffs['datas'] = [];
             $returnDiffs['classes'] = [];
-            foreach ($diffs['classes'] as $className => $catalogNumbers) {
-                foreach ($selectedCatalogNumbers as $selectedCatalogNumber) {
-                    if (isset($diffs['datas'][$selectedCatalogNumber]) &&
-                        isset($diffs['classes'][$className][$selectedCatalogNumber])
-                    ) {
-                        $returnDiffs['datas'][$selectedCatalogNumber] = $diffs['datas'][$selectedCatalogNumber];
+
+            foreach ($selectedCatalogNumbers as $selectedCatalogNumber) {
+                if (array_key_exists($selectedCatalogNumber, $diffs['datas'])) {
+                    $returnDiffs['datas'][$selectedCatalogNumber] = $diffs['datas'][$selectedCatalogNumber];
+                    foreach (array_keys($diffs['datas'][$selectedCatalogNumber]) as $className) {
+                        $className = ucfirst($className);
                         if (!isset($returnDiffs['classes'][$className])) {
                             $returnDiffs['classes'][$className] = [];
                         }
@@ -242,6 +242,7 @@ class Diffs extends \SplFileObject
                     }
                 }
             }
+
         }
 
         return $returnDiffs;

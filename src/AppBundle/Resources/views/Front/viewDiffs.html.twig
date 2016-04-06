@@ -17,22 +17,8 @@
             <div id="page-content-wrapper">
                 {% include '@App/Front/partial/buttonHamburger.html.twig' %}
                 {% include '@App/Front/partial/breadcrumb.html.twig' %}
+                {% include '@App/Front/partial/pagination.html.twig' %}
 
-                <div class="text-center">
-                    <div style="display: inline-block; vertical-align: middle;">
-                        {{ knp_pagination_render(pagination) }}
-                    </div>
-                    <div style="display: inline-block;vertical-align: middle;">
-                        <label for="maxItemPerPage"
-                               style="font-size: 0.85em; font-weight: 500;">{{ 'label.maxItemPerPage' | trans }}</label>
-                        <select name="maxItemPerPage" id="maxItemPerPage">
-                            <option value="5" {{ pagination.getItemNumberPerPage == 5 ? 'selected="true"':'' }}>5</option>
-                            <option value="10" {{ pagination.getItemNumberPerPage == 10 ? 'selected="true"':'' }}>10</option>
-                            <option value="20" {{ pagination.getItemNumberPerPage == 20 ? 'selected="true"':'' }}>20</option>
-                            <option value="50" {{ pagination.getItemNumberPerPage == 50 ? 'selected="true"':'' }}>50</option>
-                        </select>
-                    </div>
-                </div>
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
                     {% include '@App/Front/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
@@ -54,29 +40,5 @@
 
 {% block javascripts %}
     <script src="{{ asset('assets/AppBundle/js/viewDiffs.js') }}"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var $maxItemPerPage = $('#maxItemPerPage');
-            if (localStorage.getItem('maxItemPerPage')) {
-                $maxItemPerPage.val(localStorage.getItem('maxItemPerPage'));
-                $.get(Routing.generate('setmaxitem', {'maxItem': localStorage.getItem('maxItemPerPage')}));
-            }
-            $maxItemPerPage.change(function () {
-                {% if selectedClassName is not defined %}
-                    {% set selectedClassName = "all" %}
-                {% endif %}
-                var url;
-                {% if app.request.attributes.get('_route') == 'lonesomes' %}
-                    url = "{{ path(app.request.attributes.get('_route'),{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
-                {% else %}
-                    url = "{{ path(app.request.attributes.get('_route'),
-                {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
-                {% endif %}
-
-                var maxItemPerPage = $maxItemPerPage.find(":selected").text();
-                localStorage.setItem('maxItemPerPage', maxItemPerPage);
-                jQuery(location).attr('href', url.replace('_itemNum', maxItemPerPage));
-            });
-        });
-    </script>
+    {%  include '@App/Front/partial/pagination_js.html.twig' %}
 {% endblock %}

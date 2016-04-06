@@ -219,4 +219,52 @@ class DiffHandler
             mkdir($dir, 0755);
         }
     }
+
+    /**
+     * @param string $search
+     * @return array
+     */
+    public function search($search)
+    {
+        $catalogNumbers = $this->searchByCatalogNumber($search);
+        $catalogNumbers = array_merge($this->searchByTaxon($search), $catalogNumbers);
+
+        return $catalogNumbers;
+    }
+
+    /**
+     * @param string $search
+     * @return array
+     */
+    public function searchByTaxon($search)
+    {
+        $catalogNumbers = [];
+        $search = strtolower($search);
+        $filteredData = array_filter($this->getDiffsFile()->getData()['datas'], function($el) use ($search) {
+            return (strpos(strtolower($el['taxon']), $search) !== false);
+        });
+        if (!empty($filteredData)) {
+            $catalogNumbers = array_keys($filteredData);
+        }
+
+        return $catalogNumbers;
+    }
+
+    /**
+     * @param string $search
+     * @return array
+     */
+    public function searchByCatalogNumber($search)
+    {
+        $catalogNumbers = [];
+        $regExpSearch = sprintf('/%s/i', $search);
+
+        $results = preg_grep($regExpSearch, array_keys($this->getDiffsFile()->getData()['datas']));
+
+        if (!empty($results)) {
+            $catalogNumbers = $results;
+        }
+
+        return $catalogNumbers;
+    }
 }

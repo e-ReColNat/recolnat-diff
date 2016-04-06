@@ -103,7 +103,7 @@
                 <target state="translated">Rédacteur</target> 
             </trans-unit>
             <trans-unit id="26" approved="yes">
-                <source>label.bibliography.fields.datePublication</source> 
+                <source>label.bibliography.fields.datepublication</source>
                 <target state="translated">Date de publication</target> 
             </trans-unit>
             <trans-unit id="27" approved="yes">
