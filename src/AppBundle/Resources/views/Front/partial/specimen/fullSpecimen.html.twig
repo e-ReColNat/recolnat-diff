@@ -4,11 +4,13 @@
 {% if app.request.attributes.get('_route') != 'lonesomes' %}
     {% set specimenRecolnat = attribute(specimens.recolnat, catalogNumber) | first %}
     {% set specimenInstitution = attribute(specimens.institution, catalogNumber) | first %}
+{% else %}
+    {% set specimenRecolnat = specimen %}
 {% endif %}
 
 <div class="js_specimen panel panel-default" id="{{ catalogNumber }}" data-catalognumber="{{ catalogNumber }}">
     <div class="panel-heading">
-            {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
+        {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
     </div>
     <div class="panel-body">
         <ul class="nav nav-tabs" id="tabs">

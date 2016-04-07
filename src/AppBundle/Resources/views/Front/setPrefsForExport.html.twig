@@ -1,9 +1,19 @@
-<h1 class="page-header">{{ 'prefs.save.title' | trans({}, 'prefs') }}</h1>
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{ 'prefs.save.title' | trans({}, 'prefs') }}</h4>
+    </div>
+    <div class="modal-body">
+        <p>Il y a {{ sumStats.diffs - statsChoices.sum }} choix non effectués</p>
+        <p>Il y a {{ sumLonesomeRecords.recolnat }} nouveaux enregistrements du côté de recolnat</p>
+        <p>Il y a {{ sumLonesomeRecords.institution }} nouveaux enregistrements du côté de l'institution</p>
 
-<p>Il y a {{ sumStats.diffs - statsChoices.sum }} choix non effectués</p>
-<p>Il y a {{ sumLonesomeRecords.recolnat }} nouveaux enregistrements du côté de recolnat</p>
-<p>Il y a {{ sumLonesomeRecords.institution }} nouveaux enregistrements du côté de l'institution</p>
-
-{{ form_start(form) }}
-{{ form_widget(form) }}
-{{ form_end(form) }}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{'modal.cancel' | trans}}</button>
+        <button type="button" class="btn btn-primary confirm">{{'modal.agree' | trans}}</button>
+    </div>
+</div><!-- /.modal-content -->

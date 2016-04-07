@@ -81,7 +81,7 @@ $(document).ready(function () {
     var $parameters = $("#parameters");
     var institutionCode = $parameters.data("institutioncode") ;
     var collectionCode = $parameters.data("collectioncode") ;
-    var $checkboxSpecimen = $(".specimen").find("[name^='check-specimen']");
+    var $checkboxSpecimen = $(".js_specimen").find("[name^='check-specimen']");
     $("#menu-toggle").click(function (e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");

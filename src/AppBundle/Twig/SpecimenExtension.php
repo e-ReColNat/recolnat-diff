@@ -259,16 +259,16 @@ class SpecimenExtension extends \Twig_Extension
 
     /**
      * @param string $entity
-     * @param string $fieldname
+     * @param string $fieldName
      * @return string
      */
-    public function getFieldLabel($entity, $fieldname)
+    public function getFieldLabel($entity, $fieldName)
     {
-        if ($fieldname[strlen($fieldname) - 1] == '_') {
-            $fieldname = substr($fieldname, 0, -1);
+        if ($fieldName[strlen($fieldName) - 1] == '_') {
+            $fieldName = substr($fieldName, 0, -1);
         }
 
-        return sprintf('label.%s.fields.%s', strtolower($entity), strtolower($fieldname));
+        return sprintf('label.%s.fields.%s', strtolower($entity), strtolower($fieldName));
     }
 
     /**

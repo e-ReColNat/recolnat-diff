@@ -6,6 +6,7 @@ use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
+use AppBundle\Manager\ExportManager;
 use Doctrine\ORM\AbstractQuery;
 use Knp\Component\Pager\Pagination\AbstractPagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -130,7 +131,7 @@ class FrontController extends Controller
         /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $catalogNumbers = array_keys($pagination->getItems());
-        $specimens=[];
+        $specimens = [];
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
             $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
         $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
@@ -301,6 +302,7 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
 
         $allCatalogNumbers = json_decode($jsonCatalogNumbers);
+
         list($pagination, $diffs, $specimens) = $this->getDataForDisplay($page, $allCatalogNumbers, $request,
             $exportManager, $collection);
 
@@ -359,11 +361,11 @@ class FrontController extends Controller
     }
 
     /**
-     * @param int     $page
-     * @param array   $catalogNumbers
-     * @param Request $request
-     * @param         $exportManager
-     * @param         $collection
+     * @param int           $page
+     * @param array         $catalogNumbers
+     * @param Request       $request
+     * @param ExportManager $exportManager
+     * @param Collection    $collection
      * @return array
      */
     private function getDataForDisplay($page, $catalogNumbers, $request, $exportManager, $collection)
@@ -374,12 +376,12 @@ class FrontController extends Controller
         $pagination = $paginator->paginate($catalogNumbers, $page, $maxItemPerPage);
         $catalogNumbers = $pagination->getItems();
 
-
         $diffs = $exportManager->getDiffsByCatalogNumbers($catalogNumbers);
-        $specimens=[];
-        $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
-            $catalogNumbers,
-            AbstractQuery::HYDRATE_OBJECT);
+        $specimens = [];
+
+        $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')
+            ->findByCatalogNumbers($collection,$catalogNumbers,AbstractQuery::HYDRATE_OBJECT);
+
         $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
             'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
