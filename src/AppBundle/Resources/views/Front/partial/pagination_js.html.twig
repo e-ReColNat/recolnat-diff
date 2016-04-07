@@ -3,7 +3,11 @@
         var $maxItemPerPage = $('#maxItemPerPage');
         if (localStorage.getItem('maxItemPerPage')) {
             $maxItemPerPage.val(localStorage.getItem('maxItemPerPage'));
-            $.get(Routing.generate('setmaxitem', {'maxItem': localStorage.getItem('maxItemPerPage')}));
+            $.ajax({
+                url: Routing.generate('setmaxitem', {'maxItem': localStorage.getItem('maxItemPerPage')}),
+                global: false,
+                method:'GET'
+            });
         }
         $maxItemPerPage.change(function () {
             {% if selectedClassName is not defined %}
