@@ -1,0 +1,15 @@
+<div class="text-center">
+    <div style="display: inline-block; vertical-align: middle;">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    <div style="display: inline-block;vertical-align: middle;">
+        <label for="maxItemPerPage"
+               style="font-size: 0.85em; font-weight: 500;">{{ 'label.maxItemPerPage' | trans }}</label>
+        <select name="maxItemPerPage" id="maxItemPerPage">
+            <option value="5" {{ pagination.getItemNumberPerPage == 5 ? 'selected="true"':'' }}>5</option>
+            <option value="10" {{ pagination.getItemNumberPerPage == 10 ? 'selected="true"':'' }}>10</option>
+            <option value="20" {{ pagination.getItemNumberPerPage == 20 ? 'selected="true"':'' }}>20</option>
+            <option value="50" {{ pagination.getItemNumberPerPage == 50 ? 'selected="true"':'' }}>50</option>
+        </select>
+    </div>
+</div>

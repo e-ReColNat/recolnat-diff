@@ -16,7 +16,7 @@ class DiffHandler
     /*
      * @var Diffs
      */
-    protected $diffs = null;
+    protected $diffsFile = null;
 
     protected $institutionPath;
     protected $collectionCode;
@@ -43,7 +43,7 @@ class DiffHandler
      */
     public function shouldSearchDiffs()
     {
-        return !is_file($this->getCollectionPath().'/'.Diffs::DIFF_FILENAME);
+        return !is_file($this->getCollectionPath().Diffs::DIFF_FILENAME);
     }
 
     /**
@@ -102,11 +102,11 @@ class DiffHandler
      */
     public function getDiffsFile()
     {
-        if (is_null($this->diffs)) {
+        if (is_null($this->diffsFile)) {
             $this->setDiffsFile();
         }
 
-        return $this->diffs;
+        return $this->diffsFile;
     }
 
     /**
@@ -124,7 +124,7 @@ class DiffHandler
      */
     public function setDiffsFile()
     {
-        $this->diffs = new Diffs($this->getCollectionPath());
+        $this->diffsFile = new Diffs($this->getCollectionPath());
 
         return $this;
     }
@@ -144,9 +144,9 @@ class DiffHandler
      * @param null|string $selectedClassName
      * @return array
      */
-    public function getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName = null)
+    public function getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName = null)
     {
-        return $this->getDiffsFile()->getLonesomeRecordsIndexedBySpecimenCode($db, $selectedClassName);
+        return $this->getDiffsFile()->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
     }
 
     /**
@@ -171,9 +171,9 @@ class DiffHandler
     public static function formatItemsToChoices($items, $diffs, $inputClassesName, $inputOrigin, $choices)
     {
         if (count($items) > 0) {
-            foreach ($items as $specimenCode => $row) {
+            foreach ($items as $catalogNumber => $row) {
                 foreach ($row['classes'] as $className => $data) {
-                    $rowClass = $diffs['datas'][$specimenCode]['classes'][$className];
+                    $rowClass = $diffs['datas'][$catalogNumber]['classes'][$className];
                     $relationId = $rowClass['id'];
                     foreach ($rowClass['fields'] as $fieldName => $rowFields) {
                         $doUpdate = false;
@@ -186,7 +186,7 @@ class DiffHandler
                                 'fieldName' => $fieldName,
                                 'relationId' => $relationId,
                                 'choice' => $inputOrigin,
-                                'specimenCode' => $specimenCode,
+                                'catalogNumber' => $catalogNumber,
                             ];
                         }
                     }
@@ -218,5 +218,53 @@ class DiffHandler
         if (!is_dir($dir)) {
             mkdir($dir, 0755);
         }
+    }
+
+    /**
+     * @param string $search
+     * @return array
+     */
+    public function search($search)
+    {
+        $catalogNumbers = $this->searchByCatalogNumber($search);
+        $catalogNumbers = array_merge($this->searchByTaxon($search), $catalogNumbers);
+
+        return $catalogNumbers;
+    }
+
+    /**
+     * @param string $search
+     * @return array
+     */
+    public function searchByTaxon($search)
+    {
+        $catalogNumbers = [];
+        $search = strtolower($search);
+        $filteredData = array_filter($this->getDiffsFile()->getData()['datas'], function($el) use ($search) {
+            return (strpos(strtolower($el['taxon']), $search) !== false);
+        });
+        if (!empty($filteredData)) {
+            $catalogNumbers = array_keys($filteredData);
+        }
+
+        return $catalogNumbers;
+    }
+
+    /**
+     * @param string $search
+     * @return array
+     */
+    public function searchByCatalogNumber($search)
+    {
+        $catalogNumbers = [];
+        $regExpSearch = sprintf('/%s/i', $search);
+
+        $results = preg_grep($regExpSearch, array_keys($this->getDiffsFile()->getData()['datas']));
+
+        if (!empty($results)) {
+            $catalogNumbers = $results;
+        }
+
+        return $catalogNumbers;
     }
 }

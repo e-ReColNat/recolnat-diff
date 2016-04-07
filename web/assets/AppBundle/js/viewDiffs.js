@@ -47,7 +47,7 @@ $(document).ready(function () {
     }
 
     // Rajoute les choix effectués au tableau choices
-    function setChoice(choices, element, specimenCode) {
+    function setChoice(choices, element, catalogNumber) {
         var fieldName = element.data('fieldname');
         var className = element.data('class');
         var relationId = element.data('relationid');
@@ -56,7 +56,7 @@ $(document).ready(function () {
             'fieldName': fieldName,
             'relationId': relationId,
             'choice': element.attr('value'),
-            'specimenCode': specimenCode
+            'catalogNumber': catalogNumber
         };
         var flag = false;
         if (choices.length > 0) {
@@ -85,16 +85,16 @@ $(document).ready(function () {
         var choices = data.choices;
         $.each(data.choices, function (i) {
             $("input[type=radio][data-relationid='" + choices[i]['relationId'] + "'][data-fieldname='" + choices[i]['fieldName'] + "'][value=" + choices[i]['choice'] + "]").prop('checked', true);
-            if (typeof comptchoices[choices[i]['specimenCode']] === "undefined") {
-                comptchoices[choices[i]['specimenCode']] = [];
+            if (typeof comptchoices[choices[i]['catalogNumber']] === "undefined") {
+                comptchoices[choices[i]['catalogNumber']] = [];
             }
-            if (typeof comptchoices[choices[i]['specimenCode']][choices[i]['className']] === "undefined") {
-                comptchoices[choices[i]['specimenCode']][choices[i]['className']] = 1;
+            if (typeof comptchoices[choices[i]['catalogNumber']][choices[i]['className']] === "undefined") {
+                comptchoices[choices[i]['catalogNumber']][choices[i]['className']] = 1;
             }
             else {
-                comptchoices[choices[i]['specimenCode']][choices[i]['className']]++;
+                comptchoices[choices[i]['catalogNumber']][choices[i]['className']]++;
             }
-            $("#facet-" + choices[i]['specimenCode'] + "-" + choices[i]['className']).data('comptchoices', comptchoices[choices[i]['specimenCode']][choices[i]['className']]);
+            $("#facet-" + choices[i]['catalogNumber'] + "-" + choices[i]['className']).data('comptchoices', comptchoices[choices[i]['catalogNumber']][choices[i]['className']]);
         });
         $idFacet.each(function () {
             var formattedTemplate = formatTemplate($(this).find('.facet-className').html(), $(this).data('comptchoices'), $(this).data('comptdiffs'));
@@ -133,7 +133,7 @@ $(document).ready(function () {
             var tableContext = $(this).parents('table.diff');
             var relationId = $(this).attr('name');
             var choice = $(this).attr('value');
-            var specimenCode = $(this).parents('section').data('specimencode');
+            var catalogNumber = $(this).parents('.js_specimen').data('catalognumber');
             if ($(this).data('type') === 'diff-entity') {
                 tableContext.find(":radio")
                     .filter("[name^='" + relationId + "']")
@@ -142,11 +142,11 @@ $(document).ready(function () {
                     .map(
                         function () {
                             $(this).prop('checked', true);
-                            setChoice(choices, $(this), specimenCode);
+                            setChoice(choices, $(this), catalogNumber);
                         });
             }
             else {
-                setChoice(choices, $(this), specimenCode);
+                setChoice(choices, $(this), catalogNumber);
             }
             $.ajax({
                     url: Routing.generate('setChoice', { collectionCode: collectionCode}),

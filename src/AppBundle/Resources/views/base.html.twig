@@ -43,9 +43,11 @@
                 <li><a href="#">{{ 'nav.aide' | trans }}</a></li>
                 <li><a href="{{ logout_path('main') }}">{{ 'login.logout' | trans({}, 'user') }}</a></li>
             </ul>
-            {#<form class="navbar-form navbar-right">#}
-            {#<input type="text" placeholder="Search..." class="form-control">#}
-            {#</form>#}
+            {% if collectionCode is defined and collectionCode is not empty %}
+                <form class="navbar-form navbar-right" action="{{ path('search', {'collectionCode':collectionCode}) }}">
+                    <input type="text" placeholder="{{ 'label.search' | trans }}" name="search" class="form-control">
+                </form>
+            {% endif %}
         </div>
     </div>
 </nav>

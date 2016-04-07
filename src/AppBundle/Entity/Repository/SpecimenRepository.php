@@ -4,7 +4,6 @@ namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Query;
 
 /**
  * SpecimenRepository
@@ -38,12 +37,13 @@ class SpecimenRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
             ->where($qb->expr()->in('s.occurrenceid', ':ids'));
         $qb->setParameter('ids', $ids, 'rawid');
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param string $id
-     * @param int   $fetchMode
+     * @param int    $fetchMode
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -53,103 +53,48 @@ class SpecimenRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param $specimenCode
+     * @param Collection $collection ,
+     * @param string     $catalogNumber
      * @return object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneBySpecimenCode($specimenCode)
+    public function findOneByCatalogNumber(Collection $collection, $catalogNumber)
     {
-        $qb = $this->createQueryBuilder('s');
-        $qb
-            ->select('s, b, d, t, m, st, r, l')
-            ->leftJoin('s.bibliographies', 'b')
-            ->leftJoin('s.determinations', 'd')
-            ->leftJoin('d.taxon', 't')
-            ->leftJoin('s.multimedias', 'm')
-            ->leftJoin('s.stratigraphy', 'st')
-            ->leftJoin('s.recolte', 'r')
-            ->leftJoin('r.localisation', 'l');
-        $this->setSpecimenCodesWhereClause($qb, [$specimenCode]);
-        return $qb->getQuery()->getOneOrNullResult();
+        $query = $this->getQbForFindByCatalogNumber($collection, [$catalogNumber]);
+
+        return $query->getOneOrNullResult();
     }
 
     /**
-     *
-     * @param array $specimenCodes
+     * @param Collection $collection
+     * @param array      $catalogNumbers
      * @return array
      */
-    public function findBySpecimenCodeUnordered($specimenCodes)
+    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
-        $qb = $this->createQueryBuilder('s');
+        $query = $this->getQbForFindByCatalogNumber($collection, $catalogNumbers);
 
-        $qb
-            ->select('s');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $qb->getQuery()->getResult();
+        return $query->getArrayResult();
     }
 
     /**
-     *
-     * @param array $specimenCodes
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findAllBySpecimenCodeUnordered($specimenCodes)
-    {
-        $qb = $this->createQueryBuilder('s');
+    public function findByCatalogNumbers(
+        Collection $collection,
+        $catalogNumbers,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
+        $query = $this->getQbForFindByCatalogNumber($collection, $catalogNumbers);
 
-        $qb
-            ->select('s, b, d, t, m, st, r, l')
-            ->leftJoin('s.bibliographies', 'b')
-            ->leftJoin('s.determinations', 'd')
-            ->leftJoin('d.taxon', 't')
-            ->leftJoin('s.multimedias', 'm')
-            ->leftJoin('s.stratigraphy', 'st')
-            ->leftJoin('s.recolte', 'r')
-            ->leftJoin('r.localisation', 'l');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $qb->getQuery()->getArrayResult();
-    }
-
-    /**
-     *
-     * @param array $specimenCodes
-     * @param $hydratationMode int
-     * @return array
-     */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
-        $qb = $this->createQueryBuilder('s');
-
-        $qb
-            ->select('s, b, d, t, m, st, r, l')
-            ->leftJoin('s.bibliographies', 'b')
-            ->leftJoin('s.determinations', 'd')
-            ->leftJoin('d.taxon', 't')
-            ->leftJoin('s.multimedias', 'm')
-            ->leftJoin('s.stratigraphy', 'st')
-            ->leftJoin('s.recolte', 'r')
-            ->leftJoin('r.localisation', 'l')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        $query = $qb->getQuery();
         $query->useResultCache(true, 300);
-        return $this->orderResultSetBySpecimenCode($query->getResult($hydratationMode), 'occurrenceid');
+
+        return $this->orderResultSetByCatalogNumber($query->getResult($hydratationMode), 'occurrenceid');
     }
 
-    /**
-     *
-     * @param array $specimenCodes
-     * @return Query
-     */
-    public function getQueryForSpecimenCodes($specimenCodes)
-    {
-        $qb = $this->createQueryBuilder('s');
-
-        $qb
-            ->select('s');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $qb->getQuery();
-    }
 
     /**
      * @param array  $datas
@@ -162,6 +107,31 @@ class SpecimenRepository extends AbstractRecolnatRepository
 
         $qb->where('a.occurrenceid = HEXTORAW(:id)')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return \Doctrine\ORM\Query
+     */
+    public function getQbForFindByCatalogNumber(Collection $collection, $catalogNumbers)
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $qb
+            ->select('s, b, d, t, m, st, r, l')
+            ->leftJoin('s.bibliographies', 'b')
+            ->leftJoin('s.determinations', 'd')
+            ->leftJoin('d.taxon', 't')
+            ->leftJoin('s.multimedias', 'm')
+            ->leftJoin('s.stratigraphy', 'st')
+            ->leftJoin('s.recolte', 'r')
+            ->leftJoin('r.localisation', 'l');
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+        $query = $qb->getQuery();
+
+        return $query;
     }
 }

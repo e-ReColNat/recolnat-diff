@@ -2,6 +2,7 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Intl\Locale;
@@ -52,6 +53,7 @@ class GenericEntityManager
     {
         $em = $this->getEntityManager($base);
         $entity = $em->getRepository($this->getFullClassName($className))->find($id);
+
         return $entity;
     }
 
@@ -65,6 +67,7 @@ class GenericEntityManager
         $entity = $this->getEntityClass($entity);
         $meta = $this->emR->getClassMetadata(get_class($entity));
         $identifier = $meta->getSingleIdentifierFieldName();
+
         return $identifier;
     }
 
@@ -80,6 +83,7 @@ class GenericEntityManager
         $meta = $this->emR->getClassMetadata(get_class($entity));
         $identifier = $meta->getSingleIdentifierFieldName();
         $getter = 'get'.$identifier;
+
         return $entity->{$getter}();
     }
 
@@ -94,24 +98,29 @@ class GenericEntityManager
             $fullClassName = $this->getFullClassName($entity);
             if (class_exists($fullClassName)) {
                 $entity = new $fullClassName;
+
                 return $entity;
             } else {
                 throw new \Exception(sprintf('class %s n\'existe pas', $fullClassName));
             }
         }
+
         return $entity;
     }
 
     /**
-     * @param string $base
-     * @param string $className
-     * @param array  $specimenCodes
+     * @param string     $base
+     * @param Collection $collection
+     * @param string     $className
+     * @param array      $catalogNumbers
      * @return mixed
      */
-    public function getEntitiesBySpecimenCodes($base, $className, $specimenCodes)
+    public function getEntitiesByCatalogNumbers($base, Collection $collection, $className, $catalogNumbers)
     {
         $em = $this->getEntityManager($base);
-        $entities = $em->getRepository($this->getFullClassName($className))->findAllBySpecimenCodeUnordered($specimenCodes);
+        $entities = $em->getRepository($this->getFullClassName($className))
+            ->findByCatalogNumbersUnordered($collection, $catalogNumbers);
+
         return $entities;
     }
 
@@ -125,13 +134,14 @@ class GenericEntityManager
     }
 
     /**
-     * @param string $base
-     * @param array  $specimenCodes
+     * @param string     $base
+     * @param Collection $collection
+     * @param array      $catalogNumbers
      * @return mixed
      */
-    public function getEntitiesLinkedToSpecimens($base, $specimenCodes)
+    public function getEntitiesLinkedToSpecimens($base, Collection $collection, $catalogNumbers)
     {
-        return $this->getEntitiesBySpecimenCodes($base, 'Specimen', $specimenCodes);
+        return $this->getEntitiesByCatalogNumbers($base, $collection, 'Specimen', $catalogNumbers);
     }
 
 
@@ -190,6 +200,7 @@ class GenericEntityManager
                 $dateFormater = $this->getDateFormatter();
                 $data = $dateFormater->format($data);
             }
+
             return $data;
         } else {
             throw new \Exception('\AppBundle\Entity\\'.$className.' get'.$fieldName.' doesn\'t exists.');
@@ -222,6 +233,7 @@ class GenericEntityManager
             }
             $entity->{$setter}($data);
         }
+
         return $entity;
     }
 
@@ -243,8 +255,10 @@ class GenericEntityManager
         $em = $this->emI;
         if (strtolower($base) == 'recolnat') {
             $em = $this->emR;
+
             return $em;
         }
+
         return $em;
     }
 

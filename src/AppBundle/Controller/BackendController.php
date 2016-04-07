@@ -66,8 +66,10 @@ class BackendController extends Controller
 
         $institutionCode = $this->getUser()->getInstitutionCode();
         $diffManager = $this->get('diff.manager');
+        $diffManager->init($collection);
+
         $diffComputer = $this->get('diff.computer');
-        $diffManager->init($collection, $this->getParameter('export_path'));
+        $diffComputer->setCollection($collection);
 
         $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
         $diffHandler->setCollectionCode($collectionCode);
@@ -93,7 +95,7 @@ class BackendController extends Controller
     {
         $response->setCallback(function() use ($diffManager, $diffComputer, $diffHandler) {
             $server = new RecolnatServer();
-            $specimenCodes = [];
+            $catalogNumbers = [];
 
             // Nb total d'étapes :  Search / Compute pour chaque entité
             // +1 étape sauvegarde
@@ -102,10 +104,10 @@ class BackendController extends Controller
             foreach ($diffManager::ENTITIES_NAME as $entityName) {
 
                 $server->step->send(json_encode(['count' => $countStep++, 'step' => 'search '.$entityName]));
-                $specimenCodes[$entityName] = $diffManager->getDiff($entityName);
+                $catalogNumbers[$entityName] = $diffManager->getDiff($entityName);
                 $server->step->send(json_encode(['count' => $countStep++, 'step' => 'compute '.$entityName]));
 
-                $diffComputer->setSpecimenCodes($specimenCodes);
+                $diffComputer->setCatalogNumbers($catalogNumbers);
                 $diffComputer->computeClassname($entityName);
             }
 
@@ -192,7 +194,7 @@ class BackendController extends Controller
 
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
         if ($type == 'choices') {
-            $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesBySpecimenCode());
+            $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesByCatalogNumber());
         }
         if ($type == 'todo') {
             $specimensWithoutChoices = $exportManager->getSessionHandler()->getChoices();
@@ -261,9 +263,9 @@ class BackendController extends Controller
                 break;
             case 'selectedSpecimens':
                 if (!is_null($selectedSpecimens) && is_array($selectedSpecimens)) {
-                    foreach ($selectedSpecimens as $specimenCode) {
-                        if (isset($diffs['datas'][$specimenCode])) {
-                            $items[$specimenCode] = $diffs['datas'][$specimenCode];
+                    foreach ($selectedSpecimens as $catalogNumber) {
+                        if (isset($diffs['datas'][$catalogNumber])) {
+                            $items[$catalogNumber] = $diffs['datas'][$catalogNumber];
                         }
                     }
                 }

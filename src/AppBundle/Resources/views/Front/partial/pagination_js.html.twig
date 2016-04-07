@@ -1,0 +1,30 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        var $maxItemPerPage = $('#maxItemPerPage');
+        if (localStorage.getItem('maxItemPerPage')) {
+            $maxItemPerPage.val(localStorage.getItem('maxItemPerPage'));
+            $.get(Routing.generate('setmaxitem', {'maxItem': localStorage.getItem('maxItemPerPage')}));
+        }
+        $maxItemPerPage.change(function () {
+            {% if selectedClassName is not defined %}
+            {% set selectedClassName = "all" %}
+            {% endif %}
+
+            var url;
+            {% if app.request.attributes.get('_route') == 'lonesomes' %}
+                url = "{{ path('lonesomes',{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
+            {% elseif app.request.attributes.get('_route') == 'viewSpecimens' %}
+                url = "{{ path('viewSpecimens',{'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','jsonCatalogNumbers' : diffs.datas | keys | json_encode}) }}";
+            {% elseif app.request.attributes.get('_route') == 'search' %}
+                url = "{{ path('search',{'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','search' : search}) }}";
+            {% else %}
+                url = "{{ path(app.request.attributes.get('_route'),
+                {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
+            {% endif %}
+
+            var maxItemPerPage = $maxItemPerPage.find(":selected").text();
+            localStorage.setItem('maxItemPerPage', maxItemPerPage);
+            jQuery(location).attr('href', url.replace('_itemNum', maxItemPerPage));
+        });
+    });
+</script>

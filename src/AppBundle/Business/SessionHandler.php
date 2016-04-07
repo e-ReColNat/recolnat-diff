@@ -33,7 +33,7 @@ class SessionHandler
         unset($data['stats']);
         $this->sessionManager->set('diffs', $data);
 
-        $this->sessionManager->set('specimensCode', $this->getSpecimensCode());
+        $this->sessionManager->set('catalogNumbers', $this->getCatalogNumbers());
     }
 
     /**
@@ -87,7 +87,7 @@ class SessionHandler
     /**
      * @return array
      */
-    private function getSpecimensCode()
+    private function getCatalogNumbers()
     {
         $stats = $this->sessionManager->get('diffs');
         if (is_array($stats['datas'])) {
@@ -174,17 +174,17 @@ class SessionHandler
     /**
      * @return array
      */
-    public function getChoicesBySpecimenCode()
+    public function getChoicesByCatalogNumber()
     {
         $choices = $this->getChoices();
         $returnChoices = array();
         if (count($choices) > 0) {
             foreach ($choices as $choice) {
-                if (!isset($returnChoices[$choice['specimenCode']])) {
-                    $returnChoices[$choice['specimenCode']] = [];
+                if (!isset($returnChoices[$choice['catalogNumber']])) {
+                    $returnChoices[$choice['catalogNumber']] = [];
                 }
-                unset($choice[$choice['specimenCode']]);
-                $returnChoices[$choice['specimenCode']][] = $choice;
+                unset($choice[$choice['catalogNumber']]);
+                $returnChoices[$choice['catalogNumber']][] = $choice;
             }
         }
         return $returnChoices;

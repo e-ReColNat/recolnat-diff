@@ -318,6 +318,18 @@
                 <source>label.collection</source>
                 <target>Collection</target>
             </trans-unit>
+            <trans-unit id="80">
+                <source>label.filtres</source>
+                <target>Filtres</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>label.selection.lot</source>
+                <target>Sélection par lot</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>label.search</source>
+                <target>Rechercher (taxon ou numéro de catalogue)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

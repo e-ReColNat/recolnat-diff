@@ -31,7 +31,7 @@
             {% for md5key, data in stats %}
                 {% set percent =  loop.index / (stats|length) * 100  %}
                 
-                {% set countDiffs = countDiffs + (data.specimensCode | length) %}
+                {% set countDiffs = countDiffs + (data.catalogNumbers | length) %}
                 
                 {% if percent >= 20 and flagPareto == 0 %}
                     {% set classTr = 'info' %}
@@ -54,9 +54,9 @@
                     </td>
                     <td>{{data.datas.institution is not empty ? data.datas.institution : emptyField}}</td>
                     <td>
-                        {{data.specimensCode | length}}
+                        {{data.catalogNumbers | length}}
                         <span class="hidden" rel="{{md5key}}">
-                            {{data.specimensCode | json_encode}}
+                            {{data.catalogNumbers | json_encode}}
                         </span>
                         <a role="button" data-toggle="collapse" href="#taxon-{{md5key}}" aria-expanded="false" aria-controls="collapseExample">
                             <span class="caret"></span>
@@ -65,15 +65,15 @@
                 </tr>
                 <tr id="taxon-{{md5key}}" class="collapse">
                     <td colspan="8">
-                        {% if data.specimensCode | length > 1 %}
-                        <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonSpecimensCode' : data.specimensCode | keys | json_encode})}}">
-                            {{ 'view.specimens' | trans({'%count%' : (data.specimensCode | length) })}}
+                        {% if data.catalogNumbers | length > 1 %}
+                        <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonCatalogNumbers' : data.catalogNumbers | keys | json_encode})}}">
+                            {{ 'view.specimens' | trans({'%count%' : (data.catalogNumbers | length) })}}
                         </a>
                         {% endif %}
                         <ul>
-                        {% for specimenCode, taxon in data.taxons %}
+                        {% for catalogNumber, taxon in data.taxons %}
                             <li>
-                                <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonSpecimensCode' : ([specimenCode] | json_encode)})}}">
+                                <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonCatalogNumbers' : ([catalogNumber] | json_encode)})}}">
                                     {{taxon}}
                                 </a>
                             </li>
@@ -94,19 +94,19 @@
     $(document).ready(function(){
         $(".choice").on('change', function() {
             // recuperation des clés des enregistrements concernés
-            var specimensCode = jQuery.parseJSON($("table.diffs").find("[rel='"+$(this).attr('name')+"']").html());
+            var catalogNumbers = jQuery.parseJSON($("table.diffs").find("[rel='"+$(this).attr('name')+"']").html());
             var choices=[];
             var radioInput = $(this);
             var fieldName=radioInput.data('fieldname');
             var className=radioInput.data('class');
             var choice = radioInput.attr('value') ;
-            $.each(specimensCode, function(specimenCode, relationId) {
+            $.each(catalogNumbers, function(catalogNumber, relationId) {
                 var temp = {
                     'className' : className, 
                     'fieldName' : fieldName,
                     'relationId' : relationId,
                     'choice' : choice,
-                    'specimenCode' : specimenCode
+                    'catalogNumber' : catalogNumber
                 };
                 choices.push(temp);
             });

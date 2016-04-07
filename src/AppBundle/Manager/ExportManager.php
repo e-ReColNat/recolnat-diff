@@ -99,6 +99,7 @@ class ExportManager
     public function init(User $user)
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -115,7 +116,7 @@ class ExportManager
         if (is_null($this->collection)) {
             throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
         } else {
-            $this->diffManager->init($this->collection, $this->getExportDirPath());
+            $this->diffManager->init($this->collection);
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
             $this->diffHandler->setCollectionCode($this->collectionCode);
             $data = $this->launchDiffProcess();
@@ -133,13 +134,8 @@ class ExportManager
     {
         if ($this->getDiffHandler()->shouldSearchDiffs()) {
             $diffs = $this->diffManager->searchDiffs();
-            $diffComputer = $this->diffComputer->init($diffs);
-            $data = array_merge($diffComputer->getDiffs(),
-                [
-                    'stats' => $diffComputer->getAllStats(),
-                    'lonesomeRecords' => $diffComputer->getLonesomeRecords(),
-                    'statsLonesomeRecords' => $diffComputer->getStatsLonesomeRecords()
-                ]);
+            $diffComputer = $this->diffComputer->init($this->collection, $diffs);
+            $data = $diffComputer->getAllDatas();
             $this->getDiffHandler()->saveDiffs($data);
             $this->getDiffHandler()->getDiffsFile()->searchDiffs = false;
         } else {
@@ -193,13 +189,13 @@ class ExportManager
     }
 
     /**
-     * @param $specimensCode
+     * @param $catalogNumbers
      * @return array
      */
-    public function getDiffsBySpecimensCode($specimensCode)
+    public function getDiffsByCatalogNumbers($catalogNumbers)
     {
         $allDiffs = $this->sessionManager->get('diffs');
-        $diffs = $this->diffHandler->getDiffsFile()->filterBySpecimensCode($allDiffs, $specimensCode);
+        $diffs = $this->diffHandler->getDiffsFile()->filterByCatalogNumbers($allDiffs, $catalogNumbers);
 
         return $diffs;
     }
@@ -312,26 +308,30 @@ class ExportManager
         // ajout des nouveaux enregistrements de specimens complets
         // Un seul côté
         if ($this->exportPrefs->getSideForNewRecords() != 'both') {
-            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedBySpecimenCodes(
+            $catalogNumbersLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
                 $this->exportPrefs->getSideForNewRecords());
-            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForNewRecords(),
-                array_keys($specimenCodesLonesomeRecords));
+            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
+                $this->exportPrefs->getSideForNewRecords(),
+                $this->collection,
+                array_keys($catalogNumbersLonesomeRecords));
             $datas = array_merge($datas, $datasNewRecords);
 
             return $datas;
         } // des deux côtés
         else {
-            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedBySpecimenCodes(
+            $catalogNumbersLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
                 'recolnat');
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
-                array_keys($specimenCodesLonesomeRecords));
+                $this->collection,
+                array_keys($catalogNumbersLonesomeRecords));
             $datas = array_merge($datas, $datasNewRecords);
 
 
-            $specimenCodesLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedBySpecimenCodes(
+            $catalogNumbersLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
                 'institution');
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('institution',
-                array_keys($specimenCodesLonesomeRecords));
+                $this->collection,
+                array_keys($catalogNumbersLonesomeRecords));
             $datas = array_merge($datas, $datasNewRecords);
 
             return $datas;
@@ -412,9 +412,10 @@ class ExportManager
     private function prepareExport(ExportPrefs $exportPrefs)
     {
         $this->exportPrefs = $exportPrefs;
-        $specimenCodes = $this->sessionManager->get('specimensCode');
+        $catalogNumbers = $this->sessionManager->get('catalogNumbers');
         $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForChoicesNotSet(),
-            $specimenCodes);
+            $this->collection,
+            $catalogNumbers);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
 
         return $datasWithChoices;

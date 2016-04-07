@@ -19,8 +19,8 @@
     {% if pagination is defined %}
     <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
     {% else %}
-    {% if specimensCode is defined %}
-    <li class="active">{{ specimensCode | length }} {{ 'label.specimen' | transchoice(specimensCode | length, {}, 'entity') }}</li>
+    {% if catalogNumbers is defined %}
+    <li class="active">{{ catalogNumbers | length }} {{ 'label.specimen' | transchoice(catalogNumbers | length, {}, 'entity') }}</li>
     {% endif %}
     {% endif %}
 </ol>

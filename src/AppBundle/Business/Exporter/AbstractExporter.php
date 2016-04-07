@@ -36,6 +36,9 @@ abstract class AbstractExporter
     {
         $this->datas = $datas;
         $this->exportPath = $exportPath;
+        if (!is_dir($this->exportPath)) {
+            mkdir($this->exportPath);
+        }
         foreach ($this->entitiesName as $className) {
             $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\Entity\\'.ucfirst($className).'Exporter';
             /* @var $entityExporter \AppBundle\Business\Exporter\Entity\AbstractEntityExporter */

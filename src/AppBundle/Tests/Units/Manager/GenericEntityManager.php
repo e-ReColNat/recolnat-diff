@@ -27,11 +27,15 @@ class GenericEntityManager extends Units\Test
      */
     protected $entityManager;
 
-    protected $specimenCodes = ['MHNAIX#AIX#AIX017190', 'MHNAIX#AIX#AIX000097'];
+    protected $catalogNumbers = ['AIX017190', 'AIX000097'];
     /**
      * @var Symfony\Component\DependencyInjection\Container
      */
     protected $container;
+
+    protected $collection;
+    protected $collectionCode='AIX';
+
 
     public function beforeTestMethod($method)
     {
@@ -41,6 +45,8 @@ class GenericEntityManager extends Units\Test
         // Store the container and the entity manager in test case properties
         $this->container = $this->kernel->getContainer();
         $managerRegistry = $this->container->get('doctrine');
+        $this->collection = $managerRegistry->getRepository('AppBundle:Collection')
+            ->findOneBy(['collectioncode' => $this->collectionCode]);
 
         $this->genericEntityManager = new \AppBundle\Manager\GenericEntityManager($managerRegistry);
     }
@@ -52,10 +58,10 @@ class GenericEntityManager extends Units\Test
         )->isInstanceOf('\AppBundle\Entity\Localisation');
     }
 
-    public function testGetEntitiesBySpecimenCodes()
+    public function testGetEntitiesByCatalogNumbers()
     {
-        $specimens = $this->genericEntityManager->getEntitiesBySpecimenCodes('recolnat', 'specimen',
-            $this->specimenCodes);
+        $specimens = $this->genericEntityManager->getEntitiesByCatalogNumbers('recolnat', $this->collection, 'specimen',
+            $this->catalogNumbers);
         $this->array(
             $specimens
         )
@@ -95,14 +101,15 @@ class GenericEntityManager extends Units\Test
     public function testGetEntitiesLinkedToSpecimens()
     {
         $this->if($entities = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
-            $this->specimenCodes))
+            $this->collection,
+            $this->catalogNumbers))
             ->array($entities)->sizeOf($entities)->isEqualTo(2);
 
     }
 
     public function testFormatArraySpecimen()
     {
-        $entities = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $this->specimenCodes);
+        $entities = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $this->collection, $this->catalogNumbers);
         foreach ($entities as $entity) {
             $this->if($formatEntities = $this->genericEntityManager->formatArraySpecimen($entity))
                 ->array($formatEntities)

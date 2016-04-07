@@ -27,14 +27,24 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     const ENTITY_PREFIX = 'AppBundle\\Entity\\';
 
     /**
-     *
-     * @param array $specimenCodes
-     * @param       $hydratationMode int
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @param int        $hydratationMode int
      * @return array
+     * @internal param array $specimenCodes
      */
-    abstract public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY);
+    abstract public function findByCatalogNumbers(
+        Collection $collection,
+        $catalogNumbers,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    );
 
-    abstract public function findBySpecimenCodeUnordered($specimenCodes);
+    /**
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return mixed
+     */
+    abstract public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers);
 
     /**
      * @param Collection $collection
@@ -67,17 +77,9 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      */
     abstract public function update(array $datas, $id);
 
-    public static function getExprConcatSpecimenCode($alias = 's')
+    public static function getExprCatalogNumber($alias = 's')
     {
-        $concatFields = array(
-            sprintf('%s.institutioncode', $alias),
-            "'#'",
-            sprintf('%s.collectioncode', $alias),
-            "'#'",
-            sprintf('%s.catalognumber', $alias),
-        );
-
-        return new Expr\Func('CONCAT', $concatFields);
+        return sprintf('%s.catalognumber', $alias);
     }
 
 
@@ -86,17 +88,21 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      * @param string $identifierName
      * @return array
      */
-    protected function orderResultSetBySpecimenCode($resultsSet, $identifierName)
+    protected function orderResultSetByCatalogNumber($resultsSet, $identifierName)
     {
         $orderResultSet = [];
         if (count($resultsSet)) {
             foreach ($resultsSet as $resultRow) {
                 if (!empty($resultRow)) {
-                    if (is_array($resultRow[0])) {
-                        $specimenCode = $resultRow['specimencode'];
-                        $orderResultSet[$specimenCode][$resultRow[0][$identifierName]] = $resultRow[0];
+                    if (is_array($resultRow)) {
+                        $row = $resultRow;
+                        if (!isset($resultRow[$identifierName])) {
+                            $row = $resultRow[0];
+                        }
+                        $catalogNumber = $resultRow['catalognumber'];
+                        $orderResultSet[$catalogNumber][$row[$identifierName]] = $row;
                     } else {
-                        $orderResultSet[$resultRow['specimencode']][$resultRow[0]->{'get'.$identifierName}()] = $resultRow[0];
+                        $orderResultSet[$resultRow->getCatalogNumber()][$resultRow->{'get'.$identifierName}()] = $resultRow;
                     }
                 }
             }
@@ -106,21 +112,23 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     }
 
     /**
+     * @param Collection   $collection
      * @param QueryBuilder $qb
-     * @param array        $specimenCodes
+     * @param array        $catalogNumbers
      * @param string       $alias
      */
-    protected function setSpecimenCodesWhereClause(QueryBuilder &$qb, $specimenCodes, $alias = 's')
-    {
-
-        list($catalogNumbers, $institutionCode, $collectionCode) = $this->splitSpecimenCodes($specimenCodes);
-
+    protected function setSpecimenCodesWhereClause(
+        Collection $collection,
+        QueryBuilder &$qb,
+        $catalogNumbers,
+        $alias = 's'
+    ) {
         $qb->andWhere(sprintf('%s.institutioncode = :institutionCode', $alias))
             ->andWhere(sprintf('%s.collectioncode = :collectionCode', $alias))
             ->andWhere($qb->expr()->in(sprintf('%s.catalognumber', $alias), ':catalogNumbers'))
             ->setParameters([
-                'institutionCode' => $institutionCode,
-                'collectionCode' => $collectionCode,
+                'institutionCode' => $collection->getInstitution()->getInstitutioncode(),
+                'collectionCode' => $collection->getCollectioncode(),
                 'catalogNumbers' => $catalogNumbers,
             ]);
     }

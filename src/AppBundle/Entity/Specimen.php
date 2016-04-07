@@ -855,6 +855,17 @@ class Specimen
     }
 
     /**
+     * @param string $specimenCode
+     * @return string
+     */
+    public static function explodeSpecimenCode($specimenCode)
+    {
+        $explodeData = explode('#', $specimenCode);
+
+        return end($explodeData);
+    }
+
+    /**
      * @return array
      */
     public function toArray()

@@ -7,7 +7,6 @@ use AppBundle\Entity\Repository\AbstractRecolnatRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Description of DiffManager
@@ -64,8 +63,6 @@ class DiffManager
     protected $recolnatAlias;
     protected $recolnatDiffAlias;
 
-    protected $exportDirPath;
-
     /**
      * DiffManager constructor.
      * @param ManagerRegistry $managerRegistry
@@ -85,22 +82,10 @@ class DiffManager
 
     /**
      * @param Collection $collection
-     * @param string     $exportDirPath
      */
-    public function init(Collection $collection, $exportDirPath)
+    public function init(Collection $collection)
     {
         $this->collection = $collection;
-        $this->exportDirPath = $exportDirPath;
-        $this->createDir();
-    }
-
-    private function createDir()
-    {
-        $fs = new Filesystem();
-
-        if (!$fs->exists($this->exportDirPath)) {
-            $fs->mkdir($this->exportDirPath, 0777);
-        }
     }
 
     /**
@@ -108,11 +93,11 @@ class DiffManager
      */
     public function searchDiffs()
     {
-        $specimenCodes = [];
+        $catalogNumber = [];
         foreach ($this->entitiesName as $entityName) {
-            $specimenCodes[$entityName] = $this->getDiff($entityName);
+            $catalogNumber[$entityName] = $this->getDiff($entityName);
         }
-        return $specimenCodes;
+        return $catalogNumber;
     }
 
     /**
@@ -136,7 +121,7 @@ class DiffManager
             //'AppBundle:Taxon' => ' /*+ INDEX(DETERMINATIONS DETER_TAX_IDX_FK) */ '
         ];
         isset ($forceIndex[$fullClassName]) ? $strForceIndex = $forceIndex[$fullClassName] : $strForceIndex = '';
-        $identifier = 'specimenCode';
+        $identifier = 'cn as catalognumber';
         $strQuery = 'SELECT '.$identifier.' FROM ';
         $arrayFields = $this->formatFieldsName($metadata, $aliasDb1, $aliasDb2);
         $strFromClauseDb1 = $this->getFromClause($fullClassName, $aliasDb1, $inversed);
@@ -160,9 +145,7 @@ class DiffManager
      */
     private function getSpecimenUniqueIdClause($alias)
     {
-        return sprintf(' %s.institutioncode||\'#\'||%s.collectioncode||\'#\'||%s.catalognumber as specimenCode ',
-            $alias, $alias,
-            $alias);
+        return sprintf(' %s.catalognumber as cn', $alias);
     }
 
     /**

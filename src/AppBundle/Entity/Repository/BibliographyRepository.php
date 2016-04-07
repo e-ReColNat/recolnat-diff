@@ -40,12 +40,13 @@ class BibliographyRepository extends AbstractRecolnatRepository
             ->from('AppBundle\Entity\Bibliography', 'b', 'b.referenceid')
             ->andWhere($qb->expr()->in('b.referenceid', $ids));
         $qb->setParameter('ids', $ids, 'rawid');
+
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param string $id
-     * @param int   $fetchMode
+     * @param int    $fetchMode
      * @return array|object|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -64,35 +65,41 @@ class BibliographyRepository extends AbstractRecolnatRepository
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @return \Doctrine\Common\Collections\Collection
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findBySpecimenCodeUnordered($specimenCodes)
+    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b')
             ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
-     *
-     * @param array $specimenCodes
-     * @param $hydratationMode int
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @param int        $hydratationMode
      * @return array
      */
-    public function findBySpecimenCodes($specimenCodes, $hydratationMode = AbstractQuery::HYDRATE_ARRAY)
-    {
+    public function findByCatalogNumbers(
+        Collection $collection,
+        $catalogNumbers,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('b')
             ->from('AppBundle\Entity\Bibliography', 'b')
-            ->addSelect($this->getExprConcatSpecimenCode().' as specimencode')
+            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($qb, $specimenCodes);
-        return $this->orderResultSetBySpecimenCode($qb->getQuery()->getResult($hydratationMode), 'referenceid');
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'referenceid');
     }
 
     /**
@@ -106,6 +113,7 @@ class BibliographyRepository extends AbstractRecolnatRepository
 
         $qb->where('a.referenceid = HEXTORAW(:id)')
             ->setParameter('id', $id);
+
         return $qb->getQuery()->execute();
     }
 }
