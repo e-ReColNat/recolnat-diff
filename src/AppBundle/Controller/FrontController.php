@@ -130,7 +130,7 @@ class FrontController extends Controller
         /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $catalogNumbers = array_keys($pagination->getItems());
-
+        $specimens=[];
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
             $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
         $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
@@ -376,7 +376,7 @@ class FrontController extends Controller
 
 
         $diffs = $exportManager->getDiffsByCatalogNumbers($catalogNumbers);
-
+        $specimens=[];
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
             $catalogNumbers,
             AbstractQuery::HYDRATE_OBJECT);
