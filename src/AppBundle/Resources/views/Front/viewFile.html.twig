@@ -223,7 +223,7 @@
                 var url = $(this).attr('href');
                 var modalPrefs = $("#modal").clone();
                 $.get(url, function (data) {
-                            modalPrefs.find('.modal-body').html(data);
+                            modalPrefs.find('.modal-content').html(data);
                             modalPrefs.modal('show');
                         })
                         .success(function () {

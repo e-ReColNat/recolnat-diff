@@ -328,7 +328,11 @@
             </trans-unit>
             <trans-unit id="82">
                 <source>label.search</source>
-                <target>Rechercher (taxon ou numéro de catalogue)</target>
+                <target>Rechercher (taxon ou numéro d'inventaire)</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>titre.recherche.diffs</source>
+                <target>Recherche des différences en cours</target>
             </trans-unit>
         </body>
     </file>
