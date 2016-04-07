@@ -588,7 +588,7 @@
             </trans-unit>
             <trans-unit id="147" approved="yes">
                 <source>label.all</source> 
-                <target state="translated">Toutes</target> 
+                <target state="translated">Toutes les classes</target>
             </trans-unit>
             <trans-unit id="148" approved="yes">
                 <source>label.multimedia.fields.audience</source> 

@@ -186,6 +186,7 @@ class FrontController extends Controller
             'collection' => $collection,
             'specimens' => $specimens,
             'pagination' => $pagination,
+            'db' => $db,
         ));
     }
 
