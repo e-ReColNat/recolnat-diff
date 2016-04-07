@@ -1,26 +1,39 @@
 <ol class="breadcrumb col-sm-offset-1">
-    <li><a href="{{path('index')}}">{{institutionCode}}</a></li>
-    
+    <li><a href="{{ path('index') }}">{{ institutionCode }}</a></li>
+
     {% if app.request.get('_route') =='viewfile' %}
-    <li class="active">{{collectionCode}}</li>
+        <li class="active">{{ collectionCode }}</li>
     {% else %}
-    <li><a href="{{path('viewfile', {'collectionCode' : collectionCode, })}}">{{collectionCode}}</a></li>
+        <li><a href="{{ path('viewfile', {'collectionCode' : collectionCode, }) }}">{{ collectionCode }}</a></li>
+        {% if app.request.get('_route') =='todos' %}
+            <li>{{ 'label.todo' | trans }}</li>
+        {% endif %}
+        {% if app.request.get('_route') =='diffs' %}
+            <li>{{ 'label.diffs' | trans }}</li>
+        {% endif %}
+        {% if app.request.get('_route') =='choices' %}
+            <li>{{ 'label.choices' | trans }}</li>
+        {% endif %}
+        {% if app.request.get('_route') =='lonesomes' %}
+            <li>{{ ('label.lonesomes.'~db) | trans }}</li>
+        {% endif %}
+
     {% endif %}
-    
+
     {% if app.request.get('_route') =='stats' %}
-    <li class="active">{{'stats.details'|trans}}</li>
+        <li class="active">{{ 'stats.details'|trans }}</li>
     {% endif %}
-    
-    
+
+
     {% if selectedClassName is defined %}
-    <li>{{selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : ''}}</li>
+        <li>{{ selectedClassName is not null ? ('label.'~selectedClassName|lower) | transchoice(pagination.getTotalItemCount, {}, 'entity')|capitalize : '' }}</li>
     {% endif %}
-    
+
     {% if pagination is defined %}
-    <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
+        <li class="active">{{ pagination.getTotalItemCount }} {{ 'label.specimen' | transchoice(pagination.getTotalItemCount, {}, 'entity') }}</li>
     {% else %}
-    {% if catalogNumbers is defined %}
-    <li class="active">{{ catalogNumbers | length }} {{ 'label.specimen' | transchoice(catalogNumbers | length, {}, 'entity') }}</li>
-    {% endif %}
+        {% if catalogNumbers is defined %}
+            <li class="active">{{ catalogNumbers | length }} {{ 'label.specimen' | transchoice(catalogNumbers | length, {}, 'entity') }}</li>
+        {% endif %}
     {% endif %}
 </ol>

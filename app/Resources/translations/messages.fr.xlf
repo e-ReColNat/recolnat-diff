@@ -334,6 +334,26 @@
                 <source>titre.recherche.diffs</source>
                 <target>Recherche des différences en cours</target>
             </trans-unit>
+            <trans-unit id="84">
+                <source>label.todo</source>
+                <target>Reste à faire</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.diffs</source>
+                <target>Différences</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>label.choices</source>
+                <target>Choix</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>label.lonesomes.recolnat</source>
+                <target>Recolnat exclusivement</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>label.lonesomes.institution</source>
+                <target>Institution exclusivement</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
