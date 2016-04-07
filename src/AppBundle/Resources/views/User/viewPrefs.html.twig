@@ -1,6 +1,7 @@
 {% extends '@App/base.html.twig' %}
 
 {% block  body %}
+<div class="container-fluid">
     <h1 class="page-header">{{'prefs.title' | trans({}, 'prefs')}}</h1>
     <ul>
         <li>{{ 'dwc-a' | trans }}
@@ -22,4 +23,5 @@
     </ul>
 
     <a href="{{ path('editPrefsUser') }}">{{ 'prefs.edit' | trans({}, 'prefs') }}</a>
+</div>
 {% endblock %}

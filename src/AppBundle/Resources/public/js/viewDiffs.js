@@ -38,6 +38,9 @@ $(document).ready(function () {
     var selectedClassName = $diffs.data('selectedclassname');
     var smallModal = $('#smallModal');
     var selectedSpecimens = [];
+    if (localStorage.getItem('selectedSpecimens') !== null) {
+        selectedSpecimens = JSON.parse(localStorage.getItem('selectedSpecimens'));
+    }
     var highlightClass = 'highlight';
     var $specimen = $(".specimen");
 

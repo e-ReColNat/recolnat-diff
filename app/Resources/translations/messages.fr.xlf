@@ -95,8 +95,8 @@
                 <target>Accueil</target>
             </trans-unit>
             <trans-unit id="24">
-                <source>nav.parametres</source>
-                <target>Paramètres</target>
+                <source>nav.preferences</source>
+                <target>Préférences</target>
             </trans-unit>
             <trans-unit id="25">
                 <source>nav.profil</source>

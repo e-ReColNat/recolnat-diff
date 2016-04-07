@@ -1,8 +1,10 @@
 {% extends '@App/base.html.twig' %}
 
 {% block  body %}
+<div class="container-fluid">
     <h1 class="page-header">{{'prefs.save.title' | trans({}, 'prefs') }}</h1>
     {{ form_start(form) }}
     {{ form_widget(form) }}
     {{ form_end(form) }}
+</div>
 {% endblock %}

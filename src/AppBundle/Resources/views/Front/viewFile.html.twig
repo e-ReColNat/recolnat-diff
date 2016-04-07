@@ -133,6 +133,7 @@
                                         {{ 'delete.choices'|trans }}
                                     </a>
                                 </p>
+                                {% if app.environment=='dev' %}
                                 <p>
                                     <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode}) }}"
                                        class="delete deleteDiffs btn btn-default" role="button">
@@ -140,11 +141,10 @@
                                     </a>
                                 </p>
                                 <p>
-                                    {% if app.environment=='dev' %}
-                                        <a href="{{ path('generateDiff', {'collectionCode' : collectionCode, 'compt' : 5}) }}"
-                                           class="btn btn-default" role="button">Generate diff</a>
-                                    {% endif %}
+                                    <a href="{{ path('generateDiff', {'collectionCode' : collectionCode, 'compt' : 5}) }}"
+                                       class="btn btn-default" role="button">Generate diff</a>
                                 </p>
+                                {% endif %}
                             </td>
                         {% endif %}
                     </tr>

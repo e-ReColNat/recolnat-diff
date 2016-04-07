@@ -103,9 +103,9 @@ class BackendController extends Controller
             $countStep = 0;
             foreach ($diffManager::ENTITIES_NAME as $entityName) {
 
-                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'search '.$entityName]));
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'recherche '.$entityName]));
                 $catalogNumbers[$entityName] = $diffManager->getDiff($entityName);
-                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'compute '.$entityName]));
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => 'traitement '.$entityName]));
 
                 $diffComputer->setCatalogNumbers($catalogNumbers);
                 $diffComputer->computeClassname($entityName);

@@ -35,12 +35,12 @@
         </div>
         <div class="navbar-collapse collapse" id="navbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">{{ 'nav.accueil' | trans }}</a></li>
+                {#<li><a href="#">{{ 'nav.accueil' | trans }}</a></li>#}
                 <li>
-                    <a href="{{ path('viewPrefsUser', {'institutionCode':'MHNAIX'}) }}">{{ 'nav.parametres' | trans }}</a>
+                    <a href="{{ path('viewPrefsUser', {'institutionCode':'MHNAIX'}) }}">{{ 'nav.preferences' | trans }}</a>
                 </li>
-                <li><a href="#">{{ 'nav.profil' | trans }}</a></li>
-                <li><a href="#">{{ 'nav.aide' | trans }}</a></li>
+                {#<li><a href="#">{{ 'nav.profil' | trans }}</a></li>#}
+                {#<li><a href="#">{{ 'nav.aide' | trans }}</a></li>#}
                 <li><a href="{{ logout_path('main') }}">{{ 'login.logout' | trans({}, 'user') }}</a></li>
             </ul>
             {% if collectionCode is defined and collectionCode is not empty %}

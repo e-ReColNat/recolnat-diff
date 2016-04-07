@@ -1,6 +1,7 @@
 {% extends '@App/base.html.twig' %}
 
 {% block body %}
+<div class="container-fluid">
     {% include '@App/Front/partial/breadcrumb.html.twig' %}
      <h1 class="page-header">{{'stats.details' | trans }}</h1>
 
@@ -23,7 +24,7 @@
                     <th>{{'className' | trans}}</th>
                     <th>{{'fieldName' | trans}}</th>
                     <th colspan="2">Recolnat</th>
-                    <th colspan="2">{{ institutionCode}}</th>
+                    <th colspan="2">{{ collectionCode}}</th>
                     <th>{{'count.abbr' | trans}}</th>
                 </tr>
             </thead>
@@ -42,7 +43,7 @@
                 
                 <tr class="{{classTr}} {{data.className|lower}} lighter">
                     <td>{{data.className}}</td>
-                    <td>{{('label.'~(data.className | lower) ~'.fields.'~data.fieldName) | trans({}, 'entity')}}</td>
+                    <td>{{getFieldLabel(data.className, data.fieldName) | trans({}, 'entity')}}</td>
 
                     <td>
                         <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="recolnat">
@@ -64,7 +65,7 @@
                     </td>
                 </tr>
                 <tr id="taxon-{{md5key}}" class="collapse">
-                    <td colspan="8">
+                    <td colspan="7">
                         {% if data.catalogNumbers | length > 1 %}
                         <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonCatalogNumbers' : data.catalogNumbers | keys | json_encode})}}">
                             {{ 'view.specimens' | trans({'%count%' : (data.catalogNumbers | length) })}}
@@ -85,6 +86,7 @@
             </tbody>
         </table>
     {% endif %}
+</div>
 {% endblock %}
 
 
