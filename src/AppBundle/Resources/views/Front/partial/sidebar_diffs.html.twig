@@ -22,7 +22,7 @@
                              id="facet-{{ catalogNumber }}-{{ className }}" data-classname="{{ className }}"
                              data-comptchoices="{{ nbChoices }}" data-comptdiffs="{{ nbDiffs }}">
                             <span class="facet-className">{{ ('label.'~ (className|lower)~'.abbr') | trans({},'entity') | capitalize }}</span>&nbsp;:&nbsp;
-                            <span class="facet-choix">{{ 'label.choices' | transchoice(nbChoices, {'%count%': nbChoices}) }}</span>&nbsp;/&nbsp;
+                            <span class="facet-choix">{{ 'label.nbChoices' | transchoice(nbChoices, {'%count%': nbChoices}) }}</span>&nbsp;/&nbsp;
                             <span class="facet-diffs">{{ 'label.differences.abbr' | transchoice(nbDiffs, {'%count%': nbDiffs}) }}</span>
                         </div>
                     </li>
