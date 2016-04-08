@@ -23,7 +23,7 @@
                 <target>{1}%count% différence|]1,Inf]%count% différences</target>
             </trans-unit>
             <trans-unit id="6">
-                <source>label.choices</source>
+                <source>label.nbChoices</source>
                 <target>{0}0 choix|{1}%count% choix|]1,Inf]%count% choix</target>
             </trans-unit>
             <trans-unit id="7">
