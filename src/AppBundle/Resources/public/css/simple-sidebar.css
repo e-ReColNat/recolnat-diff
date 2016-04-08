@@ -106,6 +106,10 @@
         background: #000;
     }
 
+    #menu-toggle {
+        background: #fff;
+    }
+
     .navbar-toggle .icon-bar {
         width: 22px;
         transition: all 0.2s;
@@ -169,6 +173,7 @@
     }
 
     #menu-toggle:not(.collapsed) {
-        left: 200px;
+        left: 190px;
+        opacity: 0.5;
     }
 }

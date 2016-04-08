@@ -5,7 +5,7 @@
     {{ 'label.filtres'|trans }}
 </button>
 
-<div class="collapse filters">
+<div class="collapse filters" id="js_filters" >
     <h3>{{ 'label.selection.lot'|trans }}</h3>
     <form id="form-filters" class="form-horizontal">
         <div class="form-group filter-origin">
@@ -81,14 +81,18 @@
         </div>
     </form>
 </div>
-
+{#
 <script type="text/javascript">
     window.onload = function () {
         $(document).ready(function () {
+            $('#js_filters').on('show.bs.collapse', function () {
+                $('#wrapper').addClass('toggled');
+                $('#menu-toggle').addClass('collapsed');
+            });
             $("#selectAllClasses").click(function (event) {
                 $("#form-filters").find("[name^='classesName']").not($(this)).prop('checked', true);
                 event.preventDefault();
             });
         });
     }
-</script>
+</script>#}

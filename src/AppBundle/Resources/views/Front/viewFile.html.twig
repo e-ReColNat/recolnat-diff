@@ -108,7 +108,7 @@
                                 style="background-color: transparent;text-align:right">
                                 <p>
                                     <a href="{{ path('stats', {'collectionCode' : collectionCode}) }}"
-                                       class="btn btn-default"
+                                       class="btn bg-primary"
                                        role="button">
                                         {{ 'stats.details'| trans }}
                                     </a>
@@ -116,33 +116,33 @@
                                 <p>
                                     <a data-toggle="modal"
                                        href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode}) }}"
-                                       class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
+                                       class=" btn bg-primary checkprefs" role="button" data-target="#spinnerModal">
                                         {{ 'downloadDwc'|trans }}
                                     </a>
                                 </p>
                                 <p>
                                     <a data-toggle="modal"
                                        href="{{ path('setPrefsForExport', {'type':'csv', 'collectionCode' : collectionCode}) }}"
-                                       class=" btn btn-default checkprefs" role="button" data-target="#spinnerModal">
+                                       class=" btn bg-primary checkprefs" role="button" data-target="#spinnerModal">
                                         {{ 'downloadCsv'|trans }}
                                     </a>
                                 </p>
                                 <p>
                                     <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode}) }}"
-                                       class="delete deleteChoices btn btn-default" role="button">
+                                       class="delete deleteChoices btn bg-primary" role="button">
                                         {{ 'delete.choices'|trans }}
                                     </a>
                                 </p>
                                 {% if app.environment=='dev' %}
                                 <p>
                                     <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode}) }}"
-                                       class="delete deleteDiffs btn btn-default" role="button">
+                                       class="delete deleteDiffs btn bg-primary" role="button">
                                         {{ 'delete.diffs'|trans }}
                                     </a>
                                 </p>
                                 <p>
                                     <a href="{{ path('generateDiff', {'collectionCode' : collectionCode, 'compt' : 5}) }}"
-                                       class="btn btn-default" role="button">Generate diff</a>
+                                       class="btn bg-primary" role="button">Generate diff</a>
                                 </p>
                                 {% endif %}
                             </td>
