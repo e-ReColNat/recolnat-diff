@@ -8,20 +8,21 @@
 {% block body %}
     {% set datas = pagination.items %}
     {% if diffs is not empty %}
-        <div id="wrapper" class="toggled">
 
-            <div class="sidebar-wrapper sidebar-wrapper-left">
-                {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
-            </div>
+        <div id="wrapper" class="toggled">
+            {% include '@App/Front/partial/module_diff.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
+
+            {#{% include '@App/Front/partial/traitement_lot.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
+            {% include '@App/Front/partial/form_search.html.twig' %}#}
 
             <div id="page-content-wrapper">
-                {% include '@App/Front/partial/buttonHamburger.html.twig' %}
+                {#{% include '@App/Front/partial/buttonHamburger.html.twig' %}#}
                 {% include '@App/Front/partial/breadcrumb.html.twig' %}
                 {% include '@App/Front/partial/pagination.html.twig' %}
 
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
-                    {% include '@App/Front/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
+
                     {% for catalogNumber, classWithDiff in datas %}
                         {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' %}
                     {% endfor %}

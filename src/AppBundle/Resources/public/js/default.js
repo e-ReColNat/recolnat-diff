@@ -82,12 +82,6 @@ $(document).ready(function () {
     var institutionCode = $parameters.data("institutioncode") ;
     var collectionCode = $parameters.data("collectioncode") ;
     var $checkboxSpecimen = $(".js_specimen").find("[name^='check-specimen']");
-    $("#menu-toggle").click(function (e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-        $(this).toggleClass("collapsed");
-    });
-
 
     var selectedSpecimens=[];
     if (localStorage.getItem('selectedSpecimens') !== null) {

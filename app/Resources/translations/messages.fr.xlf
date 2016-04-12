@@ -323,8 +323,8 @@
                 <target>Filtres</target>
             </trans-unit>
             <trans-unit id="81">
-                <source>label.selection.lot</source>
-                <target>Sélection par lot</target>
+                <source>label.traitement.lot</source>
+                <target>Traitement par lot</target>
             </trans-unit>
             <trans-unit id="82">
                 <source>label.search</source>

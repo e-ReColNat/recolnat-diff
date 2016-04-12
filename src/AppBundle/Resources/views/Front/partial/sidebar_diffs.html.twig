@@ -6,7 +6,9 @@
         {% set classWithDiff = datas.classes %}
         <li>
             {% set taxon = datas.taxon %}
-
+            {%  if taxon is null %}
+                {% set taxon = 'label.notaxon' | trans %}
+            {% endif %}
             {% set path='' %}
             {% if page != currentPage %}
                 {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}

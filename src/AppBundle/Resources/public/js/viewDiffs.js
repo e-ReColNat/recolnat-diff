@@ -131,6 +131,56 @@ $(document).ready(function () {
     }
 
     // Sélection bouton radio par specimen
+    $('table.diff').find(".js_select_entity").hover(function () {
+        var tableContext = $(this).parents('table.diff');
+        var relationId = $(this).attr('name');
+        var choice = $(this).attr('value');
+        tableContext.find(":radio")
+            .filter("[name^='" + relationId + "']")
+            .filter('[data-type="diff-field"]')
+            .filter('[value = "' + choice + '"]')
+            .map(
+                function () {
+                    higlightCells($(this), highlightClass);
+                });
+    }, function () {
+
+        var tableContext = $(this).parents('table.diff');
+        var relationId = $(this).attr('name');
+        var choice = $(this).attr('value');
+        tableContext.find(":radio")
+            .filter("[name^='" + relationId + "']")
+            .filter('[data-type="diff-field"]')
+            .filter('[value = "' + choice + '"]')
+            .map(
+                function () {
+                    unHiglightCells($(this), highlightClass);
+                });
+    }).click(function() {
+        var choices = [];
+        var tableContext = $(this).parents('table.diff');
+        var relationId = $(this).attr('name');
+        var choice = $(this).attr('value');
+        var catalogNumber = $(this).parents('.js_specimen').data('catalognumber');
+        tableContext.find(":radio")
+            .filter("[name^='" + relationId + "']")
+            .filter('[data-type="diff-field"]')
+            .filter('[value = "' + choice + '"]')
+            .map(
+                function () {
+                    $(this).prop('checked', true);
+                    setChoice(choices, $(this), catalogNumber);
+                });
+        $.ajax({
+                url: Routing.generate('setChoice', { collectionCode: collectionCode}),
+                data: {'choices': choices},
+                method: "POST"
+            })
+            .done(function (data) {
+                updateDisplay(data);
+            });
+    });
+
     $('table.diff').find(":radio").change(function () {
             var choices = [];
             var tableContext = $(this).parents('table.diff');
@@ -201,15 +251,16 @@ $(document).ready(function () {
 
     function higlightCells(radioElement, highlightClass) {
         if (radioElement.length > 0) {
-            radioElement.parent().addClass(highlightClass);
-            radioElement.parent().prev().addClass(highlightClass);
+            console.log(radioElement.parents('td'));
+            radioElement.parents('td').addClass(highlightClass);
+            //radioElement.parent().prev().addClass(highlightClass);
         }
     }
 
     function unHiglightCells(radioElement, highlightClass) {
         if (radioElement.length > 0) {
-            radioElement.parent().removeClass(highlightClass);
-            radioElement.parent().prev().removeClass(highlightClass);
+            radioElement.parents('td').removeClass(highlightClass);
+            //radioElement.parent().prev().removeClass(highlightClass);
         }
     }
 
@@ -240,4 +291,10 @@ $(document).ready(function () {
         event.preventDefault();
     });
 
+
+    $(".sidebar-btn").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+        $(this).toggleClass("collapsed");
+    });
 });

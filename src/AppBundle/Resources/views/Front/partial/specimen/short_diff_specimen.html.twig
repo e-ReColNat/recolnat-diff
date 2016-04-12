@@ -8,14 +8,6 @@
             <col class="col-md-5">
             <col class="xsmall">
         </colgroup>
-        <thead>
-        <tr>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>
-            <th colspan="2">Recolnat</th>
-            <th colspan="2">Institution</th>
-        </tr>
-        </thead>
         <tbody>
         {% set specimen = attribute(diffs.datas, catalogNumber) %}
         {% for className, details in specimen.classes %}
@@ -28,15 +20,19 @@
                 <td class="diff-class" rowspan="{{ rowspan }}" style="width: 10px !important;">
                     <div>{{ ('label.' ~ className|lower ~ '.abbr') |trans({},'entity')|capitalize }}</div>
                 </td>
-                <td colspan="2">{{ relationToString }}</td>
+                <td colspan="2"><h4>{{ relationToString }}</h4></td>
                 <td>
-                    <input type="radio" data-class="{{ className }}" data-type='diff-entity' name="{{ relationId }}"
-                           value="recolnat">
+                    <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner" data-class="{{ className }}"
+                            data-type='diff-entity' name="{{ relationId }}" value="recolnat">
+                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> e-ReColNat
+                    </button>
                 </td>
                 <td>&nbsp;</td>
                 <td>
-                    <input type="radio" data-class="{{ className }}" data-type='diff-entity' name="{{ relationId }}"
-                           value="institution">
+                    <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner data-class="{{ className }}"
+                            data-type='diff-entity' name="{{ relationId }}" value="institution">
+                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Institution
+                    </button>
                 </td>
             </tr>
 
@@ -45,17 +41,13 @@
                     <td>
                         {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
                     </td>
-                    <td>
-                        {{ fieldToString(relationRecolnat, fieldName) }}
+                    <td colspan="2" class="field-radio">
+                        <div class="pull-left">{{ fieldToString(relationRecolnat, fieldName) }}</div>
+                        <div class="pull-right">{% include '@App/Front/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}</div>
                     </td>
-                    <td>
-                        {% include '@App/Front/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}
-                    </td>
-                    <td>
-                        {{ fieldToString(relationInstitution, fieldName) }}
-                    </td>
-                    <td>
-                        {% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}
+                    <td colspan="2" class="field-radio">
+                        <div class="pull-left">{{ fieldToString(relationInstitution, fieldName) }}</div>
+                        <div class="pull-right">{% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}</div>
                     </td>
                 </tr>
             {% endfor %}

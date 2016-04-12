@@ -166,8 +166,8 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensByCatalogNumbers = $exportManager->getDiffHandler()->getLonesomeRecordsIndexedByCatalogNumber($db,
-            $selectedClassName);
+        $lonesomesSpecimensByCatalogNumbers = $exportManager->getDiffHandler()
+            ->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomesSpecimensByCatalogNumbers, $page, $maxItemPerPage);
@@ -381,7 +381,7 @@ class FrontController extends Controller
         $specimens = [];
 
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')
-            ->findByCatalogNumbers($collection,$catalogNumbers,AbstractQuery::HYDRATE_OBJECT);
+            ->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
         $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
             'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
