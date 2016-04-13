@@ -1,0 +1,24 @@
+{% set page = 1 %}
+{% set choices = exportManager.sessionHandler.choices %}
+
+<ul class="nav sidebar-nav sidebar-choices">
+    {% dump(specimens) %}
+    {#{% for catalogNumber, datas in diffs.datas %}
+        <li>
+            {% set taxon = datas.taxon %}
+            {%  if taxon is null %}
+                {% set taxon = 'label.notaxon' | trans %}
+            {% endif %}
+            {% set path='' %}
+            {% if page != currentPage %}
+                {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
+            {% endif %}
+
+            <a href="{{ path }}#{{ catalogNumber }}" data-currentpage="{{ page != currentPage ? 'false' : 'true' }}">{{ taxon }}</a>
+
+            {% if ( loop.index % itemNumberPerPage) == 0 %}
+                {% set page = page +1 %}
+            {% endif %}
+        </li>
+    {% endfor %}#}
+</ul>

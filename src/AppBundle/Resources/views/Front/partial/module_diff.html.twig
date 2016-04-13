@@ -24,6 +24,10 @@
 
 </div>
 <div class="sidebar-wrapper sidebar-wrapper-left">
-    {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
+    {% if app.request.attributes.get('_route') == 'lonesomes' %}
+        {% include '@App/Front/partial/sidebar_lonesomes.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
+    {% else %}
+        {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
+    {% endif %}
 </div>
 {% include '@App/Front/partial/traitement_lot.html.twig' %}

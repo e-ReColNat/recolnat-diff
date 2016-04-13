@@ -189,7 +189,6 @@ class FrontController extends Controller
             'pagination' => $pagination,
             'db' => $db,
             'exportManager' => $exportManager,
-            'diffs' => $diffs,
         ));
     }
 
