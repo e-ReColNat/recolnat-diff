@@ -1,6 +1,5 @@
 <div class="diff_module_buttons">
 
-
     <button type="button" class="sidebar-btn btn btn-primary collapsed">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar top-bar"></span>
@@ -15,7 +14,7 @@
 
     <form id="js-search-form" class="search-form" action="{{ path('search', {'collectionCode':collectionCode}) }}"
           role="search">
-        <input type="text" placeholder="{{ 'label.search' | trans }}" name="search" class="form-control">
+        <input type="text" placeholder="{{ 'label.search' | trans }}" id="js-search-input" name="search" class="form-control">
     </form>
 
     <button type="button" class="btn btn-primary btn-search"
@@ -28,14 +27,3 @@
     {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
 </div>
 {% include '@App/Front/partial/traitement_lot.html.twig' %}
-
-<script type="text/javascript">
-    window.onload = function () {
-        $(document).ready(function () {
-            $(".btn-search").click(function (event) {
-                $("#js-search-form").addClass('active') ;
-                event.preventDefault();
-            });
-        });
-    }
-</script>

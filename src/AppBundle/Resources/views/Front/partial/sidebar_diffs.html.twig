@@ -14,7 +14,7 @@
                 {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
             {% endif %}
 
-            <a href="{{ path }}#{{ catalogNumber }}">{{ taxon }}</a>
+            <a href="{{ path }}#{{ catalogNumber }}" data-currentpage="{{ page != currentPage ? 'false' : 'true' }}">{{ taxon }}</a>
             <ul class="choices">
                 {% for className in classWithDiff | keys %}
                     {% set nbDiffs = countDiffs(diffs, className, catalogNumber) %}

@@ -37,13 +37,4 @@
         {% endif %}
     {% endif %}
 
-    <li class="pull-right"><a href="#" id="linkSelectedSpecimen" class="pull-left hidden btn btn-default btn-xs"
-       style="margin-left:1em;">{{ 'viewSelectedSpecimens'| trans }}</a></li>
-    {% if collectionCode is defined and collectionCode is not empty %}
-        <li class="pull-right search">
-        <form class="navbar-form navbar-right" action="{{ path('search', {'collectionCode':collectionCode}) }}">
-            <input type="text" placeholder="{{ 'label.search' | trans }}" name="search" class="form-control">
-        </form>
-    {% endif %}
-        </li>
 </ol>

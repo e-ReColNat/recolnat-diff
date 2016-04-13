@@ -30,7 +30,40 @@ $(document).ready(function () {
 
 
     maybeScrollToHash();
+    $(document).on("scroll", onScroll);
+    // Sidebar
+    function onScroll(event){
+        var scrollPos = $(document).scrollTop();
+        $('.sidebar-choices').find("a[data-currentpage='true']").each(function () {
+            var currLink = $(this);
+            var refElement = $(currLink.attr("href"));
+            if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+                $('.sidebar-choices li').removeClass("active");
+                currLink.parent().addClass("active");
+            }
+            else{
+                currLink.parent().removeClass("active");
+            }
+        });
+    }
 
+// Bouton de recherche
+    $(".btn-search").click(function (event) {
+        var $searchInput = $("#js-search-input");
+        var $searchForm = $("#js-search-form");
+        if ($(this).hasClass('active') && $searchInput.val() == '') {
+            $searchForm.removeClass('active') ;
+            $(this).removeClass('active') ;
+        }
+        else {
+            if ($searchInput.val() !== '') {
+                $searchForm.submit();
+            }
+            $searchForm.addClass('active');
+            $(this).addClass('active');
+        }
+        event.preventDefault();
+    });
 
     var $diffs = $('#diffs');
     var institutionCode = $diffs.data('institutioncode');
@@ -251,16 +284,13 @@ $(document).ready(function () {
 
     function higlightCells(radioElement, highlightClass) {
         if (radioElement.length > 0) {
-            console.log(radioElement.parents('td'));
             radioElement.parents('td').addClass(highlightClass);
-            //radioElement.parent().prev().addClass(highlightClass);
         }
     }
 
     function unHiglightCells(radioElement, highlightClass) {
         if (radioElement.length > 0) {
             radioElement.parents('td').removeClass(highlightClass);
-            //radioElement.parent().prev().removeClass(highlightClass);
         }
     }
 

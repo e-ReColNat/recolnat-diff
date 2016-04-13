@@ -864,38 +864,6 @@ table.diff caption {
 #diffs .tab-pane .row:last-child {
   border-bottom: none;
 }
-/** SIDEBAR **/
-.sidebar-wrapper ul.sidebar-choices {
-  font-size: 85%;
-  list-style: outside none none;
-  padding-left: 5px;
-}
-.sidebar-wrapper ul.sidebar-choices,
-.sidebar-wrapper ul.choices {
-  list-style: outside none none;
-}
-.sidebar-wrapper ul.choices {
-  padding-left: 10px;
-}
-.sidebar-wrapper ul li div {
-  margin-left: 10px;
-}
-.sidebar-wrapper > li > a {
-  padding: 5px 5px 3px 5px;
-}
-.sidebar-wrapper > li:hover {
-  background-color: #eee;
-}
-.sidebar-wrapper .nav > li {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 5px;
-}
-.sidebar-wrapper .nav > li > a {
-  padding: 0;
-}
-.sidebar-wrapper > li:last-child {
-  border-bottom: none;
-}
 /** TABLE WITH ROTATED HEADER
 see : http://jsfiddle.net/D2RLR/7569/ */
 .table-header-rotated > tbody > tr > td {
@@ -939,7 +907,7 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   text-align:left;
 
 }*/
-/** FILTERS **/
+/** BOUTONS PAGE DE DIFF **/
 #wrapper:not(.toggled) .diff_module_buttons {
   left: 260px;
 }
@@ -970,13 +938,62 @@ see : http://jsfiddle.net/D2RLR/7569/ */
 .diff_module_buttons .btn-search,
 .diff_module_buttons .search-form {
   top: 80px;
+  transition: all 1.0s ease;
 }
 .diff_module_buttons .search-form {
-  display: none;
+  left: -310px;
+  position: absolute;
+  width: 300px ;
 }
 .diff_module_buttons .search-form.active {
-  display: block;
+  left: 0;
 }
+.diff_module_buttons .btn-search.active {
+  margin-left: 300px;
+}
+/** SIDEBAR **/
+.sidebar-wrapper {
+  background-color: #fff;
+}
+.sidebar-wrapper ul.sidebar-choices {
+  font-size: 85%;
+  list-style: outside none none;
+  padding-left: 5px;
+}
+.sidebar-wrapper ul.sidebar-choices,
+.sidebar-wrapper ul.choices {
+  list-style: outside none none;
+}
+.sidebar-wrapper ul.choices {
+  padding-left: 10px;
+}
+.sidebar-wrapper ul li div {
+  margin-left: 10px;
+}
+.sidebar-wrapper > li > a {
+  padding: 5px 5px 3px 5px;
+}
+.sidebar-wrapper li:hover,
+.sidebar-wrapper li.active {
+  background-color: #d9edf7;
+}
+a.sidebar-wrapper li:hover:hover,
+a.sidebar-wrapper li.active:hover,
+a.sidebar-wrapper li:hover:focus,
+a.sidebar-wrapper li.active:focus {
+  background-color: #afd9ee;
+}
+.sidebar-wrapper .nav > li {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+.sidebar-wrapper .nav > li > a {
+  padding: 0;
+}
+.sidebar-wrapper > li:last-child {
+  border-bottom: none;
+}
+/** TRAITEMENT PAR LOT ****/
 .radio-inline label,
 .checkbox-inline label {
   font-weight: normal;
@@ -995,13 +1012,16 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   margin-right: 0;
 }
 /** SEARCH IN BREADCRUMB **/
-.breadcrumb > li + li.search::before {
+/*.breadcrumb > li + li.search::before {
   content: none;
 }
-.breadcrumb li.search .navbar-form {
-  margin-top: -8px;
-  margin-right: 140px;
-}
-.breadcrumb li.search .navbar-form .form-control {
-  width: 300px;
-}
+
+.breadcrumb li.search {
+  .navbar-form {
+    margin-top: -8px;
+    margin-right: 140px;
+  }
+  .navbar-form .form-control {
+    width: 300px;
+  }
+}*/

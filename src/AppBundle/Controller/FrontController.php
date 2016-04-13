@@ -173,6 +173,7 @@ class FrontController extends Controller
         $pagination = $paginator->paginate($lonesomesSpecimensByCatalogNumbers, $page, $maxItemPerPage);
         $catalogNumbers = array_keys($pagination->getItems());
 
+        $diffs = $exportManager->getDiffs($request, $selectedClassName, [], []);
 
         if ($db == 'recolnat') {
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
@@ -187,6 +188,8 @@ class FrontController extends Controller
             'specimens' => $specimens,
             'pagination' => $pagination,
             'db' => $db,
+            'exportManager' => $exportManager,
+            'diffs' => $diffs,
         ));
     }
 

@@ -1,6 +1,7 @@
 @import "../bootstrap-3.3.6/less/variables.less";
 @import "../bootstrap-3.3.6/less/mixins.less";
 
+
 /*@specimen: #c0504d;
 @bibliography: #4f81bd;
 @determination: #9bbb59;
@@ -30,15 +31,15 @@
 //@multimedia : #fccde5;
 //@diffs : #d9d9d9;
 
-@specimen: rgb(107, 94, 74);
-@bibliography: rgb(239, 190, 118);
+@specimen:      rgb(107, 94, 74);
+@bibliography:  rgb(239, 190, 118);
 @determination: rgb(206, 165, 125);
-@localisation: rgb(255, 140, 121);
-@recolte: rgb(182, 93, 153);
-@stratigraphy: rgb(252, 186, 63);
-@taxon: rgb(146, 114, 74);
-@multimedia: rgb(135, 189, 106);
-@diffs: rgb(125, 155, 172);
+@localisation:  rgb(255, 140, 121);
+@recolte:       rgb(182, 93, 153);
+@stratigraphy:  rgb(252, 186, 63);
+@taxon:         rgb(146, 114, 74);
+@multimedia:    rgb(135, 189, 106);
+@diffs:         rgb(125, 155, 172);
 /*
 @specimen: #00A0B0;
 @bibliography:lighten(spin(@specimen, 5), 10%);
@@ -60,41 +61,41 @@
 @determination: lighten(spin(@specimen, 10), 40%);
 @diffs : rgb(125, 155, 172);*/
 
-@fadeTdBackground: 50%;
-@fadeTdBackground-light: 40%;
-@fadeTdBackground-lighter: 30%;
-@fadeTdBackground-dark: 30%;
+@fadeBackground: 50%;
+@fadeBackground-light: 40%;
+@fadeBackground-lighter: 30%;
+@fadeBackground-dark: 30%;
 
 /** Couleurs des classes **/
 
 .setColor(@color) {
   tr.@{color} td, tr.@{color} th {
-    background-color: fade(@@color, @fadeTdBackground);
+    background-color: fade(@@color, @fadeBackground);
   }
 
   td.@{color}, th.@{color} {
-    background-color: fade(@@color, @fadeTdBackground);
+    background-color: fade(@@color, @fadeBackground);
   }
 
   tr.@{color}.light td, li.@{color}.light {
-    background-color: fade(@@color, @fadeTdBackground-light)
+    background-color: fade(@@color, @fadeBackground-light)
   }
 
   tr.@{color} td.highlight, tr.@{color}.lighter td.field-radio.highlight {
-    border: 1px double darken(@@color, @fadeTdBackground-dark);
+    border: 1px double darken(@@color, @fadeBackground-dark);
   }
 
   tr.@{color}.lighter td, li.@{color}.lighter {
-    background-color: fade(@@color, @fadeTdBackground-lighter);
-    border: 1px solid fade(@@color, @fadeTdBackground-lighter);
+    background-color: fade(@@color, @fadeBackground-lighter);
+    border: 1px solid fade(@@color, @fadeBackground-lighter);
   }
 
   tr.@{color}.lighter td.field-radio, li.@{color}.lighter {
-    border: 1px solid fade(@@color, @fadeTdBackground-light);
+    border: 1px solid fade(@@color, @fadeBackground-light);
   }
 
   .sidebar-wrapper ul li.@{color} {
-    background-color: fade(@@color, @fadeTdBackground);
+    background-color: fade(@@color, @fadeBackground);
   }
   .chart {
     rect.@{color} {
@@ -116,7 +117,7 @@
     }
   }
   .tab-pane.@{color} {
-    background-color: fade(@@color, @fadeTdBackground-light)
+    background-color: fade(@@color, @fadeBackground-light)
   }
   .nav-tabs {
     border-bottom: 1px solid @nav-tabs-border-color;
@@ -128,14 +129,14 @@
 
       // Actual tabs (as links)
       > a {
-        background-color: fade(@@color, @fadeTdBackground-light);
+        background-color: fade(@@color, @fadeBackground-light);
         margin-right: 2px;
         line-height: @line-height-base;
         //border: 1px solid transparent;
-        border: 1px solid fade(@@color, @fadeTdBackground);
+        border: 1px solid fade(@@color, @fadeBackground);
         border-radius: @border-radius-base @border-radius-base 0 0;
         &:hover {
-          border-color: fade(@@color, @fadeTdBackground);
+          border-color: fade(@@color, @fadeBackground);
         }
       }
 
@@ -147,7 +148,7 @@
           color: @nav-tabs-active-link-hover-color;
           /*background-color: @nav-tabs-active-link-hover-bg;
           border: 1px solid @nav-tabs-active-link-hover-border-color;*/
-          background-color: fade(@@color, @fadeTdBackground-light);
+          background-color: fade(@@color, @fadeBackground-light);
 
           border-bottom-color: transparent;
           cursor: default;
@@ -263,41 +264,6 @@ table.diff {
   }
 }
 
-/** SIDEBAR **/
-.sidebar-wrapper {
-  ul.sidebar-choices {
-    font-size: 85%;
-    list-style: outside none none;
-    padding-left: 5px;
-  }
-  ul.sidebar-choices, ul.choices {
-    list-style: outside none none;
-  }
-  ul.choices {
-    padding-left: 10px;
-  }
-  ul li div {
-    margin-left: 10px;
-  }
-
-  > li > a {
-    padding: 5px 5px 3px 5px;
-  }
-  > li:hover {
-    background-color: #eee;
-  }
-  .nav > li {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-  }
-  .nav > li > a {
-    padding: 0;
-  }
-  > li:last-child {
-    border-bottom: none;
-  }
-}
-
 /** TABLE WITH ROTATED HEADER
 see : http://jsfiddle.net/D2RLR/7569/ */
 .table-header-rotated > tbody > tr > td {
@@ -343,7 +309,7 @@ see : http://jsfiddle.net/D2RLR/7569/ */
 
 }*/
 
-/** FILTERS **/
+/** BOUTONS PAGE DE DIFF **/
 #wrapper:not(.toggled) .diff_module_buttons {
   left: 260px;
 }
@@ -363,7 +329,6 @@ see : http://jsfiddle.net/D2RLR/7569/ */
     position: absolute;
   }
 
-
   .sidebar-btn {
     top: 0;
     padding: 9px 10px;
@@ -376,17 +341,58 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   }
   .btn-search, .search-form {
     top: 80px;
+    transition: all 1.0s ease;
   }
   .search-form {
-    display : none;
+    left: -310px;
+    position: absolute;
+    width: 300px ;
   }
   .search-form.active {
-    display : block;
+    left: 0;
   }
-
+  .btn-search.active {
+    margin-left : 300px;
+  }
 }
 
+/** SIDEBAR **/
+.sidebar-wrapper {
+  background-color:@body-bg ;
+  ul.sidebar-choices {
+    font-size: 85%;
+    list-style: outside none none;
+    padding-left: 5px;
+  }
+  ul.sidebar-choices, ul.choices {
+    list-style: outside none none;
+  }
+  ul.choices {
+    padding-left: 10px;
+  }
+  ul li div {
+    margin-left: 10px;
+  }
 
+  > li > a {
+    padding: 5px 5px 3px 5px;
+  }
+  li:hover, li.active {
+    .bg-variant(@state-info-bg);
+  }
+  .nav > li {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+  .nav > li > a {
+    padding: 0;
+  }
+  > li:last-child {
+    border-bottom: none;
+  }
+}
+
+/** TRAITEMENT PAR LOT ****/
 .radio-inline label,
 .checkbox-inline label {
   font-weight: normal;
@@ -408,7 +414,7 @@ see : http://jsfiddle.net/D2RLR/7569/ */
 }
 
 /** SEARCH IN BREADCRUMB **/
-.breadcrumb > li + li.search::before {
+/*.breadcrumb > li + li.search::before {
   content: none;
 }
 
@@ -420,5 +426,5 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   .navbar-form .form-control {
     width: 300px;
   }
-}
+}*/
 
