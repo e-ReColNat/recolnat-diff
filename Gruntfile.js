@@ -101,6 +101,12 @@ module.exports = function(grunt) {
                     'src/AppBundle/Resources/public/js/string.js',
                 ],
                 dest: 'web/assets/AppBundle/js/recolnat.js'
+            },
+            jquery: {
+                src: [
+                    'src/AppBundle/Resources/public/jquery/jquery-1.12.3.min.js'
+                ],
+                dest: 'web/assets/vendor/jquery/jquery.min.js'
             }
         },
         // Lorsque l'on modifie des fichiers LESS, il faut relancer la tache 'css'

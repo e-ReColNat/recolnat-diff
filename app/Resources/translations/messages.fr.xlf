@@ -354,6 +354,14 @@
                 <source>label.lonesomes.institution</source>
                 <target>Institution exclusivement</target>
             </trans-unit>
+            <trans-unit id="89">
+                <source>choix.erecolnat.all</source>
+                <target>e-ReColNat</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>choix.collection.all</source>
+                <target>%collection%</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

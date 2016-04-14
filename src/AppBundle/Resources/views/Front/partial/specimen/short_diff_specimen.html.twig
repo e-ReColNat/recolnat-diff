@@ -24,14 +24,15 @@
                 <td>
                     <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner" data-class="{{ className }}"
                             data-type='diff-entity' name="{{ relationId }}" value="recolnat">
-                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> e-ReColNat
+                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> {{ 'choix.erecolnat.all' | trans }}
                     </button>
                 </td>
                 <td>&nbsp;</td>
                 <td>
                     <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner data-class="{{ className }}"
                             data-type='diff-entity' name="{{ relationId }}" value="institution">
-                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Institution
+                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>&nbsp;
+                            {{ 'choix.collection.all' | trans({'%collection%':collectionCode}) }}
                     </button>
                 </td>
             </tr>

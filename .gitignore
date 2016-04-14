@@ -30,6 +30,9 @@
 # Composer PHAR
 /composer.phar
 
+#grunt
+node_modules
+
 ### RECOLNAT SPECIFIC ###
 src/AppBundle/Tests
 src/AppBundle/Data/*
