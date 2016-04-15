@@ -4,7 +4,6 @@ namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\User\Prefs;
 use AppBundle\Entity\Stratigraphy;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -30,6 +29,7 @@ class DwcExporter extends AbstractExporter
     protected $dwcLineBreak = "\t";
     protected $dwcIgnoreHeaderLines = true;
     protected $dwcDateFormat = 'Y-m-d';
+    protected $zipFileName = 'dwc.zip';
 
     /**
      * @return array
@@ -128,7 +128,7 @@ class DwcExporter extends AbstractExporter
      */
     private function createZipFile()
     {
-        $zipFilePath = $this->getExportDirPath().'/dwc.zip';
+        $zipFilePath = $this->getExportDirPath().'/'.$this->zipFileName;
         $arrayFilesName = [];
         $arrayFilesName[] = $this->getMetaFilepath().' ';
         if (is_array($this->csvFiles) && count($this->csvFiles) > 0) {
@@ -140,7 +140,11 @@ class DwcExporter extends AbstractExporter
             $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
             exec($zipCommand);
         } else {
-            throw new Exception('DWC-a can\'t be created !');
+            throw new \Exception('DWC-a can\'t be created !');
+        }
+
+        if (!is_file($zipFilePath)) {
+            throw new \Exception('Zip file has not been created');
         }
 
         return $zipFilePath;

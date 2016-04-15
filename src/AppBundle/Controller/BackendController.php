@@ -131,7 +131,7 @@ class BackendController extends Controller
             $path = urldecode($path);
             $response->setContent(file_get_contents($path));
             $response->headers->set('Content-Type', 'application/zip');
-            $response->headers->set('Content-Disposition', 'attachment; collectionCode="'.basename($path).'"');
+            $response->headers->set('Content-Disposition', 'attachment; filename="'.basename($path).'"');
         }
 
         return $response;
