@@ -31,16 +31,26 @@ tr.specimen td,
 tr.specimen th {
   background-color: rgba(107, 94, 74, 0.5);
 }
+td.specimen,
+th.specimen {
+  background-color: rgba(107, 94, 74, 0.5);
+}
 tr.specimen.light td,
 li.specimen.light {
   background-color: rgba(107, 94, 74, 0.4);
 }
+tr.specimen td.highlight,
+tr.specimen.lighter td.field-radio.highlight {
+  border: 1px double #110f0b;
+}
 tr.specimen.lighter td,
 li.specimen.lighter {
   background-color: rgba(107, 94, 74, 0.3);
+  border: 1px solid rgba(107, 94, 74, 0.3);
 }
-tr.specimen td.highlight {
-  border: 1px double #110f0b;
+tr.specimen.lighter td.field-radio,
+li.specimen.lighter {
+  border: 1px solid rgba(107, 94, 74, 0.4);
 }
 .sidebar-wrapper ul li.specimen {
   background-color: rgba(107, 94, 74, 0.5);
@@ -106,16 +116,26 @@ tr.bibliography td,
 tr.bibliography th {
   background-color: rgba(239, 190, 118, 0.5);
 }
+td.bibliography,
+th.bibliography {
+  background-color: rgba(239, 190, 118, 0.5);
+}
 tr.bibliography.light td,
 li.bibliography.light {
   background-color: rgba(239, 190, 118, 0.4);
 }
+tr.bibliography td.highlight,
+tr.bibliography.lighter td.field-radio.highlight {
+  border: 1px double #b77515;
+}
 tr.bibliography.lighter td,
 li.bibliography.lighter {
   background-color: rgba(239, 190, 118, 0.3);
+  border: 1px solid rgba(239, 190, 118, 0.3);
 }
-tr.bibliography td.highlight {
-  border: 1px double #b77515;
+tr.bibliography.lighter td.field-radio,
+li.bibliography.lighter {
+  border: 1px solid rgba(239, 190, 118, 0.4);
 }
 .sidebar-wrapper ul li.bibliography {
   background-color: rgba(239, 190, 118, 0.5);
@@ -181,16 +201,26 @@ tr.determination td,
 tr.determination th {
   background-color: rgba(206, 165, 125, 0.5);
 }
+td.determination,
+th.determination {
+  background-color: rgba(206, 165, 125, 0.5);
+}
 tr.determination.light td,
 li.determination.light {
   background-color: rgba(206, 165, 125, 0.4);
 }
+tr.determination td.highlight,
+tr.determination.lighter td.field-radio.highlight {
+  border: 1px double #815931;
+}
 tr.determination.lighter td,
 li.determination.lighter {
   background-color: rgba(206, 165, 125, 0.3);
+  border: 1px solid rgba(206, 165, 125, 0.3);
 }
-tr.determination td.highlight {
-  border: 1px double #815931;
+tr.determination.lighter td.field-radio,
+li.determination.lighter {
+  border: 1px solid rgba(206, 165, 125, 0.4);
 }
 .sidebar-wrapper ul li.determination {
   background-color: rgba(206, 165, 125, 0.5);
@@ -256,16 +286,26 @@ tr.localisation td,
 tr.localisation th {
   background-color: rgba(255, 140, 121, 0.5);
 }
+td.localisation,
+th.localisation {
+  background-color: rgba(255, 140, 121, 0.5);
+}
 tr.localisation.light td,
 li.localisation.light {
   background-color: rgba(255, 140, 121, 0.4);
 }
+tr.localisation td.highlight,
+tr.localisation.lighter td.field-radio.highlight {
+  border: 1px double #df2000;
+}
 tr.localisation.lighter td,
 li.localisation.lighter {
   background-color: rgba(255, 140, 121, 0.3);
+  border: 1px solid rgba(255, 140, 121, 0.3);
 }
-tr.localisation td.highlight {
-  border: 1px double #df2000;
+tr.localisation.lighter td.field-radio,
+li.localisation.lighter {
+  border: 1px solid rgba(255, 140, 121, 0.4);
 }
 .sidebar-wrapper ul li.localisation {
   background-color: rgba(255, 140, 121, 0.5);
@@ -331,16 +371,26 @@ tr.recolte td,
 tr.recolte th {
   background-color: rgba(182, 93, 153, 0.5);
 }
+td.recolte,
+th.recolte {
+  background-color: rgba(182, 93, 153, 0.5);
+}
 tr.recolte.light td,
 li.recolte.light {
   background-color: rgba(182, 93, 153, 0.4);
 }
+tr.recolte td.highlight,
+tr.recolte.lighter td.field-radio.highlight {
+  border: 1px double #542645;
+}
 tr.recolte.lighter td,
 li.recolte.lighter {
   background-color: rgba(182, 93, 153, 0.3);
+  border: 1px solid rgba(182, 93, 153, 0.3);
 }
-tr.recolte td.highlight {
-  border: 1px double #542645;
+tr.recolte.lighter td.field-radio,
+li.recolte.lighter {
+  border: 1px solid rgba(182, 93, 153, 0.4);
 }
 .sidebar-wrapper ul li.recolte {
   background-color: rgba(182, 93, 153, 0.5);
@@ -406,16 +456,26 @@ tr.stratigraphy td,
 tr.stratigraphy th {
   background-color: rgba(252, 186, 63, 0.5);
 }
+td.stratigraphy,
+th.stratigraphy {
+  background-color: rgba(252, 186, 63, 0.5);
+}
 tr.stratigraphy.light td,
 li.stratigraphy.light {
   background-color: rgba(252, 186, 63, 0.4);
 }
+tr.stratigraphy td.highlight,
+tr.stratigraphy.lighter td.field-radio.highlight {
+  border: 1px double #a06902;
+}
 tr.stratigraphy.lighter td,
 li.stratigraphy.lighter {
   background-color: rgba(252, 186, 63, 0.3);
+  border: 1px solid rgba(252, 186, 63, 0.3);
 }
-tr.stratigraphy td.highlight {
-  border: 1px double #a06902;
+tr.stratigraphy.lighter td.field-radio,
+li.stratigraphy.lighter {
+  border: 1px solid rgba(252, 186, 63, 0.4);
 }
 .sidebar-wrapper ul li.stratigraphy {
   background-color: rgba(252, 186, 63, 0.5);
@@ -481,16 +541,26 @@ tr.multimedia td,
 tr.multimedia th {
   background-color: rgba(135, 189, 106, 0.5);
 }
+td.multimedia,
+th.multimedia {
+  background-color: rgba(135, 189, 106, 0.5);
+}
 tr.multimedia.light td,
 li.multimedia.light {
   background-color: rgba(135, 189, 106, 0.4);
 }
+tr.multimedia td.highlight,
+tr.multimedia.lighter td.field-radio.highlight {
+  border: 1px double #3f622c;
+}
 tr.multimedia.lighter td,
 li.multimedia.lighter {
   background-color: rgba(135, 189, 106, 0.3);
+  border: 1px solid rgba(135, 189, 106, 0.3);
 }
-tr.multimedia td.highlight {
-  border: 1px double #3f622c;
+tr.multimedia.lighter td.field-radio,
+li.multimedia.lighter {
+  border: 1px solid rgba(135, 189, 106, 0.4);
 }
 .sidebar-wrapper ul li.multimedia {
   background-color: rgba(135, 189, 106, 0.5);
@@ -556,16 +626,26 @@ tr.taxon td,
 tr.taxon th {
   background-color: rgba(146, 114, 74, 0.5);
 }
+td.taxon,
+th.taxon {
+  background-color: rgba(146, 114, 74, 0.5);
+}
 tr.taxon.light td,
 li.taxon.light {
   background-color: rgba(146, 114, 74, 0.4);
 }
+tr.taxon td.highlight,
+tr.taxon.lighter td.field-radio.highlight {
+  border: 1px double #2c2317;
+}
 tr.taxon.lighter td,
 li.taxon.lighter {
   background-color: rgba(146, 114, 74, 0.3);
+  border: 1px solid rgba(146, 114, 74, 0.3);
 }
-tr.taxon td.highlight {
-  border: 1px double #2c2317;
+tr.taxon.lighter td.field-radio,
+li.taxon.lighter {
+  border: 1px solid rgba(146, 114, 74, 0.4);
 }
 .sidebar-wrapper ul li.taxon {
   background-color: rgba(146, 114, 74, 0.5);
@@ -631,16 +711,26 @@ tr.diffs td,
 tr.diffs th {
   background-color: rgba(125, 155, 172, 0.5);
 }
+td.diffs,
+th.diffs {
+  background-color: rgba(125, 155, 172, 0.5);
+}
 tr.diffs.light td,
 li.diffs.light {
   background-color: rgba(125, 155, 172, 0.4);
 }
+tr.diffs td.highlight,
+tr.diffs.lighter td.field-radio.highlight {
+  border: 1px double #384c58;
+}
 tr.diffs.lighter td,
 li.diffs.lighter {
   background-color: rgba(125, 155, 172, 0.3);
+  border: 1px solid rgba(125, 155, 172, 0.3);
 }
-tr.diffs td.highlight {
-  border: 1px double #384c58;
+tr.diffs.lighter td.field-radio,
+li.diffs.lighter {
+  border: 1px solid rgba(125, 155, 172, 0.4);
 }
 .sidebar-wrapper ul li.diffs {
   background-color: rgba(125, 155, 172, 0.5);
@@ -704,7 +794,7 @@ tr.diffs td.highlight {
 }
 /** DIFF TABLE **/
 .well.odd {
-  background-color: #e2dede ;
+  background-color: #e2dede;
   background-image: linear-gradient(to bottom, #e8e8e8 0px, #fff 100%);
 }
 table.diff > tbody > tr > td,
@@ -725,7 +815,7 @@ table.diff .diff-class {
 }
 table.diff .diff-class div {
   transform: rotate(270deg);
-  transform-origin: center center ;
+  transform-origin: center center;
 }
 table.diff .diff-entity {
   font-weight: bold;
@@ -740,6 +830,9 @@ table.diff caption {
   text-align: center;
   font-weight: bold;
   font-size: 1.1em;
+}
+#diffs .panel-default {
+  border-color: #777777;
 }
 /** FILTERS **/
 #form-filters hr {
@@ -757,6 +850,10 @@ table.diff caption {
   margin: 0;
 }
 /** Onglets */
+#diffs {
+  margin-left: 50px;
+  margin-right: 20px;
+}
 #diffs .tab-pane {
   padding: 1em;
 }
@@ -767,33 +864,9 @@ table.diff caption {
 #diffs .tab-pane .row:last-child {
   border-bottom: none;
 }
-/** SIDEBAR **/
-.sidebar-wrapper ul.choices {
-  font-size: 85%;
-  list-style: outside none none;
-  padding-left: 0;
-}
-.sidebar-wrapper ul li div {
-  margin-left: 10px;
-}
-.sidebar-wrapper > li > a {
-  padding: 5px 5px 3px 5px;
-}
-.sidebar-wrapper > li:hover {
-  background-color: #eee;
-}
-.sidebar-wrapper .nav > li {
-  border-bottom: 1px solid #ddd;
-}
-.sidebar-wrapper .nav > li > a {
-  padding: 0;
-}
-.sidebar-wrapper > li:last-child {
-  border-bottom: none;
-}
 /** TABLE WITH ROTATED HEADER
 see : http://jsfiddle.net/D2RLR/7569/ */
-.table-header-rotated td {
+.table-header-rotated > tbody > tr > td {
   vertical-align: middle;
   text-align: center;
   border: none !important;
@@ -830,31 +903,128 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
   text-align: left;
 }
-.table-header-rotated th:first-of-type,
-.table-header-rotated td:first-of-type {
-  text-align: left;
+/*.table-header-rotated th:first-of-type,.table-header-rotated td:first-of-type{
+  text-align:left;
+
+}*/
+/** BOUTONS PAGE DE DIFF **/
+#wrapper:not(.toggled) .diff_module_buttons {
+  left: 260px;
 }
-/** FILTERS **/
-.btn-filters {
+.diff_module_buttons {
+  left: 10px;
+  transition: all 1.0s ease;
   position: fixed;
   top: 50px;
-  right: 10px;
-  display: block;
   z-index: 990;
-  margin-bottom: 8px;
-  margin-right: 15px;
-  margin-top: 8px;
+}
+.diff_module_buttons .btn {
+  margin: 8px 15px 8px 0;
+  width: 46px;
+  padding-left: 10px;
+  padding-right: 10px;
+  position: absolute;
+}
+.diff_module_buttons .sidebar-btn {
+  top: 0;
   padding: 9px 10px;
 }
-.filters {
-  position: fixed;
-  top: 90px;
+.diff_module_buttons .search-form {
+  margin: 8px 10px 0 0;
+}
+.diff_module_buttons .btn-filters {
+  top: 40px;
+}
+.diff_module_buttons .btn-search,
+.diff_module_buttons .search-form {
+  top: 80px;
+  transition: all 1.0s ease;
+}
+.diff_module_buttons .search-form {
+  left: -310px;
+  position: absolute;
+  width: 300px ;
+}
+.diff_module_buttons .search-form.active {
   left: 0;
-  right: 0;
-  margin: 15px 30px;
-  z-index: 989;
-  padding: 35px;
-  background: #fff;
-  border-radius: 2px;
-  box-shadow: inset 0 0 3px 3px #ccc;
+}
+.diff_module_buttons .btn-search.active {
+  margin-left: 300px;
+}
+/** SIDEBAR **/
+.sidebar-wrapper {
+  background-color: #fff;
+}
+.sidebar-wrapper ul.sidebar-choices {
+  font-size: 85%;
+  list-style: outside none none;
+  padding-left: 5px;
+}
+.sidebar-wrapper ul.sidebar-choices,
+.sidebar-wrapper ul.choices {
+  list-style: outside none none;
+}
+.sidebar-wrapper ul.choices {
+  padding-left: 10px;
+}
+.sidebar-wrapper ul li div {
+  margin-left: 10px;
+}
+.sidebar-wrapper > li > a {
+  padding: 5px 5px 3px 5px;
+}
+.sidebar-wrapper li:hover,
+.sidebar-wrapper li.active {
+  background-color: #d9edf7;
+}
+a.sidebar-wrapper li:hover:hover,
+a.sidebar-wrapper li.active:hover,
+a.sidebar-wrapper li:hover:focus,
+a.sidebar-wrapper li.active:focus {
+  background-color: #afd9ee;
+}
+.sidebar-wrapper .nav > li {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+.sidebar-wrapper .nav > li > a {
+  padding: 0;
+}
+.sidebar-wrapper > li:last-child {
+  border-bottom: none;
+}
+/** TRAITEMENT PAR LOT ****/
+.radio-inline label,
+.checkbox-inline label {
+  font-weight: normal;
+}
+.checkbox-inline,
+.checkbox-inline + .checkbox-inline,
+.checkbox-inline + .radio-inline,
+.radio-inline,
+.radio-inline + .radio-inline,
+.radio-inline + .checkbox-inline {
+  margin-left: 0;
+  margin-right: 10px;
+}
+.checkbox-inline:last-child,
+.radio-inline:last-child {
+  margin-right: 0;
+}
+/** vertical center modal **/
+.modal {
+  text-align: center;
+}
+@media screen and (min-width: 768px) {
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
 }

@@ -30,7 +30,40 @@ $(document).ready(function () {
 
 
     maybeScrollToHash();
+    $(document).on("scroll", onScroll);
+    // Sidebar
+    function onScroll(event){
+        var scrollPos = $(document).scrollTop();
+        $('.sidebar-choices').find("a[data-currentpage='true']").each(function () {
+            var currLink = $(this);
+            var refElement = $(currLink.attr("href"));
+            if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+                $('.sidebar-choices li').removeClass("active");
+                currLink.parent().addClass("active");
+            }
+            else{
+                currLink.parent().removeClass("active");
+            }
+        });
+    }
 
+// Bouton de recherche
+    $(".btn-search").click(function (event) {
+        var $searchInput = $("#js-search-input");
+        var $searchForm = $("#js-search-form");
+        if ($(this).hasClass('active') && $searchInput.val() == '') {
+            $searchForm.removeClass('active') ;
+            $(this).removeClass('active') ;
+        }
+        else {
+            if ($searchInput.val() !== '') {
+                $searchForm.submit();
+            }
+            $searchForm.addClass('active');
+            $(this).addClass('active');
+        }
+        event.preventDefault();
+    });
 
     var $diffs = $('#diffs');
     var institutionCode = $diffs.data('institutioncode');
@@ -131,6 +164,56 @@ $(document).ready(function () {
     }
 
     // Sélection bouton radio par specimen
+    $('table.diff').find(".js_select_entity").hover(function () {
+        var tableContext = $(this).parents('table.diff');
+        var relationId = $(this).attr('name');
+        var choice = $(this).attr('value');
+        tableContext.find(":radio")
+            .filter("[name^='" + relationId + "']")
+            .filter('[data-type="diff-field"]')
+            .filter('[value = "' + choice + '"]')
+            .map(
+                function () {
+                    higlightCells($(this), highlightClass);
+                });
+    }, function () {
+
+        var tableContext = $(this).parents('table.diff');
+        var relationId = $(this).attr('name');
+        var choice = $(this).attr('value');
+        tableContext.find(":radio")
+            .filter("[name^='" + relationId + "']")
+            .filter('[data-type="diff-field"]')
+            .filter('[value = "' + choice + '"]')
+            .map(
+                function () {
+                    unHiglightCells($(this), highlightClass);
+                });
+    }).click(function() {
+        var choices = [];
+        var tableContext = $(this).parents('table.diff');
+        var relationId = $(this).attr('name');
+        var choice = $(this).attr('value');
+        var catalogNumber = $(this).parents('.js_specimen').data('catalognumber');
+        tableContext.find(":radio")
+            .filter("[name^='" + relationId + "']")
+            .filter('[data-type="diff-field"]')
+            .filter('[value = "' + choice + '"]')
+            .map(
+                function () {
+                    $(this).prop('checked', true);
+                    setChoice(choices, $(this), catalogNumber);
+                });
+        $.ajax({
+                url: Routing.generate('setChoice', { collectionCode: collectionCode}),
+                data: {'choices': choices},
+                method: "POST"
+            })
+            .done(function (data) {
+                updateDisplay(data);
+            });
+    });
+
     $('table.diff').find(":radio").change(function () {
             var choices = [];
             var tableContext = $(this).parents('table.diff');
@@ -201,15 +284,13 @@ $(document).ready(function () {
 
     function higlightCells(radioElement, highlightClass) {
         if (radioElement.length > 0) {
-            radioElement.parent().addClass(highlightClass);
-            radioElement.parent().prev().addClass(highlightClass);
+            radioElement.parents('td').addClass(highlightClass);
         }
     }
 
     function unHiglightCells(radioElement, highlightClass) {
         if (radioElement.length > 0) {
-            radioElement.parent().removeClass(highlightClass);
-            radioElement.parent().prev().removeClass(highlightClass);
+            radioElement.parents('td').removeClass(highlightClass);
         }
     }
 
@@ -238,6 +319,13 @@ $(document).ready(function () {
                 updateDisplay(data);
             });
         event.preventDefault();
+    });
+
+
+    $(".sidebar-btn").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+        $(this).toggleClass("collapsed");
     });
     /** Gestion sidebar et filtres */
     $('#js_filters').on('show.bs.collapse', function () {

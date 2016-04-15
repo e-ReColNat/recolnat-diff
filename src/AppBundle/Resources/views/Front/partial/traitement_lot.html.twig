@@ -1,0 +1,105 @@
+{% set classesName = {1:'specimen',2:'bibliography',3:'determination',4:'localisation',5:'recolte',6:'stratigraphy',7:'taxon', 8 : 'multimedia'} %}
+
+
+<div id="js_modal_traitement" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <form id="form-filters" class="modal-form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h3>{{ 'label.traitement.lot'|trans }}</h3>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group filter-specimens">
+                        <fieldset>
+                            <legend>{{ 'label.legend.specimens' | trans }}</legend>
+                            <div class="radio">
+                                <label for="radio1-specimens">
+                                    <input type="radio" id='radio1-specimens' name="specimens" value="allDatas">
+                                    {{ 'label.selectAllPages' | trans }} {{ pagination is defined ? '('~pagination.getTotalItemCount~')' : '' }}
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="radio2-specimens">
+                                    <input type="radio" id="radio2-specimens" name="specimens" value="page">
+                                    {{ 'label.selectPageDatas' | trans }}
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="radio3-specimens" class="pull-left">
+                                    <input type="radio" id="radio3-specimens" name="specimens"
+                                           value="selectedSpecimens">
+                                    {{ 'label.selectSpecimen' | trans }}
+                                </label>
+                                <a href="#" id="linkSelectedSpecimen" class="pull-left hidden btn btn-default btn-xs"
+                                   style="margin-left:1em;">{{ 'viewSelectedSpecimens'| trans }}</a>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group filter-classesName">
+                        <fieldset>
+                            <legend>{{ 'label.selectOnlyClass' | trans }}
+                                <button type="submit" id="selectAllClasses"
+                                        class="btn btn-primary col-sm-offset-1 btn-xs">{{ 'label.selectAllClasses' | trans }}</button>
+                            </legend>
+                            {% for className in classesName %}
+                                <div class="checkbox-inline">
+                                    <label for="checkbox{{ loop.index }}-classesName">
+                                        <input type="checkbox" id='checkbox{{ loop.index }}-selectLevel3'
+                                               name="classesName[]"
+                                               value="{{ className }}">
+                                        {{ ('label.'~className) |transchoice(2,{},'entity') }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group filter-origin">
+                        <fieldset>
+                            <legend>{{ 'label.legend.origin' | trans }}</legend>
+                            <div class="radio">
+                                <label for="radio1-origin">
+                                    <input type="radio" id="radio1-origin" name="origin" value="recolnat">
+                                    {{ 'label.choixRecolnat' | trans }}
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="radio2-origin">
+                                    <input type="radio" id="radio2-origin" name="origin" value="institution">
+                                    {{ 'label.choixInstitution' | trans }}
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <input type="hidden" name="institutionCode" value="{{ institutionCode }}">
+                    <input type="hidden" name="selectedClassName"
+                           value="{{ selectedClassName is defined ? selectedClassName :'' }}">
+                    <input type="hidden" name="page" value="{{ currentPage }}">
+                    <input type="hidden" name="type" value="{{ type is defined ? type :'' }}">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'label.close' | trans }}</button>
+                    <button type="submit" class="btn btn-primary btn-sm">{{ 'label.filtre.button' | trans }}</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.onload = function () {
+        $(document).ready(function () {
+            $("#selectAllClasses").click(function (event) {
+                $("#form-filters").find("[name^='classesName']").not($(this)).prop('checked', true);
+                event.preventDefault();
+            });
+        });
+    }
+</script>

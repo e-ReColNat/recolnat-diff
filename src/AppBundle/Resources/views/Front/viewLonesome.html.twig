@@ -10,32 +10,14 @@
     {% if specimens is not empty %}
         <div id="wrapper" class="toggled">
 
-            {#<div id="sidebar-wrapper">#}
-                {#{% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber, 'choices':choicesFacets} %}#}
-            {#</div>#}
+            {% include '@App/Front/partial/module_diff.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
 
             <div id="page-content-wrapper">
-                {#{% include '@App/Front/partial/buttonHamburger.html.twig' %}#}
                 {% include '@App/Front/partial/breadcrumb.html.twig' %}
 
-                <div class="text-center">
-                    <div style="display: inline-block; vertical-align: middle;">
-                        {{ knp_pagination_render(pagination) }}
-                    </div>
-                    <div style="display: inline-block;vertical-align: middle;">
-                        <label for="maxItemPerPage"
-                               style="font-size: 0.85em; font-weight: 500;">{{ 'label.maxItemPerPage' | trans }}</label>
-                        <select name="maxItemPerPage" id="maxItemPerPage">
-                            <option value="5" {{ pagination.getItemNumberPerPage == 5 ? 'selected="true"':'' }}>5</option>
-                            <option value="10" {{ pagination.getItemNumberPerPage == 10 ? 'selected="true"':'' }}>10</option>
-                            <option value="20" {{ pagination.getItemNumberPerPage == 20 ? 'selected="true"':'' }}>20</option>
-                            <option value="50" {{ pagination.getItemNumberPerPage == 50 ? 'selected="true"':'' }}>50</option>
-                        </select>
-                    </div>
-                </div>
+                {% include '@App/Front/partial/pagination.html.twig' %}
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
-                    {% include '@App/Front/partial/filters.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
                     {% for catalogNumber, records in specimens %}
                         {% for occurrenceid, specimen in records %}
                             {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' with {'loop' : loop.parent.loop} %}

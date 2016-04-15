@@ -21,13 +21,6 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse"
-                    class="navbar-toggle collapsed" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a href="{{ path("index") }}" class="navbar-brand">Recolnat - Diffs</a>
             {% if app.environment=='dev' %}
                 <p class="navbar-text bg-warning text-uppercase">{{ default_connection }}</p>
@@ -43,11 +36,7 @@
                 {#<li><a href="#">{{ 'nav.aide' | trans }}</a></li>#}
                 <li><a href="{{ logout_path('main') }}">{{ 'login.logout' | trans({}, 'user') }}</a></li>
             </ul>
-            {% if collectionCode is defined and collectionCode is not empty %}
-                <form class="navbar-form navbar-right" action="{{ path('search', {'collectionCode':collectionCode}) }}">
-                    <input type="text" placeholder="{{ 'label.search' | trans }}" name="search" class="form-control">
-                </form>
-            {% endif %}
+
         </div>
     </div>
 </nav>
@@ -72,7 +61,7 @@
 <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
 <script src="{{ url('bazinga_jstranslation_js') }}"></script>
 <script src="{{ url('bazinga_jstranslation_js', { 'domain': 'entity' }) }}"></script>
-<script src="{{ asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
 
 <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
@@ -82,6 +71,7 @@
 
 {% endblock %}
 <script type="text/javascript">
+
     $(document).ready(function () {
         // Toast Messages
         {% for flash_type, flashes in app.session.flashbag.all %}

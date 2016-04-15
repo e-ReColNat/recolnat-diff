@@ -1,6 +1,7 @@
 @import "../bootstrap-3.3.6/less/variables.less";
 @import "../bootstrap-3.3.6/less/mixins.less";
 
+
 /*@specimen: #c0504d;
 @bibliography: #4f81bd;
 @determination: #9bbb59;
@@ -30,15 +31,15 @@
 //@multimedia : #fccde5;
 //@diffs : #d9d9d9;
 
-@specimen: rgb(107, 94, 74);
-@bibliography: rgb(239, 190, 118);
+@specimen:      rgb(107, 94, 74);
+@bibliography:  rgb(239, 190, 118);
 @determination: rgb(206, 165, 125);
-@localisation: rgb(255, 140, 121);
-@recolte: rgb(182, 93, 153);
-@stratigraphy: rgb(252, 186, 63);
-@taxon : rgb(146, 114, 74);
-@multimedia : rgb(135, 189, 106);
-@diffs : rgb(125, 155, 172);
+@localisation:  rgb(255, 140, 121);
+@recolte:       rgb(182, 93, 153);
+@stratigraphy:  rgb(252, 186, 63);
+@taxon:         rgb(146, 114, 74);
+@multimedia:    rgb(135, 189, 106);
+@diffs:         rgb(125, 155, 172);
 /*
 @specimen: #00A0B0;
 @bibliography:lighten(spin(@specimen, 5), 10%);
@@ -60,23 +61,41 @@
 @determination: lighten(spin(@specimen, 10), 40%);
 @diffs : rgb(125, 155, 172);*/
 
-@fadeTdBackground: 50%;
-@fadeTdBackground-light: 40%;
-@fadeTdBackground-lighter: 30%;
-@fadeTdBackground-dark: 30%;
-
+@fadeBackground: 50%;
+@fadeBackground-light: 40%;
+@fadeBackground-lighter: 30%;
+@fadeBackground-dark: 30%;
 
 /** Couleurs des classes **/
 
 .setColor(@color) {
-  tr.@{color} td, tr.@{color} th{ background-color: fade(@@color,@fadeTdBackground);}
-  tr.@{color}.light td, li.@{color}.light{ background-color: fade(@@color,@fadeTdBackground-light)}
-  tr.@{color}.lighter td, li.@{color}.lighter{ background-color: fade(@@color,@fadeTdBackground-lighter)}
-  tr.@{color} td.highlight{border: 1px double darken(@@color,@fadeTdBackground-dark);}
+  tr.@{color} td, tr.@{color} th {
+    background-color: fade(@@color, @fadeBackground);
+  }
 
+  td.@{color}, th.@{color} {
+    background-color: fade(@@color, @fadeBackground);
+  }
+
+  tr.@{color}.light td, li.@{color}.light {
+    background-color: fade(@@color, @fadeBackground-light)
+  }
+
+  tr.@{color} td.highlight, tr.@{color}.lighter td.field-radio.highlight {
+    border: 1px double darken(@@color, @fadeBackground-dark);
+  }
+
+  tr.@{color}.lighter td, li.@{color}.lighter {
+    background-color: fade(@@color, @fadeBackground-lighter);
+    border: 1px solid fade(@@color, @fadeBackground-lighter);
+  }
+
+  tr.@{color}.lighter td.field-radio, li.@{color}.lighter {
+    border: 1px solid fade(@@color, @fadeBackground-light);
+  }
 
   .sidebar-wrapper ul li.@{color} {
-    background-color: fade(@@color,@fadeTdBackground);
+    background-color: fade(@@color, @fadeBackground);
   }
   .chart {
     rect.@{color} {
@@ -97,25 +116,27 @@
       }
     }
   }
-  .tab-pane.@{color} {background-color: fade(@@color,@fadeTdBackground-light)}
+  .tab-pane.@{color} {
+    background-color: fade(@@color, @fadeBackground-light)
+  }
   .nav-tabs {
     border-bottom: 1px solid @nav-tabs-border-color;
     > li.@{color} {
       float: left;
       // Make the list-items overlay the bottom border
       margin-bottom: -1px;
-      background-color : transparent;
+      background-color: transparent;
 
       // Actual tabs (as links)
       > a {
-        background-color: fade(@@color,@fadeTdBackground-light);
+        background-color: fade(@@color, @fadeBackground-light);
         margin-right: 2px;
         line-height: @line-height-base;
         //border: 1px solid transparent;
-        border : 1px solid fade(@@color,@fadeTdBackground);
+        border: 1px solid fade(@@color, @fadeBackground);
         border-radius: @border-radius-base @border-radius-base 0 0;
         &:hover {
-          border-color: fade(@@color,@fadeTdBackground);
+          border-color: fade(@@color, @fadeBackground);
         }
       }
 
@@ -127,7 +148,7 @@
           color: @nav-tabs-active-link-hover-color;
           /*background-color: @nav-tabs-active-link-hover-bg;
           border: 1px solid @nav-tabs-active-link-hover-border-color;*/
-          background-color: fade(@@color,@fadeTdBackground-light);
+          background-color: fade(@@color, @fadeBackground-light);
 
           border-bottom-color: transparent;
           cursor: default;
@@ -149,6 +170,7 @@
   }
 
 }
+
 .setColor(specimen);
 .setColor(bibliography);
 .setColor(determination);
@@ -161,9 +183,10 @@
 
 /** DIFF TABLE **/
 .well.odd {
-  background-color: #e2dede ;
+  background-color: #e2dede;
   background-image: linear-gradient(to bottom, #e8e8e8 0px, #fff 100%);
 }
+
 table.diff {
   //border-color: #08C;
   > tbody > tr > td, > tbody > tr > th {
@@ -175,7 +198,7 @@ table.diff {
   }
   td >
   th {
-    text-align : right;
+    text-align: right;
   }
   .diff-class {
     vertical-align: middle;
@@ -183,24 +206,29 @@ table.diff {
     font-weight: bold;
     div {
       transform: rotate(270deg);
-      transform-origin: center center ;
+      transform-origin: center center;
     }
   }
   .diff-entity {
     font-weight: bold;
   }
-  .diff-entity small{
+  .diff-entity small {
     font-size: 0.9em;
   }
   .input {
     text-align: center;
   }
   caption {
-    text-align : center;
+    text-align: center;
     font-weight: bold;
     font-size: 1.1em;
   }
 }
+
+#diffs .panel-default {
+  border-color: @gray-light;
+}
+
 /** FILTERS **/
 #form-filters {
   hr {
@@ -221,23 +249,126 @@ table.diff {
 }
 
 /** Onglets */
-#diffs .tab-pane {
-  padding: 1em;
-  .row {
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 1em;
+#diffs {
+  margin-left: 50px;
+  margin-right: 20px;
+  .tab-pane {
+    padding: 1em;
+    .row {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 1em;
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
   }
-  .row:last-child {
-    border-bottom: none;
+}
+
+/** TABLE WITH ROTATED HEADER
+see : http://jsfiddle.net/D2RLR/7569/ */
+.table-header-rotated > tbody > tr > td {
+  vertical-align: middle;
+  text-align: center;
+  border: none !important;
+}
+
+.table-header-rotated th {
+  border: none !important;
+}
+
+.table-header-rotated th.rotate {
+  height: 80px;
+  position: relative;
+  vertical-align: bottom;
+  padding: 0;
+  font-size: 12px;
+  line-height: 0.8;
+  border: none;
+}
+
+.table-header-rotated th.rotate > div {
+  position: relative;
+  top: 0px;
+  left: 40px; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
+  height: 100%;
+  transform: skew(-45deg, 0deg);
+}
+
+.table-header-rotated th.rotate span {
+  transform: skew(45deg, 0deg) rotate(315deg);
+  position: absolute;
+  bottom: 30px; /* 40 cos(45) = 28 with an additional 2px margin*/
+  left: -25px; /*Because it looked good, but there is probably a mathematical link here as well*/
+  display: inline-block;
+  width: 85px; /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
+  text-align: left;
+}
+
+/*.table-header-rotated th:first-of-type,.table-header-rotated td:first-of-type{
+  text-align:left;
+
+}*/
+
+/** BOUTONS PAGE DE DIFF **/
+#wrapper:not(.toggled) .diff_module_buttons {
+  left: 260px;
+}
+
+.diff_module_buttons {
+  left: 10px;
+  transition: all 1.0s ease;
+  position: fixed;
+  top: 50px;
+  z-index: 990;
+
+  .btn {
+    margin: 8px 15px 8px 0;
+    width: 46px;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: absolute;
+  }
+
+  .sidebar-btn {
+    top: 0;
+    padding: 9px 10px;
+  }
+  .search-form {
+    margin: 8px 10px 0 0;
+  }
+  .btn-filters {
+    top: 40px;
+  }
+  .btn-search, .search-form {
+    top: 80px;
+    transition: all 1.0s ease;
+  }
+  .search-form {
+    left: -310px;
+    position: absolute;
+    width: 300px ;
+  }
+  .search-form.active {
+    left: 0;
+  }
+  .btn-search.active {
+    margin-left : 300px;
   }
 }
 
 /** SIDEBAR **/
 .sidebar-wrapper {
-  ul.choices {
+  background-color:@body-bg ;
+  ul.sidebar-choices {
     font-size: 85%;
     list-style: outside none none;
-    padding-left: 0;
+    padding-left: 5px;
+  }
+  ul.sidebar-choices, ul.choices {
+    list-style: outside none none;
+  }
+  ul.choices {
+    padding-left: 10px;
   }
   ul li div {
     margin-left: 10px;
@@ -246,11 +377,12 @@ table.diff {
   > li > a {
     padding: 5px 5px 3px 5px;
   }
-  > li:hover {
-    background-color: #eee;
+  li:hover, li.active {
+    .bg-variant(@state-info-bg);
   }
   .nav > li {
     border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
   }
   .nav > li > a {
     padding: 0;
@@ -260,69 +392,44 @@ table.diff {
   }
 }
 
-/** TABLE WITH ROTATED HEADER
-see : http://jsfiddle.net/D2RLR/7569/ */
-.table-header-rotated td{
-  vertical-align: middle;
+/** TRAITEMENT PAR LOT ****/
+.radio-inline label,
+.checkbox-inline label {
+  font-weight: normal;
+}
+
+.checkbox-inline,
+.checkbox-inline + .checkbox-inline,
+.checkbox-inline + .radio-inline,
+.radio-inline,
+.radio-inline + .radio-inline,
+.radio-inline + .checkbox-inline {
+  margin-left: 0;
+  margin-right: 10px;
+}
+
+.checkbox-inline:last-child,
+.radio-inline:last-child {
+  margin-right: 0;
+}
+
+/** vertical center modal **/
+.modal {
   text-align: center;
-  border : none !important;
-}
-.table-header-rotated th {
-  border : none !important;
-}
-.table-header-rotated th.rotate{
-  height: 80px;
-  position: relative;
-  vertical-align: bottom;
-  padding: 0;
-  font-size: 12px;
-  line-height: 0.8;
-  border : none;
 }
 
-.table-header-rotated th.rotate > div{
-  position: relative;
-  top: 0px;
-  left: 40px; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
-  height: 100%;
-  transform:skew(-45deg,0deg);
+@media screen and (min-width: 768px) {
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
 }
 
-.table-header-rotated th.rotate span {
-  transform:skew(45deg,0deg) rotate(315deg);
-  position: absolute;
-  bottom: 30px; /* 40 cos(45) = 28 with an additional 2px margin*/
-  left: -25px; /*Because it looked good, but there is probably a mathematical link here as well*/
+.modal-dialog {
   display: inline-block;
-  width: 85px; /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
   text-align: left;
-}
-.table-header-rotated th:first-of-type,.table-header-rotated td:first-of-type{
-  text-align:left;
-
+  vertical-align: middle;
 }
 
-/** FILTERS **/
-.btn-filters {
-  position: fixed;
-  top: 50px;
-  right: 10px;
-  display : block;
-  z-index: 990;
-  margin-bottom: 8px;
-  margin-right: 15px;
-  margin-top: 8px;
-  padding: 9px 10px;
-}
-.filters {
-  position: fixed;
-  top: 90px;
-  left:0;
-  right:0;
-  margin: 15px 30px;
-  z-index: 989;
-  padding: 35px;
-  background: #fff;
-  border-radius: 2px;
-  box-shadow:  inset 0 0 3px 3px #ccc;
-}

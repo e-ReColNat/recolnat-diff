@@ -36,7 +36,7 @@
                         <div><span>{{ 'header.lonesomeRecords.recolnat' | trans }}</span></div>
                     </th>
                     <th class="rotate">
-                        <div><span>{{ 'header.lonesomeRecords.institution' | trans }}</span></div>
+                        <div><span>{{ 'header.lonesomeRecords.collection' | trans({'%collection%':collectionCode}) }}</span></div>
                     </th>
                     <th>&nbsp;</th>
                 </tr>
@@ -45,7 +45,6 @@
                 {% for className, detailedStats in stats %}
                     <tr class="{{ className|lower }}">
                         <th class="row-header col-sm-2">{{ ('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize }}</th>
-                        {% set transClass=('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity') %}
                         <td class="col-sm-1">
                             {% if detailedStats.specimens > 0 %}
                                 <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
@@ -108,7 +107,7 @@
                                 style="background-color: transparent;text-align:right">
                                 <p>
                                     <a href="{{ path('stats', {'collectionCode' : collectionCode}) }}"
-                                       class="btn bg-primary"
+                                       class="btn btn-primary"
                                        role="button">
                                         {{ 'stats.details'| trans }}
                                     </a>
@@ -116,33 +115,33 @@
                                 <p>
                                     <a data-toggle="modal"
                                        href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode}) }}"
-                                       class=" btn bg-primary checkprefs" role="button" data-target="#spinnerModal">
+                                       class=" btn btn-primary checkprefs" role="button" data-target="#spinnerModal">
                                         {{ 'downloadDwc'|trans }}
                                     </a>
                                 </p>
                                 <p>
                                     <a data-toggle="modal"
                                        href="{{ path('setPrefsForExport', {'type':'csv', 'collectionCode' : collectionCode}) }}"
-                                       class=" btn bg-primary checkprefs" role="button" data-target="#spinnerModal">
+                                       class=" btn btn-primary checkprefs" role="button" data-target="#spinnerModal">
                                         {{ 'downloadCsv'|trans }}
                                     </a>
                                 </p>
                                 <p>
                                     <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode}) }}"
-                                       class="delete deleteChoices btn bg-primary" role="button">
+                                       class="delete deleteChoices btn btn-primary" role="button">
                                         {{ 'delete.choices'|trans }}
                                     </a>
                                 </p>
                                 {% if app.environment=='dev' %}
                                 <p>
                                     <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode}) }}"
-                                       class="delete deleteDiffs btn bg-primary" role="button">
+                                       class="delete deleteDiffs btn btn-primary" role="button">
                                         {{ 'delete.diffs'|trans }}
                                     </a>
                                 </p>
                                 <p>
                                     <a href="{{ path('generateDiff', {'collectionCode' : collectionCode, 'compt' : 5}) }}"
-                                       class="btn bg-primary" role="button">Generate diff</a>
+                                       class="btn btn-primary" role="button">Generate diff</a>
                                 </p>
                                 {% endif %}
                             </td>
@@ -184,9 +183,8 @@
                 </tr>
                 </tbody>
             </table>
-
-
         {% endif %}
+
     </div>
     {% include '@App/Front/partial/modal.html.twig' %}
 

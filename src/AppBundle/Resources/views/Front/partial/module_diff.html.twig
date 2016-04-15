@@ -1,0 +1,33 @@
+<div class="diff_module_buttons">
+
+    <button type="button" class="sidebar-btn btn btn-primary collapsed">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar top-bar"></span>
+        <span class="icon-bar middle-bar"></span>
+        <span class="icon-bar bottom-bar"></span>
+    </button>
+
+    <button type="button" class="btn btn-primary btn-filters" data-toggle="modal" data-target="#js_modal_traitement"
+            aria-label="{{ 'label.traitement.lot'|trans }}">
+        <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+    </button>
+
+    <form id="js-search-form" class="search-form" action="{{ path('search', {'collectionCode':collectionCode}) }}"
+          role="search">
+        <input type="text" placeholder="{{ 'label.search' | trans }}" id="js-search-input" name="search" class="form-control">
+    </form>
+
+    <button type="button" class="btn btn-primary btn-search"
+            aria-expanded="false" aria-controls="js-search-form" aria-label="{{ 'label.search'|trans }}">
+        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    </button>
+
+</div>
+<div class="sidebar-wrapper sidebar-wrapper-left">
+    {% if app.request.attributes.get('_route') == 'lonesomes' %}
+        {% include '@App/Front/partial/sidebar_lonesomes.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
+    {% else %}
+        {% include '@App/Front/partial/sidebar_diffs.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}
+    {% endif %}
+</div>
+{% include '@App/Front/partial/traitement_lot.html.twig' %}
