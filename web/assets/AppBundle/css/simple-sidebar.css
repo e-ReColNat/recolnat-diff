@@ -148,26 +148,4 @@
         top: 0;
         opacity: 1;
     }
-    /*.sidebar-btn.collapsed {
-        background: #fff none repeat scroll 0 0;
-    }*/
-
-    /*.sidebar-btn {
-        display: block !important;
-    }*/
-
-    /*.sidebar-btn {
-        position: fixed;
-        top: 50px;
-        transition: all 1s;
-        z-index: 990;
-    }
-
-    .sidebar-btn.collapsed {
-        left: 10px;
-    }
-
-    .sidebar-btn:not(.collapsed) {
-        left: 260px;
-    }*/
 }

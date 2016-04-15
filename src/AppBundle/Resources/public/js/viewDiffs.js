@@ -327,4 +327,17 @@ $(document).ready(function () {
         $("#wrapper").toggleClass("toggled");
         $(this).toggleClass("collapsed");
     });
+    /** Gestion sidebar et filtres */
+    $('#js_filters').on('show.bs.collapse', function () {
+        $('#wrapper').addClass('toggled');
+        $('#menu-toggle').addClass('collapsed');
+    });
+    $('#menu-toggle').on('click', function () {
+        console.log('yeah!');
+        $('#js_filters').collapse('hide');
+    });
+    $("#selectAllClasses").click(function (event) {
+        $("#form-filters").find("[name^='classesName']").not($(this)).prop('checked', true);
+        event.preventDefault();
+    });
 });

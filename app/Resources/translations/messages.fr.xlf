@@ -120,7 +120,7 @@
             </trans-unit>
             <trans-unit id="30">
                 <source>header.nb.specimens</source>
-                <target>Nombre de spécimens</target>
+                <target>Nombre d'occurrences</target>
             </trans-unit>
             <trans-unit id="31">
                 <source>header.nb.differences</source>
@@ -132,7 +132,7 @@
             </trans-unit>
             <trans-unit id="33">
                 <source>header.nb.reste</source>
-                <target>Reste à faire</target>
+                <target>En attente de traitement</target>
             </trans-unit>
             <trans-unit id="34">
                 <source>label.total</source>
