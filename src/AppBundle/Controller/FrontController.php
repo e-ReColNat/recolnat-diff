@@ -158,7 +158,7 @@ class FrontController extends Controller
      * @param string  $db
      * @return Response
      */
-    public function viewLoneSomeAction(Request $request, $collectionCode, $db, $selectedClassName = 'all', $page = 1)
+    public function viewLonesomesAction(Request $request, $collectionCode, $db, $selectedClassName = 'all', $page = 1)
     {
         $collection = $this->getCollection($collectionCode);
 
@@ -166,14 +166,12 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensByCatalogNumbers = $exportManager->getDiffHandler()
+        $lonesomeRecords = $exportManager->getDiffHandler()
             ->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate($lonesomesSpecimensByCatalogNumbers, $page, $maxItemPerPage);
+        $pagination = $paginator->paginate($lonesomeRecords, $page, $maxItemPerPage);
         $catalogNumbers = array_keys($pagination->getItems());
-
-        $diffs = $exportManager->getDiffs($request, $selectedClassName, [], []);
 
         if ($db == 'recolnat') {
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
@@ -189,6 +187,7 @@ class FrontController extends Controller
             'pagination' => $pagination,
             'db' => $db,
             'exportManager' => $exportManager,
+            'lonesomeRecords' => $lonesomeRecords,
         ));
     }
 

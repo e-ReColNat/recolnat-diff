@@ -8,7 +8,7 @@
     {% set specimenRecolnat = specimen %}
 {% endif %}
 
-<div class="js_specimen panel panel-default" id="{{ catalogNumber }}" data-catalognumber="{{ catalogNumber }}">
+<div class="js_specimen panel panel-default" id="{{ catalogNumber | replace({' ':''}) }}" data-catalognumber="{{ catalogNumber }}">
     <div class="panel-heading">
         {% include '@App/Front/partial/short_specimen.html.twig' with {'specimen' : specimenRecolnat} %}
     </div>

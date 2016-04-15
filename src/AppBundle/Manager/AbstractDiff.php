@@ -259,7 +259,7 @@ abstract class AbstractDiff
             $id = $record->{$this->getIdSetter()}();
         }
         if (!is_null($id)) {
-            $this->lonesomeRecords[$db][] = ['code' => $catalogNumber, 'id' => $id];
+            $this->lonesomeRecords[$db][] = ['catalogNumber' => $catalogNumber, 'id' => $id];
         }
     }
 
