@@ -413,18 +413,23 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   margin-right: 0;
 }
 
-/** SEARCH IN BREADCRUMB **/
-/*.breadcrumb > li + li.search::before {
-  content: none;
+/** vertical center modal **/
+.modal {
+  text-align: center;
 }
 
-.breadcrumb li.search {
-  .navbar-form {
-    margin-top: -8px;
-    margin-right: 140px;
+@media screen and (min-width: 768px) {
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
   }
-  .navbar-form .form-control {
-    width: 300px;
-  }
-}*/
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
 

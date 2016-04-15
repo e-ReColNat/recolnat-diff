@@ -36,7 +36,7 @@
                         <div><span>{{ 'header.lonesomeRecords.recolnat' | trans }}</span></div>
                     </th>
                     <th class="rotate">
-                        <div><span>{{ 'header.lonesomeRecords.institution' | trans }}</span></div>
+                        <div><span>{{ 'header.lonesomeRecords.collection' | trans({'%collection%':collectionCode}) }}</span></div>
                     </th>
                     <th>&nbsp;</th>
                 </tr>
@@ -183,15 +183,8 @@
                 </tr>
                 </tbody>
             </table>
-
-
         {% endif %}
 
-        <div class="row">
-            <div class="col-sm-8">
-                {% include '@App/Front/partial/table_stats_vertical.html.twig' %}
-            </div>
-        </div>
     </div>
     {% include '@App/Front/partial/modal.html.twig' %}
 

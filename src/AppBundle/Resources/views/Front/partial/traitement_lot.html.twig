@@ -12,23 +12,6 @@
                 </div>
                 <div class="modal-body">
 
-                    <div class="form-group filter-origin">
-                        <fieldset>
-                            <legend>{{ 'label.legend.origin' | trans }}</legend>
-                            <div class="radio">
-                                <label for="radio1-origin">
-                                    <input type="radio" id="radio1-origin" name="origin" value="recolnat">
-                                    {{ 'label.choixRecolnat' | trans }}
-                                </label>
-                            </div>
-                            <div class="radio">
-                                <label for="radio2-origin">
-                                    <input type="radio" id="radio2-origin" name="origin" value="institution">
-                                    {{ 'label.choixInstitution' | trans }}
-                                </label>
-                            </div>
-                        </fieldset>
-                    </div>
                     <div class="form-group filter-specimens">
                         <fieldset>
                             <legend>{{ 'label.legend.specimens' | trans }}</legend>
@@ -55,6 +38,7 @@
                             </div>
                         </fieldset>
                     </div>
+
                     <div class="form-group filter-classesName">
                         <fieldset>
                             <legend>{{ 'label.selectOnlyClass' | trans }}
@@ -74,6 +58,24 @@
                         </fieldset>
                     </div>
 
+                    <div class="form-group filter-origin">
+                        <fieldset>
+                            <legend>{{ 'label.legend.origin' | trans }}</legend>
+                            <div class="radio">
+                                <label for="radio1-origin">
+                                    <input type="radio" id="radio1-origin" name="origin" value="recolnat">
+                                    {{ 'label.choixRecolnat' | trans }}
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="radio2-origin">
+                                    <input type="radio" id="radio2-origin" name="origin" value="institution">
+                                    {{ 'label.choixInstitution' | trans }}
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+
                     <input type="hidden" name="institutionCode" value="{{ institutionCode }}">
                     <input type="hidden" name="selectedClassName"
                            value="{{ selectedClassName is defined ? selectedClassName :'' }}">
@@ -82,7 +84,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'label.close' | trans }}</button>
                     <button type="submit" class="btn btn-primary btn-sm">{{ 'label.filtre.button' | trans }}</button>
                 </div>
 

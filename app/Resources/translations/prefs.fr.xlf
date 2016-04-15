@@ -68,7 +68,7 @@
             </trans-unit>
             <trans-unit id="17">
                 <source>sidenotset.institution</source>
-                <target>Institution</target>
+                <target>Collection</target>
             </trans-unit>
             <trans-unit id="18">
                 <source>newrecords.recolnat</source>
@@ -76,7 +76,7 @@
             </trans-unit>
             <trans-unit id="19">
                 <source>newrecords.institution</source>
-                <target>Institution</target>
+                <target>Collection</target>
             </trans-unit>
             <trans-unit id="20">
                 <source>newrecords.both</source>

@@ -11,21 +11,21 @@
         {% set emptyField = 'empty.field' | trans %}
         <table class="table table-bordered table-condensed table-striped diffs" style="table-layout: fixed; ">
             <colgroup>
-                <col style="width: 10%">
+                <col style="width: 5%">
+                <col style="width: 15%">
                 <col style="width: 16%">
                 <col style="width: 2%">
                 <col style="width: 30%">
                 <col style="width: 2%">
                 <col style="width: 30%">
-                <col style="width: 5%">
             </colgroup>
             <thead>
                 <tr>
+                    <th>{{'count.abbr' | trans}}</th>
                     <th>{{'className' | trans}}</th>
                     <th>{{'fieldName' | trans}}</th>
                     <th colspan="2">Recolnat</th>
                     <th colspan="2">{{ collectionCode}}</th>
-                    <th>{{'count.abbr' | trans}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -42,6 +42,15 @@
                 {% endif %}
                 
                 <tr class="{{classTr}} {{data.className|lower}} lighter">
+                    <td>
+                        {{data.catalogNumbers | length}}
+                        <span class="hidden" rel="{{md5key}}">
+                            {{data.catalogNumbers | json_encode}}
+                        </span>
+                        <a role="button" data-toggle="collapse" href="#taxon-{{md5key}}" aria-expanded="false" aria-controls="collapseExample">
+                            <span class="caret"></span>
+                        </a>
+                    </td>
                     <td>{{data.className}}</td>
                     <td>{{getFieldLabel(data.className, data.fieldName) | trans({}, 'entity')}}</td>
 
@@ -54,15 +63,7 @@
                         <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="institution">
                     </td>
                     <td>{{data.datas.institution is not empty ? data.datas.institution : emptyField}}</td>
-                    <td>
-                        {{data.catalogNumbers | length}}
-                        <span class="hidden" rel="{{md5key}}">
-                            {{data.catalogNumbers | json_encode}}
-                        </span>
-                        <a role="button" data-toggle="collapse" href="#taxon-{{md5key}}" aria-expanded="false" aria-controls="collapseExample">
-                            <span class="caret"></span>
-                        </a>
-                    </td>
+
                 </tr>
                 <tr id="taxon-{{md5key}}" class="collapse">
                     <td colspan="7">

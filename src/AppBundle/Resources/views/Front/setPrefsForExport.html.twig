@@ -4,9 +4,10 @@
         <h4 class="modal-title">{{ 'prefs.save.title' | trans({}, 'prefs') }}</h4>
     </div>
     <div class="modal-body">
-        <p>Il y a {{ sumStats.diffs - statsChoices.sum }} choix non effectués</p>
-        <p>Il y a {{ sumLonesomeRecords.recolnat }} nouveaux enregistrements du côté de recolnat</p>
-        <p>Il y a {{ sumLonesomeRecords.institution }} nouveaux enregistrements du côté de l'institution</p>
+        {%  set countChoices = sumStats.diffs - statsChoices.sum  %}
+        <p>{{ 'label.export.choices' | transchoice(countChoices, {'%count%':countChoices}) }}</p>
+        <p>{{ 'label.export.lonesomes.recolnat' | transchoice(sumLonesomeRecords.recolnat, {'%count%':sumLonesomeRecords.recolnat}) }}</p>
+        <p>{{ 'label.export.lonesomes.collection' | transchoice(sumLonesomeRecords.institution, {'%count%':sumLonesomeRecords.institution, '%collection%':collectionCode}) }}</p>
 
         {{ form_start(form) }}
         {{ form_widget(form) }}

@@ -112,7 +112,7 @@
             </trans-unit>
             <trans-unit id="28">
                 <source>label.legend.origin</source>
-                <target>Choisir les données</target>
+                <target>Choisir les données venant de</target>
             </trans-unit>
             <trans-unit id="29">
                 <source>label.legend.specimens</source>
@@ -271,8 +271,8 @@
                 <target>Enreg. exclusivement Recolnat</target>
             </trans-unit>
             <trans-unit id="68">
-                <source>header.lonesomeRecords.institution</source>
-                <target>Enreg. exclusivement Institution</target>
+                <source>header.lonesomeRecords.collection</source>
+                <target>Enreg. exclusivement %collection%</target>
             </trans-unit>
             <trans-unit id="69">
                 <source>header.className</source>
@@ -361,6 +361,22 @@
             <trans-unit id="90">
                 <source>choix.collection.all</source>
                 <target>%collection%</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>label.close</source>
+                <target>Fermer</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>label.export.choices</source>
+                <target>[0,1]Il y a %count% choix non effectué|]1,Inf]Il y a %count% choix non effectués</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>label.export.lonesomes.recolnat</source>
+                <target>{0}Iln'y a pas de nouvel enregistrement du côté d'e-ReColNat|{1}Il y a un nouvel enregistrement du côté d'e-ReColNat|]1,Inf]Il y a %count% nouvaux enregistrements du côté d'e-ReColNat</target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>label.export.lonesomes.collection</source>
+                <target>{0}Iln'y a pas de nouvel enregistrement du côté de la collection %collection%|{1}Il y a un nouvel enregistrement du côté de la collection %collection%|]1,Inf]Il y a %count% nouvaux enregistrements du côté de la collection %collection%</target>
             </trans-unit>
         </body>
     </file>
