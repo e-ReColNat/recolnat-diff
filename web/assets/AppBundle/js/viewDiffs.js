@@ -333,7 +333,6 @@ $(document).ready(function () {
         $('#menu-toggle').addClass('collapsed');
     });
     $('#menu-toggle').on('click', function () {
-        console.log('yeah!');
         $('#js_filters').collapse('hide');
     });
     $("#selectAllClasses").click(function (event) {
