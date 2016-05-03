@@ -13,9 +13,37 @@ class ExportExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFunction('countChoices', array($this, 'getCountChoices')),
             new \Twig_SimpleFunction('countDiffs', array($this, 'getCountDiffs')),
+            new \Twig_SimpleFunction('getFirstLetters', array($this, 'getFirstLetters')),
         );
     }
 
+    /**
+     * Retourne un tableau de la première lettre des taxons
+     * @param array $diffs
+     * @return array
+     */
+    public function getFirstLetters(array $diffs)
+    {
+        $letters = [];
+        $withoutTaxon = 0 ;
+        if (isset($diffs['datas']) && count($diffs['datas'])) {
+            foreach($diffs['datas'] as $specimen) {
+                if (empty($specimen['taxon'])) {
+                    $withoutTaxon++;
+                }
+                else {
+                    $letter = strtoupper($specimen['taxon']{0});
+                    isset($letters[$letter]) ? $letters[$letter]++ : $letters[$letter] = 1;
+                }
+            }
+        }
+        ksort($letters);
+        if ($withoutTaxon > 0) {
+            $letters = ['N/A'=>$withoutTaxon] + $letters;
+        }
+
+        return $letters;
+    }
     /**
      * Retourne le nombre de différence trouvées entre les deux bases pour un couple Spécimen / Class
      * @param array  $stats

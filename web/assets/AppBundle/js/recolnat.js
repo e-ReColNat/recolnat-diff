@@ -138,8 +138,6 @@ $(document).ready(function () {
         nbSelectedSpecimens = selectedSpecimens.length;
         setLinkViewSelected();
     });
-
-
 });
 
 /***********************************************************************************

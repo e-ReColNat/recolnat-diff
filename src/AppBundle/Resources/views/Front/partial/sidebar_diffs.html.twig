@@ -1,17 +1,35 @@
 {% set page = 1 %}
 {% set choices = exportManager.sessionHandler.choices %}
 
+{%  set letters = getFirstLetters(diffs) %}
+<div class="sidebar-letters">
+    {% for letter, count in letters %}
+       <a href="#letter-{{ letter }}" title="{{ 'count.specimens' | transchoice(count, {'%count%': count}) }}">{{ letter }}</a>&nbsp;
+    {% endfor %}
+</div>
+{% dump(letters) %}
+{% set firstLetter = '' %}
 <ul class="nav sidebar-nav sidebar-choices">
     {% for catalogNumber, datas in diffs.datas %}
+        {% set taxon = datas.taxon %}
         {% set classWithDiff = datas.classes %}
-        <li>
-            {% set taxon = datas.taxon %}
+        {% set path='' %}
+        {% if page != currentPage %}
+            {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
+        {% endif %}
+
+        <li id="js_sb_{{ catalogNumber }}">
             {%  if taxon is null %}
                 {% set taxon = 'label.notaxon' | trans %}
-            {% endif %}
-            {% set path='' %}
-            {% if page != currentPage %}
-                {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
+                {% if firstLetter != 'N/A' %}
+                    {% set firstLetter = 'N/A' %}
+                    <span id="{{ firstLetter }}" class="js-sidebar-anchors"></span>
+                {% endif %}
+            {% else %}
+                {% if firstLetter != taxon|first %}
+                    {% set firstLetter = taxon|first %}
+                    <span id="letter-{{ firstLetter }}" class="js-sidebar-anchors"></span>
+                {% endif %}
             {% endif %}
 
             <a href="{{ path }}#{{ catalogNumber }}" data-currentpage="{{ page != currentPage ? 'false' : 'true' }}">{{ taxon }}</a>

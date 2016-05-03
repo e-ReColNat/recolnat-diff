@@ -1,5 +1,7 @@
 $(document).ready(function () {
     var boolScrollToHash = true;
+    var offsetTopContent = $('.navbar-fixed-top').height() + parseInt($('.navbar-fixed-top').css('margin-bottom'), 10);
+
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 
         boolScrollToHash = false;
@@ -18,33 +20,42 @@ $(document).ready(function () {
         // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
         var $hash = $(window.location.hash);
         if (window.location.hash && $hash.length && boolScrollToHash) {
-            var newTop = $hash.offset().top + parseInt($hash.css('padding-top'), 10) - $('.navbar-fixed-top').height() - parseInt($('body').css('padding-top'), 10) + parseInt($('.navbar-fixed-top').css('margin-bottom'), 10);
+            var newTop = $hash.offset().top - offsetTopContent;
             $(window).scrollTop(newTop);
         }
     }
 
     $(window).bind('hashchange', function (e) {
-        e.preventDefault();
-        maybeScrollToHash();
+        target = $(window.location.hash);
+        // Pour éviter d'appeler la fonction en cliquant sur les lettres de la sidebar
+        if (! target.hasClass('js-sidebar-anchors')) {
+            e.preventDefault();
+            maybeScrollToHash();
+        }
     });
-
-
     maybeScrollToHash();
+
+
     $(document).on("scroll", onScroll);
-    // Sidebar
-    function onScroll(event){
-        var scrollPos = $(document).scrollTop();
-        $('.sidebar-choices').find("a[data-currentpage='true']").each(function () {
-            var currLink = $(this);
-            var refElement = $(currLink.attr("href"));
-            if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
-                $('.sidebar-choices li').removeClass("active");
-                currLink.parent().addClass("active");
-            }
-            else{
-                currLink.parent().removeClass("active");
+    // scroll la sidebar et met en valeur le lien de la sidebar lorsqu'on scrolle dans la liste des différences
+    function onScroll(event)
+    {
+        var scrollPos = $(document).scrollTop() - offsetTopContent;
+        var specimen = $("#diffs").find(".js_specimen").filter(function () {
+            if ($(this).position().top <= scrollPos && $(this).position().top + $(this).height() > scrollPos) {
+                return true;
             }
         });
+        if (specimen) {
+            var catalogNumber = specimen.attr('id');
+            var sb_specimen = $('.sidebar-choices li#js_sb_' + catalogNumber);
+
+            if (sb_specimen.length == 1) {
+                $('.sidebar-choices li').removeClass("active");
+                sb_specimen.addClass("active");
+            }
+        }
+
     }
 
 // Bouton de recherche
