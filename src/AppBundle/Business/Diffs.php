@@ -45,11 +45,14 @@ class Diffs extends \SplFileObject
         $fs = new Filesystem();
         if ($fs->exists($this->getPathname())) {
             $fileContent = json_decode(file_get_contents($this->getPathname()), true);
+            if (is_null($fileContent)) {
+                $fileContent = [];
+            }
 
             return $fileContent;
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -99,7 +102,7 @@ class Diffs extends \SplFileObject
      */
     public function getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName = null)
     {
-        $lonesomeRecordsByCatalogNumbers = [];
+        $returnLonesomeRecords = [];
         $specimenLonesomeRecords = $this->getLonesomeRecords($db, 'specimen');
         $refCatalogNumber = array_column($specimenLonesomeRecords['Specimen'][$db], 'catalogNumber');
         $fullLonesomeRecords = $this->getLonesomeRecords($db, $selectedClassName);
@@ -108,30 +111,40 @@ class Diffs extends \SplFileObject
             foreach ($fullLonesomeRecords as $className => $lonesomeRecords) {
                 foreach ($lonesomeRecords[$db] as $item) {
                     // Si le catalogNumber de l'enregistrement est dans la liste des specimens de ref c'est que tous les
-                    // enregistrements correspondant à ce specimen code sont nouveaux
+                    // enregistrements correspondant à ce catalog number sont nouveaux
                     // puisque le specimen n'est pas dans l'autre base
-                    if (!in_array($item['code'], $refCatalogNumber) || $selectedClassName == 'specimen') {
-                        $lonesomeRecordsByCatalogNumbers[$item['code']][] = [
-                            'className' => $className,
-                            'id' => $item['id']
-                        ];
+                    if (!in_array($item['catalogNumber'], $refCatalogNumber) || $selectedClassName == 'specimen') {
+                        $this->extractLonesomeRecord($className, $item, $returnLonesomeRecords);
                     } elseif ($selectedClassName == 'all') {
-                        $lonesomeRecordsByCatalogNumbers[$item['code']][] = [
-                            'className' => $className,
-                            'id' => $item['id']
-                        ];
+                        $this->extractLonesomeRecord($className, $item, $returnLonesomeRecords);
                     }
-
                 }
             }
         }
 
-        return $lonesomeRecordsByCatalogNumbers;
+        return $returnLonesomeRecords;
     }
 
 
     /**
-     * retourne les nouveaux enregistrements pour un specimen code et une base
+     * @param $className
+     * @param $item
+     * @param $returnLonesomeRecords
+     * @return mixed
+     */
+    private function extractLonesomeRecord($className, $item, &$returnLonesomeRecords)
+    {
+        $returnLonesomeRecords[$item['catalogNumber']]['data'][] = [
+            'className' => $className,
+            'id' => $item['id']
+        ];
+        $returnLonesomeRecords[$item['catalogNumber']]['taxon'] = $item['taxon'];
+
+        return $returnLonesomeRecords;
+    }
+
+    /**
+     * retourne les nouveaux enregistrements pour un catalog number et une base
      * @param string      $catalogNumber
      * @param null|string $db
      * @return array
@@ -320,4 +333,5 @@ class Diffs extends \SplFileObject
         parent::__construct($this->getPathname(), 'c+');
         $this->searchDiffs = true;
     }
+
 }

@@ -109,7 +109,7 @@ class FrontController extends Controller
      * @param int     $page
      * @return Response
      */
-    public function diffsAction(Request $request, $collectionCode, $selectedClassName = 'all', $page = 1)
+    public function viewDiffsAction(Request $request, $collectionCode, $selectedClassName = 'all', $page = 1)
     {
         $collection = $this->getCollection($collectionCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
@@ -124,8 +124,7 @@ class FrontController extends Controller
             $specimensWithoutChoices = $exportManager->sessionHandler->getChoices();
         }
 
-        $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
-            $specimensWithoutChoices);
+        $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices, $specimensWithoutChoices);
 
         $paginator = $this->get('knp_paginator');
         /** @var AbstractPagination $pagination */
@@ -158,7 +157,7 @@ class FrontController extends Controller
      * @param string  $db
      * @return Response
      */
-    public function viewLoneSomeAction(Request $request, $collectionCode, $db, $selectedClassName = 'all', $page = 1)
+    public function viewLonesomesAction(Request $request, $collectionCode, $db, $selectedClassName = 'all', $page = 1)
     {
         $collection = $this->getCollection($collectionCode);
 
@@ -166,14 +165,12 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomesSpecimensByCatalogNumbers = $exportManager->getDiffHandler()
+        $lonesomeRecords = $exportManager->getDiffHandler()
             ->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
 
         $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate($lonesomesSpecimensByCatalogNumbers, $page, $maxItemPerPage);
+        $pagination = $paginator->paginate($lonesomeRecords, $page, $maxItemPerPage);
         $catalogNumbers = array_keys($pagination->getItems());
-
-        $diffs = $exportManager->getDiffs($request, $selectedClassName, [], []);
 
         if ($db == 'recolnat') {
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
@@ -189,6 +186,7 @@ class FrontController extends Controller
             'pagination' => $pagination,
             'db' => $db,
             'exportManager' => $exportManager,
+            'lonesomeRecords' => $lonesomeRecords,
         ));
     }
 
@@ -320,7 +318,7 @@ class FrontController extends Controller
 
     /**
      * @Route("{collectionCode}/search/{page}", name="search", defaults={"page"= 1}, requirements={"page": "\d+"})
-     * @param         $collectionCode
+     * @param String  $collectionCode
      * @param Request $request
      * @return Response
      */
@@ -389,5 +387,19 @@ class FrontController extends Controller
             'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
         return array($pagination, $diffs, $specimens);
+    }
+
+    /**
+     * @Route("test/")
+     */
+    public function testAction()
+    {
+        $collectionCode = 'AIX';
+        $specimenCodes = ['AIX018780', 'AIX012608', 'AIX000097'];
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $diffs = $exportManager->getDiffsByCatalogNumbers($specimenCodes) ;
+        dump($diffs);
+        var_dump(\AppBundle\Manager\ExportManager::orderDiffsByTaxon($diffs));
+        return $this->render('@App/base.html.twig');
     }
 }

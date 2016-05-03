@@ -377,7 +377,7 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   > li > a {
     padding: 5px 5px 3px 5px;
   }
-  li:hover, li.active {
+  li:hover, li.active, li:hover a {
     .bg-variant(@state-info-bg);
   }
   .nav > li {
@@ -389,6 +389,9 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   }
   > li:last-child {
     border-bottom: none;
+  }
+  .sidebar-letters {
+    text-transform: capitalize;
   }
 }
 

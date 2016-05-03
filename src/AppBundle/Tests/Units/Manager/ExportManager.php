@@ -31,7 +31,7 @@ class ExportManager extends Units\Test
      */
     protected $entityManager;
 
-    protected $specimenCodes = ['MHNAIX#AIX#AIX017190', 'MHNAIX#AIX#AIX000097'];
+    protected $catalogNumbers = ['AIX017190', 'AIX000097'];
     /**
      * @var Symfony\Component\DependencyInjection\Container
      */
@@ -86,12 +86,13 @@ class ExportManager extends Units\Test
 
     public function testGetDiffsBySpecimensCode()
     {
-        $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->specimenCodes))
+        $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->catalogNumbers))
             ->array($diff);
     }
 
     public function testOrderDiffsByTaxon()
     {
+
         $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->catalogNumbers))
             ->array(\AppBundle\Manager\ExportManager::orderDiffsByTaxon($diff));
     }

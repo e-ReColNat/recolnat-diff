@@ -119,14 +119,20 @@ class DiffComputer
         $this->diffs['classes'] = $this->classes;
     }
 
-    private function setTaxons()
+    private function setTaxons($catalogNumbers = null, $base = 'recolnat')
     {
+        if (is_null($catalogNumbers)) {
+            $catalogNumbers = $this->catalogNumbers;
+        }
         $flattenCatalogNumbers = [];
-        array_walk_recursive($this->catalogNumbers, function($a) use (&$flattenCatalogNumbers) {
+        array_walk_recursive($catalogNumbers, function($a) use (&$flattenCatalogNumbers) {
             $flattenCatalogNumbers[] = $a;
         });
-
-        $taxonRepository = $this->emR->getRepository('\AppBundle\Entity\Taxon');
+        $em = $this->emR;
+        if ($base != 'recolnat') {
+            $em = $this->emD;
+        }
+        $taxonRepository = $em->getRepository('\AppBundle\Entity\Taxon');
 
         $arrayChunkCatalogNumbers = array_chunk($flattenCatalogNumbers, 300);
         if (count($arrayChunkCatalogNumbers)) {
@@ -240,32 +246,37 @@ class DiffComputer
     {
         $this->lonesomeRecords[$className] = [];
         foreach ($lonesomeRecords as $db => $items) {
+            $this->setTaxons(array_column($items, 'catalogNumber'), $db);
+
             if (!isset($this->lonesomeRecords[$className][$db])) {
                 $this->lonesomeRecords[$className][$db] = [];
             }
             $catalogNumbersNewSpecimenRecords = [];
             if ($className != 'Specimen') {
                 $catalogNumbersNewSpecimenRecords = array_column($this->lonesomeRecords['Specimen'][$db],
-                    'code');
+                    'catalogNumber');
             }
 
             foreach ($items as $lonesomeRecord) {
-                if ($className == 'Specimen' || !in_array($lonesomeRecord['code'],
-                        $catalogNumbersNewSpecimenRecords)
+                $catalogNumber = $lonesomeRecord['catalogNumber'];
+
+                if ($className == 'Specimen' || !in_array($catalogNumber, $catalogNumbersNewSpecimenRecords)
                 ) {
+                    $lonesomeRecord['taxon'] = $this->getTaxon($catalogNumber);
                     $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
-                    if (!isset($this->statsLonesomeRecords[$lonesomeRecord['code']])) {
-                        $this->statsLonesomeRecords[$lonesomeRecord['code']] = [];
+                    if (!isset($this->statsLonesomeRecords[$catalogNumber])) {
+                        $this->statsLonesomeRecords[$catalogNumber] = [];
                     }
-                    $this->statsLonesomeRecords[$lonesomeRecord['code']][] = [
-                        'class' => $className,
-                        'id' => $lonesomeRecord['id'],
-                        'db' => $db
-                    ];
+
+                    $this->statsLonesomeRecords[$catalogNumber][] =
+                        [
+                            'class' => $className,
+                            'id' => $lonesomeRecord['id'],
+                            'db' => $db,
+                        ];
                 }
             }
         }
-
     }
 
     /**
