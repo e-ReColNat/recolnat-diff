@@ -974,13 +974,16 @@ see : http://jsfiddle.net/D2RLR/7569/ */
   padding: 5px 5px 3px 5px;
 }
 .sidebar-wrapper li:hover,
-.sidebar-wrapper li.active {
+.sidebar-wrapper li.active,
+.sidebar-wrapper li:hover a {
   background-color: #d9edf7;
 }
 a.sidebar-wrapper li:hover:hover,
 a.sidebar-wrapper li.active:hover,
+a.sidebar-wrapper li:hover a:hover,
 a.sidebar-wrapper li:hover:focus,
-a.sidebar-wrapper li.active:focus {
+a.sidebar-wrapper li.active:focus,
+a.sidebar-wrapper li:hover a:focus {
   background-color: #afd9ee;
 }
 .sidebar-wrapper .nav > li {
@@ -992,6 +995,9 @@ a.sidebar-wrapper li.active:focus {
 }
 .sidebar-wrapper > li:last-child {
   border-bottom: none;
+}
+.sidebar-wrapper .sidebar-letters {
+  text-transform: capitalize;
 }
 /** TRAITEMENT PAR LOT ****/
 .radio-inline label,

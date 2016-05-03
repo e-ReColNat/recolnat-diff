@@ -185,8 +185,22 @@ class ExportManager
         $diffs = $this->diffHandler->getDiffsFile()->filterResults($allDiffs, $classesName, $specimensWithChoices,
             $choicesToRemove);
 
-        return $diffs;
+        return self::orderDiffsByTaxon($diffs);
     }
+
+    public static function orderDiffsByTaxon(array $diffs) {
+        $sortedDiffs = $diffs;
+        if (count($diffs['datas'])) {
+            $datas = $diffs['datas'];
+            foreach($datas as $catalogNumber => $diff) {
+                $taxons[$catalogNumber] = $diff['taxon'];
+            }
+            array_multisort($taxons, SORT_STRING, $datas) ;
+            $sortedDiffs['datas'] = $datas;
+        }
+        return $sortedDiffs;
+    }
+
 
     /**
      * @param $catalogNumbers

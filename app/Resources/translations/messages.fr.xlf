@@ -378,6 +378,10 @@
                 <source>label.export.lonesomes.collection</source>
                 <target>{0}Iln'y a pas de nouvel enregistrement du côté de la collection %collection%|{1}Il y a un nouvel enregistrement du côté de la collection %collection%|]1,Inf]Il y a %count% nouvaux enregistrements du côté de la collection %collection%</target>
             </trans-unit>
+            <trans-unit id="95">
+                <source>count.specimens</source>
+                <target>[0,1]%count% spécimen|]1,Inf]%count% spécimens</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

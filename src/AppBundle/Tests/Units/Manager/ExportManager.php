@@ -31,7 +31,7 @@ class ExportManager extends Units\Test
      */
     protected $entityManager;
 
-    protected $specimenCodes = ['MHNAIX#AIX#AIX017190', 'MHNAIX#AIX#AIX000097'];
+    protected $catalogNumbers = ['AIX017190', 'AIX000097'];
     /**
      * @var Symfony\Component\DependencyInjection\Container
      */
@@ -62,7 +62,7 @@ class ExportManager extends Units\Test
         $this->exportManager->init($user)->setCollectionCode('AIX');
     }
 
-    public function testGetDiffs()
+    /*public function testGetDiffs()
     {
         $this->if($diff = $this->exportManager->getDiffs())
             ->array($diff);
@@ -82,12 +82,18 @@ class ExportManager extends Units\Test
         $this->if($dwcFilePath = $this->exportManager->export('dwc', $exportPrefs))
             ->string($dwcFilePath);
         $this->boolean($filesystem->exists($dwcFilePath))->isTrue();
-    }
+    }*/
 
     public function testGetDiffsBySpecimensCode()
     {
-        $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->specimenCodes))
+        $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->catalogNumbers))
             ->array($diff);
+    }
+
+    public function testOrderDiffsByTaxon()
+    {
+        $diffs = $this->exportManager->getDiffsByCatalogNumbers($this->catalogNumbers) ;
+        var_dump(\AppBundle\Manager\ExportManager::orderDiffsByTaxon($diffs));
     }
 }
 
