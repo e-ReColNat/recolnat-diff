@@ -89,5 +89,11 @@ class ExportManager extends Units\Test
         $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->specimenCodes))
             ->array($diff);
     }
+
+    public function testOrderDiffsByTaxon()
+    {
+        $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->catalogNumbers))
+            ->array(\AppBundle\Manager\ExportManager::orderDiffsByTaxon($diff));
+    }
 }
 
