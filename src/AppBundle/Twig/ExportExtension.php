@@ -25,13 +25,12 @@ class ExportExtension extends \Twig_Extension
     public function getFirstLetters(array $diffs)
     {
         $letters = [];
-        $withoutTaxon = 0 ;
+        $withoutTaxon = 0;
         if (isset($diffs['datas']) && count($diffs['datas'])) {
-            foreach($diffs['datas'] as $specimen) {
+            foreach ($diffs['datas'] as $specimen) {
                 if (empty($specimen['taxon'])) {
                     $withoutTaxon++;
-                }
-                else {
+                } else {
                     $letter = strtoupper($specimen['taxon']{0});
                     isset($letters[$letter]) ? $letters[$letter]++ : $letters[$letter] = 1;
                 }
@@ -39,11 +38,12 @@ class ExportExtension extends \Twig_Extension
         }
         ksort($letters);
         if ($withoutTaxon > 0) {
-            $letters = ['N/A'=>$withoutTaxon] + $letters;
+            $letters = ['N/A' => $withoutTaxon] + $letters;
         }
 
         return $letters;
     }
+
     /**
      * Retourne le nombre de différence trouvées entre les deux bases pour un couple Spécimen / Class
      * @param array  $stats
@@ -56,6 +56,7 @@ class ExportExtension extends \Twig_Extension
         if (isset($stats['datas'][$catalogNumber]['classes'][$className])) {
             return count($stats['datas'][$catalogNumber]['classes'][$className]['fields']);
         }
+
         return 0;
     }
 
@@ -76,6 +77,7 @@ class ExportExtension extends \Twig_Extension
                 }
             }
         }
+
         return $countChoices;
     }
 
