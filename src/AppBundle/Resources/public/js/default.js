@@ -138,4 +138,27 @@ $(document).ready(function () {
         nbSelectedSpecimens = selectedSpecimens.length;
         setLinkViewSelected();
     });
+
+    $('.js-form-selectedSpecimen').on('submit', function(e) {
+        e.preventDefault();
+        var button = $(this).children('button').first();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            data: {action : button.attr('name'), catalogNumber : button.attr('value')},
+            method: "POST",
+            global: false
+        })
+        .done(function (data) {
+            var arr = $.map(data, function(el) { return el });
+            if (jQuery.inArray(button.attr('value'), arr) > 0) {
+                button.attr('name', 'remove');
+                button.children('span').removeClass('glyphicon-star-empty').addClass('glyphicon-star text-primary');
+            }
+            else {
+                button.attr('name', 'add');
+                button.children('span').addClass('glyphicon-star-empty').removeClass('glyphicon-star text-primary');
+            }
+        });
+    });
 });

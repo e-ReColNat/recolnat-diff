@@ -7,7 +7,7 @@
        <a href="#letter-{{ letter }}" title="{{ 'count.specimens' | transchoice(count, {'%count%': count}) }}">{{ letter }}</a>&nbsp;
     {% endfor %}
 </div>
-{% dump(letters) %}
+
 {% set firstLetter = '' %}
 <ul class="nav sidebar-nav sidebar-choices">
     {% for catalogNumber, datas in diffs.datas %}

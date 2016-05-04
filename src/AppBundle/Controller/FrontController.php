@@ -127,6 +127,7 @@ class FrontController extends Controller
         $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
             $specimensWithoutChoices);
 
+        dump($diffs);
         $paginator = $this->get('knp_paginator');
         /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);

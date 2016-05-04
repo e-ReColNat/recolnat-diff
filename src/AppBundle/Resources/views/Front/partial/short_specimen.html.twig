@@ -9,12 +9,7 @@
 {% set localisation = recolte.localisation %}
 
 <div class="row">
-    <div class="col-sm-1">
-        <div style="padding-left: 80%;" role="toolbar" class="btn-toolbar">
-            <input type="checkbox" name="check-specimen[]" value="{{catalogNumber}}">
-        </div>
-    </div>
-    <div class="col-sm-8">
+    <div class="col-sm-10">
         {{ getFullLink(specimen, collection, taxon) |raw }}
         <div class="row">
             <div class="col-sm-6">
@@ -33,6 +28,11 @@
                     {{printLabelAndField(recolte, 'recolte', 'eventdate', false, '<br />')|raw}}
                 {% endif %}
             </div>
+        </div>
+    </div>
+    <div class="col-sm-1 col-sm-offset-1">
+        <div>
+            {% include('@App/Front/partial/formSelectSpecimen.html.twig') %}
         </div>
     </div>
 </div>

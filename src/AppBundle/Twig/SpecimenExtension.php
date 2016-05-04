@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Intl\Locale;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -22,12 +23,18 @@ class SpecimenExtension extends \Twig_Extension
     protected $doctrine;
     protected $translator;
     protected $urlRecolnat;
+    protected $sessionManager;
 
-    public function __construct(RegistryInterface $doctrine, TranslatorInterface $translator, $urlRecolnat)
-    {
+    public function __construct(
+        RegistryInterface $doctrine,
+        TranslatorInterface $translator,
+        Session $sessionManager,
+        $urlRecolnat
+    ) {
         $this->doctrine = $doctrine;
         $this->translator = $translator;
         $this->urlRecolnat = $urlRecolnat;
+        $this->sessionManager = $sessionManager;
     }
 
     public function getFunctions()
@@ -42,7 +49,22 @@ class SpecimenExtension extends \Twig_Extension
             new \Twig_SimpleFunction('getFieldLabel', array($this, 'getFieldLabel')),
             new \Twig_SimpleFunction('getLink', array($this, 'getLink')),
             new \Twig_SimpleFunction('getFullLink', array($this, 'getFullLink')),
+            new \Twig_SimpleFunction('isSelected', array($this, 'isSelected')),
         );
+    }
+
+    /**
+     * @param $catalogNumber
+     * @return bool
+     */
+    public function isSelected($catalogNumber)
+    {
+        $selectedSpecimen = $this->sessionManager->get('selectedSpecimens', []);
+        if (in_array($catalogNumber, $selectedSpecimen)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -116,7 +138,8 @@ class SpecimenExtension extends \Twig_Extension
         if ($printIfNull || !is_null($value)) {
             $label = $this->getFieldLabel($typeEntity, $fieldName);
 
-            return sprintf('<small>%s</small>  : <span><strong>%s</strong></span>%s', $this->translator->trans($label, $transParams, 'entity'), $value,
+            return sprintf('<small>%s</small>  : <span><strong>%s</strong></span>%s',
+                $this->translator->trans($label, $transParams, 'entity'), $value,
                 $endString);
         }
 

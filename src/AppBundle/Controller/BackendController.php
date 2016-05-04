@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\SelectedSpecimensHandler;
 use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
@@ -12,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -331,4 +333,28 @@ class BackendController extends Controller
         return $response;
     }
 
+    /**
+     * @Route("selectedSpecimen/{collectionCode}", name="selectedSpecimen")
+     * @param string $collectionCode
+     * @param Request $request
+     */
+    public function selectedSpecimenAction(Request $request, $collectionCode)
+    {
+        $session = $this->get('session');
+        $action = $request->get('action');
+        $catalogNumber = $request->get('catalogNumber') ;
+        $selectedSpecimensHandler = new SelectedSpecimensHandler($this->getUser()->getDataDirPath().$collectionCode);
+        if ($action == 'add') {
+            $selectedSpecimensHandler->add($catalogNumber);
+        }
+        else {
+            $selectedSpecimensHandler->remove($catalogNumber);
+        }
+        $data = $selectedSpecimensHandler->getData();
+        $session->set('selectSpecimens', $data);
+        $response = new JsonResponse();
+        $response->setData($data);
+
+        return $response;
+    }
 }
