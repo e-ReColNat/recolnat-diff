@@ -19,15 +19,15 @@ class ExportExtension extends \Twig_Extension
 
     /**
      * Retourne un tableau de la première lettre des taxons
-     * @param array $diffs
+     * @param array $specimensData
      * @return array
      */
-    public function getFirstLetters(array $diffs)
+    public function getFirstLetters(array $specimensData)
     {
         $letters = [];
         $withoutTaxon = 0;
-        if (isset($diffs['datas']) && count($diffs['datas'])) {
-            foreach ($diffs['datas'] as $specimen) {
+        if (isset($specimensData) && count($specimensData)) {
+            foreach ($specimensData as $specimen) {
                 if (empty($specimen['taxon'])) {
                     $withoutTaxon++;
                 } else {
@@ -46,15 +46,14 @@ class ExportExtension extends \Twig_Extension
 
     /**
      * Retourne le nombre de différence trouvées entre les deux bases pour un couple Spécimen / Class
-     * @param array  $stats
+     * @param array  $specimenData
      * @param string $className
-     * @param string $catalogNumber
      * @return int
      */
-    public function getCountDiffs($stats, $className, $catalogNumber)
+    public function getCountDiffs($specimenData, $className)
     {
-        if (isset($stats['datas'][$catalogNumber]['classes'][$className])) {
-            return count($stats['datas'][$catalogNumber]['classes'][$className]['fields']);
+        if (isset($specimenData['classes'][$className])) {
+            return count($specimenData['classes'][$className]['fields']);
         }
 
         return 0;

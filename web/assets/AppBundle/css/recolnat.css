@@ -951,6 +951,9 @@ see : http://jsfiddle.net/D2RLR/7569/ */
 .diff_module_buttons .btn-search.active {
   margin-left: 300px;
 }
+.diff_module_buttons .btn-selected {
+  top: 120px;
+}
 /** SIDEBAR **/
 .sidebar-wrapper {
   background-color: #fff;

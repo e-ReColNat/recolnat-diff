@@ -150,7 +150,6 @@ class ExportManager
         }
 
         $data['selectedSpecimens'] = $this->selectedSpecimensHandler->getData();
-        dump($data['selectedSpecimens']);
 
         return $data;
     }
@@ -194,7 +193,6 @@ class ExportManager
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffsFile()->filterResults($allDiffs, $classesName, $specimensWithChoices,
             $choicesToRemove);
-        dump($this->sessionManager->get('selectedSpecimens'));
         $diffs['selectedSpecimens'] = $this->sessionManager->get('selectedSpecimens', []);
 
         return self::orderDiffsByTaxon($diffs);
@@ -214,7 +212,7 @@ class ExportManager
             foreach ($datas as $catalogNumber => $diff) {
                 $taxons[$catalogNumber] = $diff['taxon'];
             }
-            array_multisort($taxons, SORT_STRING, $datas);
+            array_multisort($taxons, SORT_ASC, SORT_NATURAL|SORT_FLAG_CASE, $datas);
             $sortedDiffs['datas'] = $datas;
         }
 

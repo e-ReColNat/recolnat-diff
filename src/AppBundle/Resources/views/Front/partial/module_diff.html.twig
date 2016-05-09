@@ -22,7 +22,12 @@
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
     </button>
 
+    <a href="{{ path('list', {'collectionCode' : collection.collectioncode, 'type':'selected'}) }}" class="btn btn-primary btn-selected">
+        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+    </a>
+
 </div>
+
 <div class="sidebar-wrapper sidebar-wrapper-left">
     {% if app.request.attributes.get('_route') == 'lonesomes' %}
         {% include '@App/Front/partial/sidebar_lonesomes.html.twig' with {'itemNumberPerPage' : pagination.getItemNumberPerPage, 'currentPage' : pagination.getCurrentPageNumber} %}

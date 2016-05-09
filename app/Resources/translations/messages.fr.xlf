@@ -382,6 +382,22 @@
                 <source>count.specimens</source>
                 <target>[0,1]%count% spécimen|]1,Inf]%count% spécimens</target>
             </trans-unit>
+            <trans-unit id="96">
+                <source>title.list.alpha</source>
+                <target>Liste des spécimens présentant des différences</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>title.list.selected</source>
+                <target>Liste des spécimens sélectionnés</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>remove.selection</source>
+                <target>Retirer des spécimens sélectionnés</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>add.selection</source>
+                <target>Ajouter aux spécimens sélectionnés</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

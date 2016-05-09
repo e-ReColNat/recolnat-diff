@@ -127,7 +127,6 @@ class FrontController extends Controller
         $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
             $specimensWithoutChoices);
 
-        dump($diffs);
         $paginator = $this->get('knp_paginator');
         /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
@@ -291,7 +290,7 @@ class FrontController extends Controller
 
 
     /**
-     * @Route("{collectionCode}/specimens/view/{page}/{jsonCatalogNumbers}", name="viewSpecimens",
+     * @Route("{collectionCode}/specimens/view/{jsonCatalogNumbers}/{page}", name="viewSpecimens",
      * options={"expose"=true}, defaults={"page"= 1}, requirements={"page": "\d+"})
      * @param Request $request
      * @param string  $collectionCode
@@ -304,9 +303,9 @@ class FrontController extends Controller
         $collection = $this->getCollection($collectionCode);
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
 
-        $allCatalogNumbers = json_decode($jsonCatalogNumbers);
+        $catalogNumbers = json_decode($jsonCatalogNumbers);
 
-        list($pagination, $diffs, $specimens) = $this->getDataForDisplay($page, $allCatalogNumbers, $request,
+        list($pagination, $diffs, $specimens) = $this->getDataForDisplay($page, $catalogNumbers, $request,
             $exportManager, $collection);
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
@@ -321,6 +320,7 @@ class FrontController extends Controller
     /**
      * @Route("{collectionCode}/search/{page}", name="search", defaults={"page"= 1}, requirements={"page": "\d+"})
      * @param String  $collectionCode
+     * @param Integer $page
      * @param Request $request
      * @return Response
      */
@@ -349,6 +349,60 @@ class FrontController extends Controller
             'search' => $search,
             'pagination' => $pagination,
         ));
+    }
+
+    /**
+     * @Route("{collectionCode}/list/{type}/{page}", name="list", defaults={"page"= 1}, requirements={"page": "\d+"})
+     * @param String  $collectionCode
+     * @param String  $type
+     * @return Response
+     */
+    public function listSpecimensAction($collectionCode, $type)
+    {
+        $collection = $this->getCollection($collectionCode);
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+
+        $specimens = [];
+        $orderSpecimens = [];
+        $orderSpecimensOuput=[];
+        switch ($type) {
+            case 'alpha' :
+                $specimens = $exportManager->getDiffs()['datas'];
+                break;
+            case 'selected' :
+                $catalogNumbers = $this->get('session')->get('selectedSpecimens');
+                $specimens = $exportManager::orderDiffsByTaxon($exportManager->getDiffsByCatalogNumbers($catalogNumbers))['datas'];
+                break;
+        }
+        if (count($specimens)) {
+            $withoutTaxon=[];
+            foreach ($specimens as $catalogNumber => $specimen) {
+                $letter = 'N/A';
+                if (!(empty($specimen['taxon']))) {
+                    $firstLetter = mb_substr($specimen['taxon'], 0,1);
+                    $letter = mb_strtoupper($firstLetter, 'UTF-8');
+                    $orderSpecimens[$letter][$catalogNumber] = $specimen;
+                }
+                else {
+                    $withoutTaxon[] = $specimen;
+                }
+                if (count($withoutTaxon)) {
+                    $orderSpecimensOuput = ['N/A' => $withoutTaxon] + $orderSpecimens;
+                }
+                else {
+                    $orderSpecimensOuput = $orderSpecimens;
+                }
+            }
+        }
+
+        return $this->render('@App/Front/list.html.twig', array(
+            'collection' => $collection,
+            'exportManager' => $exportManager,
+            'orderSpecimens' => $orderSpecimensOuput,
+            'type' => $type
+        ));
+
     }
 
     /**

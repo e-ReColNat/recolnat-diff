@@ -1,0 +1,68 @@
+{% extends '@App/base.html.twig' %}
+{% set choices = exportManager.sessionHandler.choices %}
+{% set collectionCode = collection.collectionCode %}
+
+{% block body %}
+    <div class="container">
+    <h1>{{ ('title.list.'~type) | trans }}</h1>
+    <div>
+        {% for letter, specimens in orderSpecimens %}
+            <a href="#letter-{{ letter }}"
+               title="{{ 'count.specimens' | transchoice(specimens|length, {'%count%': specimens|length}) }}">{{ letter }}</a>
+            &nbsp;
+        {% endfor %}
+    </div>
+
+    {% set firstLetter = '' %}
+
+    {% for letter, specimens in orderSpecimens %}
+        <ul>
+            {% for catalogNumber, datas in specimens %}
+                {% set taxon = datas.taxon %}
+                {% set classWithDiff = datas.classes %}
+
+                {% if taxon is null %}
+                    {% set taxon = 'label.notaxon' | trans %}
+                    {% if firstLetter != 'N/A' %}
+                        {% set firstLetter = 'N/A' %}
+                        <span id="{{ firstLetter }}">{{ firstLetter }}</span>
+                    {% endif %}
+                {% else %}
+                    {% if firstLetter != taxon|first|upper %}
+                        {% set firstLetter = taxon|first|upper %}
+                        <span id="letter-{{ firstLetter }}">{{ firstLetter }}</span>
+                    {% endif %}
+                {% endif %}
+
+                <li>
+                    <div class="pull-left">
+                        <a href="{{ path('viewSpecimens', {'jsonCatalogNumbers' : ([catalogNumber] | json_encode), 'collectionCode' : collectionCode }) }}">
+                            {{ taxon }}
+                        </a>&nbsp;
+                    </div>
+                    <div>
+                        {% include '@App/Front/partial/formSelectSpecimen.html.twig' %}
+                    </div>
+
+                    <ul class="choices clearfix">
+                        {% for className in classWithDiff | keys %}
+                            {% set nbDiffs = countDiffs(datas, className) %}
+                            {% set nbChoices = countChoices(choices, catalogNumber, className) %}
+                            <li class="{{ className|lower }} light">
+                                <div class="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning' }}"
+                                     id="facet-{{ catalogNumber }}-{{ className }}" data-classname="{{ className }}"
+                                     data-comptchoices="{{ nbChoices }}" data-comptdiffs="{{ nbDiffs }}">
+                                    <span class="facet-className">{{ ('label.'~ (className|lower)~'.abbr') | trans({},'entity') | capitalize }}</span>&nbsp;:&nbsp;
+                                    <span class="facet-choix">{{ 'label.nbChoices' | transchoice(nbChoices, {'%count%': nbChoices}) }}</span>&nbsp;/&nbsp;
+                                    <span class="facet-diffs">{{ 'label.differences.abbr' | transchoice(nbDiffs, {'%count%': nbDiffs}) }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+            {% endfor %}
+        </ul>
+    {% endfor %}
+    </div>
+{% endblock %}
