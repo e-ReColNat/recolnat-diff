@@ -105,9 +105,9 @@ class BackendController extends Controller
             $countStep = 0;
             foreach ($diffManager::ENTITIES_NAME as $entityName) {
 
-                $server->step->send(json_encode(['count' => $countStep++, 'step' => $entityName. ' : recherche']));
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => $entityName.' : recherche']));
                 $catalogNumbers[$entityName] = $diffManager->getDiff($entityName);
-                $server->step->send(json_encode(['count' => $countStep++, 'step' => $entityName. ' : traitement']));
+                $server->step->send(json_encode(['count' => $countStep++, 'step' => $entityName.' : traitement']));
 
                 $diffComputer->setCatalogNumbers($catalogNumbers);
                 $diffComputer->computeClassname($entityName);
@@ -335,19 +335,18 @@ class BackendController extends Controller
 
     /**
      * @Route("selectedSpecimen/{collectionCode}", name="selectedSpecimen")
-     * @param string $collectionCode
+     * @param string  $collectionCode
      * @param Request $request
      */
     public function selectedSpecimenAction(Request $request, $collectionCode)
     {
         $session = $this->get('session');
         $action = $request->get('action');
-        $catalogNumber = $request->get('catalogNumber') ;
+        $catalogNumber = $request->get('catalogNumber');
         $selectedSpecimensHandler = new SelectedSpecimensHandler($this->getUser()->getDataDirPath().$collectionCode);
         if ($action == 'add') {
             $selectedSpecimensHandler->add($catalogNumber);
-        }
-        else {
+        } else {
             $selectedSpecimensHandler->remove($catalogNumber);
         }
         $data = $selectedSpecimensHandler->getData();
