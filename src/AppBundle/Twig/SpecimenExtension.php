@@ -60,11 +60,7 @@ class SpecimenExtension extends \Twig_Extension
     public function isSelected($catalogNumber)
     {
         $selectedSpecimen = $this->sessionManager->get('selectedSpecimens', []);
-        if (in_array($catalogNumber, $selectedSpecimen)) {
-            return true;
-        }
-
-        return false;
+        return in_array($catalogNumber, $selectedSpecimen) ;
     }
 
     /**

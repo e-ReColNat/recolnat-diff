@@ -353,8 +353,8 @@ class FrontController extends Controller
 
     /**
      * @Route("{collectionCode}/list/{type}/{page}", name="list", defaults={"page"= 1}, requirements={"page": "\d+"})
-     * @param String  $collectionCode
-     * @param String  $type
+     * @param String $collectionCode
+     * @param String $type
      * @return Response
      */
     public function listSpecimensAction($collectionCode, $type)
@@ -365,7 +365,7 @@ class FrontController extends Controller
 
         $specimens = [];
         $orderSpecimens = [];
-        $orderSpecimensOuput=[];
+        $orderSpecimensOuput = [];
         switch ($type) {
             case 'alpha' :
                 $specimens = $exportManager->getDiffs()['datas'];
@@ -376,21 +376,18 @@ class FrontController extends Controller
                 break;
         }
         if (count($specimens)) {
-            $withoutTaxon=[];
+            $withoutTaxon = [];
             foreach ($specimens as $catalogNumber => $specimen) {
-                $letter = 'N/A';
                 if (!(empty($specimen['taxon']))) {
-                    $firstLetter = mb_substr($specimen['taxon'], 0,1);
+                    $firstLetter = mb_substr($specimen['taxon'], 0, 1);
                     $letter = mb_strtoupper($firstLetter, 'UTF-8');
                     $orderSpecimens[$letter][$catalogNumber] = $specimen;
-                }
-                else {
+                } else {
                     $withoutTaxon[] = $specimen;
                 }
                 if (count($withoutTaxon)) {
                     $orderSpecimensOuput = ['N/A' => $withoutTaxon] + $orderSpecimens;
-                }
-                else {
+                } else {
                     $orderSpecimensOuput = $orderSpecimens;
                 }
             }
