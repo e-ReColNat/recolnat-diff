@@ -138,6 +138,88 @@ $(document).ready(function () {
         nbSelectedSpecimens = selectedSpecimens.length;
         setLinkViewSelected();
     });
+
+    $('.js-form-selectedSpecimen').on('submit', function(e) {
+        e.preventDefault();
+        var button = $(this).children('button').first();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            data: {action : button.attr('name'), catalogNumber : button.attr('value')},
+            method: "POST",
+            global: false
+        })
+        .done(function (data) {
+            var arr = $.map(data, function(el) { return el });
+            if (jQuery.inArray(button.attr('value'), arr) > 0) {
+                button.attr('name', 'remove');
+                button.children('span').removeClass('glyphicon-star-empty').addClass('glyphicon-star text-primary');
+            }
+            else {
+                button.attr('name', 'add');
+                button.children('span').addClass('glyphicon-star-empty').removeClass('glyphicon-star text-primary');
+            }
+        });
+    });
+
+    var boolScrollToHash = true;
+    var offsetTopContent = $('.navbar-fixed-top').height() + parseInt($('.navbar-fixed-top').css('margin-bottom'), 10);
+
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+
+        boolScrollToHash = false;
+        var currTabTarget = $(e.target).attr('href');
+
+        var remoteUrl = $(this).attr('data-tab-remote');
+        var loadedOnce = $(this).data('loaded');
+        if (remoteUrl !== '' && !loadedOnce) {
+            $(currTabTarget).load(remoteUrl);
+            $(this).data('loaded', true);
+        }
+        boolScrollToHash = true;
+    });
+
+    function maybeScrollToHash() {
+        // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
+        var $hash = $(window.location.hash);
+        if (window.location.hash && $hash.length && boolScrollToHash) {
+            var newTop = $hash.offset().top - offsetTopContent;
+            $(window).scrollTop(newTop);
+        }
+    }
+
+    $(window).bind('hashchange', function (e) {
+        target = $(window.location.hash);
+        // Pour éviter d'appeler la fonction en cliquant sur les lettres de la sidebar
+        if (! target.hasClass('js-sidebar-anchors')) {
+            e.preventDefault();
+            maybeScrollToHash();
+        }
+    });
+    maybeScrollToHash();
+
+
+    $(document).on("scroll", onScroll);
+    // scroll la sidebar et met en valeur le lien de la sidebar lorsqu'on scrolle dans la liste des différences
+    function onScroll(event)
+    {
+        var scrollPos = $(document).scrollTop() - offsetTopContent;
+        var specimen = $("#diffs").find(".js_specimen").filter(function () {
+            if ($(this).position().top <= scrollPos && $(this).position().top + $(this).height() > scrollPos) {
+                return true;
+            }
+        });
+        if (specimen) {
+            var catalogNumber = specimen.attr('id');
+            var sb_specimen = $('.sidebar-choices li#js_sb_' + catalogNumber);
+
+            if (sb_specimen.length == 1) {
+                $('.sidebar-choices li').removeClass("active");
+                sb_specimen.addClass("active");
+            }
+        }
+
+    }
 });
 
 /***********************************************************************************

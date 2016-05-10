@@ -132,6 +132,12 @@
                                         {{ 'delete.choices'|trans }}
                                     </a>
                                 </p>
+                                <p>
+                                    <a href="{{ path('list', {'collectionCode' : collectionCode, 'type' : 'alpha'}) }}"
+                                       class="btn btn-primary" role="button">
+                                        {{ 'list.alpha'|trans }}
+                                    </a>
+                                </p>
                                 {% if app.environment=='dev' %}
                                 <p>
                                     <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode}) }}"

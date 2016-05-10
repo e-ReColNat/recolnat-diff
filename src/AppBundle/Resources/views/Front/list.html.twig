@@ -1,0 +1,99 @@
+{% extends '@App/base.html.twig' %}
+{% set choices = exportManager.sessionHandler.choices %}
+{% set collectionCode = collection.collectionCode %}
+
+{% block body %}
+    <div class="container-fluid">
+        {% include '@App/Front/partial/breadcrumb.html.twig' %}
+        <h1 class="page-header">
+            {{ ('title.list.'~type) | trans }}
+        </h1>
+        <div class="row">
+            <ul class="list-inline">
+                {% for letter, specimens in orderSpecimens %}
+                    <li>
+                        <a href="#letter-{{ letter }}"
+                           title="{{ 'count.specimens' | transchoice(specimens|length, {'%count%': specimens|length}) }}">{{ letter }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% set firstLetter = '' %}
+        {% set boolFirstLetter = 0 %}
+
+        {% for letter, specimens in orderSpecimens %}
+            <ul class="list-unstyled">
+                {% for catalogNumber, datas in specimens %}
+                    {% set taxon = datas.taxon %}
+                    {% set classWithDiff = datas.classes %}
+
+                    {% if taxon is null %}
+                        {% set taxon = 'label.notaxon' | trans %}
+                        {% if firstLetter != 'N/A' %}
+                            {% set firstLetter = 'N/A' %}
+                            {% set boolFirstLetter = 1 %}
+                        {% endif %}
+                    {% else %}
+                        {% if firstLetter != taxon|first|upper %}
+                            {% set firstLetter = taxon|first|upper %}
+                            {% set boolFirstLetter = 1 %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if boolFirstLetter == 1 %}
+                        <div class="row">
+                            <div id="letter-{{ firstLetter }}" class="bg-primary col-sm-6"
+                                 style="padding-left:0.5em;margin-bottom: 0.3em;">
+                                {{ firstLetter }}
+                            </div>
+                            <div class="col-sm-1 bg-primary" style="padding-right:0.5em;">
+                                <div class="pull-right">
+                                    <a href="#top"><span class="glyphicon glyphicon-arrow-up btn-primary"
+                                                         aria-hidden="true"></span></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% set boolFirstLetter = 0 %}
+                    {% endif %}
+
+
+                    <li style="margin-top: 0.5em;">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <a href="{{ path('viewSpecimens', {'jsonCatalogNumbers' : ([catalogNumber] | json_encode), 'collectionCode' : collectionCode }) }}">
+                                    {{ taxon }}
+                                </a>&nbsp;
+                            </div>
+                            <div class="col-sm-1" style="padding-right:0">
+                                <div class="pull-right">
+                                    {% include '@App/Front/partial/formSelectSpecimen.html.twig' %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <ul class="choices col-sm-6 list-unstyled" style="margin-left: 1em;">
+                                {% for className in classWithDiff | keys %}
+                                    {% set nbDiffs = countDiffs(datas, className) %}
+                                    {% set nbChoices = countChoices(choices, catalogNumber, className) %}
+                                    <li class="{{ className|lower }} light">
+                                        <div class="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning' }}"
+                                             id="facet-{{ catalogNumber }}-{{ className }}"
+                                             data-classname="{{ className }}"
+                                             data-comptchoices="{{ nbChoices }}" data-comptdiffs="{{ nbDiffs }}">
+                                            <span class="facet-className">{{ ('label.'~ (className|lower)~'.abbr') | trans({},'entity') | capitalize }}</span>&nbsp;:&nbsp;
+                                            <span class="facet-choix">{{ 'label.nbChoices' | transchoice(nbChoices, {'%count%': nbChoices}) }}</span>&nbsp;/&nbsp;
+                                            <span class="facet-diffs">{{ 'label.differences.abbr' | transchoice(nbDiffs, {'%count%': nbDiffs}) }}</span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+{% endblock %}

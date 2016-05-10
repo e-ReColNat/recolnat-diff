@@ -12,17 +12,11 @@
         <div id="wrapper" class="toggled">
             {% include '@App/Front/partial/module_diff.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
 
-            {#{% include '@App/Front/partial/traitement_lot.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}
-            {% include '@App/Front/partial/form_search.html.twig' %}#}
-
             <div id="page-content-wrapper">
-                {#{% include '@App/Front/partial/buttonHamburger.html.twig' %}#}
                 {% include '@App/Front/partial/breadcrumb.html.twig' %}
                 {% include '@App/Front/partial/pagination.html.twig' %}
 
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
-
-
                     {% for catalogNumber, classWithDiff in datas %}
                         {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' %}
                     {% endfor %}

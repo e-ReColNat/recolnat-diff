@@ -1,13 +1,13 @@
 {% set page = 1 %}
 {% set choices = exportManager.sessionHandler.choices %}
 
-{%  set letters = getFirstLetters(diffs) %}
+{%  set letters = getFirstLetters(diffs.datas) %}
 <div class="sidebar-letters">
     {% for letter, count in letters %}
        <a href="#letter-{{ letter }}" title="{{ 'count.specimens' | transchoice(count, {'%count%': count}) }}">{{ letter }}</a>&nbsp;
     {% endfor %}
 </div>
-{% dump(letters) %}
+
 {% set firstLetter = '' %}
 <ul class="nav sidebar-nav sidebar-choices">
     {% for catalogNumber, datas in diffs.datas %}
@@ -35,7 +35,7 @@
             <a href="{{ path }}#{{ catalogNumber }}" data-currentpage="{{ page != currentPage ? 'false' : 'true' }}">{{ taxon }}</a>
             <ul class="choices">
                 {% for className in classWithDiff | keys %}
-                    {% set nbDiffs = countDiffs(diffs, className, catalogNumber) %}
+                    {% set nbDiffs = countDiffs(datas, className) %}
                     {% set nbChoices = countChoices(choices, catalogNumber, className) %}
                     <li class="{{ className|lower }} light">
                         <div class="{{ nbDiffs == nbChoices ? 'text-success' :  'text-warning' }}"

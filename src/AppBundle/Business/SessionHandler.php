@@ -29,13 +29,15 @@ class SessionHandler
         $this->genericEntityManager = $genericEntityManager;
 
         $this->sessionManager->set('stats', $data['stats']);
-
         unset($data['stats']);
+
+        $this->sessionManager->set('selectedSpecimens', $data['selectedSpecimens']);
+        unset($data['selectedSpecimens']);
+
         $this->sessionManager->set('diffs', $data);
 
         $this->sessionManager->set('catalogNumbers', $this->getCatalogNumbers());
     }
-
     /**
      * @param DiffHandler $diffHandler
      * @param string      $collectionCode

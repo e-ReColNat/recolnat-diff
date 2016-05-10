@@ -4,6 +4,7 @@ namespace AppBundle\Manager;
 
 use AppBundle\Business\Exporter\AbstractExporter;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\SelectedSpecimensHandler;
 use AppBundle\Business\SessionHandler;
 use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -44,6 +45,9 @@ class ExportManager
 
     /** @var \AppBundle\Business\DiffHandler */
     private $diffHandler;
+
+    /** @var  SelectedSpecimensHandler */
+    private $selectedSpecimensHandler;
 
     /** @var  ExportPrefs */
     protected $exportPrefs;
@@ -119,6 +123,9 @@ class ExportManager
             $this->diffManager->init($this->collection);
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
             $this->diffHandler->setCollectionCode($this->collectionCode);
+
+            $this->selectedSpecimensHandler = new SelectedSpecimensHandler($this->user->getDataDirPath().$this->collectionCode);
+
             $data = $this->launchDiffProcess();
             $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
             $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
@@ -141,6 +148,8 @@ class ExportManager
         } else {
             $data = $this->getDiffHandler()->getDiffsFile()->getData();
         }
+
+        $data['selectedSpecimens'] = $this->selectedSpecimensHandler->getData();
 
         return $data;
     }
@@ -184,10 +193,16 @@ class ExportManager
         $allDiffs = $this->sessionManager->get('diffs');
         $diffs = $this->diffHandler->getDiffsFile()->filterResults($allDiffs, $classesName, $specimensWithChoices,
             $choicesToRemove);
+        $diffs['selectedSpecimens'] = $this->sessionManager->get('selectedSpecimens', []);
 
         return self::orderDiffsByTaxon($diffs);
     }
 
+    /**
+     * Tri les différences par ordre alphabétique
+     * @param array $diffs
+     * @return array
+     */
     public static function orderDiffsByTaxon(array $diffs)
     {
         $sortedDiffs = $diffs;
@@ -197,7 +212,7 @@ class ExportManager
             foreach ($datas as $catalogNumber => $diff) {
                 $taxons[$catalogNumber] = $diff['taxon'];
             }
-            array_multisort($taxons, SORT_STRING, $datas);
+            array_multisort($taxons, SORT_ASC, SORT_NATURAL|SORT_FLAG_CASE, $datas);
             $sortedDiffs['datas'] = $datas;
         }
 
