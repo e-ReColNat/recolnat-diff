@@ -1,11 +1,16 @@
 {% extends '@App/base.html.twig' %}
-
+{%  set stats = pagination.items %}
 {% block body %}
 <div class="container-fluid">
     {% include '@App/Front/partial/breadcrumb.html.twig' %}
+
      <h1 class="page-header">{{'stats.details' | trans }}</h1>
 
     {% if stats is not empty %}
+        <div class="text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
         {% set countDiffs = 0 %}
         {% set flagPareto = 0 %}
         {% set emptyField = 'empty.field' | trans %}
@@ -86,6 +91,9 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
     {% endif %}
 </div>
 {% endblock %}

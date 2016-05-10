@@ -51,11 +51,13 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/stats", name="stats")
+     * @Route("{collectionCode}/stats/{page}", name="stats",defaults={ "page" = 1},
+     *     requirements={"page": "\d+"})
      * @param string $collectionCode
+     * @param int    $page
      * @return Response
      */
-    public function statsAction($collectionCode)
+    public function statsAction($collectionCode, $page = 1)
     {
         $prefs = $this->getUser()->getPrefs();
 
@@ -64,10 +66,14 @@ class FrontController extends Controller
         $statsBySimilarity = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $statsManager->getSumStats();
 
+        $paginator = $this->get('knp_paginator');
+        /** @var AbstractPagination $pagination */
+        $pagination = $paginator->paginate($statsBySimilarity, $page, 100);
+
         return $this->render('@App/Front/stats.html.twig', array(
             'collectionCode' => $collectionCode,
-            'stats' => $statsBySimilarity,
             'sumStats' => $sumStats,
+            'pagination' => $pagination,
         ));
     }
 
