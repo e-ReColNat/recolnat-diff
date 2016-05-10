@@ -272,24 +272,6 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("/generateDiff/{collectionCode}/{compt}", name="generateDiff")
-     * @param string  $collectionCode
-     * @param integer $compt
-     * @return Response
-     */
-    public function generateDiffAction($collectionCode, $compt)
-    {
-        $collection = $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
-        /* @var $diffManager \AppBundle\Manager\DiffManager */
-        $diffManager = $this->get('diff.manager');
-        $diffManager->generateDiff($collection, $compt, rand(1, 5));
-
-        return $this->render('@App/Front/generateDiff.html.twig');
-    }
-
-
-    /**
      * @Route("{collectionCode}/specimens/view/{jsonCatalogNumbers}/{page}", name="viewSpecimens",
      * options={"expose"=true}, defaults={"page"= 1}, requirements={"page": "\d+"})
      * @param Request $request
@@ -367,10 +349,10 @@ class FrontController extends Controller
         $orderSpecimens = [];
         $orderSpecimensOuput = [];
         switch ($type) {
-            case 'alpha' :
+            case 'alpha':
                 $specimens = $exportManager->getDiffs()['datas'];
                 break;
-            case 'selected' :
+            case 'selected':
                 $catalogNumbers = $this->get('session')->get('selectedSpecimens');
                 $specimens = $exportManager::orderDiffsByTaxon($exportManager->getDiffsByCatalogNumbers($catalogNumbers))['datas'];
                 break;
