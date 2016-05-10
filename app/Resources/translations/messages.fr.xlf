@@ -398,6 +398,10 @@
                 <source>add.selection</source>
                 <target>Ajouter aux spécimens sélectionnés</target>
             </trans-unit>
+            <trans-unit id="100">
+                <source>list.alpha</source>
+                <target>Liste alphabétique des spécimens</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
