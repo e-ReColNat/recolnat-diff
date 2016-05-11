@@ -212,7 +212,7 @@ class ExportManager
             foreach ($datas as $catalogNumber => $diff) {
                 $taxons[$catalogNumber] = $diff['taxon'];
             }
-            array_multisort($taxons, SORT_ASC, SORT_NATURAL|SORT_FLAG_CASE, $datas);
+            array_multisort($taxons, SORT_ASC, SORT_NATURAL | SORT_FLAG_CASE, $datas);
             $sortedDiffs['datas'] = $datas;
         }
 
@@ -299,27 +299,18 @@ class ExportManager
         if ($this->sessionManager->has('choices')) {
             $sessionChoices = $this->sessionManager->get('choices');
         }
-        $flag = false;
         $row['data'] = $this->genericEntityManager->getData($row['choice'], $row['className'], $row['fieldName'],
             $row['relationId']);
-        if (is_array($sessionChoices) && count($sessionChoices) > 0) {
-            foreach ($sessionChoices as $key => $choice) {
-                if (
-                    $choice['className'] == $row['className'] &&
-                    $choice['fieldName'] == $row['fieldName'] &&
-                    $choice['relationId'] == $row['relationId']
-                ) {
-                    $sessionChoices[$key] = $row;
-                    $flag = true;
-                }
-            }
-        }
 
-        if (!$flag) {
-            $sessionChoices[] = $row;
-        }
+        $sessionChoices[self::getIndexChoice($row)] = $row;
+
         $this->sessionManager->set('choices', $sessionChoices);
         $this->diffHandler->getChoicesFile()->save($sessionChoices);
+    }
+
+    private static function getIndexChoice(array $choice)
+    {
+        return md5($choice['className'].$choice['fieldName'].$choice['relationId']);
     }
 
     /**
