@@ -212,7 +212,7 @@ class ExportManager
             foreach ($datas as $catalogNumber => $diff) {
                 $taxons[$catalogNumber] = $diff['taxon'];
             }
-            array_multisort($taxons, SORT_ASC, SORT_NATURAL | SORT_FLAG_CASE, $datas);
+            array_multisort($taxons, SORT_ASC, SORT_NATURAL|SORT_FLAG_CASE, $datas);
             $sortedDiffs['datas'] = $datas;
         }
 

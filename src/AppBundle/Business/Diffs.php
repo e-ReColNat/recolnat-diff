@@ -72,22 +72,25 @@ class Diffs extends \SplFileObject
 
         $lonesomeRecords = $this->getData()['lonesomeRecords'];
         $returnLonesomes = [];
-        if (!is_null($db)) {
-            foreach ($lonesomeRecords as $className => $items) {
-                if (!empty($classesName)) {
-                    if (in_array($className, $classesName)) {
+
+        if (count($lonesomeRecords)) {
+            if (!is_null($db)) {
+                foreach ($lonesomeRecords as $className => $items) {
+                    if (!empty($classesName)) {
+                        if (in_array($className, $classesName)) {
+                            $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
+                        }
+                    } else {
                         $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
                     }
-                } else {
-                    $returnLonesomes[$className][$db] = $lonesomeRecords[$className][$db];
                 }
-            }
-        } else {
-            if (empty($classesName)) {
-                $returnLonesomes = $lonesomeRecords;
             } else {
-                foreach ($classesName as $className) {
-                    $returnLonesomes[$className] = $lonesomeRecords[$className];
+                if (empty($classesName)) {
+                    $returnLonesomes = $lonesomeRecords;
+                } else {
+                    foreach ($classesName as $className) {
+                        $returnLonesomes[$className] = $lonesomeRecords[$className];
+                    }
                 }
             }
         }
