@@ -358,7 +358,8 @@ class ExportManager
             $data = array_merge($data, $datasNewRecords);
 
         }
-        $data = $this->filterDataByCatalogNumbers($data) ;
+        $data = $this->filterDataByCatalogNumbers($data);
+
         return $data;
     }
 
@@ -367,10 +368,11 @@ class ExportManager
      * @param $data
      * @return array
      */
-    private function filterDataByCatalogNumbers($data) {
-        $filteredCatalogNumbersLonesomeRecords=[] ;
+    private function filterDataByCatalogNumbers($data)
+    {
+        $filteredCatalogNumbersLonesomeRecords = [];
         foreach ($data as $index => $specimen) {
-            $filteredCatalogNumbersLonesomeRecords[$specimen['catalognumber']] = $specimen ;
+            $filteredCatalogNumbersLonesomeRecords[$specimen['catalognumber']] = $specimen;
         }
 
         return $filteredCatalogNumbersLonesomeRecords;
@@ -399,14 +401,16 @@ class ExportManager
             foreach ($arraySpecimenWithEntities as $className => $row) {
                 if (in_array($className, $entitiesNameWithArray)) {
                     foreach ($row as $indexSubArray => $record) {
-                        $dataWithChoices[$catalogNumber][$className][$indexSubArray] = $record ;
-                        $this->getSessionHandler()->setChoiceForEntity($dataWithChoices, $catalogNumber, $className, $record,
+                        $dataWithChoices[$catalogNumber][$className][$indexSubArray] = $record;
+                        $this->getSessionHandler()->setChoiceForEntity($dataWithChoices, $catalogNumber, $className,
+                            $record,
                             $indexSubArray);
                     }
                 } else {
                     if (!empty($row)) {
                         $dataWithChoices[$catalogNumber][$className] = $row;
-                        $this->getSessionHandler()->setChoiceForEntity($dataWithChoices, $catalogNumber, $className, $row);
+                        $this->getSessionHandler()->setChoiceForEntity($dataWithChoices, $catalogNumber, $className,
+                            $row);
                     }
 
                 }

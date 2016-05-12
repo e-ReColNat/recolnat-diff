@@ -48,7 +48,7 @@ class DwcExporter extends AbstractExporter
             $formattedData[$key] = [];
             $occurrenceid = $data['Specimen']['occurrenceid'];
 
-            $formattedData[$key]['Specimen'] = $this->getSpecimenData($data, $key);
+            $formattedData[$key]['Specimen'] = $this->getSpecimenData($data);
 
             $determinationData = $this->getDeterminationData($data);
             if (!empty($determinationData)) {
