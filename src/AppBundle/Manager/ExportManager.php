@@ -323,85 +323,97 @@ class ExportManager
 
     /**
      * Rajoute les nouveaux enregistrements de specimens complets aux données avant export
-     * @param array $datas
+     * @param array $data
      * @return array
      */
-    private function addNewRecords($datas)
+    private function addLonesomesRecords($data)
     {
         // ajout des nouveaux enregistrements de specimens complets
         // Un seul côté
         if ($this->exportPrefs->getSideForNewRecords() != 'both') {
-            $catalogNumbersLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                $this->exportPrefs->getSideForNewRecords());
+            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
+                $this->exportPrefs->getSideForNewRecords()));
+
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
                 $this->exportPrefs->getSideForNewRecords(),
                 $this->collection,
-                array_keys($catalogNumbersLonesomeRecords));
-            $datas = array_merge($datas, $datasNewRecords);
+                $catalogNumbersLonesomeRecords);
+            $data = array_merge($data, $datasNewRecords);
 
-            return $datas;
         } // des deux côtés
         else {
-            $catalogNumbersLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                'recolnat');
+            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
+                'recolnat'));
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
                 $this->collection,
                 array_keys($catalogNumbersLonesomeRecords));
-            $datas = array_merge($datas, $datasNewRecords);
+            $data = array_merge($data, $datasNewRecords);
 
 
-            $catalogNumbersLonesomeRecords = $this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                'institution');
+            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
+                'institution'));
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('institution',
                 $this->collection,
-                array_keys($catalogNumbersLonesomeRecords));
-            $datas = array_merge($datas, $datasNewRecords);
+                $catalogNumbersLonesomeRecords);
+            $data = array_merge($data, $datasNewRecords);
 
-            return $datas;
         }
+        $data = $this->filterDataByCatalogNumbers($data) ;
+        return $data;
     }
 
     /**
-     * @param array $datas
+     * Dédoublonne les spécimens avant export
+     * @param $data
      * @return array
      */
-    private function getArrayDatasWithChoices($datas)
+    private function filterDataByCatalogNumbers($data) {
+        $filteredCatalogNumbersLonesomeRecords=[] ;
+        foreach ($data as $index => $specimen) {
+            $filteredCatalogNumbersLonesomeRecords[$specimen['catalognumber']] = $specimen ;
+        }
+
+        return $filteredCatalogNumbersLonesomeRecords;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function getArrayDatasWithChoices($data)
     {
-        $datasWithChoices = [];
+        $dataWithChoices = [];
         $entitiesNameWithArray = [
             'Determination',
             'Taxon',
             'Multimedia',
             'Bibliography',
         ];
-        $datas = $this->addNewRecords($datas);
+        $data = $this->addLonesomesRecords($data);
 
-        foreach ($datas as $index => $specimen) {
+        foreach ($data as $catalogNumber => $specimen) {
 
             $arraySpecimenWithEntities = $this->genericEntityManager->formatArraySpecimen($specimen);
-            $datasWithChoices[$index] = $arraySpecimenWithEntities;
+            $dataWithChoices[$catalogNumber] = $arraySpecimenWithEntities;
 
             foreach ($arraySpecimenWithEntities as $className => $row) {
                 if (in_array($className, $entitiesNameWithArray)) {
                     foreach ($row as $indexSubArray => $record) {
-                        foreach ($record as $fieldName => $value) {
-                            $datasWithChoices[$index][$className][$indexSubArray][$fieldName] = $value;
-                        }
-                        $this->getSessionHandler()->setChoiceForEntity($datasWithChoices, $index, $className, $record,
+                        $dataWithChoices[$catalogNumber][$className][$indexSubArray] = $record ;
+                        $this->getSessionHandler()->setChoiceForEntity($dataWithChoices, $catalogNumber, $className, $record,
                             $indexSubArray);
                     }
                 } else {
                     if (!empty($row)) {
-                        foreach ($row as $fieldName => $value) {
-                            $datasWithChoices[$index][$className][$fieldName] = $value;
-                        }
-                        $this->getSessionHandler()->setChoiceForEntity($datasWithChoices, $index, $className, $row);
+                        $dataWithChoices[$catalogNumber][$className] = $row;
+                        $this->getSessionHandler()->setChoiceForEntity($dataWithChoices, $catalogNumber, $className, $row);
                     }
+
                 }
             }
         }
 
-        return $datasWithChoices;
+        return $dataWithChoices;
     }
 
     /**

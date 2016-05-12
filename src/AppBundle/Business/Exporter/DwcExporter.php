@@ -3,6 +3,8 @@
 namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\User\Prefs;
+use AppBundle\Entity\Localisation;
+use AppBundle\Entity\Recolte;
 use AppBundle\Entity\Stratigraphy;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -31,56 +33,126 @@ class DwcExporter extends AbstractExporter
     protected $dwcDateFormat = 'Y-m-d';
     protected $zipFileName = 'dwc.zip';
 
+    private $arrayEmptyClasses = [];
+
     /**
      * @return array
      */
     public function formatDatas()
     {
-        $formatDatas = [];
-        $emptyStratigraphy = new Stratigraphy();
-        $arrayEmptyStratigraphy = $emptyStratigraphy->toArray();
+        $formattedData = [];
+        $this->setEmptyClasses();
+
+
         foreach ($this->datas as $key => $data) {
-            $formatDatas[$key] = [];
+            $formattedData[$key] = [];
             $occurrenceid = $data['Specimen']['occurrenceid'];
 
-            if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
-                $data['Stratigraphy'] = $arrayEmptyStratigraphy;
+            $formattedData[$key]['Specimen'] = $this->getSpecimenData($data, $key);
+
+            $determinationData = $this->getDeterminationData($data);
+            if (!empty($determinationData)) {
+                $formattedData[$key]['Determination'] = $determinationData;
             }
 
-            $formatDatas[$key]['Specimen'] = array_merge($data['Specimen'], $data['Stratigraphy']);
-
-            if (isset($data['Determination']) && count($data['Determination']) > 0) {
-                foreach ($data['Determination'] as $key2 => $determination) {
-                    $taxon = $determination['Taxon'];
-                    unset($determination['Taxon']);
-                    if (is_array($taxon)) {
-                        $formatDatas[$key]['Determination'][$key2] = array_merge($determination, $taxon);
-                    } else {
-                        $formatDatas[$key]['Determination'][$key2] = $determination;
-                    }
-                }
+            $bibliographyData = $this->getBibliographyData($data, $occurrenceid);
+            if (!empty($bibliographyData)) {
+                $formattedData[$key]['Bibliography'] = $bibliographyData;
             }
 
-            if (isset($data['Bibliography']) && count($data['Bibliography']) > 0) {
-                foreach ($data['Bibliography'] as $key2 => $bibliography) {
-                    $formatDatas[$key]['Bibliography'][$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
-                }
+            $multimediaData = $this->getMultimediaData($data, $occurrenceid);
+            if (!empty($multimediaData)) {
+                $formattedData[$key]['Multimedia'] = $multimediaData;
             }
 
-            if (isset($data['Multimedia']) && count($data['Multimedia']) > 0) {
-                foreach ($data['Multimedia'] as $key2 => $multimedia) {
-                    $formatDatas[$key]['Multimedia'][$key2] = ['occurrenceid' => $occurrenceid] + $multimedia;
-                }
-            }
-
-            if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
-                if (isset($data['Localisation']) && count($data['Localisation']) > 0) {
-                    $formatDatas[$key]['Recolte'] = array_merge($data['Recolte'], $data['Localisation']);
-                }
-                $formatDatas[$key]['Recolte']['occurrenceid'] = $occurrenceid;
+            $recolteData = $this->getRecolteData($data);
+            if (!empty($recolteData)) {
+                $formattedData[$key]['Recolte'] = $recolteData;
             }
         }
-        return $formatDatas;
+
+        return $formattedData;
+    }
+
+    /**
+     * @param array $data
+     * @param string $occurrenceid
+     * @return array
+     */
+    private function getMultimediaData($data, $occurrenceid) {
+        $returnData = [];
+        if (isset($data['Multimedia']) && count($data['Multimedia']) > 0) {
+            foreach ($data['Multimedia'] as $key2 => $bibliography) {
+                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
+            }
+        }
+        return $returnData;
+    }
+
+    /**
+     * @param array $data
+     * @param string $occurrenceid
+     * @return array
+     */
+    private function getBibliographyData($data, $occurrenceid) {
+        $returnData = [];
+        if (isset($data['Bibliography']) && count($data['Bibliography']) > 0) {
+            foreach ($data['Bibliography'] as $key2 => $bibliography) {
+                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
+            }
+        }
+        return $returnData;
+    }
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function getDeterminationData($data)
+    {
+        $returnData = [];
+        if (isset($data['Determination']) && count($data['Determination']) > 0) {
+            foreach ($data['Determination'] as $key2 => $determination) {
+                $taxon = $determination['Taxon'];
+                unset($determination['Taxon']);
+                if (is_array($taxon)) {
+                    $returnData[$key2] = array_merge($determination, $taxon);
+                } else {
+                    $returnData[$key2] = $determination;
+                }
+            }
+        }
+
+        return $returnData;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function getSpecimenData($data)
+    {
+        if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
+            $data['Stratigraphy'] = $this->arrayEmptyClasses['Stratigraphy'];
+        }
+
+        return array_merge($data['Specimen'], $data['Stratigraphy']);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function getRecolteData($data)
+    {
+        $returnData = [];
+        if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
+            if (!isset($data['Localisation']) || count($data['Localisation']) == 0) {
+                $data['Localisation'] = $this->arrayEmptyClasses['Localisation'];
+            }
+            $returnData = array_merge($data['Recolte'], $data['Localisation']);
+        }
+
+        return $returnData;
     }
 
     /**
@@ -120,11 +192,13 @@ class DwcExporter extends AbstractExporter
         foreach ($this->entitiesName as $className) {
             $this->setXmlGenericEntity($root, $className);
         }
+
         return $this->dwc->saveXML($root);
     }
 
-    /**
+    /*
      * @return string
+     * @throws \Exception
      */
     private function createZipFile()
     {
@@ -330,6 +404,7 @@ class DwcExporter extends AbstractExporter
     {
         $search = ['d', 'm', 'Y', 'H', 'i', 's', '\T'];
         $replace = ['DD', 'MM', 'YYYY', 'hh', 'mm', 'ss', 'T'];
+
         return str_replace($search, $replace, $this->dwcDateFormat);
     }
 
@@ -341,4 +416,15 @@ class DwcExporter extends AbstractExporter
         $this->dwcDateFormat = $dwcDateFormat;
     }
 
+    private function setEmptyClasses()
+    {
+        $emptyStratigraphy = new Stratigraphy();
+        $this->arrayEmptyClasses['Stratigraphy'] = $emptyStratigraphy->toArray();
+
+        $emptyRecolte = new Recolte();
+        $this->arrayEmptyClasses['Recolte'] = $emptyRecolte->toArray();
+
+        $emptyLocalisation = new Localisation();
+        $this->arrayEmptyClasses['Localisation'] = $emptyLocalisation->toArray();
+    }
 }

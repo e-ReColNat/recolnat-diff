@@ -13,7 +13,14 @@ class SpecimenExporter extends AbstractEntityExporter
         public function getExportProperties()
     {
         $stratigraphyExporter = new StratigraphyExporter();
-        return array_merge($this->arrayExportTerm, $stratigraphyExporter->getExportProperties());
+        $recolteExporter = new RecolteExporter();
+        $localisationExporter = new LocalisationExporter();
+        return array_merge(
+            $this->arrayExportTerm,
+            $stratigraphyExporter->getExportProperties(),
+            $recolteExporter->getExportProperties(),
+            $localisationExporter->getExportProperties()
+        );
     }
     
     public function setExportTerm() 
@@ -38,7 +45,6 @@ class SpecimenExporter extends AbstractEntityExporter
             'rights' => 'http://purl.org/dc/terms/rights',
             'rightsholder' => 'http://purl.org/dc/terms/rightsHolder',
             'sex' => 'http://rs.tdwg.org/dwc/terms/sex',
-            //'geologicalcontextid' => 'http://rs.tdwg.org/dwc/terms/geologicalContextID',
             'eventid' => 'http://rs.tdwg.org/dwc/terms/eventID',
         ];
     }

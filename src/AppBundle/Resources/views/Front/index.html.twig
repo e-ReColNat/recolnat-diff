@@ -21,6 +21,14 @@
                                 <li>{{ 'fichier.modifiele'|trans({'%date%': diffHandler.getMTime|date("d/m/Y"), '%heure%' :diffHandler.getMTime|date("H:i:s")}) }}</li>
                             {% endfor %}
                         </ul>
+                    {% else %}
+                        <div class="col-sm-2">
+                            {{ 'label.collection' | trans }} :
+                                {{ collection['collection'].getCollectionCode }}
+                        </div>
+                        <div class="col-sm-3">
+                            {{ 'label.nodiffs' | trans }}
+                        </div>
                     {% endif %}
                     <a class="col-sm-3 searchDiffButton btn btn-primary" role="button"
                        href="{{ path('searchDiff', {'collectionCode' : collection.collection.collectionCode}) }}">

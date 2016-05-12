@@ -35,12 +35,13 @@ class FrontController extends Controller
         /** @var Collection $collection */
         foreach ($institution->getCollections() as $collection) {
             $collectionCode = $collection->getCollectioncode();
-            $exportManager->setCollectionCode($collectionCode);
+
             $collections[$collectionCode]['collection'] = $collection;
             $diffHandler->setCollectionCode($collectionCode);
             $collections[$collectionCode]['diffHandler'] = [];
             if (!$diffHandler->shouldSearchDiffs()) {
                 /* @var $exportManager \AppBundle\Manager\ExportManager */
+                $exportManager->setCollectionCode($collectionCode);
                 $collections[$collectionCode]['diffHandler'] = $exportManager->getFiles();
             }
         }
