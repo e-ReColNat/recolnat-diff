@@ -402,6 +402,10 @@
                 <source>list.alpha</source>
                 <target>Liste alphabétique des spécimens</target>
             </trans-unit>
+            <trans-unit id="101">
+                <source>label.nodiffs</source>
+                <target>La recherche de différences n'a pas été effectué</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

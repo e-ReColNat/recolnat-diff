@@ -13,7 +13,7 @@ class StratigraphyExporter extends AbstractEntityExporter
     public function setExportTerm() 
     {
         $this->arrayExportTerm = [
-            'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
+            //'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
             'geologicalcontextid' => 'http://rs.tdwg.org/dwc/terms/geologicalContextID',
             'bed' => 'http://rs.tdwg.org/dwc/terms/bed',
             'earliestageorloweststage' => 'http://rs.tdwg.org/dwc/terms/earliestAgeOrLowestStage',

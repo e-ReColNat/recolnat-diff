@@ -18,8 +18,8 @@ class RecolteExporter extends AbstractEntityExporter
     public function setExportTerm()
     {
         $this->arrayExportTerm = [
-            'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
-            'locationid' => 'http://rs.tdwg.org/dwc/terms/locationID',
+            //'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
+            //'locationid' => 'http://rs.tdwg.org/dwc/terms/locationID',
             'eventid' => 'http://rs.tdwg.org/dwc/terms/eventID',
             'eventdate' => 'http://rs.tdwg.org/dwc/terms/eventDate',
             'eventremarks' => 'http://rs.tdwg.org/dwc/terms/eventRemarks',

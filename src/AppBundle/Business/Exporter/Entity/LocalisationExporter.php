@@ -13,7 +13,7 @@ class LocalisationExporter extends AbstractEntityExporter
     public function setExportTerm()
     {
         $this->arrayExportTerm = [
-            'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
+            //'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
             'locationid' => 'http://rs.tdwg.org/dwc/terms/locationID',
             'averagealtituderounded' => '',
             'continent' => 'http://rs.tdwg.org/dwc/terms/continent',
@@ -35,6 +35,7 @@ class LocalisationExporter extends AbstractEntityExporter
             'sourcefileid' => '',
             'stateprovince' => 'http://rs.tdwg.org/dwc/terms/stateProvince',
             'verbatimcountry' => '',
+            'verbatimeventdate' => 'http://rs.tdwg.org/dwc/terms/verbatimEventDate',
             'verbatimelevation' => 'http://rs.tdwg.org/dwc/terms/verbatimElevation',
             'verbatimlocality' => 'http://rs.tdwg.org/dwc/terms/verbatimLocality',
         ];

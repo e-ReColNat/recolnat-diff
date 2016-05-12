@@ -141,6 +141,13 @@ class CsvExporter extends AbstractExporter
         $this->files[$className] = new \SplFileObject($fileName);
     }
 
+    private function getFileNameForClass($className)
+    {
+        if (strtolower($className) == 'specimen') {
+
+        }
+    }
+
     /**
      * @return array<string,\SplFileObject>
      */

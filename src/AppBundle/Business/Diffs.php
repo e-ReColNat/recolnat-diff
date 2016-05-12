@@ -247,7 +247,6 @@ class Diffs extends \SplFileObject
                 if (array_key_exists($selectedCatalogNumber, $diffs['datas'])) {
                     $returnDiffs['datas'][$selectedCatalogNumber] = $diffs['datas'][$selectedCatalogNumber];
                     foreach (array_keys($diffs['datas'][$selectedCatalogNumber]) as $className) {
-                        $className = ucfirst($className);
                         if (!isset($returnDiffs['classes'][$className])) {
                             $returnDiffs['classes'][$className] = [];
                         }
