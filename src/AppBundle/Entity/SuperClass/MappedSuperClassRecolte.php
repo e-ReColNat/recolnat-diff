@@ -435,29 +435,8 @@ abstract class MappedSuperClassRecolte
         return $this->verbatimeventdate;
     }
 
-     /**
-     * Set localisation
-     *
-     * @param Localisation|null $localisation
-     *
-     * @return Recolte
-     */
-    public function setLocation(Localisation $localisation = null)
-    {
-        $this->localisation = $localisation;
+    abstract public function getLocalisation();
 
-        return $this;
-    }
-
-    /**
-     * Get localisation
-     *
-     * @return Localisation|null
-     */
-    public function getLocalisation()
-    {
-        return $this->localisation;
-    }
 
     /**
      * Get specimen

@@ -31,4 +31,12 @@ class RecolteBuffer extends MappedSuperClassRecolte
     {
         return $this->specimen;
     }
+
+    /**
+     * @return LocalisationBuffer
+     */
+    public function getLocalisation()
+    {
+        return $this->localisation;
+    }
 }

@@ -11,7 +11,7 @@ use AppBundle\Entity\SuperClass\MappedSuperClassSpecimen as Specimen;
  * @ORM\MappedSuperclass
  * @ORM\Table(name="Specimens")
  */
-class MappedSuperClassSpecimen
+abstract class MappedSuperClassSpecimen
 {
 
     /**
@@ -129,54 +129,6 @@ class MappedSuperClassSpecimen
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     protected $sex;
-//
-//    /**
-//     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Collection", inversedBy="specimens", fetch="EXTRA_LAZY")
-//     * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
-//     **/
-//    protected $collection;
-//
-//    /**
-//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY", inversedBy="specimen")
-//     * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
-//     **/
-//    protected $stratigraphy;
-//
-//    /**
-//     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", inversedBy="specimen", fetch="EXTRA_LAZY")
-//     * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
-//     **/
-//    protected $recolte;
-//
-//    /**
-//     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Multimedia", inversedBy="specimens")
-//     * @ORM\JoinTable(name="Multimedia_Has_Occurrences",
-//     *      joinColumns={@ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")},
-//     *      inverseJoinColumns={@ORM\JoinColumn(name="multimediaid", referencedColumnName="multimediaid")}
-//     *      )
-//     **/
-//    protected $multimedias;
-//
-//    /**
-//     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EXTRA_LAZY")
-//     * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
-//     */
-//    protected $determinations;
-//
-//    /**
-//     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EXTRA_LAZY")
-//     */
-//    protected $bibliographies;
-//
-//    /**
-//     * Constructor
-//     */
-//    public function __construct()
-//    {
-//        $this->multimedias = new ArrayCollection();
-//        $this->determinations = new ArrayCollection();
-//        $this->bibliographies = new ArrayCollection();
-//    }
 
     /**
      * Get occurrenceid
@@ -717,130 +669,6 @@ class MappedSuperClassSpecimen
     }
 
     /**
-     * Set collectionid
-     *
-     * @param Collection|null $collection
-     *
-     * @return Specimen
-     */
-    public function setCollection(Collection $collection = null)
-    {
-        $this->collection = $collection;
-
-        return $this;
-    }
-
-    /**
-     * Get collectionid
-     *
-     * @return \AppBundle\Entity\Collection|null
-     */
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
-    /**
-     * Set stratigraphy
-     *
-     * @param Stratigraphy|null $stratigraphy
-     *
-     * @return Specimen
-     */
-    public function setGeologicalcontextid(Stratigraphy $stratigraphy = null)
-    {
-        $this->stratigraphy = $stratigraphy;
-
-        return $this;
-    }
-
-    /**
-     * Get stratigraphy
-     *
-     * @return \AppBundle\Entity\Stratigraphy|null
-     */
-    public function getStratigraphy()
-    {
-        return $this->stratigraphy;
-    }
-
-    /**
-     * Set eventid
-     *
-     * @param Recolte|null $recolte
-     *
-     * @return Specimen
-     */
-    public function setRecolte(Recolte $recolte = null)
-    {
-        $this->recolte = $recolte;
-
-        return $this;
-    }
-
-    /**
-     * Get recolte
-     *
-     * @return Recolte|null
-     */
-    public function getRecolte()
-    {
-        return $this->recolte;
-    }
-
-    /**
-     * Add multimediaid
-     *
-     * @param Multimedia $multimedia
-     *
-     * @return Specimen
-     */
-    public function addMultimediaid(Multimedia $multimedia)
-    {
-        $this->multimedias[] = $multimedia;
-
-        return $this;
-    }
-
-    /**
-     * Remove multimedia
-     *
-     * @param Multimedia $multimedia
-     */
-    public function removeMultimedia(Multimedia $multimedia)
-    {
-        $this->multimedias->removeElement($multimedia);
-    }
-
-    /**
-     * Get multimedias
-     *
-     * @return ArrayCollection
-     */
-    public function getMultimedias()
-    {
-        return $this->multimedias;
-    }
-
-    /**
-     *
-     * @return ArrayCollection
-     */
-    public function getDeterminations()
-    {
-        return $this->determinations;
-    }
-
-    /**
-     *
-     * @return ArrayCollection
-     */
-    public function getBibliographies()
-    {
-        return $this->bibliographies;
-    }
-
-    /**
      * @return string
      */
     public function getSpecimenCode()
@@ -897,4 +725,21 @@ class MappedSuperClassSpecimen
             'eventid' => !is_null($this->getRecolte()) ? $this->getRecolte()->getEventid() : null,
         ];
     }
+
+    /**
+     * Get collectionid
+     *
+     * @return \AppBundle\Entity\Collection
+     */
+    abstract public function getCollection();
+
+    abstract public function getStratigraphy();
+
+    abstract public function getRecolte();
+
+    abstract public function getMultimedias();
+
+    abstract public function getDeterminations();
+
+    abstract public function getBibliographies();
 }

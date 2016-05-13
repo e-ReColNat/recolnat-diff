@@ -5,15 +5,11 @@ namespace AppBundle\Controller;
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\SelectedSpecimensHandler;
-use AppBundle\Manager\DiffComputer;
-use AppBundle\Manager\DiffManager;
-use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Description of AjaxDiffsController

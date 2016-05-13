@@ -60,4 +60,63 @@ class Specimen extends MappedSuperClassSpecimen
         $this->bibliographies = new ArrayCollection();
     }
 
+
+    /**
+     * Get collectionid
+     *
+     * @return \AppBundle\Entity\Collection|null
+     */
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
+
+    /**
+     * Get stratigraphy
+     *
+     * @return \AppBundle\Entity\Stratigraphy|null
+     */
+    public function getStratigraphy()
+    {
+        return $this->stratigraphy;
+    }
+
+    /**
+     * Get recolte
+     *
+     * @return Recolte|null
+     */
+    public function getRecolte()
+    {
+        return $this->recolte;
+    }
+
+    /**
+     * Get multimedias
+     *
+     * @return ArrayCollection
+     */
+    public function getMultimedias()
+    {
+        return $this->multimedias;
+    }
+
+    /**
+     *
+     * @return ArrayCollection
+     */
+    public function getDeterminations()
+    {
+        return $this->determinations;
+    }
+
+    /**
+     *
+     * @return ArrayCollection
+     */
+    public function getBibliographies()
+    {
+        return $this->bibliographies;
+    }
 }

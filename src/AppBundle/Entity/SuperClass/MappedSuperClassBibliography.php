@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\SuperClass;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\SuperClass\MappedSuperClassBibliography as Bibliography;
 
 /**
  * @ORM\MappedSuperclass()
@@ -375,20 +376,6 @@ abstract class MappedSuperClassBibliography
         return $this->type;
     }
 
-
-    /**
-     * Set specimen
-     *
-     * @param Specimen|null $occurrence
-     *
-     * @return Bibliography
-     */
-    public function setSpecimen(Specimen $occurrence = null)
-    {
-        $this->specimen = $occurrence;
-
-        return $this;
-    }
 
     abstract public function getSpecimen();
 
