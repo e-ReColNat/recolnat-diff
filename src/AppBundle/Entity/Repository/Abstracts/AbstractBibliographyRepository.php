@@ -1,13 +1,45 @@
 <?php
 
-namespace AppBundle\Entity\Repository;
+namespace AppBundle\Entity\Repository\Abstracts;
 
 use AppBundle\Entity\Collection;
-use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\ORM\AbstractQuery;
 
-class MultimediaRepository extends AbstractRecolnatRepository
+/**
+ * BibliographyRepository
+ */
+class AbstractBibliographyRepository extends AbstractRecolnatRepository
 {
+    /**
+     * @param Collection $collection
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilderFindByCollection(Collection $collection)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('b.referenceid as id')
+            ->from('bibliography', 'b')
+            ->join('b.specimen', 's')
+            ->andWhere('s.collection = :collection')
+            ->setParameter('collection', $collection);
+    }
+
+    /**
+     *
+     * @param array $ids
+     * @return array
+     */
+    public function findById($ids)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('b')
+            ->from('bibliography', 'b', 'b.referenceid')
+            ->andWhere($qb->expr()->in('b.referenceid', $ids));
+        $qb->setParameter('ids', $ids, 'rawid');
+
+        return $qb->getQuery()->getResult();
+    }
 
     /**
      * @param string $id
@@ -17,7 +49,7 @@ class MultimediaRepository extends AbstractRecolnatRepository
      */
     public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
-        return $this->getQueryFindOneById('multimedia', $id)->getOneOrNullResult($fetchMode);
+        return $this->getQueryFindOneById('bibliography', $id)->getOneOrNullResult($fetchMode);
     }
 
     /**
@@ -29,17 +61,6 @@ class MultimediaRepository extends AbstractRecolnatRepository
         return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
     }
 
-
-    public function getQueryBuilderFindByCollection(Collection $collection)
-    {
-        return $this->getEntityManager()->createQueryBuilder()
-            ->select('m')
-            ->from('AppBundle\Entity\Multimedia', 'm')
-            ->join('AppBundle\Entity\Specimen', 's')
-            ->andWhere('s.collection = :collection')
-            ->setParameter('collection', $collection);
-    }
-
     /**
      * @param Collection $collection
      * @param array      $catalogNumbers
@@ -49,9 +70,9 @@ class MultimediaRepository extends AbstractRecolnatRepository
     public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('m')
-            ->from('AppBundle\Entity\Multimedia', 'm')
-            ->join('AppBundle\Entity\Specimen', 's');
+            ->select('b')
+            ->from('bibliography', 'b')
+            ->join('b.specimen', 's');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -69,30 +90,13 @@ class MultimediaRepository extends AbstractRecolnatRepository
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
         $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('m')
+            ->select('b')
+            ->from('bibliography', 'b')
             ->addSelect($this->getExprCatalogNumber().' as catalognumber')
-            ->from('AppBundle\Entity\Multimedia', 'm')
-            ->innerJoin('m.specimens', 's')
-            ->orderBy('m.identifier', 'ASC');
+            ->join('b.specimen', 's');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
-        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'multimediaid');
-    }
-
-    /**
-     * @param array $ids
-     * @return array
-     */
-    public function findById($ids)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb
-            ->select('m')
-            ->from('AppBundle\Entity\Multimedia', 'm')
-            ->andWhere($qb->expr()->in('m.multimediaid', $ids));
-        $qb->setParameter('ids', $ids, 'rawid');
-
-        return $qb->getQuery()->getResult();
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'referenceid');
     }
 
     /**
@@ -104,11 +108,9 @@ class MultimediaRepository extends AbstractRecolnatRepository
     {
         $qb = $this->createUpdateQuery($datas);
 
-        $qb->where('a.multimediaid = HEXTORAW(:id)')
+        $qb->where('a.referenceid = HEXTORAW(:id)')
             ->setParameter('id', $id);
 
         return $qb->getQuery()->execute();
     }
-
-
 }

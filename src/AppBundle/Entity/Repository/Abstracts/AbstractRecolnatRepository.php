@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Entity\Repository;
+namespace AppBundle\Entity\Repository\Abstracts;
 
 use AppBundle\Entity\Collection;
 use Doctrine\ORM\AbstractQuery;

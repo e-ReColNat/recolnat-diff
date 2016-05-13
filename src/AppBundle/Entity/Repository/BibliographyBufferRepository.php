@@ -7,6 +7,6 @@ use AppBundle\Entity\Repository\Abstracts\AbstractBibliographyRepository;
 /**
  * BibliographyRepository
  */
-class BibliographyRepository extends AbstractBibliographyRepository
+class BibliographyBufferRepository extends AbstractBibliographyRepository
 {
 }

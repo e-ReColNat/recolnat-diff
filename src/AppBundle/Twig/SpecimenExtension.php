@@ -7,6 +7,8 @@ use AppBundle\Entity\Localisation;
 use AppBundle\Entity\Recolte;
 use AppBundle\Entity\Specimen;
 use AppBundle\Entity\Stratigraphy;
+use AppBundle\Entity\SuperClass\MappedSuperClassRecolte;
+use AppBundle\Entity\SuperClass\MappedSuperClassSpecimen;
 use AppBundle\Entity\Taxon;
 use AppBundle\Entity\Collection as rCollection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -144,11 +146,11 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Specimen $specimen
-     * @param String   $class
+     * @param MappedSuperClassSpecimen $specimen
+     * @param String                   $class
      * @return Localisation|Recolte|Specimen|Stratigraphy|array|ArrayCollection
      */
-    public function getRelation(Specimen $specimen, $class)
+    public function getRelation(MappedSuperClassSpecimen $specimen, $class)
     {
         $relation = null;
         switch (strtolower($class)) {
@@ -187,12 +189,12 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Specimen $specimen
-     * @param string   $class
-     * @param string   $id
+     * @param MappedSuperClassSpecimen $specimen
+     * @param string                   $class
+     * @param string                   $id
      * @return Localisation|Recolte|Stratigraphy|array|mixed|null|object
      */
-    public function getRelationById(Specimen $specimen, $class, $id)
+    public function getRelationById(MappedSuperClassSpecimen $specimen, $class, $id)
     {
         $relations = $this->getRelation($specimen, $class);
         $return = null;
@@ -222,12 +224,12 @@ class SpecimenExtension extends \Twig_Extension
     /**
      * Renvoie le nom minimum d'une extension d'un specimen
      * ex : pour la Récolte d'un specimen on aura la date et nom d'un récolteur
-     * @param Specimen $specimen
-     * @param string   $class
-     * @param string   $id
+     * @param MappedSuperClassSpecimen $specimen
+     * @param string                   $class
+     * @param string                   $id
      * @return string
      */
-    public function getRelationByIdToString(Specimen $specimen, $class, $id)
+    public function getRelationByIdToString(MappedSuperClassSpecimen $specimen, $class, $id)
     {
         $relation = $this->getRelationById($specimen, $class, $id);
         $toString = '';
@@ -248,10 +250,10 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Recolte $recolte
+     * @param MappedSuperClassRecolte $recolte
      * @return string
      */
-    private function getToStringRecolte(Recolte $recolte)
+    private function getToStringRecolte(MappedSuperClassRecolte $recolte)
     {
         $dateFormater = $this->getDateFormatter();
         if (!is_null($recolte->getEventdate())) {

@@ -7,11 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\SpecimenRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\SpecimenBufferRepository")
  * @ORM\Table(name="Specimens")
  */
-class Specimen extends MappedSuperClassSpecimen
+class SpecimenBuffer extends MappedSuperClassSpecimen
 {
+
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Collection", inversedBy="specimens", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
@@ -19,13 +20,13 @@ class Specimen extends MappedSuperClassSpecimen
     protected $collection;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY", inversedBy="specimen")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\StratigraphyBuffer", fetch="EXTRA_LAZY", inversedBy="specimen")
      * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
      **/
     protected $stratigraphy;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", inversedBy="specimen", fetch="EXTRA_LAZY")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\RecolteBuffer", inversedBy="specimen", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
      **/
     protected $recolte;
@@ -46,7 +47,7 @@ class Specimen extends MappedSuperClassSpecimen
     protected $determinations;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\BibliographyBuffer", mappedBy="specimen", fetch="EXTRA_LAZY")
      */
     protected $bibliographies;
 
@@ -59,5 +60,4 @@ class Specimen extends MappedSuperClassSpecimen
         $this->determinations = new ArrayCollection();
         $this->bibliographies = new ArrayCollection();
     }
-
 }

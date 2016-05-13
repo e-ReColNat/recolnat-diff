@@ -36,6 +36,11 @@ services:
         arguments:
             exportManager: "@exportmanager"
 
+    utility:
+        class: AppBundle\Manager\UtilityService
+        arguments:
+            managerRegistry: "@doctrine"
+
     # TWIG EXTENSIONS
     app.twig_multimedia_extension:
         class: AppBundle\Twig\MultimediaExtension
