@@ -5,76 +5,86 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\BibliographyRepository")
-* @ORM\Table(name="Bibliographies")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\BibliographyRepository")
+ * @ORM\Table(name="Bibliographies")
+ */
 class Bibliography
 {
-    /** 
+    /**
      * @ORM\Id
      * @ORM\Column(type="rawid")
      */
     private $referenceid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=1500, nullable=true)
      */
     private $bibliographiccitation;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $creator;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $datePublication;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $identifier;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=3, nullable=true)
      */
     private $language;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $rights;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
     private $source;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $subject;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $taxonremarks;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=600, nullable=true)
      */
     private $title;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $type;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $modified;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="bibliographies", fetch="EXTRA_LAZY")
@@ -90,7 +100,7 @@ class Bibliography
      */
     public function getReferenceid()
     {
-        return$this->referenceid;
+        return $this->referenceid;
     }
 
     /**
@@ -382,6 +392,54 @@ class Bibliography
     }
 
     /**
+     * Set created
+     *
+     * @param \DateTime $created
+     *
+     * @return Specimen
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Specimen
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
+    }
+
+    /**
      * Set specimen
      *
      * @param Specimen|null $occurrence
@@ -404,14 +462,16 @@ class Bibliography
     {
         return $this->specimen;
     }
-    
+
     public function __toString()
     {
         return sprintf('%s %s', $this->getSubject(), $this->getCreator());
     }
-    
-    public function toArray() {
+
+    public function toArray()
+    {
         $specimen = $this->getSpecimen();
+
         return [
             'occurrenceid' => !is_null($specimen) ? $specimen->getOccurrenceid() : null,
             'referenceid' => $this->getReferenceid(),
