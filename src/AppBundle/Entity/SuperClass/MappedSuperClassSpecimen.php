@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity\SuperClass;
 
-use AppBundle\Entity\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\SuperClass\MappedSuperClassSpecimen as Specimen;
 
