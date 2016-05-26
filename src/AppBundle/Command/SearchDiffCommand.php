@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\User\User;
+use AppBundle\Entity\Collection;
 use AppBundle\Manager\UtilityService;
 use epierce\CasRestClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -73,13 +74,11 @@ class SearchDiffCommand extends ContainerAwareCommand
         $this->collectionCode = $input->getArgument('collectionCode');
         if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
             $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
-        }
-        else {
+        } else {
             throw new \Exception($this->getContainer()->get('translator')->trans('access.denied.wrongDateFormat'));
         }
 
         $user = $this->simpleCasAuthentification($input->getArgument('username'), $input->getArgument('password'));
-
 
         if (!$user->isManagerFor($this->collectionCode)) {
             throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPermission'));
@@ -107,10 +106,24 @@ class SearchDiffCommand extends ContainerAwareCommand
         $diffHandler = new DiffHandler($this->getContainer()->getParameter('export_path').'/'.$institutionCode);
         $diffHandler->setCollectionCode($this->collectionCode);
 
+        $this->sendSuccesMail($user, $collection);
         $diffHandler->saveDiffs($datas);
+
         return 'search OK';
     }
 
+    private function sendSuccesMail(User $user, Collection $collection)
+    {
+        //var_dump($user->getEmail());
+        $message = \Swift_Message::newInstance()
+            ->setSubject($user->getEmail())
+            ->setFrom('thomas@ird.fr')
+            ->setTo($user->getEmail())
+            ->setBody('blable', 'text/plain'
+
+            );
+        $this->getContainer()->get('mailer')->send($message);
+    }
 
     /**
      * @param string $username

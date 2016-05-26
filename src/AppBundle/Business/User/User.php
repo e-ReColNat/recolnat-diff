@@ -92,6 +92,13 @@ class User implements UserInterface
         return (array) $data->permissionResources;
     }
 
+    public function getEmail()
+    {
+        $data = $this->getData();
+
+        return $data->email;
+    }
+
     /**
      * @param String $collectionCode
      * @return bool

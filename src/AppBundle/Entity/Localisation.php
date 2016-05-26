@@ -680,7 +680,7 @@ class Localisation
      *
      * @param \DateTime $modified
      *
-     * @return Specimen
+     * @return Localisation
      */
     public function setModified($modified)
     {
