@@ -32,7 +32,7 @@ class UtilityService
      * @param $date
      * @return bool
      */
-    static function checkDateFormat($date)
+    static public function isDateWellFormatted($date)
     {
         return (boolean) preg_match('#\d{2}(/)\d{2}(/)\d{4}#', $date);
     }

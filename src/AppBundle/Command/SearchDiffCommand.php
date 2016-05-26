@@ -26,11 +26,11 @@ class SearchDiffCommand extends ContainerAwareCommand
      */
     private $startDate;
 
-    public function __construct($server_login_url, $server_ticket, $request_options, $apiRecolnatUser)
+    public function __construct($serverLoginUrl, $serverTicket, $requestOptions, $apiRecolnatUser)
     {
-        $this->server_login_url = $server_login_url;
-        $this->server_ticket = $server_ticket;
-        $this->request_options = $request_options;
+        $this->server_login_url = $serverLoginUrl;
+        $this->server_ticket = $serverTicket;
+        $this->request_options = $requestOptions;
         $this->apiRecolnatUser = $apiRecolnatUser;
         parent::__construct();
     }
@@ -70,12 +70,13 @@ class SearchDiffCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!UtilityService::checkDateFormat($input->getArgument('startDate'))) {
-            throw new \Exception('La date doit être au format jj/mm/aaaa');
-        }
-
         $this->collectionCode = $input->getArgument('collectionCode');
-        $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
+        if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
+            $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
+        }
+        else {
+            throw new \Exception($this->getContainer()->get('translator')->trans('access.denied.wrongDateFormat'));
+        }
 
         $user = $this->simpleCasAuthentification($input->getArgument('username'), $input->getArgument('password'));
 

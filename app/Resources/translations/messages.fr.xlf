@@ -412,7 +412,11 @@
             </trans-unit>
             <trans-unit id="103">
                 <source>access.denied.wrongPermission</source>
-                <target>Accés refusé : vous n'êtes pas autorisé à rechercher les différences sur cette collection</target>
+                <target>Accès refusé : vous n'êtes pas autorisé à rechercher les différences sur cette collection</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>access.denied.wrongDateFormat</source>
+                <target>La date doit être au format jj/mm/aaaa (ex : 15/09/2016)</target>
             </trans-unit>
         </body>
     </file>

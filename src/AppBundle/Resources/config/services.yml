@@ -15,8 +15,8 @@ services:
         class: AppBundle\Manager\NewDiffManager
         arguments:
             managerRegistry: "@doctrine"
-            recolnat_alias: "%database_user%"
-            recolnat_diff_alias: "%database_user_diff%"
+            recolnatAlias: "%database_user%"
+            recolnatBufferAlias: "%database_user_diff%"
 
     genericentitymanager:
         class: AppBundle\Manager\GenericEntityManager
@@ -91,7 +91,7 @@ services:
         tags:
                     -  { name: console.command }
         arguments:
-            server_login_url: "%server_login_url%"
-            server_ticket: "v1/tickets"
-            request_options: "%request_options%"
+            serverLoginUrl: "%server_login_url%"
+            serverTicket: "v1/tickets"
+            requestOptions: "%request_options%"
             apiRecolnatUser: "%api_recolnat_user%"

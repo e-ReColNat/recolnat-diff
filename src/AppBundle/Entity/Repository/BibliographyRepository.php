@@ -32,7 +32,6 @@ class BibliographyRepository extends AbstractRecolnatRepository
      */
     public function findById($ids)
     {
-        $this->
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
             ->select('b')

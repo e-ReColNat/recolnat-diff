@@ -35,7 +35,7 @@ class NewDiffManager
 
 
     protected $recolnatAlias;
-    protected $recolnatDiffAlias;
+    protected $recolnatBufferAlias;
 
     /**
      * @var \DateTime
@@ -47,18 +47,18 @@ class NewDiffManager
     /**
      * DiffManager constructor.
      * @param ManagerRegistry $managerRegistry
-     * @param string          $recolnat_alias
-     * @param string          $recolnat_diff_alias
+     * @param string          $recolnatAlias
+     * @param string          $recolnatBufferAlias
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
-        $recolnat_alias,
-        $recolnat_diff_alias
+        $recolnatAlias,
+        $recolnatBufferAlias
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->em = $managerRegistry->getManager('default');
-        $this->recolnatAlias = $recolnat_alias;
-        $this->recolnatDiffAlias = $recolnat_diff_alias;
+        $this->recolnatAlias = $recolnatAlias;
+        $this->recolnatBufferAlias = $recolnatBufferAlias;
     }
 
 
