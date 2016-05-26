@@ -141,8 +141,8 @@ class FrontController extends Controller
         $specimens = [];
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')->findByCatalogNumbers($collection,
             $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
-        $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\SpecimenBuffer',
-            'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
+        $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
+            'buffer')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
         return $this->render('@App/Front/viewDiffs.html.twig', array(
             'collection' => $collection,
@@ -185,7 +185,7 @@ class FrontController extends Controller
                 $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
         } else {
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-                'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
+                'buffer')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
         }
 
         return $this->render('@App/Front/viewLonesome.html.twig', array(
@@ -214,7 +214,7 @@ class FrontController extends Controller
                 ->findOneByCatalogNumber($collection, $catalogNumber);
         } else {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-                'diff')->findOneByCatalogNumber($collection, $catalogNumber);
+                'buffer')->findOneByCatalogNumber($collection, $catalogNumber);
         }
 
         $template = 'tab-'.strtolower($type).'.html.twig';
@@ -354,7 +354,7 @@ class FrontController extends Controller
 
         $specimens = [];
         $orderSpecimens = [];
-        $orderSpecimensOuput = [];
+        $orderSpecimensOutput = [];
         switch ($type) {
             case 'alpha':
                 $specimens = $exportManager->getDiffs()['datas'];
@@ -372,12 +372,13 @@ class FrontController extends Controller
                     $letter = mb_strtoupper($firstLetter, 'UTF-8');
                     $orderSpecimens[$letter][$catalogNumber] = $specimen;
                 } else {
-                    $withoutTaxon[] = $specimen;
+                    $specimen['taxon']=null;
+                    $withoutTaxon[$catalogNumber] = $specimen;
                 }
                 if (count($withoutTaxon)) {
-                    $orderSpecimensOuput = ['N/A' => $withoutTaxon] + $orderSpecimens;
+                    $orderSpecimensOutput = ['N/A' => $withoutTaxon] + $orderSpecimens;
                 } else {
-                    $orderSpecimensOuput = $orderSpecimens;
+                    $orderSpecimensOutput = $orderSpecimens;
                 }
             }
         }
@@ -385,7 +386,7 @@ class FrontController extends Controller
         return $this->render('@App/Front/list.html.twig', array(
             'collection' => $collection,
             'exportManager' => $exportManager,
-            'orderSpecimens' => $orderSpecimensOuput,
+            'orderSpecimens' => $orderSpecimensOutput,
             'type' => $type
         ));
 
@@ -414,7 +415,7 @@ class FrontController extends Controller
             ->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
         $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
-            'diff')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
+            'buffer')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
         return array($pagination, $diffs, $specimens);
     }

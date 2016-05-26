@@ -31,3 +31,4 @@ parameters:
     request_options:
 
     url_recolnat: https://explore.recolnat.org/#/specimen/
+    api_recolnat_user: https://api.recolnat.org/erecolnat/v1/users/login/

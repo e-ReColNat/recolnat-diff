@@ -23,7 +23,7 @@ class GenericEntityManager
     /**
      * @var EntityManager
      */
-    protected $emI;
+    protected $emB;
 
     /**
      * @var ManagerRegistry
@@ -40,7 +40,7 @@ class GenericEntityManager
     {
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
-        $this->emI = $managerRegistry->getManager('diff');
+        $this->emB = $managerRegistry->getManager('buffer');
     }
 
     /**
@@ -252,7 +252,7 @@ class GenericEntityManager
      */
     private function getEntityManager($base)
     {
-        $em = $this->emI;
+        $em = $this->emB;
         if (strtolower($base) == 'recolnat') {
             $em = $this->emR;
 

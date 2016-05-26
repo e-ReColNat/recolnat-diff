@@ -18,7 +18,7 @@ abstract class AbstractLocalisationRepository extends AbstractRecolnatRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('l.locationid as id')
-            ->from('localisation', 'l')
+            ->from('AppBundle:Localisation', 'l')
             ->join('l.recoltes', 'r')
             ->join('r.specimen', 's', 'WITH', 's.collection = :collection')
             ->setParameter('collection', $collection->getCollectionid());
@@ -33,7 +33,7 @@ abstract class AbstractLocalisationRepository extends AbstractRecolnatRepository
     {
         $query = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
-            ->from('localisation', 'l', 'l.locationid')
+            ->from('AppBundle:Localisation', 'l', 'l.locationid')
             ->where('l.locationid IN (:ids)')
             ->setParameter('ids', $ids)
             ->getQuery();
@@ -50,9 +50,9 @@ abstract class AbstractLocalisationRepository extends AbstractRecolnatRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
-            ->from('specimen', 's')
-            ->from('recolte', 'r')
-            ->from('localisation', 'l')
+            ->from('AppBundle:Specimen', 's')
+            ->from('AppBundle:Recolte', 'r')
+            ->from('AppBundle:Localisation', 'l')
             ->andWhere('s.recolte = r.eventid')
             ->andWhere('r.localisation = l.locationid');
 
@@ -75,9 +75,9 @@ abstract class AbstractLocalisationRepository extends AbstractRecolnatRepository
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('l')
             ->addSelect($this->getExprCatalogNumber().' as catalognumber')
-            ->from('specimen', 's')
-            ->from('recolte', 'r')
-            ->from('localisation', 'l')
+            ->from('AppBundle:Specimen', 's')
+            ->from('AppBundle:Recolte', 'r')
+            ->from('AppBundle:Localisation', 'l')
             ->andWhere('s.recolte = r.eventid')
             ->andWhere('r.localisation = l.locationid');
 

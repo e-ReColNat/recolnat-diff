@@ -49,7 +49,7 @@ abstract class AbstractRecolteRepository extends AbstractRecolnatRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('r.eventid as id')
-            ->from('recolte', 'r')
+            ->from('AppBundle:Recolte', 'r')
             ->join('r.specimen', 's')
             ->andWhere('s.collection = :collection')
             ->setParameter('collection', $collection);
@@ -64,7 +64,7 @@ abstract class AbstractRecolteRepository extends AbstractRecolnatRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('r')
-            ->from('recolte', 'r', 'r.eventid')
+            ->from('AppBundle:Recolte', 'r', 'r.eventid')
             ->andWhere($qb->expr()->in('r.eventid', $ids));
         $qb->setParameter('ids', $ids, 'rawid');
 
@@ -81,8 +81,8 @@ abstract class AbstractRecolteRepository extends AbstractRecolnatRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('r')
-            ->from('recoltee', 'r')
-            ->join('specimen', 's')
+            ->from('AppBundle:Recolte', 'r')
+            ->join('r.specimen', 's')
             ->andWhere('s.recolte = r.eventid');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 

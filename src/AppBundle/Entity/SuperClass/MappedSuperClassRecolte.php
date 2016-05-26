@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\SuperClass;
 
+use AppBundle\Entity\Localisation;
 use AppBundle\Entity\Recolte;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\SuperClass\MappedSuperClassSpecimen as Specimen;
@@ -88,6 +89,26 @@ abstract class MappedSuperClassRecolte
      */
     protected $verbatimeventdate;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localisation", inversedBy="recoltes", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="locationid", referencedColumnName="locationid")
+     */
+    protected $localisation;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="recolte", fetch="EXTRA_LAZY")
+     **/
+    protected $specimen;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $modified;
 
     /**
      * Get eventid
@@ -435,15 +456,71 @@ abstract class MappedSuperClassRecolte
         return $this->verbatimeventdate;
     }
 
-    abstract public function getLocalisation();
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     *
+     * @return Specimen
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
 
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Specimen
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
+    }
 
     /**
      * Get specimen
      *
      * @return Specimen
      */
-    abstract public function getSpecimen();
+    public function getSpecimen()
+    {
+        return $this->specimen;
+    }
+
+    /**
+     * @return Localisation
+     */
+    public function getLocalisation()
+    {
+        return $this->localisation;
+    }
 
     public function __toString()
     {
@@ -457,6 +534,7 @@ abstract class MappedSuperClassRecolte
     public function toArray()
     {
         $specimen = $this->getSpecimen();
+
         return [
             'occurrenceid' => !is_null($specimen) ? $specimen->getOccurrenceid() : null,
             'eventid' => $this->getEventid(),

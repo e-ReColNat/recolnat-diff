@@ -8,6 +8,7 @@ use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -15,16 +16,72 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ComputeController extends Controller
 {
     /**
-     * @Route("{collectionCode}/diff/configure/", name="searchDiff", options={"expose"=true})
+     * @Route("{collectionCode}/diff/configure/", name="configureSearchDiff", options={"expose"=true})
      * @param string $collectionCode
      * @return Response
      */
-    public function configureSearchDiffAction($collectionCode)
+    public function configureSearchDiffAction(Request $request, $collectionCode)
     {
         $collection = $this->get('utility')->getCollection($collectionCode);
         $institutionCode = $this->getUser()->getInstitutionCode();
 
+        $defaults = array(
+            'startDate' => new \DateTime('today'),
+        );
 
+        $form = $this->createFormBuilder($defaults)
+            ->add('startDate', DateType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+
+            return $this->redirectToRoute('newSearchDiff', ['collectionCode'=>$collectionCode, 'startDate'=>$data['startDate']->getTimestamp()]);
+        }
+
+        return $this->render('@App/Compute/configure.html.twig', [
+            'form' => $form->createView(),
+            'institutionCode' => $institutionCode,
+            'collection' => $collection
+        ]);
+    }
+
+    /**
+     * @Route("{collectionCode}/newSearchDiff/{startDate}", name="newSearchDiff")
+     * @param $startDate
+     * @return Response
+     */
+    public function newSearchDiffAction($collectionCode, $startDate)
+    {
+        $collection = $this->get('utility')->getCollection($collectionCode);
+        $institutionCode = $this->getUser()->getInstitutionCode();
+
+        $diffManager=$this->get('diff.newmanager');
+        $diffManager->setCollectionCode($collectionCode);
+        $diffManager->setStartDate(\DateTime::createFromFormat('U',$startDate));
+
+        $diffManager->harvestDiffs();
+
+        $diffComputer = $this->get('diff.computer');
+        $diffComputer->setCollection($collection);
+
+        foreach ($diffManager::ENTITIES_NAME as $entityName) {
+            $catalogNumbers[$entityName] = $diffManager->getResultByClassName($entityName);
+            $diffComputer->setCatalogNumbers($catalogNumbers);
+            $diffComputer->computeClassname($entityName);
+        }
+        $datas = $diffComputer->getAllDatas();
+
+        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
+        $diffHandler->setCollectionCode($collectionCode);
+
+        $diffHandler->saveDiffs($datas);
+        return $this->render('@App/base.html.twig', [
+            'institutionCode' => $institutionCode,
+            'collection' => $collection
+        ]);
     }
 
     /**
@@ -87,7 +144,7 @@ class ComputeController extends Controller
 
             $server->step->send(json_encode(['count' => $countStep++, 'step' => 'save']));
             $diffHandler->saveDiffs($datas);
-            $server->step->send(json_encode(['count' => $countStep++, 'step' => 'done']));
+            $server->step->send(json_encode(['count' => $countStep, 'step' => 'done']));
         });
     }
 }

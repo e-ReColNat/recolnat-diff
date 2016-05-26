@@ -18,7 +18,7 @@ class AbstractBibliographyRepository extends AbstractRecolnatRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('b.referenceid as id')
-            ->from('bibliography', 'b')
+            ->from('AppBundle:Bibliography', 'b')
             ->join('b.specimen', 's')
             ->andWhere('s.collection = :collection')
             ->setParameter('collection', $collection);
@@ -31,10 +31,11 @@ class AbstractBibliographyRepository extends AbstractRecolnatRepository
      */
     public function findById($ids)
     {
+        $this->
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
             ->select('b')
-            ->from('bibliography', 'b', 'b.referenceid')
+            ->from('AppBundle:Bibliography', 'b', 'b.referenceid')
             ->andWhere($qb->expr()->in('b.referenceid', $ids));
         $qb->setParameter('ids', $ids, 'rawid');
 
@@ -71,7 +72,7 @@ class AbstractBibliographyRepository extends AbstractRecolnatRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('b')
-            ->from('bibliography', 'b')
+            ->from('AppBundle:Bibliography', 'b')
             ->join('b.specimen', 's');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
@@ -91,7 +92,7 @@ class AbstractBibliographyRepository extends AbstractRecolnatRepository
     ) {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('b')
-            ->from('bibliography', 'b')
+            ->from('AppBundle:Bibliography', 'b')
             ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->join('b.specimen', 's');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);

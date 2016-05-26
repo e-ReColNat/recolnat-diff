@@ -27,4 +27,12 @@ class UtilityService
         return $this->managerRegistry->getManager('default')
             ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
     }
+
+    /**
+     * @param $date
+     * @return bool
+     */
+    static function checkDateFormat($date) {
+        return (boolean)preg_match('#\d{2}(/)\d{2}(/)\d{4}#', $date);
+    }
 }

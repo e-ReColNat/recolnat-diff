@@ -17,7 +17,7 @@ abstract class AbstractSpecimenRepository extends AbstractRecolnatRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('s.occurrenceid as id')
-            ->from('specimen', 's')
+            ->from('AppBundle:Specimen', 's')
             ->andWhere('s.collection = :collection')
             ->setParameter('collection', $collection);
     }
@@ -32,7 +32,7 @@ abstract class AbstractSpecimenRepository extends AbstractRecolnatRepository
         $qb = $this->createQueryBuilder('s');
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('s')
-            ->from('specimen', 's', 's.occurrenceid')
+            ->from('AppBundle:Specimen', 's', 's.occurrenceid')
             ->where($qb->expr()->in('s.occurrenceid', ':ids'));
         $qb->setParameter('ids', $ids, 'rawid');
 

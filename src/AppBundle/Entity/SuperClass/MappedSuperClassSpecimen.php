@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\SuperClass;
 
+use AppBundle\Entity\Recolte;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\SuperClass\MappedSuperClassSpecimen as Specimen;
 
@@ -127,6 +129,54 @@ abstract class MappedSuperClassSpecimen
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     protected $sex;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Collection", inversedBy="specimens", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
+     **/
+    protected $collection;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY", inversedBy="specimen")
+     * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
+     **/
+    protected $stratigraphy;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", inversedBy="specimen", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
+     **/
+    protected $recolte;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Multimedia", inversedBy="specimens")
+     * @ORM\JoinTable(name="Multimedia_Has_Occurrences",
+     *      joinColumns={@ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="multimediaid", referencedColumnName="multimediaid")}
+     *      )
+     **/
+    protected $multimedias;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EXTRA_LAZY")
+     * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
+     */
+    protected $determinations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bibliography", mappedBy="specimen", fetch="EXTRA_LAZY")
+     */
+    protected $bibliographies;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->multimedias = new ArrayCollection();
+        $this->determinations = new ArrayCollection();
+        $this->bibliographies = new ArrayCollection();
+    }
 
     /**
      * Get occurrenceid
@@ -727,17 +777,59 @@ abstract class MappedSuperClassSpecimen
     /**
      * Get collectionid
      *
-     * @return \AppBundle\Entity\Collection
+     * @return \AppBundle\Entity\Collection|null
      */
-    abstract public function getCollection();
+    public function getCollection()
+    {
+        return $this->collection;
+    }
 
-    abstract public function getStratigraphy();
 
-    abstract public function getRecolte();
+    /**
+     * Get stratigraphy
+     *
+     * @return \AppBundle\Entity\Stratigraphy|null
+     */
+    public function getStratigraphy()
+    {
+        return $this->stratigraphy;
+    }
 
-    abstract public function getMultimedias();
+    /**
+     * Get recolte
+     *
+     * @return Recolte|null
+     */
+    public function getRecolte()
+    {
+        return $this->recolte;
+    }
 
-    abstract public function getDeterminations();
+    /**
+     * Get multimedias
+     *
+     * @return ArrayCollection
+     */
+    public function getMultimedias()
+    {
+        return $this->multimedias;
+    }
 
-    abstract public function getBibliographies();
+    /**
+     *
+     * @return ArrayCollection
+     */
+    public function getDeterminations()
+    {
+        return $this->determinations;
+    }
+
+    /**
+     *
+     * @return ArrayCollection
+     */
+    public function getBibliographies()
+    {
+        return $this->bibliographies;
+    }
 }

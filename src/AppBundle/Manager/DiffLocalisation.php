@@ -3,7 +3,7 @@ namespace AppBundle\Manager;
 
 class DiffLocalisation extends AbstractDiff
 {
-    public $excludeFieldsName = ['sourcefileid'];
+    public $excludeFieldsName = ['sourcefileid','created', 'modified'];
 
     protected function getIdSetter()
     {

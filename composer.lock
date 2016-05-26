@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dbf570be9dd50d275f98262d1936b629",
-    "content-hash": "34c638835419c08f675653289bd5950a",
+    "hash": "fc9cad9e06ddada55af29d471ab361fe",
+    "content-hash": "7c811b7c0a88e4d2cccf84d0d0d9eb0b",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -774,6 +774,49 @@
             "time": "2016-01-05 21:34:58"
         },
         {
+            "name": "epierce/cas-rest-client",
+            "version": "dev-fixSslParam",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/e-ReColNat/cas-rest-client.git",
+                "reference": "4a7f8fc32587c2a08ee29e7cfb71a9b200d571fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/e-ReColNat/cas-rest-client/zipball/4a7f8fc32587c2a08ee29e7cfb71a9b200d571fd",
+                "reference": "4a7f8fc32587c2a08ee29e7cfb71a9b200d571fd",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "epierce\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eric Pierce",
+                    "email": "epierce@mail.usf.edu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP client for the CAS REST protocol.",
+            "support": {
+                "source": "https://github.com/e-ReColNat/cas-rest-client/tree/fixSslParam"
+            },
+            "time": "2016-05-19 15:39:22"
+        },
+        {
             "name": "friendsofsymfony/jsrouting-bundle",
             "version": "1.6.0",
             "source": {
@@ -895,16 +938,16 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "bb9024c526b22f3fe6ae55a561fd70653d470aa8"
+                "reference": "c10d860e2a9595f8883527fa0021c7da9e65f579"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/bb9024c526b22f3fe6ae55a561fd70653d470aa8",
-                "reference": "bb9024c526b22f3fe6ae55a561fd70653d470aa8",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/c10d860e2a9595f8883527fa0021c7da9e65f579",
+                "reference": "c10d860e2a9595f8883527fa0021c7da9e65f579",
                 "shasum": ""
             },
             "require": {
@@ -942,20 +985,20 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-03-08 01:15:46"
+            "time": "2016-05-18 16:56:05"
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.2.3",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b"
+                "reference": "31382fef2889136415751badebbd1cb022a4ed72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/2e89629ff057ebb49492ba08e6995d3a6a80021b",
-                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/31382fef2889136415751badebbd1cb022a4ed72",
+                "reference": "31382fef2889136415751badebbd1cb022a4ed72",
                 "shasum": ""
             },
             "require": {
@@ -1000,7 +1043,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2016-02-18 21:54:00"
+            "time": "2016-04-13 19:56:01"
         },
         {
             "name": "hoa/consistency",
@@ -3071,12 +3114,12 @@
             "version": "2.9.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/escapestudios/Symfony2-coding-standard.git",
+                "url": "https://github.com/djoos/Symfony2-coding-standard.git",
                 "reference": "03bd93ece3dc004fd49e766bf546f8cf58c64cb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/escapestudios/Symfony2-coding-standard/zipball/03bd93ece3dc004fd49e766bf546f8cf58c64cb8",
+                "url": "https://api.github.com/repos/djoos/Symfony2-coding-standard/zipball/03bd93ece3dc004fd49e766bf546f8cf58c64cb8",
                 "reference": "03bd93ece3dc004fd49e766bf546f8cf58c64cb8",
                 "shasum": ""
             },
@@ -3352,7 +3395,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "epierce/cas-rest-client": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

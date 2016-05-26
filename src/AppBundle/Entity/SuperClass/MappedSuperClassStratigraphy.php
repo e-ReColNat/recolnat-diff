@@ -7,97 +7,111 @@ use AppBundle\Entity\SuperClass\MappedSuperClassStratigraphy as Stratigraphy;
 use AppBundle\Entity\SuperClass\MappedSuperClassSpecimen as Specimen;
 
 /**
-* @ORM\MappedSuperclass()
-* @ORM\Table(name="Stratigraphies")
-*/
+ * @ORM\MappedSuperclass()
+ * @ORM\Table(name="Stratigraphies")
+ */
 abstract class MappedSuperClassStratigraphy
 {
-    /** 
+    /**
      * @ORM\Id
-     * @ORM\Column(type="integer", length=10) 
+     * @ORM\Column(type="integer", length=10)
      */
     protected $geologicalcontextid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $bed;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $earliestageorloweststage;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $earliesteonorlowesteonothem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $earliestepochorlowestseries;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $earliesteraorlowesterathem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $earliestperiodorlowestsystem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $formation;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $group_;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $highestbiostratigraphiczone;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $latestageorhigheststage;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $latesteonorhighesteonothem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $latestepochorhighestseries;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $latesteraorhighesterathem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $latestperiodorhighestsystem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $lowestbiostratigraphiczone;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $member;
 
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="stratigraphy", fetch="EXTRA_LAZY")
+     **/
+    private $specimen;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $modified;
 
     /**
      * Get geologicalcontextid
@@ -301,9 +315,11 @@ abstract class MappedSuperClassStratigraphy
         return $this->group_;
     }
 
-    public function getGroup_() {
+    public function getGroup_()
+    {
         return $this->getGroup();
     }
+
     /**
      * Set highestbiostratigraphiczone
      *
@@ -496,20 +512,72 @@ abstract class MappedSuperClassStratigraphy
         return $this->member;
     }
 
+
     /**
+     * Set created
+     *
+     * @param \DateTime $created
+     *
      * @return Specimen
      */
-    abstract public function getSpecimen();
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Specimen
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSpecimen()
+    {
+        return $this->specimen;
+    }
 
 
     public function __toString()
     {
-        return sprintf('%s %s %s', 
-                $this->getEarliestepochorlowestseries(), 
-                $this->getEarliestperiodorlowestsystem(),
-                $this->getEarliestageorloweststage());
+        return sprintf('%s %s %s',
+            $this->getEarliestepochorlowestseries(),
+            $this->getEarliestperiodorlowestsystem(),
+            $this->getEarliestageorloweststage());
     }
-    
+
     public function toArray()
     {
         return [

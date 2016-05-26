@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\SuperClass;
 
+use AppBundle\Entity\Specimen;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\SuperClass\MappedSuperClassBibliography as Bibliography;
 
@@ -76,6 +77,22 @@ abstract class MappedSuperClassBibliography
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $type;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="bibliographies", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
+     */
+    protected $specimen;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $modified;
 
 
     /**
@@ -377,7 +394,63 @@ abstract class MappedSuperClassBibliography
     }
 
 
-    abstract public function getSpecimen();
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     *
+     * @return Specimen
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Specimen
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
+    }
+
+    /**
+     * Get specimen
+     *
+     * @return \AppBundle\Entity\Specimen
+     */
+    public function getSpecimen()
+    {
+        return $this->specimen;
+    }
 
     public function __toString()
     {

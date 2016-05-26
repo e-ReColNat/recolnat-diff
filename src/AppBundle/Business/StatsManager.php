@@ -80,13 +80,10 @@ class StatsManager
                     $statsChoices[$className] = 0;
                 }
                 foreach ($value as $row) {
-                    foreach ($row as $fields) {
-                        $statsChoices[$className] += count($fields);
-                    }
+                    $statsChoices[$className] += count($row);
                 }
             }
         };
-
         array_walk($choices, $callbackCountChoices);
         $statsChoices['sum'] = array_sum($statsChoices);
         return $statsChoices;

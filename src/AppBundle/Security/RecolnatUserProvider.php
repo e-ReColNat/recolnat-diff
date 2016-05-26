@@ -19,13 +19,28 @@ class RecolnatUserProvider implements UserProviderInterface
      * @var string
      */
     protected $exportPath;
+    /**
+     * @var string
+     */
+    protected $apiRecolnatUser;
 
-    public function __construct(ManagerRegistry $managerRegistry, $exportPath)
+    /**
+     * RecolnatUserProvider constructor.
+     * @param ManagerRegistry $managerRegistry
+     * @param String          $exportPath
+     * @param String          $apiRecolnatUser
+     */
+    public function __construct(ManagerRegistry $managerRegistry, $exportPath, $apiRecolnatUser)
     {
         $this->managerRegistry = $managerRegistry;
         $this->exportPath = $exportPath;
+        $this->apiRecolnatUser = $apiRecolnatUser;
     }
 
+    /**
+     * @param string $username
+     * @return User
+     */
     public function loadUserByUsername($username)
     {
         if ($username) {
@@ -35,7 +50,7 @@ class RecolnatUserProvider implements UserProviderInterface
 
             $institution = $this->managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode' => 'MHNAIX']);
 
-            $user = new User($username, $password, $salt, $roles);
+            $user = new User($username, $password, $salt, $roles, $this->apiRecolnatUser);
             $user->init($institution, $this->exportPath);
 
             return $user;
@@ -46,6 +61,10 @@ class RecolnatUserProvider implements UserProviderInterface
         );
     }
 
+    /**
+     * @param UserInterface $user
+     * @return User
+     */
     public function refreshUser(UserInterface $user)
     {
         if (!$user instanceof User) {
@@ -57,6 +76,10 @@ class RecolnatUserProvider implements UserProviderInterface
         return $this->loadUserByUsername($user->getUsername());
     }
 
+    /**
+     * @param string $class
+     * @return bool
+     */
     public function supportsClass($class)
     {
         return $class === 'AppBundle\Business\User\User';
