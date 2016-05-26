@@ -16,13 +16,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories":
-    [
-        {
-            "type": "vcs",
-            "url": "https://github.com/e-ReColNat/cas-rest-client"
-        }
-    ],
     "require": {
         "php": ">=5.5.9",
         "symfony/symfony": "3.0.*",
@@ -40,7 +33,7 @@
         "friendsofsymfony/jsrouting-bundle": "^1.6",
         "knplabs/knp-paginator-bundle": "^2.5",
         "prayno/casauth-bundle": "^1.0",
-        "epierce/cas-rest-client": "dev-fixSslParam"
+        "epierce/cas-rest-client": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

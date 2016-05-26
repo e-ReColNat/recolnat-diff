@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fc9cad9e06ddada55af29d471ab361fe",
-    "content-hash": "7c811b7c0a88e4d2cccf84d0d0d9eb0b",
+    "hash": "7c531bc77e8f1fa61130f699feb6d149",
+    "content-hash": "5a61831bfde8850283fc71f0a7af1fa0",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -775,16 +775,16 @@
         },
         {
             "name": "epierce/cas-rest-client",
-            "version": "dev-fixSslParam",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/e-ReColNat/cas-rest-client.git",
-                "reference": "4a7f8fc32587c2a08ee29e7cfb71a9b200d571fd"
+                "url": "https://github.com/epierce/cas-rest-client.git",
+                "reference": "342ce958ec5ce40d182a4ffad59c9fa123564ecd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/e-ReColNat/cas-rest-client/zipball/4a7f8fc32587c2a08ee29e7cfb71a9b200d571fd",
-                "reference": "4a7f8fc32587c2a08ee29e7cfb71a9b200d571fd",
+                "url": "https://api.github.com/repos/epierce/cas-rest-client/zipball/342ce958ec5ce40d182a4ffad59c9fa123564ecd",
+                "reference": "342ce958ec5ce40d182a4ffad59c9fa123564ecd",
                 "shasum": ""
             },
             "require": {
@@ -800,6 +800,7 @@
                     "epierce\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -811,10 +812,7 @@
                 }
             ],
             "description": "PHP client for the CAS REST protocol.",
-            "support": {
-                "source": "https://github.com/e-ReColNat/cas-rest-client/tree/fixSslParam"
-            },
-            "time": "2016-05-19 15:39:22"
+            "time": "2016-05-24 13:36:10"
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
