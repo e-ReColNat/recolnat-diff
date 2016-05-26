@@ -65,6 +65,8 @@ class SearchDiffCommand extends ContainerAwareCommand
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
+     * @return string
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -73,11 +75,10 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
 
         $this->collectionCode = $input->getArgument('collectionCode');
-        $this->startDate = \DateTime::createFromFormat('d/m/Y',$input->getArgument('startDate'));
+        $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
 
         $user = $this->simpleCasAuthentification($input->getArgument('username'), $input->getArgument('password'));
 
-        //$output->writeln(print_r($user->getData()));
 
         if (!$user->isManagerFor($this->collectionCode)) {
             throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPermission'));
@@ -106,6 +107,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         $diffHandler->setCollectionCode($this->collectionCode);
 
         $diffHandler->saveDiffs($datas);
+        return 'search OK';
     }
 
 

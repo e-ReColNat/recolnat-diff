@@ -88,6 +88,7 @@ class RecolteRepository extends AbstractRecolnatRepository
 
         return $qb->getQuery()->getResult();
     }
+
     /**
      * @param array  $datas
      * @param string $id

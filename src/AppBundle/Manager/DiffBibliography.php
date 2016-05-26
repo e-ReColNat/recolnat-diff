@@ -4,7 +4,7 @@ namespace AppBundle\Manager;
 
 class DiffBibliography extends AbstractDiff
 {
-    public $excludeFieldsName = ['sourcefileid','created', 'modified'];
+    public $excludeFieldsName = ['sourcefileid', 'created', 'modified'];
 
     protected function getIdSetter()
     {

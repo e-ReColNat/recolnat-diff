@@ -372,7 +372,7 @@ class FrontController extends Controller
                     $letter = mb_strtoupper($firstLetter, 'UTF-8');
                     $orderSpecimens[$letter][$catalogNumber] = $specimen;
                 } else {
-                    $specimen['taxon']=null;
+                    $specimen['taxon'] = null;
                     $withoutTaxon[$catalogNumber] = $specimen;
                 }
                 if (count($withoutTaxon)) {

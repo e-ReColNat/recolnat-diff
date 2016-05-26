@@ -286,16 +286,6 @@ class DiffManager
         return $fromClause;
     }
 
-    private function getModifiedClause()
-    {
-        return 'CASE
-            WHEN recoltes.modified > specimens.modified THEN recoltes.modified
-            WHEN localisations.modified > specimens.modified THEN localisations.modified
-            WHEN determinations.modified > specimens.modified THEN determinations.modified
-            ELSE specimens.modified
-        END AS modified' ;
-    }
-
     private function getJoinCodeSpecimen($alias = 's')
     {
         return sprintf('%s.COLLECTIONID = :collectionId ', $alias);

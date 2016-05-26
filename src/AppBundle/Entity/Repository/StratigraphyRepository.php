@@ -93,7 +93,7 @@ class StratigraphyRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param array $datas
+     * @param array  $datas
      * @param string $id
      * @return mixed
      */

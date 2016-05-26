@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\SuperClass\MappedSuperClassRecolte;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -459,7 +458,7 @@ class Recolte
      *
      * @param \DateTime $created
      *
-     * @return Specimen
+     * @return Recolte
      */
     public function setCreated($created)
     {
@@ -483,7 +482,7 @@ class Recolte
      *
      * @param \DateTime $modified
      *
-     * @return Specimen
+     * @return Recolte
      */
     public function setModified($modified)
     {

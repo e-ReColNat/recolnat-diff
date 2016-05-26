@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\SuperClass\MappedSuperClassBibliography;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -398,7 +397,7 @@ class Bibliography
      *
      * @param \DateTime $created
      *
-     * @return Specimen
+     * @return Bibliography
      */
     public function setCreated($created)
     {
@@ -422,7 +421,7 @@ class Bibliography
      *
      * @param \DateTime $modified
      *
-     * @return Specimen
+     * @return Bibliography
      */
     public function setModified($modified)
     {

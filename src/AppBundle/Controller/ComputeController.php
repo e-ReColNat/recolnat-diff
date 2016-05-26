@@ -38,7 +38,8 @@ class ComputeController extends Controller
         if ($form->isValid()) {
             $data = $form->getData();
 
-            return $this->redirectToRoute('newSearchDiff', ['collectionCode'=>$collectionCode, 'startDate'=>$data['startDate']->getTimestamp()]);
+            return $this->redirectToRoute('newSearchDiff',
+                ['collectionCode' => $collectionCode, 'startDate' => $data['startDate']->getTimestamp()]);
         }
 
         return $this->render('@App/Compute/configure.html.twig', [
@@ -58,9 +59,9 @@ class ComputeController extends Controller
         $collection = $this->get('utility')->getCollection($collectionCode);
         $institutionCode = $this->getUser()->getInstitutionCode();
 
-        $diffManager=$this->get('diff.newmanager');
+        $diffManager = $this->get('diff.newmanager');
         $diffManager->setCollectionCode($collectionCode);
-        $diffManager->setStartDate(\DateTime::createFromFormat('U',$startDate));
+        $diffManager->setStartDate(\DateTime::createFromFormat('U', $startDate));
 
         $diffManager->harvestDiffs();
 
@@ -78,6 +79,7 @@ class ComputeController extends Controller
         $diffHandler->setCollectionCode($collectionCode);
 
         $diffHandler->saveDiffs($datas);
+
         return $this->render('@App/base.html.twig', [
             'institutionCode' => $institutionCode,
             'collection' => $collection

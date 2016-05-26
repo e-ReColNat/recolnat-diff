@@ -79,7 +79,7 @@ class NewDiffManager
      */
     public function getResultByClassName($className)
     {
-        $catalogNumberByClassName=[];
+        $catalogNumberByClassName = [];
         $metadata = $this->em->getMetadataFactory()->getMetadataFor($this->getFullClassName($className));
         $identifier = strtoupper(key(array_flip($metadata->getIdentifier())));
         if (count($this->resultSet)) {
@@ -89,10 +89,12 @@ class NewDiffManager
                 }
             }
         }
+
         return $catalogNumberByClassName;
     }
+
     /**
-     * @param $class
+     * @param string $class
      * @return string
      */
     private function getFullClassName($class)
@@ -161,6 +163,6 @@ QUERY;
     {
         $this->startDate = $startDate;
     }
-    
-    
+
+
 }

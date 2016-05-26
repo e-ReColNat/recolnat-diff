@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\SuperClass\MappedSuperClassLocalisation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -657,7 +656,7 @@ class Localisation
      *
      * @param \DateTime $created
      *
-     * @return Specimen
+     * @return Localisation
      */
     public function setCreated($created)
     {

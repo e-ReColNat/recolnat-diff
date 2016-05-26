@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\SuperClass\MappedSuperClassStratigraphy;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -517,7 +516,7 @@ class Stratigraphy
      *
      * @param \DateTime $created
      *
-     * @return Specimen
+     * @return Stratigraphy
      */
     public function setCreated($created)
     {
@@ -541,7 +540,7 @@ class Stratigraphy
      *
      * @param \DateTime $modified
      *
-     * @return Specimen
+     * @return Stratigraphy
      */
     public function setModified($modified)
     {
