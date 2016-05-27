@@ -9,6 +9,7 @@ use AppBundle\Entity\Collection;
 use AppBundle\Manager\UtilityService;
 use epierce\CasRestClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -71,6 +72,7 @@ class SearchDiffCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
         $this->collectionCode = $input->getArgument('collectionCode');
         if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
             $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
@@ -86,28 +88,41 @@ class SearchDiffCommand extends ContainerAwareCommand
         $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
         $institutionCode = $collection->getInstitution()->getInstitutioncode();
 
+        //return $this->sendSuccesMail($user, $collection) ;
+
         $diffManager = $this->getContainer()->get('diff.newmanager');
+        $diffComputer = $this->getContainer()->get('diff.computer');
+        $progressBar = new ProgressBar($output, 100);
+        $progressBar->setFormat('%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+        $progressBar->setProgressCharacter("\xF0\x9F\x8D\xBA");
+        $progressBar->start();
+
         $diffManager->setCollectionCode($this->collectionCode);
         $diffManager->setStartDate($this->startDate);
 
         $diffManager->harvestDiffs();
-        $diffManager->getResultByClassName('Specimen');
+        $progressBar->advance(10);
 
-        $diffComputer = $this->getContainer()->get('diff.computer');
         $diffComputer->setCollection($collection);
 
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
             $catalogNumbers[$entityName] = $diffManager->getResultByClassName($entityName);
             $diffComputer->setCatalogNumbers($catalogNumbers);
+            $output->write(' compute '.$entityName);
             $diffComputer->computeClassname($entityName);
+            $progressBar->advance(10);
         }
         $datas = $diffComputer->getAllDatas();
 
         $diffHandler = new DiffHandler($this->getContainer()->getParameter('export_path').'/'.$institutionCode);
         $diffHandler->setCollectionCode($this->collectionCode);
 
-        $this->sendSuccesMail($user, $collection);
         $diffHandler->saveDiffs($datas);
+        $progressBar->advance(10);
+        $progressBar->finish();
+        $output->writeln('');
+
+        //$this->sendSuccesMail($user, $collection);
 
         return 'search OK';
     }
@@ -117,9 +132,9 @@ class SearchDiffCommand extends ContainerAwareCommand
         //var_dump($user->getEmail());
         $message = \Swift_Message::newInstance()
             ->setSubject($user->getEmail())
-            ->setFrom('thomas@ird.fr')
+            ->setFrom('thomas.pateffoz@ird.fr')
             ->setTo($user->getEmail())
-            ->setBody('blable', 'text/plain'
+            ->setBody('blabla', 'text/plain'
 
             );
         $this->getContainer()->get('mailer')->send($message);
