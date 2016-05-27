@@ -5,7 +5,6 @@ namespace AppBundle\Command;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\User\User;
-use AppBundle\Entity\Collection;
 use AppBundle\Manager\UtilityService;
 use epierce\CasRestClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -17,9 +16,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SearchDiffCommand extends ContainerAwareCommand
 {
-    private $server_login_url;
-    private $server_ticket;
-    private $request_options;
+    private $serverLoginUrl;
+    private $serverTicket;
+    private $requestOptions;
     private $apiRecolnatUser;
     private $collectionCode;
 
@@ -30,9 +29,9 @@ class SearchDiffCommand extends ContainerAwareCommand
 
     public function __construct($serverLoginUrl, $serverTicket, $requestOptions, $apiRecolnatUser)
     {
-        $this->server_login_url = $serverLoginUrl;
-        $this->server_ticket = $serverTicket;
-        $this->request_options = $requestOptions;
+        $this->serverLoginUrl = $serverLoginUrl;
+        $this->serverTicket = $serverTicket;
+        $this->requestOptions = $requestOptions;
         $this->apiRecolnatUser = $apiRecolnatUser;
         parent::__construct();
     }
@@ -88,13 +87,10 @@ class SearchDiffCommand extends ContainerAwareCommand
         $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
         $institutionCode = $collection->getInstitution()->getInstitutioncode();
 
-        //return $this->sendSuccesMail($user, $collection) ;
-
         $diffManager = $this->getContainer()->get('diff.newmanager');
         $diffComputer = $this->getContainer()->get('diff.computer');
         $progressBar = new ProgressBar($output, 100);
         $progressBar->setFormat('%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
-        $progressBar->setProgressCharacter("\xF0\x9F\x8D\xBA");
         $progressBar->start();
 
         $diffManager->setCollectionCode($this->collectionCode);
@@ -122,22 +118,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         $progressBar->finish();
         $output->writeln('');
 
-        //$this->sendSuccesMail($user, $collection);
-
         return 'search OK';
-    }
-
-    private function sendSuccesMail(User $user, Collection $collection)
-    {
-        //var_dump($user->getEmail());
-        $message = \Swift_Message::newInstance()
-            ->setSubject($user->getEmail())
-            ->setFrom('thomas.pateffoz@ird.fr')
-            ->setTo($user->getEmail())
-            ->setBody('blabla', 'text/plain'
-
-            );
-        $this->getContainer()->get('mailer')->send($message);
     }
 
     /**
@@ -149,10 +130,10 @@ class SearchDiffCommand extends ContainerAwareCommand
     private function simpleCasAuthentification($username, $password)
     {
         $client = new CasRestClient();
-        $client->setCasServer($this->server_login_url);
-        $client->setCasRestContext($this->server_ticket);
+        $client->setCasServer($this->serverLoginUrl);
+        $client->setCasRestContext($this->serverTicket);
         $client->setCredentials($username, $password);
-        if (isset($this->request_options['verify']) && !$this->request_options['verify']) {
+        if (isset($this->requestOptions['verify']) && !$this->requestOptions['verify']) {
             $client->verifySSL(false);
         }
 
