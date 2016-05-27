@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\ORM\AbstractQuery;
 
 class MultimediaRepository extends AbstractRecolnatRepository

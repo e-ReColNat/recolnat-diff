@@ -31,7 +31,6 @@ class Diffs extends \SplFileObject
     {
         $fs = new Filesystem();
         if ($fs->exists($this->getPathname())) {
-
             $responseJson = json_encode($diffs, JSON_PRETTY_PRINT);
             $fs->dumpFile($this->getPathname(), $responseJson);
         }

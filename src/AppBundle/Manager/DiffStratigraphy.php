@@ -4,7 +4,7 @@ namespace AppBundle\Manager;
 
 class DiffStratigraphy extends AbstractDiff
 {
-    public $excludeFieldsName = ['sourcefileid'];
+    public $excludeFieldsName = ['sourcefileid', 'created', 'modified'];
 
     protected function getIdSetter()
     {

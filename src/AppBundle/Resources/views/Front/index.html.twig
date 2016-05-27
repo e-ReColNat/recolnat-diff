@@ -31,7 +31,7 @@
                         </div>
                     {% endif %}
                     <a class="col-sm-3 searchDiffButton btn btn-primary" role="button"
-                       href="{{ path('searchDiff', {'collectionCode' : collection.collection.collectionCode}) }}">
+                       href="{{ path('configureSearchDiff', {'collectionCode' : collection.collection.collectionCode}) }}">
                     <span class="glyphicon glyphicon-search"
                           aria-hidden="true"></span> {{ 'label.searchDiffs' | trans }}
                     </a>
@@ -41,7 +41,7 @@
     </div>
     {% include "@App/Front/partial/searchDiffModal.html.twig" %}
 {% endblock %}
-
+{#
 {% block javascripts %}
     <script type="text/javascript">
         $(document).ready(function () {
@@ -85,4 +85,4 @@
 
 
     </script>
-{% endblock %}
+{% endblock %}#}

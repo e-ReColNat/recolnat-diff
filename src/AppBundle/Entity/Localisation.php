@@ -15,122 +15,127 @@ class Localisation
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      */
-    private $locationid;
+    protected $locationid;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $averagealtituderounded;
+    protected $averagealtituderounded;
 
     /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
-    private $continent;
+    protected $continent;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $country;
+    protected $country;
 
     /**
      * @ORM\Column(type="string", length=3, nullable=true)
      */
-    private $countrycode;
+    protected $countrycode;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
-    private $county;
+    protected $county;
 
     /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
-    private $decimallatitude;
+    protected $decimallatitude;
 
     /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
-    private $decimallongitude;
+    protected $decimallongitude;
 
     /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
-    private $geodeticdatum;
+    protected $geodeticdatum;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $georeferencesources;
+    protected $georeferencesources;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hascoordinates;
+    protected $hascoordinates;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
-    private $locality;
+    protected $locality;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $locationremarks;
+    protected $locationremarks;
 
     /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
-    private $maximumdepthinmeters;
+    protected $maximumdepthinmeters;
 
     /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
-    private $maximumelevationinmeters;
+    protected $maximumelevationinmeters;
 
     /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
-    private $minimumdepthinmeters;
+    protected $minimumdepthinmeters;
 
     /**
      * @ORM\Column(type="float", length=24, nullable=true, options={"precision"=24, "scale"=0})
      */
-    private $minimumelevationinmeters;
+    protected $minimumelevationinmeters;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
-    private $municipality;
+    protected $municipality;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $stateprovince;
+    protected $stateprovince;
 
     /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
-    private $verbatimcountry;
+    protected $verbatimcountry;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private $verbatimelevation;
+    protected $verbatimelevation;
 
     /**
      * @ORM\Column(type="string", length=2000, nullable=true)
      */
-    private $verbatimlocality;
+    protected $verbatimlocality;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Recolte", mappedBy="localisation", fetch="EXTRA_LAZY")
      */
-    private $recoltes;
+    protected $recoltes;
 
-    public function __construct()
-    {
-        $this->recoltes = new ArrayCollection();
-    }
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $modified;
 
     /**
      * Get locationid
@@ -647,13 +652,62 @@ class Localisation
     }
 
     /**
+     * Set created
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @param \DateTime $created
+     *
+     * @return Localisation
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Localisation
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
+    }
+
+    /**
+     *
+     * @return ArrayCollection
      */
     public function getRecoltes()
     {
         return $this->recoltes;
     }
+
 
     public function __toString()
     {

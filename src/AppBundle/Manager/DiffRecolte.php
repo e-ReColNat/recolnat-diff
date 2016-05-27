@@ -3,7 +3,8 @@ namespace AppBundle\Manager;
 
 class DiffRecolte extends AbstractDiff
 {
-    public $excludeFieldsName = ['eventdate', 'sourcefileid', 'averagealtituderounded'];
+    public $excludeFieldsName = ['eventdate', 'sourcefileid', 'averagealtituderounded', 'created', 'modified'];
+
     protected function getIdSetter()
     {
         return 'getEventid';

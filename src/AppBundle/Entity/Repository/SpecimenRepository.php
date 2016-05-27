@@ -3,12 +3,10 @@
 namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\ORM\AbstractQuery;
 
-/**
- * SpecimenRepository
- *
- */
+
 class SpecimenRepository extends AbstractRecolnatRepository
 {
     /**
@@ -19,7 +17,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('s.occurrenceid as id')
-            ->from('AppBundle\Entity\Specimen', 's')
+            ->from('AppBundle:Specimen', 's')
             ->andWhere('s.collection = :collection')
             ->setParameter('collection', $collection);
     }
@@ -34,7 +32,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
         $qb = $this->createQueryBuilder('s');
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('s')
-            ->from('AppBundle\Entity\Specimen', 's', 's.occurrenceid')
+            ->from('AppBundle:Specimen', 's', 's.occurrenceid')
             ->where($qb->expr()->in('s.occurrenceid', ':ids'));
         $qb->setParameter('ids', $ids, 'rawid');
 

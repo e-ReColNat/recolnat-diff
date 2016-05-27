@@ -5,82 +5,92 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\BibliographyRepository")
-* @ORM\Table(name="Bibliographies")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\BibliographyRepository")
+ * @ORM\Table(name="Bibliographies")
+ */
 class Bibliography
 {
-    /** 
+    /**
      * @ORM\Id
      * @ORM\Column(type="rawid")
      */
-    private $referenceid;
+    protected $referenceid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=1500, nullable=true)
      */
-    private $bibliographiccitation;
+    protected $bibliographiccitation;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $creator;
+    protected $creator;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private $datePublication;
+    protected $datePublication;
 
-    /** 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    protected $description;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $identifier;
+    protected $identifier;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=3, nullable=true)
      */
-    private $language;
+    protected $language;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
-    private $rights;
+    protected $rights;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=200, nullable=true)
      */
-    private $source;
+    protected $source;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $subject;
+    protected $subject;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
-    private $taxonremarks;
+    protected $taxonremarks;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=600, nullable=true)
      */
-    private $title;
+    protected $title;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $type;
+    protected $type;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Specimen", inversedBy="bibliographies", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="occurrenceid", referencedColumnName="occurrenceid")
      */
     protected $specimen;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $modified;
 
 
     /**
@@ -90,7 +100,7 @@ class Bibliography
      */
     public function getReferenceid()
     {
-        return$this->referenceid;
+        return $this->referenceid;
     }
 
     /**
@@ -381,37 +391,74 @@ class Bibliography
         return $this->type;
     }
 
+
     /**
-     * Set specimen
+     * Set created
      *
-     * @param Specimen|null $occurrence
+     * @param \DateTime $created
      *
      * @return Bibliography
      */
-    public function setSpecimen(Specimen $occurrence = null)
+    public function setCreated($created)
     {
-        $this->specimen = $occurrence;
+        $this->created = $created;
 
         return $this;
     }
 
     /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Bibliography
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
+    }
+
+    /**
      * Get specimen
      *
-     * @return \AppBundle\Entity\Specimen|null
+     * @return \AppBundle\Entity\Specimen
      */
     public function getSpecimen()
     {
         return $this->specimen;
     }
-    
+
     public function __toString()
     {
         return sprintf('%s %s', $this->getSubject(), $this->getCreator());
     }
-    
-    public function toArray() {
+
+    public function toArray()
+    {
         $specimen = $this->getSpecimen();
+
         return [
             'occurrenceid' => !is_null($specimen) ? $specimen->getOccurrenceid() : null,
             'referenceid' => $this->getReferenceid(),

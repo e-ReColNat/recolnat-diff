@@ -11,6 +11,13 @@ services:
             recolnat_alias: "%database_user%"
             recolnat_diff_alias: "%database_user_diff%"
 
+    diff.newmanager:
+        class: AppBundle\Manager\NewDiffManager
+        arguments:
+            managerRegistry: "@doctrine"
+            recolnatAlias: "%database_user%"
+            recolnatBufferAlias: "%database_user_diff%"
+
     genericentitymanager:
         class: AppBundle\Manager\GenericEntityManager
         arguments:
@@ -35,6 +42,11 @@ services:
         class: AppBundle\Business\StatsManager
         arguments:
             exportManager: "@exportmanager"
+
+    utility:
+        class: AppBundle\Manager\UtilityService
+        arguments:
+            managerRegistry: "@doctrine"
 
     # TWIG EXTENSIONS
     app.twig_multimedia_extension:
@@ -71,3 +83,15 @@ services:
         arguments:
             managerRegistry: "@doctrine"
             exportPath: "%export_path%"
+            apiRecolnatUser: "%api_recolnat_user%"
+
+    # Command
+    command.searchDiff:
+        class: AppBundle\Command\SearchDiffCommand
+        tags:
+                    -  { name: console.command }
+        arguments:
+            serverLoginUrl: "%server_login_url%"
+            serverTicket: "v1/tickets"
+            requestOptions: "%request_options%"
+            apiRecolnatUser: "%api_recolnat_user%"

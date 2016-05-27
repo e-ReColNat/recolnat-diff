@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\ORM\AbstractQuery;
 
 /**
@@ -92,7 +93,7 @@ class StratigraphyRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param array $datas
+     * @param array  $datas
      * @param string $id
      * @return mixed
      */

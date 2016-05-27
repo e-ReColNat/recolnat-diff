@@ -3,7 +3,7 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
-use AppBundle\Entity\Repository\AbstractRecolnatRepository;
+use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;

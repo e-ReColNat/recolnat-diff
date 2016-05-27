@@ -42,7 +42,7 @@ abstract class AbstractDiff
      * Holds the Doctrine entity manager for Institution database interaction
      * @var EntityManager
      */
-    protected $emD;
+    protected $emB;
 
     /**
      * @var ManagerRegistry
@@ -72,7 +72,7 @@ abstract class AbstractDiff
         $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
-        $this->emD = $managerRegistry->getManager('diff');
+        $this->emB = $managerRegistry->getManager('buffer');
     }
 
     /**
@@ -91,9 +91,11 @@ abstract class AbstractDiff
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
                     ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
-                $this->recordsInstitution = $this->emD->getRepository($this->classFullName)
+                $this->recordsInstitution = $this->emB->getRepository($this->classFullName)
                     ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
+                $this->emR->clear();
+                $this->emB->clear();
                 $this->compare();
             }
         }

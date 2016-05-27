@@ -15,6 +15,7 @@
             {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}
             {% set relationInstitution = relationById(specimenInstitution, className, relationId) %}
             {% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
+
             {% set rowspan = details.fields | length  +1 %}
             <tr data-classname="{{ className| lower }}" class="{{ className | lower }} light">
                 <td class="diff-class" rowspan="{{ rowspan }}" style="width: 10px !important;">

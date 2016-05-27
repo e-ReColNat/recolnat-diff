@@ -1,7 +1,7 @@
 {
     "name": "e-recolnat/diffs",
     "description" : "Outils d'aide à la décision pour l'export des différences, entre la base de eRecolnat et les collections naturalistes",
-    "license": "proprietary",
+    "license": "Apache-2.0",
     "type": "project",
     "autoload": {
         "psr-4": {
@@ -32,7 +32,8 @@
         "hoa/eventsource": "~3.0",
         "friendsofsymfony/jsrouting-bundle": "^1.6",
         "knplabs/knp-paginator-bundle": "^2.5",
-        "prayno/casauth-bundle": "^1.0"
+        "prayno/casauth-bundle": "^1.0",
+        "epierce/cas-rest-client": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

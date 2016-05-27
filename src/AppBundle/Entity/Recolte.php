@@ -14,88 +14,98 @@ class Recolte
      * @ORM\Id
      * @ORM\Column(type="rawid")
      */
-    private $eventid;
+    protected $eventid;
 
     /**
      * @ORM\Column(type="integer", nullable=true, length=4)
      */
-    private $decade;
+    protected $decade;
 
     /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
-    private $eday;
+    protected $eday;
 
     /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
-    private $emonth;
+    protected $emonth;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $eventdate;
+    protected $eventdate;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $eventremarks;
+    protected $eventremarks;
 
     /**
      * @ORM\Column(type="integer", nullable=true, length=4)
      */
-    private $eyear;
+    protected $eyear;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $fieldnotes;
+    protected $fieldnotes;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $fieldnumber;
+    protected $fieldnumber;
 
     /**
      * @ORM\Column(type="string", length=500, nullable=true)
      */
-    private $habitat;
+    protected $habitat;
 
     /**
      * @ORM\Column(type="string", length=300, nullable=true)
      */
-    private $recordedby;
+    protected $recordedby;
 
     /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
-    private $sday;
+    protected $sday;
 
     /**
      * @ORM\Column(type="integer", nullable=true, length=2)
      */
-    private $smonth;
+    protected $smonth;
 
     /**
      * @ORM\Column(type="integer", nullable=true, length=4)
      */
-    private $syear;
+    protected $syear;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $verbatimeventdate;
+    protected $verbatimeventdate;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localisation", inversedBy="recoltes", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="locationid", referencedColumnName="locationid")
      */
-    private $localisation;
+    protected $localisation;
 
     /**
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="recolte", fetch="EXTRA_LAZY")
      **/
-    private $specimen;
+    protected $specimen;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $modified;
 
     /**
      * Get eventid
@@ -444,27 +454,51 @@ class Recolte
     }
 
     /**
-     * Set localisation
+     * Set created
      *
-     * @param Localisation|null $localisation
+     * @param \DateTime $created
      *
      * @return Recolte
      */
-    public function setLocation(Localisation $localisation = null)
+    public function setCreated($created)
     {
-        $this->localisation = $localisation;
+        $this->created = $created;
 
         return $this;
     }
 
     /**
-     * Get localisation
+     * Get created
      *
-     * @return Localisation|null
+     * @return \DateTime
      */
-    public function getLocalisation()
+    public function getCreated()
     {
-        return $this->localisation;
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Recolte
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
     }
 
     /**
@@ -475,6 +509,14 @@ class Recolte
     public function getSpecimen()
     {
         return $this->specimen;
+    }
+
+    /**
+     * @return Localisation
+     */
+    public function getLocalisation()
+    {
+        return $this->localisation;
     }
 
     public function __toString()
@@ -489,6 +531,7 @@ class Recolte
     public function toArray()
     {
         $specimen = $this->getSpecimen();
+
         return [
             'occurrenceid' => !is_null($specimen) ? $specimen->getOccurrenceid() : null,
             'eventid' => $this->getEventid(),

@@ -5,101 +5,111 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\StratigraphyRepository")
-* @ORM\Table(name="Stratigraphies")
-*/
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\StratigraphyRepository")
+ * @ORM\Table(name="Stratigraphies")
+ */
 class Stratigraphy
 {
-    /** 
+    /**
      * @ORM\Id
-     * @ORM\Column(type="integer", length=10) 
+     * @ORM\Column(type="integer", length=10)
      */
-    private $geologicalcontextid;
+    protected $geologicalcontextid;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $bed;
+    protected $bed;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $earliestageorloweststage;
+    protected $earliestageorloweststage;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $earliesteonorlowesteonothem;
+    protected $earliesteonorlowesteonothem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $earliestepochorlowestseries;
+    protected $earliestepochorlowestseries;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $earliesteraorlowesterathem;
+    protected $earliesteraorlowesterathem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $earliestperiodorlowestsystem;
+    protected $earliestperiodorlowestsystem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $formation;
+    protected $formation;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $group_;
+    protected $group_;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $highestbiostratigraphiczone;
+    protected $highestbiostratigraphiczone;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $latestageorhigheststage;
+    protected $latestageorhigheststage;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $latesteonorhighesteonothem;
+    protected $latesteonorhighesteonothem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $latestepochorhighestseries;
+    protected $latestepochorhighestseries;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $latesteraorhighesterathem;
+    protected $latesteraorhighesterathem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $latestperiodorhighestsystem;
+    protected $latestperiodorhighestsystem;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $lowestbiostratigraphiczone;
+    protected $lowestbiostratigraphiczone;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $member;
-    
-        /**
-         * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="stratigraphy", fetch="EXTRA_LAZY")
-         **/
-    private $specimen;
+    protected $member;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Specimen", mappedBy="stratigraphy", fetch="EXTRA_LAZY")
+     **/
+    protected $specimen;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $created;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $modified;
 
     /**
      * Get geologicalcontextid
@@ -303,9 +313,11 @@ class Stratigraphy
         return $this->group_;
     }
 
-    public function getGroup_() {
+    public function getGroup_()
+    {
         return $this->getGroup();
     }
+
     /**
      * Set highestbiostratigraphiczone
      *
@@ -498,6 +510,55 @@ class Stratigraphy
         return $this->member;
     }
 
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     *
+     * @return Stratigraphy
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set modified
+     *
+     * @param \DateTime $modified
+     *
+     * @return Stratigraphy
+     */
+    public function setModified($modified)
+    {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * Get modified
+     *
+     * @return \DateTime
+     */
+    public function getModified()
+    {
+        return $this->modified;
+    }
+
     /**
      * @return mixed
      */
@@ -506,25 +567,15 @@ class Stratigraphy
         return $this->specimen;
     }
 
-    /**
-     * @param mixed $specimen
-     * @return Stratigraphy
-     */
-    public function setSpecimen($specimen)
-    {
-        $this->specimen = $specimen;
-        return $this;
-    }
-
 
     public function __toString()
     {
-        return sprintf('%s %s %s', 
-                $this->getEarliestepochorlowestseries(), 
-                $this->getEarliestperiodorlowestsystem(),
-                $this->getEarliestageorloweststage());
+        return sprintf('%s %s %s',
+            $this->getEarliestepochorlowestseries(),
+            $this->getEarliestperiodorlowestsystem(),
+            $this->getEarliestageorloweststage());
     }
-    
+
     public function toArray()
     {
         return [

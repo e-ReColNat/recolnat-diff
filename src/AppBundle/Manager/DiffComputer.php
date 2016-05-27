@@ -26,7 +26,7 @@ class DiffComputer
      * Holds the Doctrine entity manager for Institution database interaction
      * @var EntityManager
      */
-    protected $emD;
+    protected $emB;
 
     /**
      * @var ManagerRegistry
@@ -68,7 +68,7 @@ class DiffComputer
         $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
-        $this->emD = $managerRegistry->getManager('diff');
+        $this->emB = $managerRegistry->getManager('buffer');
         $this->diffs['datas'] = [];
         $this->diffs['classes'] = [];
     }
@@ -130,7 +130,7 @@ class DiffComputer
         });
         $em = $this->emR;
         if ($base != 'recolnat') {
-            $em = $this->emD;
+            $em = $this->emB;
         }
         $taxonRepository = $em->getRepository('\AppBundle\Entity\Taxon');
 

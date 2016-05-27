@@ -16,135 +16,135 @@ class Specimen
      * @ORM\Id
      * @ORM\Column(type="rawid")
      */
-    private $occurrenceid;
+    protected $occurrenceid;
 
     /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
-    private $accessrights;
+    protected $accessrights;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $associatedmedia;
+    protected $associatedmedia;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $associatedreferences;
+    protected $associatedreferences;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $associatedtaxa;
+    protected $associatedtaxa;
 
     /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
-    private $basisofrecord;
+    protected $basisofrecord;
 
     /**
      * @ORM\Column(type="string", length=300, nullable=true)
      */
-    private $bibliographiccitation;
+    protected $bibliographiccitation;
 
     /**
      * @ORM\Column(type="string", length=30, nullable=false)
      */
-    private $catalognumber;
+    protected $catalognumber;
 
     /**
      * @ORM\Column(type="string", length=60, nullable=false)
      */
-    private $collectioncode;
+    protected $collectioncode;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $created;
+    protected $created;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $disposition;
+    protected $disposition;
 
     /**
      * @ORM\Column(type="string", length=155, nullable=false)
      */
-    private $dwcaid;
+    protected $dwcaid;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hascoordinates = 0;
+    protected $hascoordinates = 0;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hasmedia = 0;
+    protected $hasmedia = 0;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=false)
      */
-    private $institutioncode;
+    protected $institutioncode;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private $lifestage;
+    protected $lifestage;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $modified;
+    protected $modified;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $occurrenceremarks;
+    protected $occurrenceremarks;
 
     /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
-    private $ownerinstitutioncode;
+    protected $ownerinstitutioncode;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private $recordnumber;
+    protected $recordnumber;
 
     /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
-    private $rights;
+    protected $rights;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $rightsholder;
+    protected $rightsholder;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      */
-    private $sex;
+    protected $sex;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Collection", inversedBy="specimens", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="collectionid", referencedColumnName="collectionid")
      **/
-    private $collection;
+    protected $collection;
 
     /**
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Stratigraphy", fetch="EXTRA_LAZY", inversedBy="specimen")
      * @ORM\JoinColumn(name="geologicalcontextid", referencedColumnName="geologicalcontextid")
      **/
-    private $stratigraphy;
+    protected $stratigraphy;
 
     /**
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Recolte", inversedBy="specimen", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="eventid", referencedColumnName="eventid")
      **/
-    private $recolte;
+    protected $recolte;
 
     /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Multimedia", inversedBy="specimens")
@@ -153,7 +153,7 @@ class Specimen
      *      inverseJoinColumns={@ORM\JoinColumn(name="multimediaid", referencedColumnName="multimediaid")}
      *      )
      **/
-    private $multimedias;
+    protected $multimedias;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EXTRA_LAZY")
@@ -715,130 +715,6 @@ class Specimen
     }
 
     /**
-     * Set collectionid
-     *
-     * @param Collection|null $collection
-     *
-     * @return Specimen
-     */
-    public function setCollection(Collection $collection = null)
-    {
-        $this->collection = $collection;
-
-        return $this;
-    }
-
-    /**
-     * Get collectionid
-     *
-     * @return \AppBundle\Entity\Collection|null
-     */
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
-    /**
-     * Set stratigraphy
-     *
-     * @param Stratigraphy|null $stratigraphy
-     *
-     * @return Specimen
-     */
-    public function setGeologicalcontextid(Stratigraphy $stratigraphy = null)
-    {
-        $this->stratigraphy = $stratigraphy;
-
-        return $this;
-    }
-
-    /**
-     * Get stratigraphy
-     *
-     * @return \AppBundle\Entity\Stratigraphy|null
-     */
-    public function getStratigraphy()
-    {
-        return $this->stratigraphy;
-    }
-
-    /**
-     * Set eventid
-     *
-     * @param Recolte|null $recolte
-     *
-     * @return Specimen
-     */
-    public function setRecolte(Recolte $recolte = null)
-    {
-        $this->recolte = $recolte;
-
-        return $this;
-    }
-
-    /**
-     * Get recolte
-     *
-     * @return Recolte|null
-     */
-    public function getRecolte()
-    {
-        return $this->recolte;
-    }
-
-    /**
-     * Add multimediaid
-     *
-     * @param Multimedia $multimedia
-     *
-     * @return Specimen
-     */
-    public function addMultimediaid(Multimedia $multimedia)
-    {
-        $this->multimedias[] = $multimedia;
-
-        return $this;
-    }
-
-    /**
-     * Remove multimedia
-     *
-     * @param Multimedia $multimedia
-     */
-    public function removeMultimedia(Multimedia $multimedia)
-    {
-        $this->multimedias->removeElement($multimedia);
-    }
-
-    /**
-     * Get multimedias
-     *
-     * @return ArrayCollection
-     */
-    public function getMultimedias()
-    {
-        return $this->multimedias;
-    }
-
-    /**
-     *
-     * @return ArrayCollection
-     */
-    public function getDeterminations()
-    {
-        return $this->determinations;
-    }
-
-    /**
-     *
-     * @return ArrayCollection
-     */
-    public function getBibliographies()
-    {
-        return $this->bibliographies;
-    }
-
-    /**
      * @return string
      */
     public function getSpecimenCode()
@@ -894,5 +770,64 @@ class Specimen
             'geologicalcontextid' => !is_null($this->getStratigraphy()) ? $this->getStratigraphy()->getGeologicalcontextid() : null,
             'eventid' => !is_null($this->getRecolte()) ? $this->getRecolte()->getEventid() : null,
         ];
+    }
+
+    /**
+     * Get collectionid
+     *
+     * @return \AppBundle\Entity\Collection|null
+     */
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
+
+    /**
+     * Get stratigraphy
+     *
+     * @return \AppBundle\Entity\Stratigraphy|null
+     */
+    public function getStratigraphy()
+    {
+        return $this->stratigraphy;
+    }
+
+    /**
+     * Get recolte
+     *
+     * @return Recolte|null
+     */
+    public function getRecolte()
+    {
+        return $this->recolte;
+    }
+
+    /**
+     * Get multimedias
+     *
+     * @return ArrayCollection
+     */
+    public function getMultimedias()
+    {
+        return $this->multimedias;
+    }
+
+    /**
+     *
+     * @return ArrayCollection
+     */
+    public function getDeterminations()
+    {
+        return $this->determinations;
+    }
+
+    /**
+     *
+     * @return ArrayCollection
+     */
+    public function getBibliographies()
+    {
+        return $this->bibliographies;
     }
 }
