@@ -1,7 +1,7 @@
 {
     "name": "e-recolnat/diffs",
     "description" : "Outils d'aide à la décision pour l'export des différences, entre la base de eRecolnat et les collections naturalistes",
-    "license": "GPL",
+    "license": "Apache-2.0",
     "type": "project",
     "autoload": {
         "psr-4": {
