@@ -23,7 +23,7 @@ class DwcExporter extends AbstractExporter
         'Specimen',
         'Bibliography',
         'Determination',
-        'Recolte',
+        //'Recolte',
         'Multimedia'
     ];
     protected $formattedDatas = [];
@@ -65,10 +65,10 @@ class DwcExporter extends AbstractExporter
                 $formattedData[$key]['Multimedia'] = $multimediaData;
             }
 
-            $recolteData = $this->getRecolteData($data);
+            /*$recolteData = $this->getRecolteData($data);
             if (!empty($recolteData)) {
                 $formattedData[$key]['Recolte'] = $recolteData;
-            }
+            }*/
         }
 
         return $formattedData;
@@ -108,7 +108,7 @@ class DwcExporter extends AbstractExporter
             $data['Stratigraphy'] = $this->arrayEmptyClasses['Stratigraphy'];
         }
 
-        return array_merge($data['Specimen'], $data['Stratigraphy']);
+        return array_merge($data['Specimen'], $data['Stratigraphy'], $this->getRecolteData($data));
     }
 
     /**
@@ -117,12 +117,14 @@ class DwcExporter extends AbstractExporter
      */
     public function getRecolteData($data)
     {
-        $returnData = [];
         if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
             if (!isset($data['Localisation']) || count($data['Localisation']) == 0) {
                 $data['Localisation'] = $this->arrayEmptyClasses['Localisation'];
             }
             $returnData = array_merge($data['Recolte'], $data['Localisation']);
+        }
+        else {
+            $returnData = array_merge($this->arrayEmptyClasses['Recolte'], $this->arrayEmptyClasses['Localisation']);
         }
 
         return $returnData;
