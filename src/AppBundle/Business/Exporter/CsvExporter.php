@@ -24,9 +24,42 @@ class CsvExporter extends AbstractExporter
     private $fieldsName = [];
     private $acceptedFieldsName = [];
 
+    /**
+     * @return array
+     */
     public function formatDatas()
     {
+        $formattedData = [];
+        $this->setEmptyClasses();
 
+        foreach ($this->datas as $key => $data) {
+            $formattedData[$key] = [];
+            $occurrenceid = $data['Specimen']['occurrenceid'];
+
+            $formattedData[$key]['Specimen'] = $this->getSpecimenData($data);
+
+            $determinationData = $this->getDeterminationData($data, $occurrenceid);
+            if (!empty($determinationData)) {
+                $formattedData[$key]['Determination'] = $determinationData;
+            }
+
+            $bibliographyData = $this->getBibliographyData($data, $occurrenceid);
+            if (!empty($bibliographyData)) {
+                $formattedData[$key]['Bibliography'] = $bibliographyData;
+            }
+
+            $multimediaData = $this->getMultimediaData($data, $occurrenceid);
+            if (!empty($multimediaData)) {
+                $formattedData[$key]['Multimedia'] = $multimediaData;
+            }
+
+            $recolteData = $this->getRecolteData($data);
+            if (!empty($recolteData)) {
+                $formattedData[$key]['Recolte'] = $recolteData;
+            }
+        }
+
+        return $formattedData;
     }
 
     /**

@@ -167,10 +167,40 @@ class GenericEntityManager
         if (count($specimen['Determination'])) {
             foreach ($specimen['Determination'] as $key => $item) {
                 $specimen['Determination'][$key]['identificationid'] = UtilityService::formatRawId($item['identificationid']);
+                $specimen['Determination'][$key]['occurrenceid'] = $specimen['Specimen']['occurrenceid'];
             }
         }
         if (!is_null($specimen['Recolte'])) {
             $specimen['Recolte']['eventid'] = UtilityService::formatRawId($specimen['Recolte']['eventid']);
+        }
+
+        return $specimen;
+    }
+
+    /**
+     * @param array $specimen
+     * @return array
+     */
+    private function addKeys(array $specimen)
+    {
+        if (!is_null($specimen['Recolte'])) {
+            $specimen['Specimen']['eventid'] = UtilityService::formatRawId($specimen['Recolte']['eventid']);
+        }
+        if (!is_null($specimen['Localisation'])) {
+            $specimen['Recolte']['locationid'] = $specimen['Localisation']['locationid'];
+        }
+        if (count($specimen['Bibliography'])) {
+            foreach ($specimen['Bibliography'] as $key => $item) {
+                $specimen['Bibliography'][$key]['occurrenceid'] = UtilityService::formatRawId($specimen['Specimen']['occurrenceid']);
+            }
+        }
+        if (count($specimen['Multimedia'])) {
+            foreach ($specimen['Multimedia'] as $key => $item) {
+                $specimen['Multimedia'][$key]['occurrenceid'] = UtilityService::formatRawId($specimen['Specimen']['occurrenceid']);
+            }
+        }
+        if (!is_null($specimen['Stratigraphy'])) {
+            $specimen['Specimen']['geologicalcontextid'] = $specimen['Stratigraphy']['geologicalcontextid'];
         }
 
         return $specimen;
@@ -208,7 +238,7 @@ class GenericEntityManager
 
         $formattedSpecimen['Specimen'] = $specimen;
 
-        return $this->convertAllRawIdsToGuids($formattedSpecimen);
+        return $this->convertAllRawIdsToGuids($this->addKeys($formattedSpecimen));
     }
 
     /**

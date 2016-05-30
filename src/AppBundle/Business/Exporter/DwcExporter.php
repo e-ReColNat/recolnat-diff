@@ -79,41 +79,7 @@ class DwcExporter extends AbstractExporter
      * @param string $occurrenceid
      * @return array
      */
-    private function getMultimediaData($data, $occurrenceid)
-    {
-        $returnData = [];
-        if (isset($data['Multimedia']) && count($data['Multimedia']) > 0) {
-            foreach ($data['Multimedia'] as $key2 => $multimedia) {
-                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $multimedia;
-            }
-        }
-
-        return $returnData;
-    }
-
-    /**
-     * @param array  $data
-     * @param string $occurrenceid
-     * @return array
-     */
-    private function getBibliographyData($data, $occurrenceid)
-    {
-        $returnData = [];
-        if (isset($data['Bibliography']) && count($data['Bibliography']) > 0) {
-            foreach ($data['Bibliography'] as $key2 => $bibliography) {
-                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
-            }
-        }
-
-        return $returnData;
-    }
-
-    /**
-     * @param array  $data
-     * @param string $occurrenceid
-     * @return array
-     */
-    private function getDeterminationData($data, $occurrenceid)
+    public function getDeterminationData($data, $occurrenceid)
     {
         $returnData = [];
         if (isset($data['Determination']) && count($data['Determination']) > 0) {
@@ -136,7 +102,7 @@ class DwcExporter extends AbstractExporter
      * @param array $data
      * @return array
      */
-    private function getSpecimenData($data)
+    public function getSpecimenData($data)
     {
         if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
             $data['Stratigraphy'] = $this->arrayEmptyClasses['Stratigraphy'];
@@ -149,7 +115,7 @@ class DwcExporter extends AbstractExporter
      * @param array $data
      * @return array
      */
-    private function getRecolteData($data)
+    public function getRecolteData($data)
     {
         $returnData = [];
         if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
