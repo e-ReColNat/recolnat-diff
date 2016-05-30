@@ -111,7 +111,7 @@ class GenericEntityManager extends Units\Test
     {
         $entities = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat', $this->collection, $this->catalogNumbers);
         foreach ($entities as $entity) {
-            $this->if($formatEntities = $this->genericEntityManager->formatArraySpecimen($entity))
+            $this->if($formatEntities = $this->genericEntityManager->formatArraySpecimenForExport($entity))
                 ->array($formatEntities)
                 ->sizeOf($formatEntities)
                 ->isEqualTo(7);

@@ -44,10 +44,9 @@ class DwcExporter extends AbstractExporter
         $formattedData = [];
         $this->setEmptyClasses();
 
-
         foreach ($this->datas as $key => $data) {
             $formattedData[$key] = [];
-            $occurrenceid = UtilityService::formatRawId($data['Specimen']['occurrenceid']);
+            $occurrenceid = $data['Specimen']['occurrenceid'];
 
             $formattedData[$key]['Specimen'] = $this->getSpecimenData($data);
 
@@ -76,38 +75,41 @@ class DwcExporter extends AbstractExporter
     }
 
     /**
-     * @param array $data
+     * @param array  $data
      * @param string $occurrenceid
      * @return array
      */
-    private function getMultimediaData($data, $occurrenceid) {
+    private function getMultimediaData($data, $occurrenceid)
+    {
         $returnData = [];
         if (isset($data['Multimedia']) && count($data['Multimedia']) > 0) {
             foreach ($data['Multimedia'] as $key2 => $multimedia) {
-                $multimedia['multimediaid'] = UtilityService::formatRawId($multimedia['multimediaid']);
                 $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $multimedia;
             }
         }
+
         return $returnData;
     }
 
     /**
-     * @param array $data
+     * @param array  $data
      * @param string $occurrenceid
      * @return array
      */
-    private function getBibliographyData($data, $occurrenceid) {
+    private function getBibliographyData($data, $occurrenceid)
+    {
         $returnData = [];
         if (isset($data['Bibliography']) && count($data['Bibliography']) > 0) {
             foreach ($data['Bibliography'] as $key2 => $bibliography) {
-                $bibliography['referenceid'] = UtilityService::formatRawId($bibliography['referenceid']);
                 $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
             }
         }
+
         return $returnData;
     }
+
     /**
-     * @param array $data
+     * @param array  $data
      * @param string $occurrenceid
      * @return array
      */
@@ -118,7 +120,6 @@ class DwcExporter extends AbstractExporter
             foreach ($data['Determination'] as $key2 => $determination) {
                 $taxon = $determination['Taxon'];
                 $determination['occurrenceid'] = $occurrenceid;
-                $determination['identificationid'] = UtilityService::formatRawId($determination['identificationid']);
                 unset($determination['Taxon']);
                 if (is_array($taxon)) {
                     $returnData[$key2] = array_merge($determination, $taxon);
@@ -137,7 +138,6 @@ class DwcExporter extends AbstractExporter
      */
     private function getSpecimenData($data)
     {
-        $data['Specimen']['occurrenceid'] = UtilityService::formatRawId($data['Specimen']['occurrenceid']);
         if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
             $data['Stratigraphy'] = $this->arrayEmptyClasses['Stratigraphy'];
         }
@@ -153,7 +153,6 @@ class DwcExporter extends AbstractExporter
     {
         $returnData = [];
         if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
-            $data['Recolte']['eventid'] = UtilityService::formatRawId($data['Recolte']['eventid']);
             if (!isset($data['Localisation']) || count($data['Localisation']) == 0) {
                 $data['Localisation'] = $this->arrayEmptyClasses['Localisation'];
             }

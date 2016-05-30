@@ -10,11 +10,12 @@ namespace AppBundle\Business\Exporter\Entity;
 class SpecimenExporter extends AbstractEntityExporter
 {
 
-        public function getExportProperties()
+    public function getExportProperties()
     {
         $stratigraphyExporter = new StratigraphyExporter();
         $recolteExporter = new RecolteExporter();
         $localisationExporter = new LocalisationExporter();
+
         return array_merge(
             $this->arrayExportTerm,
             $stratigraphyExporter->getExportProperties(),
@@ -22,8 +23,8 @@ class SpecimenExporter extends AbstractEntityExporter
             $localisationExporter->getExportProperties()
         );
     }
-    
-    public function setExportTerm() 
+
+    public function setExportTerm()
     {
         $this->arrayExportTerm = [
             'occurrenceid' => 'http://rs.gbif.org/terms/1.0/gbifID',
@@ -48,6 +49,7 @@ class SpecimenExporter extends AbstractEntityExporter
             'eventid' => 'http://rs.tdwg.org/dwc/terms/eventID',
         ];
     }
+
     public function getNameSpace()
     {
         return 'http://rs.tdwg.org/dwc/terms/Occurrence';
@@ -57,7 +59,7 @@ class SpecimenExporter extends AbstractEntityExporter
     {
         return 'occurrenceid';
     }
-    
+
     public function getCoreIdFieldName()
     {
         return 'occurrenceid';

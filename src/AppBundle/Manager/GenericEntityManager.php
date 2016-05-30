@@ -146,11 +146,42 @@ class GenericEntityManager
 
 
     /**
+     * Parcourt tout le tableaux des spécimens pour l'export et convertit tous les RAWID en GUID
+     * ex ; e24a3400afe84b0aacde917db0be882b => e24a3400-afe8-4b0a-acde-917db0be882b (8-4-4-4-12)
+     * @param array $specimen
+     * @return array
+     */
+    private function convertAllRawIdsToGuids(array $specimen)
+    {
+        $specimen['Specimen']['occurrenceid'] = UtilityService::formatRawId($specimen['Specimen']['occurrenceid']);
+        if (count($specimen['Multimedia'])) {
+            foreach ($specimen['Multimedia'] as $key => $item) {
+                $specimen['Multimedia'][$key]['multimediaid'] = UtilityService::formatRawId($item['multimediaid']);
+            }
+        }
+        if (count($specimen['Bibliography'])) {
+            foreach ($specimen['Bibliography'] as $key => $item) {
+                $specimen['Bibliography'][$key]['referenceid'] = UtilityService::formatRawId($item['referenceid']);
+            }
+        }
+        if (count($specimen['Determination'])) {
+            foreach ($specimen['Determination'] as $key => $item) {
+                $specimen['Determination'][$key]['identificationid'] = UtilityService::formatRawId($item['identificationid']);
+            }
+        }
+        if (!is_null($specimen['Recolte'])) {
+            $specimen['Recolte']['eventid'] = UtilityService::formatRawId($specimen['Recolte']['eventid']);
+        }
+
+        return $specimen;
+    }
+
+    /**
      * Reformat le tableau généré par doctrine
      * @param array $specimen
      * @return array
      */
-    public function formatArraySpecimen(array $specimen)
+    public function formatArraySpecimenForExport(array $specimen)
     {
         $formattedSpecimen = [];
         $formattedSpecimen['Bibliography'] = $specimen['bibliographies'];
@@ -177,7 +208,7 @@ class GenericEntityManager
 
         $formattedSpecimen['Specimen'] = $specimen;
 
-        return $formattedSpecimen;
+        return $this->convertAllRawIdsToGuids($formattedSpecimen);
     }
 
     /**
