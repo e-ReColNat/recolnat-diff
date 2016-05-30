@@ -36,4 +36,16 @@ class UtilityService
     {
         return (boolean) preg_match('#\d{2}(/)\d{2}(/)\d{4}#', $date);
     }
+
+    public static function formatRawId($rawId)
+    {
+        //$explodedRawId = preg_split('#\S{8}\S{4}\S{4}\S{4}\S{12}#', $rawId);
+        //preg_match('/\w{8}\w{4}\w{4}\w{4}\w{12}/', $rawId, $explodedRawId);
+        $formattedRawId = preg_replace('/(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/','${1}-${2}-${3}-${4}-${5}' ,$rawId);
+        if ($formattedRawId != $rawId) {
+            return $formattedRawId;
+        } else {
+            throw new \Exception('RawId is not well formated');
+        }
+    }
 }

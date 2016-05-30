@@ -6,6 +6,7 @@ use AppBundle\Business\User\Prefs;
 use AppBundle\Entity\Localisation;
 use AppBundle\Entity\Recolte;
 use AppBundle\Entity\Stratigraphy;
+use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -46,11 +47,11 @@ class DwcExporter extends AbstractExporter
 
         foreach ($this->datas as $key => $data) {
             $formattedData[$key] = [];
-            $occurrenceid = $data['Specimen']['occurrenceid'];
+            $occurrenceid = UtilityService::formatRawId($data['Specimen']['occurrenceid']);
 
             $formattedData[$key]['Specimen'] = $this->getSpecimenData($data);
 
-            $determinationData = $this->getDeterminationData($data);
+            $determinationData = $this->getDeterminationData($data, $occurrenceid);
             if (!empty($determinationData)) {
                 $formattedData[$key]['Determination'] = $determinationData;
             }
@@ -82,8 +83,9 @@ class DwcExporter extends AbstractExporter
     private function getMultimediaData($data, $occurrenceid) {
         $returnData = [];
         if (isset($data['Multimedia']) && count($data['Multimedia']) > 0) {
-            foreach ($data['Multimedia'] as $key2 => $bibliography) {
-                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
+            foreach ($data['Multimedia'] as $key2 => $multimedia) {
+                $multimedia['multimediaid'] = UtilityService::formatRawId($multimedia['multimediaid']);
+                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $multimedia;
             }
         }
         return $returnData;
@@ -98,6 +100,7 @@ class DwcExporter extends AbstractExporter
         $returnData = [];
         if (isset($data['Bibliography']) && count($data['Bibliography']) > 0) {
             foreach ($data['Bibliography'] as $key2 => $bibliography) {
+                $bibliography['referenceid'] = UtilityService::formatRawId($bibliography['referenceid']);
                 $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
             }
         }
@@ -105,14 +108,17 @@ class DwcExporter extends AbstractExporter
     }
     /**
      * @param array $data
+     * @param string $occurrenceid
      * @return array
      */
-    private function getDeterminationData($data)
+    private function getDeterminationData($data, $occurrenceid)
     {
         $returnData = [];
         if (isset($data['Determination']) && count($data['Determination']) > 0) {
             foreach ($data['Determination'] as $key2 => $determination) {
                 $taxon = $determination['Taxon'];
+                $determination['occurrenceid'] = $occurrenceid;
+                $determination['identificationid'] = UtilityService::formatRawId($determination['identificationid']);
                 unset($determination['Taxon']);
                 if (is_array($taxon)) {
                     $returnData[$key2] = array_merge($determination, $taxon);
@@ -131,6 +137,7 @@ class DwcExporter extends AbstractExporter
      */
     private function getSpecimenData($data)
     {
+        $data['Specimen']['occurrenceid'] = UtilityService::formatRawId($data['Specimen']['occurrenceid']);
         if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
             $data['Stratigraphy'] = $this->arrayEmptyClasses['Stratigraphy'];
         }
@@ -146,6 +153,7 @@ class DwcExporter extends AbstractExporter
     {
         $returnData = [];
         if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
+            $data['Recolte']['eventid'] = UtilityService::formatRawId($data['Recolte']['eventid']);
             if (!isset($data['Localisation']) || count($data['Localisation']) == 0) {
                 $data['Localisation'] = $this->arrayEmptyClasses['Localisation'];
             }
