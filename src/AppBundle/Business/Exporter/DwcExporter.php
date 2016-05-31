@@ -6,6 +6,7 @@ use AppBundle\Business\User\Prefs;
 use AppBundle\Entity\Localisation;
 use AppBundle\Entity\Recolte;
 use AppBundle\Entity\Stratigraphy;
+use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -22,7 +23,7 @@ class DwcExporter extends AbstractExporter
         'Specimen',
         'Bibliography',
         'Determination',
-        'Recolte',
+        //'Recolte',
         'Multimedia'
     ];
     protected $formattedDatas = [];
@@ -43,14 +44,13 @@ class DwcExporter extends AbstractExporter
         $formattedData = [];
         $this->setEmptyClasses();
 
-
         foreach ($this->datas as $key => $data) {
             $formattedData[$key] = [];
             $occurrenceid = $data['Specimen']['occurrenceid'];
 
             $formattedData[$key]['Specimen'] = $this->getSpecimenData($data);
 
-            $determinationData = $this->getDeterminationData($data);
+            $determinationData = $this->getDeterminationData($data, $occurrenceid);
             if (!empty($determinationData)) {
                 $formattedData[$key]['Determination'] = $determinationData;
             }
@@ -64,55 +64,23 @@ class DwcExporter extends AbstractExporter
             if (!empty($multimediaData)) {
                 $formattedData[$key]['Multimedia'] = $multimediaData;
             }
-
-            $recolteData = $this->getRecolteData($data);
-            if (!empty($recolteData)) {
-                $formattedData[$key]['Recolte'] = $recolteData;
-            }
         }
 
         return $formattedData;
     }
 
     /**
-     * @param array $data
+     * @param array  $data
      * @param string $occurrenceid
      * @return array
      */
-    private function getMultimediaData($data, $occurrenceid) {
-        $returnData = [];
-        if (isset($data['Multimedia']) && count($data['Multimedia']) > 0) {
-            foreach ($data['Multimedia'] as $key2 => $bibliography) {
-                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
-            }
-        }
-        return $returnData;
-    }
-
-    /**
-     * @param array $data
-     * @param string $occurrenceid
-     * @return array
-     */
-    private function getBibliographyData($data, $occurrenceid) {
-        $returnData = [];
-        if (isset($data['Bibliography']) && count($data['Bibliography']) > 0) {
-            foreach ($data['Bibliography'] as $key2 => $bibliography) {
-                $returnData[$key2] = ['occurrenceid' => $occurrenceid] + $bibliography;
-            }
-        }
-        return $returnData;
-    }
-    /**
-     * @param array $data
-     * @return array
-     */
-    private function getDeterminationData($data)
+    public function getDeterminationData($data, $occurrenceid)
     {
         $returnData = [];
         if (isset($data['Determination']) && count($data['Determination']) > 0) {
             foreach ($data['Determination'] as $key2 => $determination) {
                 $taxon = $determination['Taxon'];
+                $determination['occurrenceid'] = $occurrenceid;
                 unset($determination['Taxon']);
                 if (is_array($taxon)) {
                     $returnData[$key2] = array_merge($determination, $taxon);
@@ -129,27 +97,28 @@ class DwcExporter extends AbstractExporter
      * @param array $data
      * @return array
      */
-    private function getSpecimenData($data)
+    public function getSpecimenData($data)
     {
         if (!isset($data['Stratigraphy']) || count($data['Stratigraphy']) == 0) {
             $data['Stratigraphy'] = $this->arrayEmptyClasses['Stratigraphy'];
         }
 
-        return array_merge($data['Specimen'], $data['Stratigraphy']);
+        return array_merge($data['Specimen'], $data['Stratigraphy'], $this->getRecolteData($data));
     }
 
     /**
      * @param array $data
      * @return array
      */
-    private function getRecolteData($data)
+    public function getRecolteData($data)
     {
-        $returnData = [];
         if (isset($data['Recolte']) && count($data['Recolte']) > 0) {
             if (!isset($data['Localisation']) || count($data['Localisation']) == 0) {
                 $data['Localisation'] = $this->arrayEmptyClasses['Localisation'];
             }
             $returnData = array_merge($data['Recolte'], $data['Localisation']);
+        } else {
+            $returnData = array_merge($this->arrayEmptyClasses['Recolte'], $this->arrayEmptyClasses['Localisation']);
         }
 
         return $returnData;
@@ -206,9 +175,12 @@ class DwcExporter extends AbstractExporter
         $arrayFilesName = [];
         $arrayFilesName[] = $this->getMetaFilepath().' ';
         if (is_array($this->csvFiles) && count($this->csvFiles) > 0) {
-            foreach ($this->csvFiles as $csvFile) {
+            foreach ($this->csvFiles as $className => $csvFile) {
                 /** @var \SplFileObject $csvFile */
                 $arrayFilesName[] = $csvFile->getPathName().' ';
+                // Closing files
+                $this->csvFiles[$className] = null;
+
             }
 
             $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
@@ -220,6 +192,8 @@ class DwcExporter extends AbstractExporter
         if (!is_file($zipFilePath)) {
             throw new \Exception('Zip file has not been created');
         }
+
+        $this->removeFiles($arrayFilesName);
 
         return $zipFilePath;
     }

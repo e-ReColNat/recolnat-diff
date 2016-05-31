@@ -395,7 +395,7 @@ class ExportManager
 
         foreach ($data as $catalogNumber => $specimen) {
 
-            $arraySpecimenWithEntities = $this->genericEntityManager->formatArraySpecimen($specimen);
+            $arraySpecimenWithEntities = $this->genericEntityManager->formatArraySpecimenForExport($specimen);
             $dataWithChoices[$catalogNumber] = $arraySpecimenWithEntities;
 
             foreach ($arraySpecimenWithEntities as $className => $row) {
