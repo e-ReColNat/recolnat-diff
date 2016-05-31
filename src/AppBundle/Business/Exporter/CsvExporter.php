@@ -51,7 +51,7 @@ class CsvExporter extends AbstractExporter
             $this->setCsvDateFormat($prefs->getCsvDateFormat());
         }
         $filesHandler = [];
-        /* @var \AppBundle\Business\Exporter\Entity\AbstractEntityExporter $entityExporters[] */
+        /* @var \AppBundle\Business\Exporter\Entity\AbstractEntityExporter $entityExporters [] */
         $entityExporters = [];
         $entitiesNameWithArray = [
             'Determination',
@@ -106,21 +106,24 @@ class CsvExporter extends AbstractExporter
     {
         $zipFilePath = $this->getExportDirPath().'/'.$zipFilename;
         $arrayFilesName = [];
-        foreach ($this->getFiles() as $csvFile) {
+        foreach ($this->getFiles() as $className => $csvFile) {
             /** @var \SplFileObject $csvFile */
             $arrayFilesName[] = $csvFile->getPathName();
+            // Closing files
+            $this->csvFiles[$className] = null;
         }
         $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
         exec($zipCommand);
 
+        $this->removeFiles($arrayFilesName);
+
         return $zipFilePath;
     }
-
 
     /**
      * Ecrit une ligne dans le fichier et ajoute un retour à la ligne
      * @param resource $fileHandler
-     * @param array $datas
+     * @param array    $datas
      */
     private function writeToFile($fileHandler, $datas)
     {
@@ -138,9 +141,12 @@ class CsvExporter extends AbstractExporter
      */
     private function createFile($className, $extension = 'csv')
     {
-        $fileExport = new Filesystem();
+
         $fileName = $this->exportPath.'/'.strtolower($className).'.'.$extension;
-        $fileExport->touch($fileName);
+        if (!is_file($fileName)) {
+            exec("touch {$fileName}");
+        }
+
         $this->files[$className] = new \SplFileObject($fileName);
     }
 
@@ -154,9 +160,9 @@ class CsvExporter extends AbstractExporter
 
     /**
      *  renvoie les données filtrées en fonction des champs acceptés
-     * @param array $datas
+     * @param array                         $datas
      * @param Entity\AbstractEntityExporter $entityExporter
-     * @param string $className
+     * @param string                        $className
      * @return array
      */
     public function filterDatas($datas, $entityExporter, $className)
@@ -181,6 +187,7 @@ class CsvExporter extends AbstractExporter
                 }
             }
         }
+
         return $filteredDatas;
     }
     /**
@@ -189,11 +196,11 @@ class CsvExporter extends AbstractExporter
      * Adapted from http://us3.php.net/manual/en/function.fputcsv.php#87120
      */
     /**
-     * @param array $fields
+     * @param array  $fields
      * @param string $delimiter
      * @param string $enclosure
-     * @param bool $encloseAll
-     * @param bool $nullToMysqlNull
+     * @param bool   $encloseAll
+     * @param bool   $nullToMysqlNull
      * @return string
      */
     private function arrayToCsv(

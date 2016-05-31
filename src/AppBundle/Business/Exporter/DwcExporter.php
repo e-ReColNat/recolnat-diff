@@ -122,8 +122,7 @@ class DwcExporter extends AbstractExporter
                 $data['Localisation'] = $this->arrayEmptyClasses['Localisation'];
             }
             $returnData = array_merge($data['Recolte'], $data['Localisation']);
-        }
-        else {
+        } else {
             $returnData = array_merge($this->arrayEmptyClasses['Recolte'], $this->arrayEmptyClasses['Localisation']);
         }
 
@@ -181,9 +180,12 @@ class DwcExporter extends AbstractExporter
         $arrayFilesName = [];
         $arrayFilesName[] = $this->getMetaFilepath().' ';
         if (is_array($this->csvFiles) && count($this->csvFiles) > 0) {
-            foreach ($this->csvFiles as $csvFile) {
+            foreach ($this->csvFiles as $className => $csvFile) {
                 /** @var \SplFileObject $csvFile */
                 $arrayFilesName[] = $csvFile->getPathName().' ';
+                // Closing files
+                $this->csvFiles[$className] = null;
+
             }
 
             $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
@@ -195,6 +197,8 @@ class DwcExporter extends AbstractExporter
         if (!is_file($zipFilePath)) {
             throw new \Exception('Zip file has not been created');
         }
+
+        $this->removeFiles($arrayFilesName);
 
         return $zipFilePath;
     }

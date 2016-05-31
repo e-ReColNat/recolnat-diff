@@ -4,6 +4,7 @@ namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\Exporter\Entity\AbstractEntityExporter;
 use AppBundle\Business\User\Prefs;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Description of Exporter
@@ -170,4 +171,14 @@ abstract class AbstractExporter
         return $data['Recolte'];
     }
 
+    /**
+     * remove csv & xml files
+     * @param array $files
+     */
+    protected function removeFiles(array $files)
+    {
+        foreach ($files as $file) {
+            exec('rm '.$file);
+        }
+    }
 }
