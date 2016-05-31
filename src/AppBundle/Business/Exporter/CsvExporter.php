@@ -3,7 +3,6 @@
 namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\User\Prefs;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Description of CsvExporter
@@ -32,7 +31,7 @@ class CsvExporter extends AbstractExporter
     /**
      * @param Prefs $prefs
      * @param array $options
-     * @return array<string,\SplFileObject>|string
+     * @return \ArrayObject|string
      */
     public function generate(Prefs $prefs, array $options = [])
     {
@@ -148,7 +147,7 @@ class CsvExporter extends AbstractExporter
     }
 
     /**
-     * @return array<string,\SplFileObject>
+     * @return \ArrayObject
      */
     public function getFiles()
     {

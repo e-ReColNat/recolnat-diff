@@ -101,7 +101,7 @@ class SearchDiffCommand extends ContainerAwareCommand
 
         $diffComputer->setCollection($collection);
 
-        $catalogNumbers=[];
+        $catalogNumbers = [];
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
             $catalogNumbers[$entityName] = $diffManager->getResultByClassName($entityName);
             $diffComputer->setCatalogNumbers($catalogNumbers);

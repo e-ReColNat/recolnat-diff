@@ -68,7 +68,7 @@ class ComputeController extends Controller
         $diffComputer = $this->get('diff.computer');
         $diffComputer->setCollection($collection);
 
-        $catalogNumbers=[];
+        $catalogNumbers = [];
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
             $catalogNumbers[$entityName] = $diffManager->getResultByClassName($entityName);
             $diffComputer->setCatalogNumbers($catalogNumbers);

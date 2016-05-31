@@ -6,7 +6,6 @@ use AppBundle\Business\User\Prefs;
 use AppBundle\Entity\Localisation;
 use AppBundle\Entity\Recolte;
 use AppBundle\Entity\Stratigraphy;
-use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
