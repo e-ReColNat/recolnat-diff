@@ -64,11 +64,6 @@ class DwcExporter extends AbstractExporter
             if (!empty($multimediaData)) {
                 $formattedData[$key]['Multimedia'] = $multimediaData;
             }
-
-            /*$recolteData = $this->getRecolteData($data);
-            if (!empty($recolteData)) {
-                $formattedData[$key]['Recolte'] = $recolteData;
-            }*/
         }
 
         return $formattedData;

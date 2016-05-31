@@ -24,9 +24,6 @@ class CsvExporter extends AbstractExporter
     private $fieldsName = [];
     private $acceptedFieldsName = [];
 
-    /**
-     * @return array
-     */
     public function formatDatas()
     {
 
@@ -110,7 +107,7 @@ class CsvExporter extends AbstractExporter
             /** @var \SplFileObject $csvFile */
             $arrayFilesName[] = $csvFile->getPathName();
             // Closing files
-            $this->csvFiles[$className] = null;
+            $this->files[$className] = null;
         }
         $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
         exec($zipCommand);
@@ -144,7 +141,7 @@ class CsvExporter extends AbstractExporter
 
         $fileName = $this->exportPath.'/'.strtolower($className).'.'.$extension;
         if (!is_file($fileName)) {
-            exec("touch {$fileName}");
+            exec('touch '.$fileName);
         }
 
         $this->files[$className] = new \SplFileObject($fileName);
