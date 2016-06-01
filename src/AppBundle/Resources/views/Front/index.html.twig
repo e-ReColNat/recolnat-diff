@@ -1,37 +1,38 @@
 {% extends '@App/base.html.twig' %}
 
-{% set sumSpecimens = 0 %}
 {% block body %}
     <div class="container-fluid">
         <h1 class="page-header row">{{ 'welcome' | trans({'%name%' : app.user},'user') }}</h1>
-        {% if collections|length > 0 %}
-            {% for collection in collections %}
+        {% if managedCollections|length > 0 %}
+            {% dump(managedCollections) %}
+            {% dump(diffHandlers) %}
+            {% for collection in managedCollections %}
+                {% set collectionCode = collection.collectionCode %}
                 <div class="row">
-                    {% if (collection['diffHandler']|length != 0) %}
+                    {% if diffHandlers[collectionCode] is defined and diffHandlers[collectionCode].shouldSearchDiffs == false %}
                         <div class="col-sm-2">
                             {{ 'label.collection' | trans }} :
 
-                            <a href="{{ path('viewfile', {'collectionCode':collection['collection'].getCollectionCode}) }}">
-                                {{ collection['collection'].getCollectionCode }}
+                            <a href="{{ path('viewfile', {'collectionCode':collectionCode}) }}">
+                                {{ collectionCode }}
                             </a>
                         </div>
+
                         <ul class="col-sm-3">
-                            {% for diffHandler in collection['diffHandler'] %}
-                                <li>{{ 'fichier.creele'|trans({'%date%': diffHandler.getCTime|date("d/m/Y"), '%heure%' :diffHandler.getCTime|date("H:i:s")}) }}</li>
-                                <li>{{ 'fichier.modifiele'|trans({'%date%': diffHandler.getMTime|date("d/m/Y"), '%heure%' :diffHandler.getMTime|date("H:i:s")}) }}</li>
-                            {% endfor %}
+                            <li>{{ 'fichier.creele'|trans({'%date%': diffHandlers[collectionCode].getCTime|date("d/m/Y"), '%heure%' :diffHandlers[collectionCode].getCTime|date("H:i:s")}) }}</li>
+                            <li>{{ 'fichier.modifiele'|trans({'%date%': diffHandlers[collectionCode].getMTime|date("d/m/Y"), '%heure%' :diffHandlers[collectionCode].getMTime|date("H:i:s")}) }}</li>
                         </ul>
                     {% else %}
                         <div class="col-sm-2">
                             {{ 'label.collection' | trans }} :
-                                {{ collection['collection'].getCollectionCode }}
+                            {{ collectionCode }}
                         </div>
                         <div class="col-sm-3">
                             {{ 'label.nodiffs' | trans }}
                         </div>
                     {% endif %}
                     <a class="col-sm-3 searchDiffButton btn btn-primary" role="button"
-                       href="{{ path('configureSearchDiff', {'collectionCode' : collection.collection.collectionCode}) }}">
+                       href="{{ path('configureSearchDiff', {'collectionCode' : collectionCode}) }}">
                     <span class="glyphicon glyphicon-search"
                           aria-hidden="true"></span> {{ 'label.searchDiffs' | trans }}
                     </a>

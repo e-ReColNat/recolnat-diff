@@ -117,7 +117,6 @@ class BackendController extends Controller
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
-        $institutionCode = $this->getUser()->getInstitutionCode();
 
         list($inputOrigin, $inputSpecimens, $inputClassesName, $page, $selectedSpecimens, $selectedClassName, $type) =
             $this->getParamsForSetChoices($request);
@@ -131,7 +130,7 @@ class BackendController extends Controller
         if ($type == 'todo') {
             $specimensWithoutChoices = $exportManager->getSessionHandler()->getChoices();
         }
-        if (!is_null($institutionCode) && !is_null($inputOrigin) && !is_null($inputSpecimens)) {
+        if (!is_null($inputOrigin) && !is_null($inputSpecimens)) {
             $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
                 $specimensWithoutChoices);
             $items = $this->getItemsForSetChoices($inputSpecimens, $diffs, $page, $maxItemPerPage,
@@ -267,6 +266,8 @@ class BackendController extends Controller
      * @Route("selectedSpecimen/{collectionCode}", name="selectedSpecimen")
      * @param string  $collectionCode
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function selectedSpecimenAction(Request $request, $collectionCode)
     {

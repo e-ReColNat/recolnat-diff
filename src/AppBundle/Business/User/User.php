@@ -16,12 +16,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface
 {
 
-    private $institutionCode;
     /* @var $prefs \AppBundle\Business\User\Prefs */
     private $prefs;
     private $exportPath;
-
-
     private $username;
     private $password;
     private $salt;
@@ -49,13 +46,11 @@ class User implements UserInterface
     }
 
     /**
-     * @param Institution $institution
-     * @param string      $exportPath
+     * @param string $exportPath
      * @return $this
      */
-    public function init($institution, $exportPath)
+    public function init($exportPath)
     {
-        $this->setInstitution($institution);
         $this->setExportPath($exportPath);
         $this->createDir();
         $this->getPrefs();
@@ -92,6 +87,21 @@ class User implements UserInterface
         return (array) $data->permissionResources;
     }
 
+    public function getManagedCollections()
+    {
+        $managedCollectionCodes = [];
+        $permissions = $this->getPermissions();
+        if (count($permissions)) {
+            foreach ($permissions as $permission) {
+                if ($this->isManagerFor($permission->resource->code)) {
+                    $managedCollectionCodes[] = $permission->resource->code;
+                }
+            }
+        }
+
+        return $managedCollectionCodes;
+    }
+
     public function getEmail()
     {
         $data = $this->getData();
@@ -110,7 +120,8 @@ class User implements UserInterface
         if (count($permissions)) {
             foreach ($permissions as $permission) {
                 if ($permission->resource->code == $collectionCode &&
-                    $permission->permission->name == self::STR_SEARCH_DIFF_PERMISSION) {
+                    $permission->permission->name == self::STR_SEARCH_DIFF_PERMISSION
+                ) {
                     $boolReturn = true;
                 }
             }
@@ -172,26 +183,7 @@ class User implements UserInterface
      */
     public function getDataDirPath()
     {
-        return realpath($this->exportPath).'/'.$this->institutionCode.'/';
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getInstitutionCode()
-    {
-        return $this->institutionCode;
-    }
-
-    /**
-     * @param mixed $institutionCode
-     * @return User
-     */
-    public function setInstitutionCode($institutionCode)
-    {
-        $this->institutionCode = $institutionCode;
-
-        return $this;
+        return realpath($this->exportPath).'/'.$this->getUsername().'/';
     }
 
     /**
@@ -236,23 +228,6 @@ class User implements UserInterface
     public function eraseCredentials()
     {
 
-    }
-
-    /**
-     * @return Institution
-     */
-    public function getInstitution()
-    {
-        return $this->institution;
-    }
-
-    /**
-     * @param Institution $institution
-     */
-    public function setInstitution($institution)
-    {
-        $this->institution = $institution;
-        $this->institutionCode = $institution->getInstitutioncode();
     }
 
     public function __toString()

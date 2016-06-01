@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
 use AppBundle\Manager\ExportManager;
@@ -25,29 +26,18 @@ class FrontController extends Controller
      */
     public function indexAction()
     {
-        /* @var $institution \AppBundle\Entity\Institution */
-        $institution = $this->getUser()->getInstitution();
-
-        $collections = [];
-        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institution->getInstitutioncode());
+        /** @var User $user */
+        $user = $this->getUser();
+        //$user = new User('Julien.Husson', '1234', '123456', [], $this->getParameter('api_recolnat_user'));
         $exportManager = $this->get('exportmanager')->init($this->getUser());
 
-        /** @var Collection $collection */
-        foreach ($institution->getCollections() as $collection) {
-            $collectionCode = $collection->getCollectioncode();
-
-            $collections[$collectionCode]['collection'] = $collection;
-            $diffHandler->setCollectionCode($collectionCode);
-            $collections[$collectionCode]['diffHandler'] = [];
-            if (!$diffHandler->shouldSearchDiffs()) {
-                /* @var $exportManager \AppBundle\Manager\ExportManager */
-                $exportManager->setCollectionCode($collectionCode);
-                $collections[$collectionCode]['diffHandler'] = $exportManager->getFiles();
-            }
-        }
+        $managedCollections = $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Collection')->findBy(['collectioncode'=>$user->getManagedCollections()]);
+        $diffHandlers = $exportManager->getDiffHandlers();
 
         return $this->render('@App/Front/index.html.twig', array(
-            'collections' => $collections,
+            'managedCollections' => $managedCollections,
+            'diffHandlers' => $diffHandlers,
         ));
     }
 
@@ -236,14 +226,12 @@ class FrontController extends Controller
      */
     public function setPrefsForExportAction(Request $request, $collectionCode, $type)
     {
-        $institutionCode = $this->getUser()->getInstitutionCode();
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
 
         $exportPrefs = new ExportPrefs();
 
         $form = $this->createForm(ExportPrefsType::class, $exportPrefs, [
             'action' => $this->generateUrl('setPrefsForExport', [
-                'institutionCode' => $institutionCode,
                 'collectionCode' => $collectionCode,
                 'type' => $type
             ])
@@ -252,7 +240,6 @@ class FrontController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $paramsExport = [
-                'institutionCode' => $institutionCode,
                 'collectionCode' => $collectionCode,
                 'exportPrefs' => serialize($exportPrefs)
             ];
@@ -269,7 +256,6 @@ class FrontController extends Controller
 
 
         return $this->render('@App/Front/setPrefsForExport.html.twig', array(
-            'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
             'sumStats' => $sumStats,
             'statsChoices' => $statsChoices,

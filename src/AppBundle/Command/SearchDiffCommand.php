@@ -80,12 +80,12 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
 
         $user = $this->simpleCasAuthentification($input->getArgument('username'), $input->getArgument('password'));
+        $user->init($this->getContainer()->getParameter('export_path'));
 
         if (!$user->isManagerFor($this->collectionCode)) {
             throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPermission'));
         }
         $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
-        $institutionCode = $collection->getInstitution()->getInstitutioncode();
 
         $diffManager = $this->getContainer()->get('diff.newmanager');
         $diffComputer = $this->getContainer()->get('diff.computer');
@@ -111,8 +111,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
         $datas = $diffComputer->getAllDatas();
 
-        $diffHandler = new DiffHandler($this->getContainer()->getParameter('export_path').'/'.$institutionCode);
-        $diffHandler->setCollectionCode($this->collectionCode);
+        $diffHandler = new DiffHandler($user->getDataDirPath(), $collection);
 
         $diffHandler->saveDiffs($datas);
         $progressBar->advance(10);

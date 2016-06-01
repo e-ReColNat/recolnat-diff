@@ -9,6 +9,7 @@ class Diffs extends \SplFileObject
 {
     public $searchDiffs;
 
+    const EMPTY_ARRAY = ['datas'=>[], 'classes'=>[], 'stats'=>[], 'lonesomeRecords'=>[], 'statsLonesomeRecords'=>[]];
     const DIFF_FILENAME = '/diffs.json';
 
     /**
@@ -45,7 +46,7 @@ class Diffs extends \SplFileObject
         if ($fs->exists($this->getPathname())) {
             $fileContent = json_decode(file_get_contents($this->getPathname()), true);
             if (is_null($fileContent)) {
-                $fileContent = [];
+                $fileContent = self::EMPTY_ARRAY;
             }
 
             return $fileContent;

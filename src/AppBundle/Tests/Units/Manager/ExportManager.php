@@ -58,7 +58,6 @@ class ExportManager extends Units\Test
         $user = new User('fakeuser', '...', '', ["ROLE_USER"], $this->container->getParameter('api_recolnat_user'));
         $institution = $managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode' => 'MHNAIX']);
         $user->setExportPath($this->container->getParameter('export_path'));
-        $user->setInstitution($institution);
         $this->exportManager->init($user)->setCollectionCode('AIX');
     }
 

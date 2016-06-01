@@ -13,10 +13,8 @@
 </head>
 <body>
 
-{% set institutionCode = app.user.institutionCode %}
 {% block navbar %}
-<div id="parameters" class="hidden" data-institutioncode="{{ institutionCode }}"
-     data-collectioncode="{{ collectionCode is defined ? collectionCode:'' }}"></div>
+<div id="parameters" class="hidden" data-collectioncode="{{ collectionCode is defined ? collectionCode:'' }}"></div>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -30,7 +28,7 @@
             <ul class="nav navbar-nav navbar-right">
                 {#<li><a href="#">{{ 'nav.accueil' | trans }}</a></li>#}
                 <li>
-                    <a href="{{ path('viewPrefsUser', {'institutionCode':'MHNAIX'}) }}">{{ 'nav.preferences' | trans }}</a>
+                    <a href="{{ path('viewPrefsUser') }}">{{ 'nav.preferences' | trans }}</a>
                 </li>
                 {#<li><a href="#">{{ 'nav.profil' | trans }}</a></li>#}
                 {#<li><a href="#">{{ 'nav.aide' | trans }}</a></li>#}

@@ -121,14 +121,19 @@ class ExportManager
             throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
         } else {
             $this->diffManager->init($this->collection);
-            $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
-            $this->diffHandler->setCollectionCode($this->collectionCode);
+            $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collection);
 
-            $this->selectedSpecimensHandler = new SelectedSpecimensHandler($this->user->getDataDirPath().$this->collectionCode);
+            if (!$this->getDiffHandler()->shouldSearchDiffs()) {
+                $this->selectedSpecimensHandler = new SelectedSpecimensHandler($this->user->getDataDirPath().$this->collectionCode);
+                $data = $this->getDiffHandler()->getDiffsFile()->getData();
+                $data['selectedSpecimens'] = $this->selectedSpecimensHandler->getData();
+                $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
+                $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
+            }
 
-            $data = $this->launchDiffProcess();
+            /*$data = $this->launchDiffProcess();
             $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
-            $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
+            $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);*/
         }
 
         return $this;
@@ -253,14 +258,19 @@ class ExportManager
     /**
      * @return array
      */
-    public function getFiles()
+    public function getDiffHandlers()
     {
         $returnDirs = [];
-        $institutionDir = $this->user->getDataDirPath();
-        if ($handle = opendir($institutionDir)) {
+        $dataDirPath = $this->user->getDataDirPath();
+        if ($handle = opendir($dataDirPath)) {
+            $collectionRepository = $this->managerRegistry->getManager()->getRepository('AppBundle:Collection');
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != '.' && $entry != '..' && is_dir($institutionDir.$entry)) {
-                    $returnDirs[] = new DiffHandler($institutionDir.$entry);
+                if ($entry != '.' && $entry != '..' && is_dir($dataDirPath.$entry)) {
+                    $collection = $collectionRepository->findOneBy(['collectioncode' => $entry]);
+                    if (!is_null($collection)) {
+                        $diffHandler = new DiffHandler($dataDirPath, $collection);
+                        $returnDirs[$entry] = $diffHandler;
+                    }
                 }
             }
             closedir($handle);

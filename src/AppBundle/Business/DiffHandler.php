@@ -2,6 +2,8 @@
 
 namespace AppBundle\Business;
 
+use AppBundle\Entity\Collection;
+
 /**
  * Description of DiffFiles
  *
@@ -18,16 +20,19 @@ class DiffHandler
      */
     protected $diffsFile = null;
 
-    protected $institutionPath;
-    protected $collectionCode;
+    protected $path;
+    /** @var  Collection */
+    protected $collection;
 
     /**
      * DiffHandler constructor.
-     * @param string $dirPath
+     * @param string     $dirPath
+     * @param Collection $collection
      */
-    public function __construct($dirPath)
+    public function __construct($dirPath, Collection $collection)
     {
-        $this->institutionPath = $dirPath;
+        $this->path = $dirPath;
+        $this->collection = $collection;
     }
 
     /**
@@ -67,20 +72,19 @@ class DiffHandler
     /**
      * @return string
      */
-    public function getCollectionCode()
+    /*public function getCollectionCode()
     {
         return $this->collectionCode;
-    }
+    }*/
 
     /**
      * @return string
      */
-    public function getInstitutionPath()
+    public function getPath()
     {
-        $institutionPath = $this->institutionPath;
-        $this->createDir($institutionPath);
+        $this->createDir($this->path);
 
-        return realpath($institutionPath);
+        return realpath($this->path);
     }
 
     /**
@@ -153,13 +157,13 @@ class DiffHandler
      * @param $collectionCode
      * @return DiffHandler
      */
-    public function setCollectionCode($collectionCode)
-    {
-        $this->collectionCode = $collectionCode;
+    /*    public function setCollectionCode($collectionCode)
+        {
+            $this->collectionCode = $collectionCode;
 
-        return $this;
-    }
-
+            return $this;
+        }
+    */
     /**
      * @param $items
      * @param $diffs
@@ -204,10 +208,12 @@ class DiffHandler
      */
     public function getCollectionPath()
     {
-        $collectionPath = $this->getInstitutionPath().'/'.$this->collectionCode;
+        $collectionPath = $this->getPath().'/'.
+            $this->collection->getInstitution()->getInstitutioncode().'-'.
+            $this->collection->getCollectioncode();
         $this->createDir($collectionPath);
 
-        return realpath($collectionPath);
+        return $collectionPath;
     }
 
     /**
@@ -216,7 +222,7 @@ class DiffHandler
     private function createDir($dir)
     {
         if (!is_dir($dir)) {
-            mkdir($dir, 0755);
+            mkdir($dir, 0775);
         }
     }
 
