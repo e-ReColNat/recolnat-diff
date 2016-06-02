@@ -3,6 +3,7 @@
 namespace AppBundle\Business;
 
 
+use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
 class SelectedSpecimensHandler extends \SplFileObject
@@ -11,10 +12,11 @@ class SelectedSpecimensHandler extends \SplFileObject
 
     /**
      * @param string $dirPath
+     * @param string $userGroup
      */
-    public function __construct($dirPath)
+    public function __construct($dirPath, $userGroup)
     {
-        $path = $dirPath.self::SELECTED_FILENAME;
+        $path = UtilityService::createFile($dirPath.self::SELECTED_FILENAME, $userGroup);
         parent::__construct($path, 'c+');
     }
 

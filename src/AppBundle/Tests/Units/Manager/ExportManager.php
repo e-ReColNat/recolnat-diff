@@ -52,11 +52,12 @@ class ExportManager extends Units\Test
             $this->container->get('genericentitymanager'),
             $this->container->get('diff.manager'),
             $this->container->getParameter('maxitemperpage')[1],
-            $this->container->get('diff.computer')
+            $this->container->get('diff.computer'),
+            $this->container->getParameter('user_group')
         );
 
-        $user = new User('fakeuser', '...', '', ["ROLE_USER"], $this->container->getParameter('api_recolnat_user'));
-        $institution = $managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode' => 'MHNAIX']);
+        $user = new User('tpateffoz', '...', '', ["ROLE_USER"], $this->container->getParameter('api_recolnat_user'),
+            $this->container->getParameter('user_group'));
         $user->setExportPath($this->container->getParameter('export_path'));
         $this->exportManager->init($user)->setCollectionCode('AIX');
     }

@@ -111,7 +111,8 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
         $datas = $diffComputer->getAllDatas();
 
-        $diffHandler = new DiffHandler($user->getDataDirPath(), $collection);
+        $diffHandler = new DiffHandler($user->getDataDirPath(), $collection,
+            $this->getContainer()->getParameter('user_group'));
 
         $diffHandler->saveDiffs($datas);
         $progressBar->advance(10);
@@ -140,7 +141,8 @@ class SearchDiffCommand extends ContainerAwareCommand
         if ($client->login()) {
             $response = $client->post('https://localhost/recolnat-diff/search');
             if ($response->getStatusCode() == 200) {
-                $user = new User($username, $password, null, [], $this->apiRecolnatUser);
+                $user = new User($username, $password, null, [], $this->apiRecolnatUser,
+                    $this->getContainer()->getParameter('user_group'));
 
                 return $user;
             } else {

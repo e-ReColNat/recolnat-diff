@@ -45,6 +45,8 @@ class DiffComputer
     protected $statsLonesomeRecords = [];
     protected $taxons = [];
 
+    protected $logQueries = false;
+
     private $classOrder = [
         'Specimen',
         'Bibliography',
@@ -71,6 +73,10 @@ class DiffComputer
         $this->emB = $managerRegistry->getManager('buffer');
         $this->diffs['datas'] = [];
         $this->diffs['classes'] = [];
+        if (!$this->logQueries) {
+            $this->emR->getConnection()->getConfiguration()->setSQLLogger(null);
+            $this->emB->getConnection()->getConfiguration()->setSQLLogger(null);
+        }
     }
 
     /**

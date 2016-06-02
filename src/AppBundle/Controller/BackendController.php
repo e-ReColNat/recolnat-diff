@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
-use AppBundle\Business\SelectedSpecimensHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -273,8 +272,11 @@ class BackendController extends Controller
     {
         $session = $this->get('session');
         $action = $request->get('action');
+
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+
         $catalogNumber = $request->get('catalogNumber');
-        $selectedSpecimensHandler = new SelectedSpecimensHandler($this->getUser()->getDataDirPath().$collectionCode);
+        $selectedSpecimensHandler = $exportManager->getSelectedSpecimenHandler();
         if ($action == 'add') {
             $selectedSpecimensHandler->add($catalogNumber);
         } else {

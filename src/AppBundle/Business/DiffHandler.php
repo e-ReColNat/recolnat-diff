@@ -3,6 +3,7 @@
 namespace AppBundle\Business;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Manager\UtilityService;
 
 /**
  * Description of DiffFiles
@@ -24,15 +25,19 @@ class DiffHandler
     /** @var  Collection */
     protected $collection;
 
+    protected $userGroup;
+
     /**
      * DiffHandler constructor.
      * @param string     $dirPath
+     * @param string     $userGroup
      * @param Collection $collection
      */
-    public function __construct($dirPath, Collection $collection)
+    public function __construct($dirPath, Collection $collection, $userGroup)
     {
         $this->path = $dirPath;
         $this->collection = $collection;
+        $this->userGroup = $userGroup;
     }
 
     /**
@@ -72,19 +77,9 @@ class DiffHandler
     /**
      * @return string
      */
-    /*public function getCollectionCode()
-    {
-        return $this->collectionCode;
-    }*/
-
-    /**
-     * @return string
-     */
     public function getPath()
     {
-        $this->createDir($this->path);
-
-        return realpath($this->path);
+        return UtilityService::createDir($this->path, $this->userGroup) ;
     }
 
     /**
@@ -118,7 +113,7 @@ class DiffHandler
      */
     public function setChoicesFile()
     {
-        $this->choicesFile = new Choices($this->getCollectionPath());
+        $this->choicesFile = new Choices($this->getCollectionPath(), $this->userGroup);
 
         return $this;
     }
@@ -128,7 +123,7 @@ class DiffHandler
      */
     public function setDiffsFile()
     {
-        $this->diffsFile = new Diffs($this->getCollectionPath());
+        $this->diffsFile = new Diffs($this->getCollectionPath(), $this->userGroup);
 
         return $this;
     }
@@ -153,17 +148,7 @@ class DiffHandler
         return $this->getDiffsFile()->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
     }
 
-    /**
-     * @param $collectionCode
-     * @return DiffHandler
-     */
-    /*    public function setCollectionCode($collectionCode)
-        {
-            $this->collectionCode = $collectionCode;
 
-            return $this;
-        }
-    */
     /**
      * @param $items
      * @param $diffs
@@ -208,22 +193,11 @@ class DiffHandler
      */
     public function getCollectionPath()
     {
-        $collectionPath = $this->getPath().'/'.
-            $this->collection->getInstitution()->getInstitutioncode().'-'.
-            $this->collection->getCollectioncode();
-        $this->createDir($collectionPath);
+        $institutionPath =  $this->getPath().'/'.$this->collection->getInstitution()->getInstitutioncode().'/';
+        UtilityService::createDir($institutionPath, $this->userGroup);
 
-        return $collectionPath;
-    }
-
-    /**
-     * @param string $dir
-     */
-    private function createDir($dir)
-    {
-        if (!is_dir($dir)) {
-            mkdir($dir, 0775);
-        }
+        $collectionPath =$institutionPath.$this->collection->getCollectioncode();
+        return UtilityService::createDir($collectionPath, $this->userGroup);
     }
 
     /**

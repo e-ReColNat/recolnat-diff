@@ -12,10 +12,6 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 class RecolnatUserProvider implements UserProviderInterface
 {
     /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
-    /**
      * @var string
      */
     protected $exportPath;
@@ -23,18 +19,22 @@ class RecolnatUserProvider implements UserProviderInterface
      * @var string
      */
     protected $apiRecolnatUser;
+     /**
+     * @var string
+     */
+    protected $userGroup;
 
     /**
      * RecolnatUserProvider constructor.
-     * @param ManagerRegistry $managerRegistry
      * @param String          $exportPath
      * @param String          $apiRecolnatUser
+     * @param String          $userGroup
      */
-    public function __construct(ManagerRegistry $managerRegistry, $exportPath, $apiRecolnatUser)
+    public function __construct($exportPath, $apiRecolnatUser, $userGroup)
     {
-        $this->managerRegistry = $managerRegistry;
         $this->exportPath = $exportPath;
         $this->apiRecolnatUser = $apiRecolnatUser;
+        $this->userGroup = $userGroup;
     }
 
     /**
@@ -48,8 +48,7 @@ class RecolnatUserProvider implements UserProviderInterface
             $salt = '';
             $roles = ['ROLE_USER'];
 
-
-            $user = new User($username, $password, $salt, $roles, $this->apiRecolnatUser);
+            $user = new User($username, $password, $salt, $roles, $this->apiRecolnatUser, $this->userGroup);
             $user->init($this->exportPath);
 
             return $user;

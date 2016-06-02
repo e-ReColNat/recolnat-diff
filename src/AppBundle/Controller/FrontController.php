@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
@@ -32,7 +31,7 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser());
 
         $managedCollections = $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Collection')->findBy(['collectioncode'=>$user->getManagedCollections()]);
+            ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $user->getManagedCollections()]);
         $diffHandlers = $exportManager->getDiffHandlers();
 
         return $this->render('@App/Front/index.html.twig', array(
@@ -192,9 +191,10 @@ class FrontController extends Controller
      * @Route("{collectionCode}/specimen/tab/{catalogNumber}/{type}/{db}",
      *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
      * @ParamConverter("collection", options={"mapping": {"collectionCode": "collectioncode"}})
-     * @param string $catalogNumber
-     * @param string $type
-     * @param string $db
+     * @param Collection $collection
+     * @param string     $catalogNumber
+     * @param string     $type
+     * @param string     $db
      * @return Response
      */
     public function viewSpecimenTabAction(Collection $collection, $catalogNumber, $type, $db)

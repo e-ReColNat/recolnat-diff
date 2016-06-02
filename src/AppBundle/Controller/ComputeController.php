@@ -17,7 +17,8 @@ class ComputeController extends Controller
 {
     /**
      * @Route("{collectionCode}/diff/configure/", name="configureSearchDiff", options={"expose"=true})
-     * @param string $collectionCode
+     * @param string  $collectionCode
+     * @param Request $request
      * @return Response
      */
     public function configureSearchDiffAction(Request $request, $collectionCode)
@@ -74,7 +75,8 @@ class ComputeController extends Controller
         }
         $datas = $diffComputer->getAllDatas();
 
-        $diffHandler = new DiffHandler($this->getUser()->getDataDirPath(), $collection);
+        $diffHandler = new DiffHandler($this->getUser()->getDataDirPath(), $collection,
+            $this->getParameter('user_group'));
 
         $diffHandler->saveDiffs($datas);
 
@@ -98,8 +100,8 @@ class ComputeController extends Controller
         $diffComputer = $this->get('diff.computer');
         $diffComputer->setCollection($collection);
 
-        $diffHandler = new DiffHandler($this->getUser()->getDataDirPath(), $collection);
-        $diffHandler->setCollectionCode($collectionCode);
+        $diffHandler = new DiffHandler($this->getUser()->getDataDirPath(), $collection,
+            $this->getParameter('user_group'));
 
         $response = new StreamedResponse();
 

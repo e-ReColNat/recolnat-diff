@@ -46,4 +46,30 @@ class UtilityService
             throw new \Exception('RawId is not well formated');
         }
     }
+
+    public static function getFileGroup($dirPath)
+    {
+        $fileInfoParent = new \SplFileInfo($dirPath);
+        return $fileInfoParent->getGroup();
+    }
+
+    public static function createDir($path, $group)
+    {
+        if (!is_dir($path)) {
+            mkdir($path);
+            chmod($path, 0775);
+            chgrp($path, $group);
+        }
+        return realpath($path);
+    }
+
+    public static function createFile($path, $group)
+    {
+        if (!file_exists($path)) {
+            touch($path);
+            chmod($path, 0775);
+            chgrp($path, $group);
+        }
+        return realpath($path);
+    }
 }

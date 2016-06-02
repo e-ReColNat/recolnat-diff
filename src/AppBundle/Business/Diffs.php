@@ -3,6 +3,7 @@
 namespace AppBundle\Business;
 
 
+use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Diffs extends \SplFileObject
@@ -14,14 +15,12 @@ class Diffs extends \SplFileObject
 
     /**
      * @param string $dirPath
+     * @param string $userGroup
      */
-    public function __construct($dirPath)
+    public function __construct($dirPath, $userGroup)
     {
         $this->searchDiffs = false;
-        $path = $dirPath.self::DIFF_FILENAME;
-        if (!is_file($path)) {
-            $this->searchDiffs = true;
-        }
+        $path = UtilityService::createFile($dirPath.self::DIFF_FILENAME, $userGroup);
         parent::__construct($path, 'c+');
     }
 

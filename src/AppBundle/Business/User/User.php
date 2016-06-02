@@ -2,7 +2,7 @@
 
 namespace AppBundle\Business\User;
 
-use AppBundle\Entity\Institution;
+use AppBundle\Manager\UtilityService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -24,9 +24,6 @@ class User implements UserInterface
     private $salt;
     private $roles;
 
-    /** @var  Institution */
-    private $institution;
-
     private $data = null;
 
     const STR_SEARCH_DIFF_PERMISSION = 'SAISIE_COLLECTION';
@@ -36,13 +33,16 @@ class User implements UserInterface
      */
     protected $apiRecolnatUser;
 
-    public function __construct($username, $password, $salt, array $roles, $apiRecolnatUser)
+    protected $userGroup;
+
+    public function __construct($username, $password, $salt, array $roles, $apiRecolnatUser, $userGroup)
     {
         $this->username = $username;
         $this->password = $password;
         $this->salt = $salt;
         $this->roles = $roles;
         $this->apiRecolnatUser = $apiRecolnatUser;
+        $this->userGroup = $userGroup;
     }
 
     /**
@@ -52,7 +52,7 @@ class User implements UserInterface
     public function init($exportPath)
     {
         $this->setExportPath($exportPath);
-        $this->createDir();
+        UtilityService::createDir($this->getDataDirPath(), $this->userGroup);
         $this->getPrefs();
 
         return $this;
@@ -137,7 +137,9 @@ class User implements UserInterface
     {
         $fs = new Filesystem();
         if (!$fs->exists($this->getDataDirPath())) {
-            $fs->mkdir($this->getDataDirPath(), 0755);
+            $fs->mkdir($this->getDataDirPath(), 02775);
+            $fs->chgrp($this->getDataDirPath(), $this->userGroup);
+
         }
     }
 
@@ -164,10 +166,10 @@ class User implements UserInterface
      */
     public function savePrefs(Prefs $prefs)
     {
+        UtilityService::createFile($this->getPrefsFileName(), $this->userGroup);
         $handle = fopen($this->getPrefsFileName(), 'w');
         fwrite($handle, $prefs->toJson());
         fclose($handle);
-        chmod($this->getPrefsFileName(), 0755);
     }
 
     /**

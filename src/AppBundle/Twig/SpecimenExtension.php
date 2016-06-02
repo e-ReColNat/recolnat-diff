@@ -319,15 +319,12 @@ class SpecimenExtension extends \Twig_Extension
      */
     public function getTaxon(Specimen $specimen)
     {
+        $taxon = null;
         $determinations = $specimen->getDeterminations();
         if (count($determinations) > 0) {
             $taxon = $determinations[0]->getTaxon();
-            if ($taxon !== null) {
-                return $taxon;
-            } else {
-                return null;
-            }
         }
+        return $taxon;
     }
 
     /**
