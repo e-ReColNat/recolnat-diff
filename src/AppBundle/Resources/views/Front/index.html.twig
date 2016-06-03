@@ -4,13 +4,12 @@
     <div class="container-fluid">
         <h1 class="page-header row">{{ 'welcome' | trans({'%name%' : app.user},'user') }}</h1>
         {% if managedCollections|length > 0 %}
-            {% dump(managedCollections) %}
-            {% dump(diffHandlers) %}
             {% for collection in managedCollections %}
                 {% set collectionCode = collection.collectionCode %}
                 <div class="row">
                     {% if diffHandlers[collectionCode] is defined and diffHandlers[collectionCode].shouldSearchDiffs == false %}
                         <div class="col-sm-2">
+                            {{ 'label.institution' | trans }} : {{ collection.institution.institutioncode }} -
                             {{ 'label.collection' | trans }} :
 
                             <a href="{{ path('viewfile', {'collectionCode':collectionCode}) }}">
@@ -24,6 +23,7 @@
                         </ul>
                     {% else %}
                         <div class="col-sm-2">
+                            {{ 'label.institution' | trans }} : {{ collection.institution.institutioncode }} -
                             {{ 'label.collection' | trans }} :
                             {{ collectionCode }}
                         </div>

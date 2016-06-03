@@ -27,11 +27,20 @@ class FrontController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
-        //$user = new User('Julien.Husson', '1234', '123456', [], $this->getParameter('api_recolnat_user'));
+
         $exportManager = $this->get('exportmanager')->init($this->getUser());
 
-        $managedCollections = $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $user->getManagedCollections()]);
+        dump($user->getRoles());
+        dump($user->isSuperAdmin());
+
+        if ($user->isSuperAdmin()) {
+         $managedCollections = $this->getDoctrine()->getManager()
+             ->getRepository('AppBundle:Collection')->findAllOrderByInstitution();
+        }
+        else {
+            $managedCollections = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $user->getManagedCollections()]);
+        }
         $diffHandlers = $exportManager->getDiffHandlers();
 
         return $this->render('@App/Front/index.html.twig', array(

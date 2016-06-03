@@ -3,7 +3,6 @@
 namespace AppBundle\Security;
 
 use AppBundle\Business\User\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;

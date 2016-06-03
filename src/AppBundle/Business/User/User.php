@@ -26,7 +26,9 @@ class User implements UserInterface
 
     private $data = null;
 
-    const STR_SEARCH_DIFF_PERMISSION = 'SAISIE_COLLECTION';
+    const STR_SEARCH_DIFF_PERMISSION = 'EXEC_DIFF';
+    const STR_SUPER_ADMIN_ROLE = 'ROLE_SUPER_ADMIN';
+    private $super_admin = null;
 
     /**
      * @var string
@@ -43,6 +45,7 @@ class User implements UserInterface
         $this->roles = $roles;
         $this->apiRecolnatUser = $apiRecolnatUser;
         $this->userGroup = $userGroup;
+        $this->setData();
     }
 
     /**
@@ -59,21 +62,25 @@ class User implements UserInterface
     }
 
     /**
+     * Grab data through webservice
+     */
+    private function setData()
+    {
+        try {
+            $client = new Client();
+            $response = $client->get($this->apiRecolnatUser.urlencode($this->getUsername()));
+            $this->data = \GuzzleHttp\json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            echo \GuzzleHttp\Psr7\str($e->getRequest());
+            echo \GuzzleHttp\Psr7\str($e->getResponse());
+        }
+    }
+
+    /**
      * @return \StdClass|null
      */
     public function getData()
     {
-        if (is_null($this->data)) {
-            try {
-                $client = new Client();
-                $response = $client->get($this->apiRecolnatUser.urlencode($this->getUsername()));
-                $this->data = \GuzzleHttp\json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                echo \GuzzleHttp\Psr7\str($e->getRequest());
-                echo \GuzzleHttp\Psr7\str($e->getResponse());
-            }
-        }
-
         return $this->data;
     }
 
@@ -85,6 +92,33 @@ class User implements UserInterface
         $data = $this->getData();
 
         return (array) $data->permissionResources;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles()
+    {
+        $data = $this->getData();
+
+        return (array) $data->roles;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuperAdmin()
+    {
+        if (is_null($this->super_admin)) {
+            $this->super_admin = false;
+            foreach ($this->getRoles() as $role) {
+                if ($role->name == self::STR_SUPER_ADMIN_ROLE) {
+                    $this->super_admin = true;
+                }
+            }
+        }
+
+        return $this->super_admin;
     }
 
     public function getManagedCollections()
@@ -128,19 +162,6 @@ class User implements UserInterface
         }
 
         return $boolReturn;
-    }
-
-    /**
-     * @return void
-     */
-    private function createDir()
-    {
-        $fs = new Filesystem();
-        if (!$fs->exists($this->getDataDirPath())) {
-            $fs->mkdir($this->getDataDirPath(), 02775);
-            $fs->chgrp($this->getDataDirPath(), $this->userGroup);
-
-        }
     }
 
     /**
@@ -205,11 +226,6 @@ class User implements UserInterface
         $this->exportPath = $exportPath;
 
         return $this;
-    }
-
-    public function getRoles()
-    {
-        return $this->roles;
     }
 
     public function getPassword()

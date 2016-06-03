@@ -67,7 +67,7 @@ services:
             - { name: twig.extension }
             
     # LISTENERS
-    appBundle.flash_messenger:
+    app.flash_messenger:
         class: AppBundle\Listener\FlashMessagesListener
         arguments: ["@session"]
         tags:
