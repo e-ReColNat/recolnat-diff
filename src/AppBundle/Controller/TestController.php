@@ -36,11 +36,20 @@ class TestController extends Controller
     }
 
     /**
+     * @Route("/testdate")
+     */
+    public function testDateAction()
+    {
+        $minDate = $this->getDoctrine()->getRepository('AppBundle:Specimen')->getMinDate('AIX');
+        dump($minDate);
+        return $this->render('@App/base.html.twig');
+    }
+    /**
      * @Route("/institutions/", name="insitutions")
      */
     public function listeInstitutionAction()
     {
-        $fakeUser = new User('Julien.Husson', '1234', '123456', [], $this->getParameter('api_recolnat_user'),
+        $fakeUser = new User('Julien.Husson', '1234', '123456', $this->getParameter('api_recolnat_user'),
             $this->getParameter('user_group'));
 
         $permissions = $fakeUser->getPermissions();

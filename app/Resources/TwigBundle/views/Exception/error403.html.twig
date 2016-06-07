@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale|split('_')[0] }}">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Recolnat Diff{% endblock %}</title>
+    {% block stylesheets %}{% endblock %}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/AppBundle/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/AppBundle/css/simple-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/AppBundle/css/recolnat.css') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/AppBundle/images/favicon.png') }}" type="image/x-icon"/>
+
+    <meta charset="{{ _charset }}"/>
+    <title>Recolnat - {{ "access.denied" | trans({}, 'exceptions') }}</title>
+</head>
+<body>
+
+{% block navbar %}
+    <div id="parameters" class="hidden" data-collectioncode="{{ collectionCode is defined ? collectionCode:'' }}"></div>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a href="{{ logout_path('main') }}" class="navbar-brand">Recolnat - Diffs</a>
+                <p class="navbar-text bg-warning text-uppercase">
+                    {{ "error.occured" | trans({}, 'exceptions') }}
+                </p>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ logout_path('main') }}">{{ 'login.logout' | trans({}, 'user') }}</a></li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+{% endblock navbar %}
+<div class="container-fluid">
+    <h1>{{ "error.occured" | trans({}, 'exceptions') }}</h1>
+    <h2>{{ "access.denied" | trans({}, 'exceptions') }}</h2>
+
+    <div>
+        {{ "access.denied.explanations" | trans({}, 'exceptions') }}
+    </div>
+</div>
+</body>
+</html>

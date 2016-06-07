@@ -312,7 +312,7 @@
             </trans-unit>
             <trans-unit id="78">
                 <source>label.searchDiffs</source>
-                <target>Rechercher les différences</target>
+                <target>Rechercher</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.collection</source>
@@ -404,19 +404,15 @@
             </trans-unit>
             <trans-unit id="101">
                 <source>label.nodiffs</source>
-                <target>La recherche de différences n'a pas été effectué</target>
+                <target>La recherche n'a pas été effectuée</target>
             </trans-unit>
             <trans-unit id="102">
-                <source>access.denied.wrongPassword</source>
-                <target>Accés refusé : couple login/password incorrect</target>
+                <source>label.startDate</source>
+                <target>Date de début</target>
             </trans-unit>
             <trans-unit id="103">
-                <source>access.denied.wrongPermission</source>
-                <target>Accès refusé : vous n'êtes pas autorisé à rechercher les différences sur cette collection</target>
-            </trans-unit>
-            <trans-unit id="104">
-                <source>access.denied.wrongDateFormat</source>
-                <target>La date doit être au format jj/mm/aaaa (ex : 15/09/2016)</target>
+                <source>label.institution</source>
+                <target>institution</target>
             </trans-unit>
         </body>
     </file>

@@ -19,4 +19,5 @@ class CollectionRepository extends EntityRepository
             ->orderBy('i.institutioncode')
             ->getQuery()->getResult();
     }
+
 }

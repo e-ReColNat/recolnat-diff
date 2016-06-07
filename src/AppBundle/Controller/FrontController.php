@@ -30,9 +30,7 @@ class FrontController extends Controller
 
         $exportManager = $this->get('exportmanager')->init($this->getUser());
 
-        dump($user->getRoles());
-        dump($user->isSuperAdmin());
-
+        $managedCollectionsByInstitution=[];
         if ($user->isSuperAdmin()) {
          $managedCollections = $this->getDoctrine()->getManager()
              ->getRepository('AppBundle:Collection')->findAllOrderByInstitution();
@@ -41,10 +39,15 @@ class FrontController extends Controller
             $managedCollections = $this->getDoctrine()->getManager()
                 ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $user->getManagedCollections()]);
         }
+        if (count($managedCollections)) {
+            foreach ($managedCollections as $collection) {
+                $managedCollectionsByInstitution[$collection->getInstitution()->getInstitutioncode()][] = $collection;
+            }
+        }
         $diffHandlers = $exportManager->getDiffHandlers();
 
         return $this->render('@App/Front/index.html.twig', array(
-            'managedCollections' => $managedCollections,
+            'managedCollectionsByInstitution' => $managedCollectionsByInstitution,
             'diffHandlers' => $diffHandlers,
         ));
     }
@@ -78,16 +81,11 @@ class FrontController extends Controller
 
     /**
      * @Route("{collectionCode}/view", name="viewfile")
-     * @param Request $request
      * @param string  $collectionCode
      * @return Response
      */
-    public function viewFileAction(Request $request, $collectionCode)
+    public function viewFileAction( $collectionCode)
     {
-        if (!is_null($request->query->get('reset', null))) {
-            $this->get('session')->clear();
-        }
-
         $collection = $this->get('utility')->getCollection($collectionCode);
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);

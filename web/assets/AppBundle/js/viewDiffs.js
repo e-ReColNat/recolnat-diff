@@ -19,7 +19,6 @@ $(document).ready(function () {
     });
 
     var $diffs = $('#diffs');
-    var institutionCode = $diffs.data('institutioncode');
     var collectionCode = $diffs.data('collectioncode');
     var selectedClassName = $diffs.data('selectedclassname');
     var smallModal = $('#smallModal');

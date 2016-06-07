@@ -56,7 +56,7 @@ class ExportManager extends Units\Test
             $this->container->getParameter('user_group')
         );
 
-        $user = new User('tpateffoz', '...', '', ["ROLE_USER"], $this->container->getParameter('api_recolnat_user'),
+        $user = new User('tpateffoz', $this->container->getParameter('api_recolnat_user'),
             $this->container->getParameter('user_group'));
         $user->setExportPath($this->container->getParameter('export_path'));
         $this->exportManager->init($user)->setCollectionCode('AIX');

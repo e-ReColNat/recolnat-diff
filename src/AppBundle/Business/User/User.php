@@ -6,6 +6,7 @@ use AppBundle\Manager\UtilityService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @author tpateffoz
  */
-class User implements UserInterface
+class User implements UserInterface, \Serializable
 {
 
     /* @var $prefs \AppBundle\Business\User\Prefs */
@@ -22,7 +23,7 @@ class User implements UserInterface
     private $username;
     private $password;
     private $salt;
-    private $roles;
+    protected $roles;
 
     private $data = null;
 
@@ -37,17 +38,28 @@ class User implements UserInterface
 
     protected $userGroup;
 
-    public function __construct($username, $password, $salt, array $roles, $apiRecolnatUser, $userGroup)
+    public function __construct($username, $apiRecolnatUser, $userGroup)
+    {
+        $this->username = $username;
+
+        $this->apiRecolnatUser = $apiRecolnatUser;
+        $this->userGroup = $userGroup;
+        $this->setData();
+        $this->setRoles();
+    }
+    /*
+    public function __construct($username, $password, $roles, $salt, $apiRecolnatUser, $userGroup)
     {
         $this->username = $username;
         $this->password = $password;
         $this->salt = $salt;
-        $this->roles = $roles;
+
         $this->apiRecolnatUser = $apiRecolnatUser;
         $this->userGroup = $userGroup;
         $this->setData();
+        $this->setRoles();
     }
-
+*/
     /**
      * @param string $exportPath
      * @return $this
@@ -97,11 +109,23 @@ class User implements UserInterface
     /**
      * @return array
      */
-    public function getRoles()
+    public function setRoles()
     {
         $data = $this->getData();
 
-        return (array) $data->roles;
+        if (count($data->roles)) {
+            foreach($data->roles as $role) {
+                $this->roles[] = new Role($role->name);
+            }
+        }
+    }
+
+    /**
+     * @return Role[]
+     */
+    public function getRoles()
+    {
+        return $this->roles;
     }
 
     /**
@@ -112,7 +136,7 @@ class User implements UserInterface
         if (is_null($this->super_admin)) {
             $this->super_admin = false;
             foreach ($this->getRoles() as $role) {
-                if ($role->name == self::STR_SUPER_ADMIN_ROLE) {
+                if ($role->getRole() == self::STR_SUPER_ADMIN_ROLE) {
                     $this->super_admin = true;
                 }
             }
@@ -251,6 +275,24 @@ class User implements UserInterface
     public function __toString()
     {
         return $this->getUsername();
+    }
+
+    /**
+     * Serializes the content of the current User object
+     * @return string
+     */
+    public function serialize()
+    {
+        return \json_encode(array($this->username, $this->roles));
+    }
+
+    /**
+     * Unserializes the given string in the current User object
+     * @param $serialized
+     */
+    public function unserialize($serialized)
+    {
+        list($this->username, $this->roles) = \json_decode($serialized);
     }
 
 }

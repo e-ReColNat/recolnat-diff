@@ -8,6 +8,10 @@ security:
         cas:
             id: app.security.recolnat_user_provider
 
+    role_hierarchy:
+        ROLE_SAISIE: ROLE_USER
+        ROLE_ADMIN: ROLE_SAISIE
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
     firewalls:
 
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -27,5 +31,5 @@ security:
 
 #
     access_control:
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/, roles: ROLE_SAISIE }
 

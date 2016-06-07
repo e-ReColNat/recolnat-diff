@@ -8,6 +8,8 @@ use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +32,7 @@ class ComputeController extends Controller
         );
 
         $form = $this->createFormBuilder($defaults)
-            ->add('startDate', DateType::class)
+            ->add('startDate', DateType::class, ['label'=>'label.startDate'])
             ->getForm();
 
         $form->handleRequest($request);
@@ -56,33 +58,20 @@ class ComputeController extends Controller
      */
     public function newSearchDiffAction($collectionCode, $startDate)
     {
-        $collection = $this->get('utility')->getCollection($collectionCode);
+        $command = $this->get('command.search_diffs');
+        $command->setContainer($this->container);
 
-        $diffManager = $this->get('diff.newmanager');
-        $diffManager->setCollectionCode($collectionCode);
-        $diffManager->setStartDate(\DateTime::createFromFormat('U', $startDate));
+        $params = [
+            'startDate'         => (\DateTime::createFromFormat('U', $startDate)->format('d/m/Y')),
+            'user'              => $this->getUser(),
+            'collectionCode'    => $collectionCode
+        ];
+        $input = new ArrayInput($params);
+        $output = new NullOutput();
+        $command->run($input, $output);
 
-        $diffManager->harvestDiffs();
+        return $this->redirectToRoute('viewfile',['collectionCode' => $collectionCode]);
 
-        $diffComputer = $this->get('diff.computer');
-        $diffComputer->setCollection($collection);
-
-        $catalogNumbers = [];
-        foreach ($diffManager::ENTITIES_NAME as $entityName) {
-            $catalogNumbers[$entityName] = $diffManager->getResultByClassName($entityName);
-            $diffComputer->setCatalogNumbers($catalogNumbers);
-            $diffComputer->computeClassname($entityName);
-        }
-        $datas = $diffComputer->getAllDatas();
-
-        $diffHandler = new DiffHandler($this->getUser()->getDataDirPath(), $collection,
-            $this->getParameter('user_group'));
-
-        $diffHandler->saveDiffs($datas);
-
-        return $this->render('@App/base.html.twig', [
-            'collection' => $collection
-        ]);
     }
 
     /**

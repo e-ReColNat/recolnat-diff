@@ -47,19 +47,24 @@ class SearchDiffCommand extends ContainerAwareCommand
                 'Start Date ?'
             )
             ->addArgument(
-                'username',
+                'collectionCode',
                 InputArgument::REQUIRED,
+                'collection code ?'
+            )
+            ->addArgument(
+                'login',
+                InputArgument::OPTIONAL,
                 'username ?'
             )
             ->addArgument(
                 'password',
-                InputArgument::REQUIRED,
+                InputArgument::OPTIONAL,
                 'password ?'
             )
             ->addArgument(
-                'collectionCode',
-                InputArgument::REQUIRED,
-                'collection code ?'
+                'user',
+                InputArgument::OPTIONAL,
+                'user ?'
             );
     }
 
@@ -73,18 +78,15 @@ class SearchDiffCommand extends ContainerAwareCommand
     {
 
         $this->collectionCode = $input->getArgument('collectionCode');
+        $translator = $this->getContainer()->get('translator');
+
         if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
             $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
         } else {
-            throw new \Exception($this->getContainer()->get('translator')->trans('access.denied.wrongDateFormat'));
+            throw new \Exception($translator->trans('access.denied.wrongDateFormat', [], 'exceptions'));
         }
 
-        $user = $this->simpleCasAuthentification($input->getArgument('username'), $input->getArgument('password'));
-        $user->init($this->getContainer()->getParameter('export_path'));
-
-        if (!$user->isManagerFor($this->collectionCode)) {
-            throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPermission'));
-        }
+        $user = $this->getUser($input);
         $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
 
         $diffManager = $this->getContainer()->get('diff.newmanager');
@@ -122,6 +124,31 @@ class SearchDiffCommand extends ContainerAwareCommand
         return 'search OK';
     }
 
+    private function getUser(InputInterface $input)
+    {
+        if ($input->hasArgument('user') && $input->getArgument('user') !== null) {
+            if ($input->getArgument('user') instanceof User) {
+                $user = $input->getArgument('user');
+            } else {
+                var_dump($input->getArgument('user'));
+                throw new AccessDeniedException('BAD USER INSTANCE ! ');
+            }
+        } else {
+            if ($input->hasArgument('login')) {
+                $user = $this->simpleCasAuthentification($input->getArgument('login'), $input->getArgument('password'));
+                $user->init($this->getContainer()->getParameter('export_path'));
+            } else {
+                throw new AccessDeniedException('missing argument login ');
+            }
+        }
+
+        if (!$user->isManagerFor($this->collectionCode)) {
+            $translator = $this->getContainer()->get('translator');
+            throw new AccessDeniedException($translator->trans('access.denied.wrongPermission', [], 'exceptions'));
+        }
+        return $user;
+    }
+
     /**
      * @param string $username
      * @param string $password
@@ -141,15 +168,17 @@ class SearchDiffCommand extends ContainerAwareCommand
         if ($client->login()) {
             $response = $client->post('https://localhost/recolnat-diff/search');
             if ($response->getStatusCode() == 200) {
-                $user = new User($username, $password, null, [], $this->apiRecolnatUser,
+                $user = new User($username, $this->apiRecolnatUser,
                     $this->getContainer()->getParameter('user_group'));
 
                 return $user;
             } else {
-                throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPassword'));
+                throw new AccessDeniedException($this->getContainer()->get('translator')
+                    ->trans('access.denied.wrongPassword', [], 'exceptions'));
             }
         } else {
-            throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPassword'));
+            throw new AccessDeniedException($this->getContainer()->get('translator')
+                ->trans('access.denied.wrongPassword', [], 'exceptions'));
         }
     }
 }

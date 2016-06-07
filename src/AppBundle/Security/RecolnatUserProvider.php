@@ -43,11 +43,7 @@ class RecolnatUserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         if ($username) {
-            $password = '...';
-            $salt = '';
-            $roles = ['ROLE_USER'];
-
-            $user = new User($username, $password, $salt, $roles, $this->apiRecolnatUser, $this->userGroup);
+            $user = new User($username, $this->apiRecolnatUser, $this->userGroup);
             $user->init($this->exportPath);
 
             return $user;

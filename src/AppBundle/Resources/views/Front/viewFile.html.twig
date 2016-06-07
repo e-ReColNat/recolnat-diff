@@ -199,7 +199,7 @@
 
 
 {% block javascripts %}
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{{ asset('assets/AppBundle/js/d3-3.5.17.min.js') }}" charset="utf-8"></script>
     <script type="text/javascript">
         var collectionCode = '{{ collectionCode }}';
         var datas = [
