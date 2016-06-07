@@ -44,25 +44,6 @@ class TestController extends Controller
         dump($minDate);
         return $this->render('@App/base.html.twig');
     }
-    /**
-     * @Route("/institutions/", name="insitutions")
-     */
-    public function listeInstitutionAction()
-    {
-        $fakeUser = new User('Julien.Husson', '1234', '123456', $this->getParameter('api_recolnat_user'),
-            $this->getParameter('user_group'));
-
-        $permissions = $fakeUser->getPermissions();
-        dump($permissions);
-        dump($fakeUser->getManagedCollections());
-        $managedCollections = $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $fakeUser->getManagedCollections()]);
-
-        return $this->render('@App/Test/institutions.html.twig', [
-            'permissions' => $permissions,
-            'managedCollections' => $managedCollections,
-        ]);
-    }
 
     /**
      * @Route("files")

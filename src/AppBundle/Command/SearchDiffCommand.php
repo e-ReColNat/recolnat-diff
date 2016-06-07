@@ -130,7 +130,6 @@ class SearchDiffCommand extends ContainerAwareCommand
             if ($input->getArgument('user') instanceof User) {
                 $user = $input->getArgument('user');
             } else {
-                var_dump($input->getArgument('user'));
                 throw new AccessDeniedException('BAD USER INSTANCE ! ');
             }
         } else {

@@ -29,7 +29,7 @@ class User implements UserInterface, \Serializable
 
     const STR_SEARCH_DIFF_PERMISSION = 'EXEC_DIFF';
     const STR_SUPER_ADMIN_ROLE = 'ROLE_SUPER_ADMIN';
-    private $super_admin = null;
+    private $superAdmin = null;
 
     /**
      * @var string
@@ -47,19 +47,7 @@ class User implements UserInterface, \Serializable
         $this->setData();
         $this->setRoles();
     }
-    /*
-    public function __construct($username, $password, $roles, $salt, $apiRecolnatUser, $userGroup)
-    {
-        $this->username = $username;
-        $this->password = $password;
-        $this->salt = $salt;
 
-        $this->apiRecolnatUser = $apiRecolnatUser;
-        $this->userGroup = $userGroup;
-        $this->setData();
-        $this->setRoles();
-    }
-*/
     /**
      * @param string $exportPath
      * @return $this
@@ -106,9 +94,7 @@ class User implements UserInterface, \Serializable
         return (array) $data->permissionResources;
     }
 
-    /**
-     * @return array
-     */
+
     public function setRoles()
     {
         $data = $this->getData();
@@ -133,16 +119,16 @@ class User implements UserInterface, \Serializable
      */
     public function isSuperAdmin()
     {
-        if (is_null($this->super_admin)) {
-            $this->super_admin = false;
+        if (is_null($this->superAdmin)) {
+            $this->superAdmin = false;
             foreach ($this->getRoles() as $role) {
                 if ($role->getRole() == self::STR_SUPER_ADMIN_ROLE) {
-                    $this->super_admin = true;
+                    $this->superAdmin = true;
                 }
             }
         }
 
-        return $this->super_admin;
+        return $this->superAdmin;
     }
 
     public function getManagedCollections()
