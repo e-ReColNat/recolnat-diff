@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
 use AppBundle\Manager\ExportManager;
@@ -25,29 +25,30 @@ class FrontController extends Controller
      */
     public function indexAction()
     {
-        /* @var $institution \AppBundle\Entity\Institution */
-        $institution = $this->getUser()->getInstitution();
+        /** @var User $user */
+        $user = $this->getUser();
 
-        $collections = [];
-        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institution->getInstitutioncode());
         $exportManager = $this->get('exportmanager')->init($this->getUser());
 
-        /** @var Collection $collection */
-        foreach ($institution->getCollections() as $collection) {
-            $collectionCode = $collection->getCollectioncode();
-
-            $collections[$collectionCode]['collection'] = $collection;
-            $diffHandler->setCollectionCode($collectionCode);
-            $collections[$collectionCode]['diffHandler'] = [];
-            if (!$diffHandler->shouldSearchDiffs()) {
-                /* @var $exportManager \AppBundle\Manager\ExportManager */
-                $exportManager->setCollectionCode($collectionCode);
-                $collections[$collectionCode]['diffHandler'] = $exportManager->getFiles();
+        $managedCollectionsByInstitution=[];
+        if ($user->isSuperAdmin()) {
+         $managedCollections = $this->getDoctrine()->getManager()
+             ->getRepository('AppBundle:Collection')->findAllOrderByInstitution();
+        }
+        else {
+            $managedCollections = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $user->getManagedCollections()]);
+        }
+        if (count($managedCollections)) {
+            foreach ($managedCollections as $collection) {
+                $managedCollectionsByInstitution[$collection->getInstitution()->getInstitutioncode()][] = $collection;
             }
         }
+        $diffHandlers = $exportManager->getDiffHandlers();
 
         return $this->render('@App/Front/index.html.twig', array(
-            'collections' => $collections,
+            'managedCollectionsByInstitution' => $managedCollectionsByInstitution,
+            'diffHandlers' => $diffHandlers,
         ));
     }
 
@@ -80,16 +81,11 @@ class FrontController extends Controller
 
     /**
      * @Route("{collectionCode}/view", name="viewfile")
-     * @param Request $request
      * @param string  $collectionCode
      * @return Response
      */
-    public function viewFileAction(Request $request, $collectionCode)
+    public function viewFileAction( $collectionCode)
     {
-        if (!is_null($request->query->get('reset', null))) {
-            $this->get('session')->clear();
-        }
-
         $collection = $this->get('utility')->getCollection($collectionCode);
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
@@ -202,9 +198,10 @@ class FrontController extends Controller
      * @Route("{collectionCode}/specimen/tab/{catalogNumber}/{type}/{db}",
      *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
      * @ParamConverter("collection", options={"mapping": {"collectionCode": "collectioncode"}})
-     * @param string $catalogNumber
-     * @param string $type
-     * @param string $db
+     * @param Collection $collection
+     * @param string     $catalogNumber
+     * @param string     $type
+     * @param string     $db
      * @return Response
      */
     public function viewSpecimenTabAction(Collection $collection, $catalogNumber, $type, $db)
@@ -236,14 +233,12 @@ class FrontController extends Controller
      */
     public function setPrefsForExportAction(Request $request, $collectionCode, $type)
     {
-        $institutionCode = $this->getUser()->getInstitutionCode();
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
 
         $exportPrefs = new ExportPrefs();
 
         $form = $this->createForm(ExportPrefsType::class, $exportPrefs, [
             'action' => $this->generateUrl('setPrefsForExport', [
-                'institutionCode' => $institutionCode,
                 'collectionCode' => $collectionCode,
                 'type' => $type
             ])
@@ -252,7 +247,6 @@ class FrontController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $paramsExport = [
-                'institutionCode' => $institutionCode,
                 'collectionCode' => $collectionCode,
                 'exportPrefs' => serialize($exportPrefs)
             ];
@@ -269,7 +263,6 @@ class FrontController extends Controller
 
 
         return $this->render('@App/Front/setPrefsForExport.html.twig', array(
-            'institutionCode' => $institutionCode,
             'collectionCode' => $collectionCode,
             'sumStats' => $sumStats,
             'statsChoices' => $statsChoices,

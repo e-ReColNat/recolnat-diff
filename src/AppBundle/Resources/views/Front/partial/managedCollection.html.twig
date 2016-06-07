@@ -1,0 +1,37 @@
+{% set collectionCode = collection.collectionCode %}
+<div>
+    <small class="col-md-12">{{ collection.collectionname }}</small>
+{% if diffHandlers[collectionCode] is defined and diffHandlers[collectionCode].shouldSearchDiffs == false %}
+
+    <div class="col-md-4">
+        <span class="list-group-item">{{ 'label.collection' | trans }} :
+
+            <a href="{{ path('viewfile', {'collectionCode':collectionCode}) }}">
+                {{ collectionCode }}
+            </a>
+        </span>
+    </div>
+    <div class="col-md-5">
+        <span class="list-group-item">
+            {{ 'fichier.creele'|trans({'%date%': diffHandlers[collectionCode].getCTime|date("d/m/Y"), '%heure%' :diffHandlers[collectionCode].getCTime|date("H:i:s")}) }}<br />
+            {{ 'fichier.modifiele'|trans({'%date%': diffHandlers[collectionCode].getMTime|date("d/m/Y"), '%heure%' :diffHandlers[collectionCode].getMTime|date("H:i:s")}) }}
+        </span>
+    </div>
+
+
+{% else %}
+    <div class="col-md-4">
+        <span class="list-group-item">{{ 'label.collection' | trans }} :
+            {{ collectionCode }}
+        </span>
+    </div>
+    <div class="col-md-5">
+        <span class="list-group-item">{{ 'label.nodiffs' | trans }}</span>
+    </div>
+{% endif %}
+    <div class="col-md-3">
+        <a class="list-group-item searchDiffButton pull-right" href="{{ path('configureSearchDiff', {'collectionCode' : collectionCode}) }}">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> {{ 'label.searchDiffs' | trans }}
+        </a>
+    </div>
+</div>

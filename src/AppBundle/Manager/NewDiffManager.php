@@ -153,6 +153,15 @@ QUERY;
      */
     public function getStartDate()
     {
+        $minCollectionModifiedDate = $this->em->getRepository('AppBundle:Specimen')
+            ->getMinDate($this->collectionCode);
+
+        if (!is_null($minCollectionModifiedDate) && $minCollectionModifiedDate instanceof \DateTime) {
+            if ($minCollectionModifiedDate > $this->startDate) {
+                return $minCollectionModifiedDate;
+            }
+        }
+
         return $this->startDate;
     }
 

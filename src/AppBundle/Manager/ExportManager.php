@@ -70,6 +70,7 @@ class ExportManager
      * @var SessionHandler
      */
     public $sessionHandler;
+    protected $userGroup;
 
     /**
      * @param ManagerRegistry      $managerRegistry
@@ -78,6 +79,7 @@ class ExportManager
      * @param DiffManager          $diffManager
      * @param int                  $maxItemPerPage
      * @param DiffComputer         $diffComputer
+     * @param string               $userGroup
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -85,7 +87,8 @@ class ExportManager
         GenericEntityManager $genericEntityManager,
         DiffManager $diffManager,
         $maxItemPerPage,
-        DiffComputer $diffComputer
+        DiffComputer $diffComputer,
+        $userGroup
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->sessionManager = $sessionManager;
@@ -93,6 +96,7 @@ class ExportManager
         $this->diffManager = $diffManager;
         $this->maxItemPerPage = $maxItemPerPage;
         $this->diffComputer = $diffComputer;
+        $this->userGroup = $userGroup;
     }
 
     /**
@@ -121,14 +125,16 @@ class ExportManager
             throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
         } else {
             $this->diffManager->init($this->collection);
-            $this->diffHandler = new DiffHandler($this->user->getDataDirPath());
-            $this->diffHandler->setCollectionCode($this->collectionCode);
+            $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collection, $this->userGroup);
 
-            $this->selectedSpecimensHandler = new SelectedSpecimensHandler($this->user->getDataDirPath().$this->collectionCode);
-
-            $data = $this->launchDiffProcess();
-            $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
-            $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
+            if (!$this->getDiffHandler()->shouldSearchDiffs()) {
+                $this->selectedSpecimensHandler = new SelectedSpecimensHandler($this->diffHandler->getCollectionPath(),
+                    $this->userGroup);
+                $data = $this->getDiffHandler()->getDiffsFile()->getData();
+                $data['selectedSpecimens'] = $this->selectedSpecimensHandler->getData();
+                $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
+                $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
+            }
         }
 
         return $this;
@@ -164,6 +170,14 @@ class ExportManager
             return $this->diffHandler;
         }
         throw new \Exception('DiffHandler has not been initialized');
+    }
+
+    /**
+     * @return SelectedSpecimensHandler
+     */
+    public function getSelectedSpecimenHandler()
+    {
+        return $this->selectedSpecimensHandler;
     }
 
     /**
@@ -253,14 +267,34 @@ class ExportManager
     /**
      * @return array
      */
-    public function getFiles()
+    public function getDiffHandlers()
     {
         $returnDirs = [];
-        $institutionDir = $this->user->getDataDirPath();
-        if ($handle = opendir($institutionDir)) {
+        $dataDirPath = $this->user->getDataDirPath();
+        if ($handle = opendir($dataDirPath)) {
+            $institutionRepository = $this->managerRegistry->getManager()->getRepository('AppBundle:Institution');
+            $collectionRepository = $this->managerRegistry->getManager()->getRepository('AppBundle:Collection');
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != '.' && $entry != '..' && is_dir($institutionDir.$entry)) {
-                    $returnDirs[] = new DiffHandler($institutionDir.$entry);
+                if ($entry != '.' && $entry != '..' && is_dir($dataDirPath.$entry)) {
+                    $institutionCode = $entry;
+                    $institution = $institutionRepository->findOneBy(['institutioncode' => $institutionCode]);
+                    if (!is_null($institution)) {
+                        $institutionPath = $dataDirPath.$institutionCode;
+                        $handle2 = opendir($institutionPath);
+                        while (false !== ($subEntry = readdir($handle2))) {
+                            if ($subEntry != '.' && $subEntry != '..' && is_dir($institutionPath.'/'.$subEntry)) {
+                                $collection = $collectionRepository->findOneBy([
+                                    'collectioncode' => $subEntry,
+                                    'institution' => $institution
+                                ]);
+                                if (!is_null($collection)) {
+                                    $diffHandler = new DiffHandler($dataDirPath, $collection, $this->userGroup);
+                                    $returnDirs[$subEntry] = $diffHandler;
+                                }
+                            }
+                        }
+                        closedir($handle2);
+                    }
                 }
             }
             closedir($handle);
@@ -275,7 +309,7 @@ class ExportManager
      */
     public function getExportDirPath()
     {
-        return $this->user->getDataDirPath().$this->collectionCode.'/export/';
+        return $this->getDiffHandler()->getCollectionPath().'/export/';
     }
 
     /**

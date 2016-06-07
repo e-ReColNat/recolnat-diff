@@ -32,11 +32,7 @@ services:
             diffManager: "@diff.manager"
             maxItemPerPage: "%knp_paginator.page_range%"
             diffComputer: "@diff.computer"
-    usermanager:
-        class: AppBundle\Business\User\User
-        arguments:
-            exportPath: "%export_path%"
-            maxItemPerPage: "%knp_paginator.page_range%"
+            userGroup: "%user_group%"
 
     statsmanager:
         class: AppBundle\Business\StatsManager
@@ -71,7 +67,7 @@ services:
             - { name: twig.extension }
             
     # LISTENERS
-    appBundle.flash_messenger:
+    app.flash_messenger:
         class: AppBundle\Listener\FlashMessagesListener
         arguments: ["@session"]
         tags:
@@ -81,12 +77,12 @@ services:
     app.security.recolnat_user_provider:
         class: AppBundle\Security\RecolnatUserProvider
         arguments:
-            managerRegistry: "@doctrine"
             exportPath: "%export_path%"
             apiRecolnatUser: "%api_recolnat_user%"
+            userGroup: "%user_group%"
 
     # Command
-    command.searchDiff:
+    command.search_diffs:
         class: AppBundle\Command\SearchDiffCommand
         tags:
                     -  { name: console.command }

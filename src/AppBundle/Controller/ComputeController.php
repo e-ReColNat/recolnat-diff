@@ -8,6 +8,8 @@ use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,20 +19,20 @@ class ComputeController extends Controller
 {
     /**
      * @Route("{collectionCode}/diff/configure/", name="configureSearchDiff", options={"expose"=true})
-     * @param string $collectionCode
+     * @param string  $collectionCode
+     * @param Request $request
      * @return Response
      */
     public function configureSearchDiffAction(Request $request, $collectionCode)
     {
         $collection = $this->get('utility')->getCollection($collectionCode);
-        $institutionCode = $this->getUser()->getInstitutionCode();
 
         $defaults = array(
             'startDate' => new \DateTime('today'),
         );
 
         $form = $this->createFormBuilder($defaults)
-            ->add('startDate', DateType::class)
+            ->add('startDate', DateType::class, ['label'=>'label.startDate'])
             ->getForm();
 
         $form->handleRequest($request);
@@ -44,47 +46,32 @@ class ComputeController extends Controller
 
         return $this->render('@App/Compute/configure.html.twig', [
             'form' => $form->createView(),
-            'institutionCode' => $institutionCode,
             'collection' => $collection
         ]);
     }
 
     /**
      * @Route("{collectionCode}/newSearchDiff/{startDate}", name="newSearchDiff")
-     * @param $startDate
+     * @param string $collectionCode
+     * @param int    $startDate
      * @return Response
      */
     public function newSearchDiffAction($collectionCode, $startDate)
     {
-        $collection = $this->get('utility')->getCollection($collectionCode);
-        $institutionCode = $this->getUser()->getInstitutionCode();
+        $command = $this->get('command.search_diffs');
+        $command->setContainer($this->container);
 
-        $diffManager = $this->get('diff.newmanager');
-        $diffManager->setCollectionCode($collectionCode);
-        $diffManager->setStartDate(\DateTime::createFromFormat('U', $startDate));
+        $params = [
+            'startDate'         => (\DateTime::createFromFormat('U', $startDate)->format('d/m/Y')),
+            'user'              => $this->getUser(),
+            'collectionCode'    => $collectionCode
+        ];
+        $input = new ArrayInput($params);
+        $output = new NullOutput();
+        $command->run($input, $output);
 
-        $diffManager->harvestDiffs();
+        return $this->redirectToRoute('viewfile',['collectionCode' => $collectionCode]);
 
-        $diffComputer = $this->get('diff.computer');
-        $diffComputer->setCollection($collection);
-
-        $catalogNumbers = [];
-        foreach ($diffManager::ENTITIES_NAME as $entityName) {
-            $catalogNumbers[$entityName] = $diffManager->getResultByClassName($entityName);
-            $diffComputer->setCatalogNumbers($catalogNumbers);
-            $diffComputer->computeClassname($entityName);
-        }
-        $datas = $diffComputer->getAllDatas();
-
-        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
-        $diffHandler->setCollectionCode($collectionCode);
-
-        $diffHandler->saveDiffs($datas);
-
-        return $this->render('@App/base.html.twig', [
-            'institutionCode' => $institutionCode,
-            'collection' => $collection
-        ]);
     }
 
     /**
@@ -96,15 +83,14 @@ class ComputeController extends Controller
     {
         $collection = $this->get('utility')->getCollection($collectionCode);
 
-        $institutionCode = $this->getUser()->getInstitutionCode();
         $diffManager = $this->get('diff.manager');
         $diffManager->init($collection);
 
         $diffComputer = $this->get('diff.computer');
         $diffComputer->setCollection($collection);
 
-        $diffHandler = new DiffHandler($this->getParameter('export_path').'/'.$institutionCode);
-        $diffHandler->setCollectionCode($collectionCode);
+        $diffHandler = new DiffHandler($this->getUser()->getDataDirPath(), $collection,
+            $this->getParameter('user_group'));
 
         $response = new StreamedResponse();
 

@@ -79,7 +79,6 @@ $(document).ready(function () {
             }
         });
     var $parameters = $("#parameters");
-    var institutionCode = $parameters.data("institutioncode") ;
     var collectionCode = $parameters.data("collectioncode") ;
     var $checkboxSpecimen = $(".js_specimen").find("[name^='check-specimen']");
 
@@ -95,7 +94,6 @@ $(document).ready(function () {
 
     function setLinkViewSelected() {
         var url = Routing.generate('viewSpecimens', {
-            institutionCode: institutionCode,
             collectionCode: collectionCode,
             jsonCatalogNumbers: localStorage.getItem('selectedSpecimens')
         });
@@ -113,7 +111,7 @@ $(document).ready(function () {
         }
     }
 
-    if (nbSelectedSpecimens > 0 && $linkSelectedSpecimen.length == 1 && institutionCode !='' && collectionCode !='') {
+    if (nbSelectedSpecimens > 0 && $linkSelectedSpecimen.length == 1 && collectionCode !='') {
         setLinkViewSelected();
     }
     if (nbSelectedSpecimens > 0) {

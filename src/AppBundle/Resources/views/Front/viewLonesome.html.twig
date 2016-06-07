@@ -16,7 +16,7 @@
                 {% include '@App/Front/partial/breadcrumb.html.twig' %}
 
                 {% include '@App/Front/partial/pagination.html.twig' %}
-                <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}" data-selectedclassname="{{ selectedClassName }}">
+                <div id="diffs" data-collectionCode="{{ collectionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
                     {% for catalogNumber, records in specimens %}
                         {% for occurrenceid, specimen in records %}

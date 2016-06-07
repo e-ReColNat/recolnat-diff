@@ -2,10 +2,11 @@
 
 namespace AppBundle\Business\User;
 
-use AppBundle\Entity\Institution;
+use AppBundle\Manager\UtilityService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -13,54 +14,66 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @author tpateffoz
  */
-class User implements UserInterface
+class User implements UserInterface, \Serializable
 {
 
-    private $institutionCode;
     /* @var $prefs \AppBundle\Business\User\Prefs */
     private $prefs;
     private $exportPath;
-
-
     private $username;
     private $password;
     private $salt;
-    private $roles;
-
-    /** @var  Institution */
-    private $institution;
+    protected $roles;
 
     private $data = null;
 
-    const STR_SEARCH_DIFF_PERMISSION = 'SAISIE_COLLECTION';
+    const STR_SEARCH_DIFF_PERMISSION = 'EXEC_DIFF';
+    const STR_SUPER_ADMIN_ROLE = 'ROLE_SUPER_ADMIN';
+    private $superAdmin = null;
 
     /**
      * @var string
      */
     protected $apiRecolnatUser;
 
-    public function __construct($username, $password, $salt, array $roles, $apiRecolnatUser)
+    protected $userGroup;
+
+    public function __construct($username, $apiRecolnatUser, $userGroup)
     {
         $this->username = $username;
-        $this->password = $password;
-        $this->salt = $salt;
-        $this->roles = $roles;
+
         $this->apiRecolnatUser = $apiRecolnatUser;
+        $this->userGroup = $userGroup;
+        $this->setData();
+        $this->setRoles();
     }
 
     /**
-     * @param Institution $institution
-     * @param string      $exportPath
+     * @param string $exportPath
      * @return $this
      */
-    public function init($institution, $exportPath)
+    public function init($exportPath)
     {
-        $this->setInstitution($institution);
         $this->setExportPath($exportPath);
-        $this->createDir();
+        UtilityService::createDir($this->getDataDirPath(), $this->userGroup);
         $this->getPrefs();
 
         return $this;
+    }
+
+    /**
+     * Grab data through webservice
+     */
+    private function setData()
+    {
+        try {
+            $client = new Client();
+            $response = $client->get($this->apiRecolnatUser.urlencode($this->getUsername()));
+            $this->data = \GuzzleHttp\json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            echo \GuzzleHttp\Psr7\str($e->getRequest());
+            echo \GuzzleHttp\Psr7\str($e->getResponse());
+        }
     }
 
     /**
@@ -68,17 +81,6 @@ class User implements UserInterface
      */
     public function getData()
     {
-        if (is_null($this->data)) {
-            try {
-                $client = new Client();
-                $response = $client->get($this->apiRecolnatUser.urlencode($this->getUsername()));
-                $this->data = \GuzzleHttp\json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                echo \GuzzleHttp\Psr7\str($e->getRequest());
-                echo \GuzzleHttp\Psr7\str($e->getResponse());
-            }
-        }
-
         return $this->data;
     }
 
@@ -90,6 +92,58 @@ class User implements UserInterface
         $data = $this->getData();
 
         return (array) $data->permissionResources;
+    }
+
+
+    public function setRoles()
+    {
+        $data = $this->getData();
+
+        if (count($data->roles)) {
+            foreach($data->roles as $role) {
+                $this->roles[] = new Role($role->name);
+            }
+        }
+    }
+
+    /**
+     * @return Role[]
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuperAdmin()
+    {
+        if (is_null($this->superAdmin)) {
+            $this->superAdmin = false;
+            foreach ($this->getRoles() as $role) {
+                if ($role->getRole() == self::STR_SUPER_ADMIN_ROLE) {
+                    $this->superAdmin = true;
+                }
+            }
+        }
+
+        return $this->superAdmin;
+    }
+
+    public function getManagedCollections()
+    {
+        $managedCollectionCodes = [];
+        $permissions = $this->getPermissions();
+        if (count($permissions)) {
+            foreach ($permissions as $permission) {
+                if ($this->isManagerFor($permission->resource->code)) {
+                    $managedCollectionCodes[] = $permission->resource->code;
+                }
+            }
+        }
+
+        return $managedCollectionCodes;
     }
 
     public function getEmail()
@@ -110,24 +164,14 @@ class User implements UserInterface
         if (count($permissions)) {
             foreach ($permissions as $permission) {
                 if ($permission->resource->code == $collectionCode &&
-                    $permission->permission->name == self::STR_SEARCH_DIFF_PERMISSION) {
+                    $permission->permission->name == self::STR_SEARCH_DIFF_PERMISSION
+                ) {
                     $boolReturn = true;
                 }
             }
         }
 
         return $boolReturn;
-    }
-
-    /**
-     * @return void
-     */
-    private function createDir()
-    {
-        $fs = new Filesystem();
-        if (!$fs->exists($this->getDataDirPath())) {
-            $fs->mkdir($this->getDataDirPath(), 0755);
-        }
     }
 
     /**
@@ -153,10 +197,10 @@ class User implements UserInterface
      */
     public function savePrefs(Prefs $prefs)
     {
+        UtilityService::createFile($this->getPrefsFileName(), $this->userGroup);
         $handle = fopen($this->getPrefsFileName(), 'w');
         fwrite($handle, $prefs->toJson());
         fclose($handle);
-        chmod($this->getPrefsFileName(), 0755);
     }
 
     /**
@@ -172,26 +216,7 @@ class User implements UserInterface
      */
     public function getDataDirPath()
     {
-        return realpath($this->exportPath).'/'.$this->institutionCode.'/';
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getInstitutionCode()
-    {
-        return $this->institutionCode;
-    }
-
-    /**
-     * @param mixed $institutionCode
-     * @return User
-     */
-    public function setInstitutionCode($institutionCode)
-    {
-        $this->institutionCode = $institutionCode;
-
-        return $this;
+        return realpath($this->exportPath).'/'.$this->getUsername().'/';
     }
 
     /**
@@ -211,11 +236,6 @@ class User implements UserInterface
         $this->exportPath = $exportPath;
 
         return $this;
-    }
-
-    public function getRoles()
-    {
-        return $this->roles;
     }
 
     public function getPassword()
@@ -238,26 +258,27 @@ class User implements UserInterface
 
     }
 
-    /**
-     * @return Institution
-     */
-    public function getInstitution()
-    {
-        return $this->institution;
-    }
-
-    /**
-     * @param Institution $institution
-     */
-    public function setInstitution($institution)
-    {
-        $this->institution = $institution;
-        $this->institutionCode = $institution->getInstitutioncode();
-    }
-
     public function __toString()
     {
         return $this->getUsername();
+    }
+
+    /**
+     * Serializes the content of the current User object
+     * @return string
+     */
+    public function serialize()
+    {
+        return \json_encode(array($this->username, $this->roles));
+    }
+
+    /**
+     * Unserializes the given string in the current User object
+     * @param $serialized
+     */
+    public function unserialize($serialized)
+    {
+        list($this->username, $this->roles) = \json_decode($serialized);
     }
 
 }

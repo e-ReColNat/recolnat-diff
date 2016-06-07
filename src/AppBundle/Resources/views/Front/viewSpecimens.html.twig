@@ -13,7 +13,7 @@
                 {% include '@App/Front/partial/breadcrumb.html.twig' %}
                 {% include '@App/Front/partial/pagination.html.twig' %}
 
-                <div id="diffs" data-collectionCode="{{ collectionCode }}" data-institutioncode="{{ institutionCode }}"
+                <div id="diffs" data-collectionCode="{{ collectionCode }}"
                      data-selectedclassname="{{ selectedClassName is defined ? selectedClassName : '' }}">
                     {% for catalogNumber, classWithDiff in datas %}
                         {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' %}

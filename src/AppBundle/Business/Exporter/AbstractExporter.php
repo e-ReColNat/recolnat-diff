@@ -4,7 +4,7 @@ namespace AppBundle\Business\Exporter;
 
 use AppBundle\Business\Exporter\Entity\AbstractEntityExporter;
 use AppBundle\Business\User\Prefs;
-use Symfony\Component\Filesystem\Filesystem;
+use AppBundle\Manager\UtilityService;
 
 /**
  * Description of Exporter
@@ -38,7 +38,8 @@ abstract class AbstractExporter
         $this->datas = $datas;
         $this->exportPath = $exportPath;
         if (!is_dir($this->exportPath)) {
-            mkdir($this->exportPath);
+            mkdir($this->exportPath, 02774);
+            chgrp($this->exportPath, UtilityService::getFileGroup($this->exportPath));
         }
         foreach ($this->entitiesName as $className) {
             $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\Entity\\'.ucfirst($className).'Exporter';

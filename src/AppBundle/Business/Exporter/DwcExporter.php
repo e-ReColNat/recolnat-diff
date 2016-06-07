@@ -179,13 +179,12 @@ class DwcExporter extends AbstractExporter
                 $arrayFilesName[] = $csvFile->getPathName().' ';
                 // Closing files
                 $this->csvFiles[$className] = null;
-
             }
 
             $zipCommand = sprintf('zip -j %s %s', $zipFilePath, implode(' ', $arrayFilesName));
             exec($zipCommand);
         } else {
-            throw new \Exception('DWC-a can\'t be created !');
+            throw new \Exception('DWC-a '.$zipFilePath.' can\'t be created !');
         }
 
         if (!is_file($zipFilePath)) {

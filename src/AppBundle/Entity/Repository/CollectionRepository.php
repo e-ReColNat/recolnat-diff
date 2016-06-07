@@ -12,4 +12,12 @@ use Doctrine\ORM\EntityRepository;
  */
 class CollectionRepository extends EntityRepository
 {
+    public function findAllOrderByInstitution()
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.institution', 'i')
+            ->orderBy('i.institutioncode')
+            ->getQuery()->getResult();
+    }
+
 }

@@ -3,7 +3,6 @@
 namespace AppBundle\Security;
 
 use AppBundle\Business\User\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -12,10 +11,6 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 class RecolnatUserProvider implements UserProviderInterface
 {
     /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
-    /**
      * @var string
      */
     protected $exportPath;
@@ -23,18 +18,22 @@ class RecolnatUserProvider implements UserProviderInterface
      * @var string
      */
     protected $apiRecolnatUser;
+     /**
+     * @var string
+     */
+    protected $userGroup;
 
     /**
      * RecolnatUserProvider constructor.
-     * @param ManagerRegistry $managerRegistry
      * @param String          $exportPath
      * @param String          $apiRecolnatUser
+     * @param String          $userGroup
      */
-    public function __construct(ManagerRegistry $managerRegistry, $exportPath, $apiRecolnatUser)
+    public function __construct($exportPath, $apiRecolnatUser, $userGroup)
     {
-        $this->managerRegistry = $managerRegistry;
         $this->exportPath = $exportPath;
         $this->apiRecolnatUser = $apiRecolnatUser;
+        $this->userGroup = $userGroup;
     }
 
     /**
@@ -44,14 +43,8 @@ class RecolnatUserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         if ($username) {
-            $password = '...';
-            $salt = '';
-            $roles = ['ROLE_USER'];
-
-            $institution = $this->managerRegistry->getRepository('AppBundle:Institution')->findOneBy(['institutioncode' => 'MHNAIX']);
-
-            $user = new User($username, $password, $salt, $roles, $this->apiRecolnatUser);
-            $user->init($institution, $this->exportPath);
+            $user = new User($username, $this->apiRecolnatUser, $this->userGroup);
+            $user->init($this->exportPath);
 
             return $user;
         }

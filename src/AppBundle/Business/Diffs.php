@@ -3,24 +3,24 @@
 namespace AppBundle\Business;
 
 
+use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Diffs extends \SplFileObject
 {
     public $searchDiffs;
 
+    const EMPTY_ARRAY = ['datas'=>[], 'classes'=>[], 'stats'=>[], 'lonesomeRecords'=>[], 'statsLonesomeRecords'=>[]];
     const DIFF_FILENAME = '/diffs.json';
 
     /**
      * @param string $dirPath
+     * @param string $userGroup
      */
-    public function __construct($dirPath)
+    public function __construct($dirPath, $userGroup)
     {
         $this->searchDiffs = false;
-        $path = $dirPath.self::DIFF_FILENAME;
-        if (!is_file($path)) {
-            $this->searchDiffs = true;
-        }
+        $path = UtilityService::createFile($dirPath.self::DIFF_FILENAME, $userGroup);
         parent::__construct($path, 'c+');
     }
 
@@ -45,7 +45,7 @@ class Diffs extends \SplFileObject
         if ($fs->exists($this->getPathname())) {
             $fileContent = json_decode(file_get_contents($this->getPathname()), true);
             if (is_null($fileContent)) {
-                $fileContent = [];
+                $fileContent = self::EMPTY_ARRAY;
             }
 
             return $fileContent;

@@ -12,7 +12,7 @@
     <div class="container-fluid">
         {% include '@App/Front/partial/breadcrumb.html.twig' %}
         <h1 class="page-header">
-            {{ 'file.stats.title' | trans({'%name%' : institutionCode ~ ' / '~ collection.collectionCode},'user') }}
+            {{ 'file.stats.title' | trans({'%name%' : collection.collectionCode},'user') }}
         </h1>
 
         {% if stats is not empty %}
@@ -199,10 +199,9 @@
 
 
 {% block javascripts %}
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{{ asset('assets/AppBundle/js/d3-3.5.17.min.js') }}" charset="utf-8"></script>
     <script type="text/javascript">
         var collectionCode = '{{ collectionCode }}';
-        var institutionCode = '{{ institutionCode }}';
         var datas = [
             {% for className, detailedStats in stats %}
             {

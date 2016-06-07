@@ -1,6 +1,6 @@
 services:
     appbundle.doctrine.dbal.events.oracle_session_init.listener:
-        class: %doctrine.dbal.events.oracle_session_init.class%
+        class: "%doctrine.dbal.events.oracle_session_init.class%"
         tags:
             - { name: doctrine.event_listener, event: postConnect, connection: default }
             - { name: doctrine.event_listener, event: postConnect, connection: buffer }

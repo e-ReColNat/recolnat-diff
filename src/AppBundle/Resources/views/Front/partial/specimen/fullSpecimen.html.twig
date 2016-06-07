@@ -43,7 +43,7 @@
                 </a>
             </li>
             <li class="multimedia {{ specimenRecolnat.multimedias | length == 0 ? 'disabled' : '' }}">
-                <a href="#{{ loop.index }}-multimedia" data-toggle="tab" d
+                <a href="#{{ loop.index }}-multimedia" data-toggle="tab"
                    data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'catalogNumber': catalogNumber, 'type':'multimedia'}) }}">
                     {{ 'tab.multimedia'| trans }} <span class="badge">{{ specimenRecolnat.multimedias|length }}</span>
                 </a>

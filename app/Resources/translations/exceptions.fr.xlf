@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="fr" target-language="fr" datatype="plaintext" original="messages.xliff">
+        <body>
+            <trans-unit id="1" approved="yes">
+                <source>access.denied</source>
+                <target state="translated">Accés non autorisé</target>
+            </trans-unit>
+            <trans-unit id="2" approved="yes">
+                <source>error.occured</source>
+                <target state="translated">Une erreur est survenue</target>
+            </trans-unit>
+            <trans-unit id="3" approved="yes">
+                <source>access.denied.explanations</source>
+                <target state="translated">Vous n'avez pas les autorisations nécessaires pour accéder à cette page. Veuillez contacter l'administrateur d'e-ReColNat</target>
+            </trans-unit>
+            <trans-unit id="4" approved="yes">
+                <source>access.denied.wrongPassword</source>
+                <target>Accés refusé : couple login/password incorrect</target>
+            </trans-unit>
+            <trans-unit id="5" approved="yes">
+                <source>access.denied.wrongPermission</source>
+                <target>Accès refusé : vous n'êtes pas autorisé à rechercher les différences sur cette collection</target>
+            </trans-unit>
+            <trans-unit id="6" approved="yes">
+                <source>access.denied.wrongDateFormat</source>
+                <target>La date doit être au format jj/mm/aaaa (ex : 15/09/2016)</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

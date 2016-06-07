@@ -47,19 +47,24 @@ class SearchDiffCommand extends ContainerAwareCommand
                 'Start Date ?'
             )
             ->addArgument(
-                'username',
+                'collectionCode',
                 InputArgument::REQUIRED,
+                'collection code ?'
+            )
+            ->addArgument(
+                'login',
+                InputArgument::OPTIONAL,
                 'username ?'
             )
             ->addArgument(
                 'password',
-                InputArgument::REQUIRED,
+                InputArgument::OPTIONAL,
                 'password ?'
             )
             ->addArgument(
-                'collectionCode',
-                InputArgument::REQUIRED,
-                'collection code ?'
+                'user',
+                InputArgument::OPTIONAL,
+                'user ?'
             );
     }
 
@@ -73,19 +78,16 @@ class SearchDiffCommand extends ContainerAwareCommand
     {
 
         $this->collectionCode = $input->getArgument('collectionCode');
+        $translator = $this->getContainer()->get('translator');
+
         if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
             $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
         } else {
-            throw new \Exception($this->getContainer()->get('translator')->trans('access.denied.wrongDateFormat'));
+            throw new \Exception($translator->trans('access.denied.wrongDateFormat', [], 'exceptions'));
         }
 
-        $user = $this->simpleCasAuthentification($input->getArgument('username'), $input->getArgument('password'));
-
-        if (!$user->isManagerFor($this->collectionCode)) {
-            throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPermission'));
-        }
+        $user = $this->getUser($input);
         $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
-        $institutionCode = $collection->getInstitution()->getInstitutioncode();
 
         $diffManager = $this->getContainer()->get('diff.newmanager');
         $diffComputer = $this->getContainer()->get('diff.computer');
@@ -111,8 +113,8 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
         $datas = $diffComputer->getAllDatas();
 
-        $diffHandler = new DiffHandler($this->getContainer()->getParameter('export_path').'/'.$institutionCode);
-        $diffHandler->setCollectionCode($this->collectionCode);
+        $diffHandler = new DiffHandler($user->getDataDirPath(), $collection,
+            $this->getContainer()->getParameter('user_group'));
 
         $diffHandler->saveDiffs($datas);
         $progressBar->advance(10);
@@ -120,6 +122,30 @@ class SearchDiffCommand extends ContainerAwareCommand
         $output->writeln('');
 
         return 'search OK';
+    }
+
+    private function getUser(InputInterface $input)
+    {
+        if ($input->hasArgument('user') && $input->getArgument('user') !== null) {
+            if ($input->getArgument('user') instanceof User) {
+                $user = $input->getArgument('user');
+            } else {
+                throw new AccessDeniedException('BAD USER INSTANCE ! ');
+            }
+        } else {
+            if ($input->hasArgument('login')) {
+                $user = $this->simpleCasAuthentification($input->getArgument('login'), $input->getArgument('password'));
+                $user->init($this->getContainer()->getParameter('export_path'));
+            } else {
+                throw new AccessDeniedException('missing argument login ');
+            }
+        }
+
+        if (!$user->isManagerFor($this->collectionCode)) {
+            $translator = $this->getContainer()->get('translator');
+            throw new AccessDeniedException($translator->trans('access.denied.wrongPermission', [], 'exceptions'));
+        }
+        return $user;
     }
 
     /**
@@ -141,14 +167,17 @@ class SearchDiffCommand extends ContainerAwareCommand
         if ($client->login()) {
             $response = $client->post('https://localhost/recolnat-diff/search');
             if ($response->getStatusCode() == 200) {
-                $user = new User($username, $password, null, [], $this->apiRecolnatUser);
+                $user = new User($username, $this->apiRecolnatUser,
+                    $this->getContainer()->getParameter('user_group'));
 
                 return $user;
             } else {
-                throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPassword'));
+                throw new AccessDeniedException($this->getContainer()->get('translator')
+                    ->trans('access.denied.wrongPassword', [], 'exceptions'));
             }
         } else {
-            throw new AccessDeniedException($this->getContainer()->get('translator')->trans('access.denied.wrongPassword'));
+            throw new AccessDeniedException($this->getContainer()->get('translator')
+                ->trans('access.denied.wrongPassword', [], 'exceptions'));
         }
     }
 }

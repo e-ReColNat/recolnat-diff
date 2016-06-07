@@ -47,7 +47,6 @@ class DiffManager
         'Multimedia'
     ];
 
-    protected $institutionCode;
     protected $collectionCode;
     protected $entitiesName = [
         'Specimen',

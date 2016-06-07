@@ -2,6 +2,7 @@
 
 namespace AppBundle\Business;
 
+use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -14,10 +15,12 @@ class Choices extends \SplFileObject
 
     /**
      * @param string $dirPath
+     * @param string $userGroup
      */
-    public function __construct($dirPath)
+    public function __construct($dirPath, $userGroup)
     {
-        parent::__construct($dirPath.'/choices.json', 'c+');
+        $filePath = UtilityService::createFile($dirPath.'/choices.json', $userGroup);
+        parent::__construct($filePath, 'c+');
     }
 
     /**

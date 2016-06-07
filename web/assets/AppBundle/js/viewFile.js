@@ -29,7 +29,6 @@ var classesName = datas.map(function(obj) {
 var groupBar = chart.selectAll("g") ;
 var selectedClassName='';
 var optParams = {
-    'institutionCode': institutionCode,
     'collectionCode' : collectionCode
 };
 var bar;
