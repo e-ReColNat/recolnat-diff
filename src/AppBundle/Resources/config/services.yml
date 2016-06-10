@@ -78,16 +78,24 @@ services:
         class: AppBundle\Security\RecolnatUserProvider
         arguments:
             exportPath: "%export_path%"
-            apiRecolnatUser: "%api_recolnat_user%"
+            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
+            apiRecolnatUserPath: "%api_recolnat_user_path%"
             userGroup: "%user_group%"
 
     # Command
     command.search_diffs:
         class: AppBundle\Command\SearchDiffCommand
         tags:
-                    -  { name: console.command }
+            -  { name: console.command }
         arguments:
             serverLoginUrl: "%server_login_url%"
-            serverTicket: "v1/tickets"
+            serverTicket: "%api_recolnat_server_ticket_path%"
             requestOptions: "%request_options%"
-            apiRecolnatUser: "%api_recolnat_user%"
+            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
+            apiRecolnatUserPath: "%api_recolnat_user_path%"
+            apiRecolnatAuthServiceUrl : "%api_recolnat_auth_service_url%"
+
+    command.compute_diffs:
+            class: AppBundle\Command\ComputeDiffCommand
+            tags:
+                -  { name: console.command }

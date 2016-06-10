@@ -17,7 +17,11 @@ class RecolnatUserProvider implements UserProviderInterface
     /**
      * @var string
      */
-    protected $apiRecolnatUser;
+    protected $apiRecolnatBaseUri;
+    /**
+     * @var string
+     */
+    protected $apiRecolnatUserPath;
      /**
      * @var string
      */
@@ -26,13 +30,15 @@ class RecolnatUserProvider implements UserProviderInterface
     /**
      * RecolnatUserProvider constructor.
      * @param String          $exportPath
-     * @param String          $apiRecolnatUser
+     * @param String          $apiRecolnatBaseUri
+     * @param String          $apiRecolnatUserPath
      * @param String          $userGroup
      */
-    public function __construct($exportPath, $apiRecolnatUser, $userGroup)
+    public function __construct($exportPath, $apiRecolnatBaseUri, $apiRecolnatUserPath, $userGroup)
     {
         $this->exportPath = $exportPath;
-        $this->apiRecolnatUser = $apiRecolnatUser;
+        $this->apiRecolnatBaseUri = $apiRecolnatBaseUri;
+        $this->apiRecolnatUserPath = $apiRecolnatUserPath;
         $this->userGroup = $userGroup;
     }
 
@@ -43,7 +49,7 @@ class RecolnatUserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         if ($username) {
-            $user = new User($username, $this->apiRecolnatUser, $this->userGroup);
+            $user = new User($username, $this->apiRecolnatBaseUri, $this->apiRecolnatUserPath, $this->userGroup);
             $user->init($this->exportPath);
 
             return $user;

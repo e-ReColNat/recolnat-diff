@@ -73,13 +73,13 @@
     $(document).ready(function () {
         // Toast Messages
         {% for flash_type, flashes in app.session.flashbag.all %}
-        {% for flash_message in flashes %}
-        $.toaster({
-            message: '{{ flash_message }}',
-            priority: '{{ flash_type }}',
-            title: '{{ ('label.' ~ flash_type) | trans }}'
-        });
-        {% endfor %}
+            {% for flash_message in flashes %}
+            $.toaster({
+                message: '{{ flash_message }}',
+                priority: '{{ flash_type }}',
+                title: '{{ ('label.' ~ flash_type) | trans }}'
+            });
+            {% endfor %}
         {% endfor %}
     });
 </script>

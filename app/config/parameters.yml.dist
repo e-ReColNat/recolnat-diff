@@ -31,7 +31,10 @@ parameters:
     request_options:
 
     url_recolnat: https://explore.recolnat.org/#/specimen/
-    api_recolnat_user: https://api.recolnat.org/erecolnat/v1/users/login/
+    api_recolnat_base_uri: https://api.recolnat.org/erecolnat/
+    api_recolnat_server_ticket_path: v1/tickets/
+    api_recolnat_user_path: users/login/
+    api_recolnat_auth_service_url: https://api.recolnat.org/erecolnat/auth/
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1

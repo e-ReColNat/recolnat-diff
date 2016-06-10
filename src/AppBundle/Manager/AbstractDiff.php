@@ -3,6 +3,7 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
@@ -78,14 +79,14 @@ abstract class AbstractDiff
     /**
      * @param Collection $collection
      * @param string     $class
-     * @param array      $catalogNumber
+     * @param array      $catalogNumbers
      * @return $this
      */
-    public function init(Collection $collection, $class, $catalogNumber)
+    public function init(Collection $collection, $class, $catalogNumbers)
     {
         $this->class = $class;
         $this->classFullName = 'AppBundle:'.ucfirst($class);
-        $arrayChunkCatalogNumbers = array_chunk($catalogNumber, $this->maxNbSpecimenPerPass);
+        $arrayChunkCatalogNumbers = array_chunk($catalogNumbers, $this->maxNbSpecimenPerPass);
         if (count($arrayChunkCatalogNumbers)) {
             foreach ($arrayChunkCatalogNumbers as $chunkCatalogNumbers) {
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)

@@ -50,6 +50,7 @@ class UtilityService
     public static function getFileGroup($dirPath)
     {
         $fileInfoParent = new \SplFileInfo($dirPath);
+
         return $fileInfoParent->getGroup();
     }
 
@@ -60,6 +61,7 @@ class UtilityService
             chmod($path, 0775);
             chgrp($path, $group);
         }
+
         return realpath($path);
     }
 
@@ -70,6 +72,7 @@ class UtilityService
             chmod($path, 0775);
             chgrp($path, $group);
         }
+
         return realpath($path);
     }
 }

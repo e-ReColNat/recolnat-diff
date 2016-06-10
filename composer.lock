@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "783497097610d35001072198221a91ac",
-    "content-hash": "29bfcf0b1f5bd55544e95b109a1b3090",
+    "hash": "940f666aa77aaad4b0708d7f5e530db7",
+    "content-hash": "7206463c050a4aa974ef019ab01f1f11",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1517,6 +1517,58 @@
                 "parameters management"
             ],
             "time": "2015-11-10 17:04:01"
+        },
+        {
+            "name": "jagandecapri/symfony-parallel-process",
+            "version": "v2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jagandecapri/symfony-parallel-process.git",
+                "reference": "cc5aaf0ba071f4002331796072a3545923016a3d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jagandecapri/symfony-parallel-process/zipball/cc5aaf0ba071f4002331796072a3545923016a3d",
+                "reference": "cc5aaf0ba071f4002331796072a3545923016a3d",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/process": "~3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jack\\Symfony\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jack",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Oliver Eglseder",
+                    "email": "php@vxvr.de",
+                    "homepage": "http://vxvr.de",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "Simple wrapper to enable parallel processing using Symfony Process component",
+            "homepage": "https://github.com/jagandecapri/symfony-parallel-process",
+            "keywords": [
+                "parallel",
+                "parallel processing",
+                "process",
+                "symfony"
+            ],
+            "time": "2016-01-12 23:42:38"
         },
         {
             "name": "jdorn/sql-formatter",

@@ -26,6 +26,10 @@
                 <source>access.denied.wrongDateFormat</source>
                 <target>La date doit être au format jj/mm/aaaa (ex : 15/09/2016)</target>
             </trans-unit>
+            <trans-unit id="7" approved="yes">
+                <source>access.denied.tgc_username</source>
+                <target>Username ou cookietgc manquant</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
