@@ -31,9 +31,6 @@ class User implements UserInterface, \Serializable
     const STR_SUPER_ADMIN_ROLE = 'ROLE_SUPER_ADMIN';
     private $superAdmin = null;
 
-    private $serviceTicket;
-    private $apiRecolnatServiceUrl;
-
     /**
      * @var string
      */
@@ -67,16 +64,26 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @return string
+     * @param $cookieTGC
+     * @param $serverLoginUrl
+     * @param $serverTicketUrl
+     * @param $apiRecolnatServiceUrl
+     * @param $verifySsl
+     * @return bool
      */
-    public function checkServiceTicket($cookieTGC, $serverLoginUrl, $serverTicketUrl, $apiRecolnatServiceUrl, $verifySsl)
-    {
+    public function checkServiceTicket(
+        $cookieTGC,
+        $serverLoginUrl,
+        $serverTicketUrl,
+        $apiRecolnatServiceUrl,
+        $verifySsl
+    ) {
         try {
             $defaultHeaders = [
                 'Accept' => '*/*',
                 'Accept-Encoding' => 'gzip, deflate'
             ];
-            $client = new Client(['base_uri'=>$serverLoginUrl]);
+            $client = new Client(['base_uri' => $serverLoginUrl]);
             $response = $client->request(
                 'POST',
                 $serverTicketUrl.'/'.$cookieTGC,
@@ -88,21 +95,22 @@ class User implements UserInterface, \Serializable
                     'verify' => $verifySsl
                 ]
             );
-            if ($response->getStatusCode()==200 && $response->getReasonPhrase()=="OK") {
+            if ($response->getStatusCode() == 200 && $response->getReasonPhrase() == "OK") {
                 $serviceTicket = $response->getBody()->getContents();
-                $queryParams = ['service'=>$apiRecolnatServiceUrl, 'ticket'=>$serviceTicket];
-                $response = $client->request('GET','validate?'.http_build_query($queryParams),
+                $queryParams = ['service' => $apiRecolnatServiceUrl, 'ticket' => $serviceTicket];
+                $response = $client->request('GET', 'validate?'.http_build_query($queryParams),
                     [
                         'headers' => $defaultHeaders,
                         'verify' => $verifySsl
                     ]);
-                if ($response->getStatusCode()==200 && $response->getReasonPhrase()=="OK") {
+                if ($response->getStatusCode() == 200 && $response->getReasonPhrase() == "OK") {
                     $data = $response->getBody()->getContents();
                     if (strstr($data, $this->username)) {
                         return true;
                     }
                 }
             }
+
             return false;
         } catch (ClientException $e) {
             echo \GuzzleHttp\Psr7\str($e->getRequest());
@@ -116,7 +124,7 @@ class User implements UserInterface, \Serializable
     private function setData()
     {
         try {
-            $client = new Client(['base_uri'=>$this->apiRecolnatBaseUri]);
+            $client = new Client(['base_uri' => $this->apiRecolnatBaseUri]);
             $response = $client->request('GET', $this->apiRecolnatUserPath.urlencode($this->getUsername()));
             $this->data = \GuzzleHttp\json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {

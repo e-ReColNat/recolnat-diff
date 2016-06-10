@@ -3,15 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
-use AppBundle\Business\User\User;
 use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
-use AppBundle\Manager\UtilityService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +35,7 @@ class ComputeController extends Controller
 
         $form = $this->createFormBuilder($defaults)
             ->add('startDate', DateType::class, ['label' => 'label.startDate'])
-            ->add('cookieTGC', HiddenType::class, ['attr' =>['class' => 'js-cookieTGC']])
+            ->add('cookieTGC', HiddenType::class, ['attr' => ['class' => 'js-cookieTGC']])
             ->getForm();
 
         $form->handleRequest($request);
@@ -68,7 +64,7 @@ class ComputeController extends Controller
      * @Route("{collectionCode}/newSearchDiff/{startDate}/{cookieTGC}", name="newSearchDiff")
      * @param string $collectionCode
      * @param int    $startDate
-     * @param string    $cookieTGC
+     * @param string $cookieTGC
      * @return Response
      */
     public function newSearchDiffAction($collectionCode, $startDate, $cookieTGC)
@@ -93,7 +89,7 @@ class ComputeController extends Controller
             throw new ProcessFailedException($process);
         }
 
-        return $this->redirectToRoute('viewfile',['collectionCode' => $collectionCode]);
+        return $this->redirectToRoute('viewfile', ['collectionCode' => $collectionCode]);
 
     }
 

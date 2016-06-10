@@ -26,7 +26,6 @@ class SearchDiffCommand extends ContainerAwareCommand
     private $requestOptions;
     private $apiRecolnatBaseUri;
     private $collectionCode;
-    private $apiRecolnatAuthServiceUrl;
     private $apiRecolnatUserPath;
     private $translator;
 
@@ -40,15 +39,13 @@ class SearchDiffCommand extends ContainerAwareCommand
         $serverTicket,
         $requestOptions,
         $apiRecolnatBaseUri,
-        $apiRecolnatUserPath,
-        $apiRecolnatAuthServiceUrl
+        $apiRecolnatUserPath
     ) {
         $this->serverLoginUrl = $serverLoginUrl;
         $this->serverTicket = $serverTicket;
         $this->requestOptions = $requestOptions;
         $this->apiRecolnatBaseUri = $apiRecolnatBaseUri;
         $this->apiRecolnatUserPath = $apiRecolnatUserPath;
-        $this->apiRecolnatAuthServiceUrl = $apiRecolnatAuthServiceUrl;
         parent::__construct();
     }
 
@@ -146,7 +143,7 @@ class SearchDiffCommand extends ContainerAwareCommand
             $pathName = $path.'/'.$entityName.'.json';
             $datas = json_decode(file_get_contents($pathName), true);
             unlink($pathName);
-            $mergeData = $this->array_merge_recursive_distinct($mergeData, $datas);
+            $mergeData = $this->arrayMergeRecursiveDistinct($mergeData, $datas);
         }
         $this->filterLonesomesRecords($mergeData['lonesomeRecords'], $mergeData['statsLonesomeRecords']);
 
@@ -356,13 +353,13 @@ class SearchDiffCommand extends ContainerAwareCommand
      * @author Daniel <daniel (at) danielsmedegaardbuus (dot) dk>
      * @author Gabriel Sobrinho <gabriel (dot) sobrinho (at) gmail (dot) com>
      */
-    private function array_merge_recursive_distinct(array &$array1, array &$array2)
+    private function arrayMergeRecursiveDistinct(array &$array1, array &$array2)
     {
         $merged = $array1;
 
         foreach ($array2 as $key => &$value) {
             if (is_array($value) && isset ($merged [$key]) && is_array($merged [$key])) {
-                $merged [$key] = $this->array_merge_recursive_distinct($merged [$key], $value);
+                $merged [$key] = $this->arrayMergeRecursiveDistinct($merged [$key], $value);
             } else {
                 $merged [$key] = $value;
             }

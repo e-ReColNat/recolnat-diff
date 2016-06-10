@@ -22,17 +22,17 @@ class RecolnatUserProvider implements UserProviderInterface
      * @var string
      */
     protected $apiRecolnatUserPath;
-     /**
+    /**
      * @var string
      */
     protected $userGroup;
 
     /**
      * RecolnatUserProvider constructor.
-     * @param String          $exportPath
-     * @param String          $apiRecolnatBaseUri
-     * @param String          $apiRecolnatUserPath
-     * @param String          $userGroup
+     * @param String $exportPath
+     * @param String $apiRecolnatBaseUri
+     * @param String $apiRecolnatUserPath
+     * @param String $userGroup
      */
     public function __construct($exportPath, $apiRecolnatBaseUri, $apiRecolnatUserPath, $userGroup)
     {

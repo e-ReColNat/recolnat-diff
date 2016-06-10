@@ -121,8 +121,7 @@ class DiffComputer
             $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
             $this->computeDiffs($className);
             unset($diffClassManager);
-        }
-        else {
+        } else {
             throw new \Exception('no catalognumber for '.$className);
         }
         $this->diffs['classes'] = $this->classes;
@@ -260,38 +259,23 @@ class DiffComputer
             if (!isset($this->lonesomeRecords[$className][$db])) {
                 $this->lonesomeRecords[$className][$db] = [];
             }
-            $catalogNumbersNewSpecimenRecords = [];
-            /*if ($className != 'Specimen') {
-                $catalogNumbersNewSpecimenRecords = array_column($this->lonesomeRecords['Specimen'][$db],
-                    'catalogNumber');
-            }*/
 
             foreach ($items as $lonesomeRecord) {
                 $catalogNumber = $lonesomeRecord['catalogNumber'];
 
-                //if ($className == 'Specimen' || !in_array($catalogNumber, $catalogNumbersNewSpecimenRecords)
-                //) {
-                    $lonesomeRecord['taxon'] = $this->getTaxon($catalogNumber);
-                    $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
-                    if (!isset($this->statsLonesomeRecords[$catalogNumber])) {
-                        $this->statsLonesomeRecords[$catalogNumber] = [];
-                    }
-
-                    /*$this->statsLonesomeRecords[$catalogNumber][] =
-                        [
-                            'class' => $className,
-                            'id' => $lonesomeRecord['id'],
-                            'db' => $db,
-                        ];*/
-                //}
+                $lonesomeRecord['taxon'] = $this->getTaxon($catalogNumber);
+                $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
+                if (!isset($this->statsLonesomeRecords[$catalogNumber])) {
+                    $this->statsLonesomeRecords[$catalogNumber] = [];
+                }
             }
         }
     }
 
     public static function computeStatsLonesomeRecords($lonesomeRecordsByClassName)
     {
-        $stats=[];
-        foreach ($lonesomeRecordsByClassName as $className=> $lonesomeRecordsByDb) {
+        $stats = [];
+        foreach ($lonesomeRecordsByClassName as $className => $lonesomeRecordsByDb) {
             foreach ($lonesomeRecordsByDb as $db => $lonesomeRecords) {
                 foreach ($lonesomeRecords as $lonesomeRecord) {
                     $catalogNumber = $lonesomeRecord['catalogNumber'];
@@ -307,8 +291,10 @@ class DiffComputer
                 }
             }
         }
+
         return $stats;
     }
+
     /**
      * @param string $className
      * @param array  $stats

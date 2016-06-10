@@ -93,7 +93,6 @@ services:
             requestOptions: "%request_options%"
             apiRecolnatBaseUri: "%api_recolnat_base_uri%"
             apiRecolnatUserPath: "%api_recolnat_user_path%"
-            apiRecolnatAuthServiceUrl : "%api_recolnat_auth_service_url%"
 
     command.compute_diffs:
             class: AppBundle\Command\ComputeDiffCommand

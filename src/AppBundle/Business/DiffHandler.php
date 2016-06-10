@@ -79,7 +79,7 @@ class DiffHandler
      */
     public function getPath()
     {
-        return UtilityService::createDir($this->path, $this->userGroup) ;
+        return UtilityService::createDir($this->path, $this->userGroup);
     }
 
     /**
@@ -193,10 +193,11 @@ class DiffHandler
      */
     public function getCollectionPath()
     {
-        $institutionPath =  $this->getPath().'/'.$this->collection->getInstitution()->getInstitutioncode().'/';
+        $institutionPath = $this->getPath().'/'.$this->collection->getInstitution()->getInstitutioncode().'/';
         UtilityService::createDir($institutionPath, $this->userGroup);
 
-        $collectionPath =$institutionPath.$this->collection->getCollectioncode();
+        $collectionPath = $institutionPath.$this->collection->getCollectioncode();
+
         return UtilityService::createDir($collectionPath, $this->userGroup);
     }
 

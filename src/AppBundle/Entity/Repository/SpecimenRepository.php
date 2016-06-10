@@ -141,15 +141,16 @@ class SpecimenRepository extends AbstractRecolnatRepository
     public function getMinDate($collectionCode)
     {
 
-        $date =  $this->createQueryBuilder('s')
+        $date = $this->createQueryBuilder('s')
             ->select('MIN(s.modified)')
             ->where('s.collectioncode = :collectionCode')
             ->setParameter('collectionCode', $collectionCode)
             ->getQuery()
-            ->getSingleScalarResult() ;
+            ->getSingleScalarResult();
         if (!is_null($date)) {
-            return \DateTime::createFromFormat('Y-m-d H:i:s', $date) ;
+            return \DateTime::createFromFormat('Y-m-d H:i:s', $date);
         }
+
         return null;
     }
 }
