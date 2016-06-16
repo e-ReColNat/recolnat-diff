@@ -71,7 +71,7 @@ class User implements UserInterface, \Serializable
      * @param bool   $verifySsl
      * @return bool
      */
-    public function checkServiceTicket(
+    public function isGrantedByCheckServiceTicket(
         $cookieTGC,
         $serverLoginUrl,
         $serverTicketUrl,

@@ -36,7 +36,6 @@ class ComputeController extends Controller
             [
                 'attr' => [
                     'class' => 'js-formSearch',
-                    //'action'=>$this->generateUrl('configureSearchDiff', ['collectionCode'=>$collectionCode])
                 ]
             ])
             ->add('startDate', DateType::class, ['label' => 'label.startDate'])
@@ -89,7 +88,7 @@ class ComputeController extends Controller
         ];
 
         $consoleDir = realpath('/'.$this->get('kernel')->getRootDir().'/../bin/console');
-        $command = sprintf("%s diff:search %s %s %s --cookieTGC=%s",
+        $command = sprintf('%s diff:search %s %s %s --cookieTGC=%s',
             $consoleDir, (string) $params['startDate'], $params['collectionCode'], $params['username'], $cookieTGC);
 
 
@@ -183,5 +182,16 @@ class ComputeController extends Controller
 
         return $this->redirectToRoute('viewfile', ['collectionCode' => $collectionCode]);
 
+    }
+
+
+    /**
+     * @Route("{collectionCode}/diff/search/error/", name="SearchDiffError", options={"expose"=true})
+     * @param string $collectionCode
+     * @return Response
+     */
+    public function searchDiffErrorAction($collectionCode)
+    {
+        return $this->render('@App/Front/searchDiffError.html.twig');
     }
 }

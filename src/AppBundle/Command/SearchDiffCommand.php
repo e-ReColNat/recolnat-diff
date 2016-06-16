@@ -203,9 +203,9 @@ class SearchDiffCommand extends ContainerAwareCommand
         $processes = $this->getComputeProcess($diffManager);
 
         $processManager = new ProcessManager();
-        $max_parallel_processes = 8;
-        $polling_interval = 1000; // microseconds
-        $processManager->runParallel($processes, $max_parallel_processes, $polling_interval, $output, $this->getLogFile());
+        $maxParallelProcesses = 8;
+        $pollingInterval = 1000; // microseconds
+        $processManager->runParallel($processes, $maxParallelProcesses, $pollingInterval, $output, $this->getLogFile());
     }
 
     /**
@@ -221,8 +221,6 @@ class SearchDiffCommand extends ContainerAwareCommand
                 $this->collectionPath);
 
             $process = new Process($command);
-            //$process->startOutput = \json_encode(['name' => $entityName, 'progress' => 0]);
-            //$process->endOutput = \json_encode(['name' => $entityName, 'progress' => 100]);
             $process->setName($entityName);
             $process->setTimeout(null);
             $processes[] = $process;
@@ -270,7 +268,7 @@ class SearchDiffCommand extends ContainerAwareCommand
                 $verifySsl = false;
             }
             try {
-                $user->checkServiceTicket(
+                $user->isGrantedByCheckServiceTicket(
                     $cookieTGC,
                     $this->getContainer()->getParameter('server_login_url'),
                     $this->getContainer()->getParameter('api_recolnat_server_ticket_path'),
@@ -339,7 +337,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         $this->log('CatalogNumbers');
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
             $catalogNumbers = $diffManager->getResultByClassName($entityName);
-            $this->log("\t$entityName : ".count($catalogNumbers));
+            $this->log("\t".$entityName." : ".count($catalogNumbers));
             $catalogNumbersFilename = $diffHandler->getCollectionPath().'/catalogNumbers_'.$entityName.'.json';
             $fs->dumpFile($catalogNumbersFilename, \json_encode($catalogNumbers));
             $catalogNumbersFiles[] = $catalogNumbersFilename;

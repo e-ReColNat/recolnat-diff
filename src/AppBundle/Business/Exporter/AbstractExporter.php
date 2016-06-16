@@ -41,10 +41,6 @@ abstract class AbstractExporter
         $this->exportPath = $exportPath;
         $this->userGroup = $userGroup;
         UtilityService::createDir($exportPath, $userGroup);
-        /*if (!is_dir($this->exportPath)) {
-            mkdir($this->exportPath, 02774);
-            chgrp($this->exportPath, UtilityService::getFileGroup($this->exportPath));
-        }*/
         foreach ($this->entitiesName as $className) {
             $entityExporterConstructor = '\\AppBundle\\Business\\Exporter\\Entity\\'.ucfirst($className).'Exporter';
             /* @var $entityExporter \AppBundle\Business\Exporter\Entity\AbstractEntityExporter */

@@ -387,15 +387,6 @@ class FrontController extends Controller
 
     }
 
-    /**
-     * @Route("{collectionCode}/diff/search/error/", name="SearchDiffError", options={"expose"=true})
-     * @param string $collectionCode
-     * @return Response
-     */
-    public function searchDiffErrorAction($collectionCode)
-    {
-        return $this->render('@App/Front/searchDiffError.html.twig');
-    }
 
     /**
      * @param int           $page
