@@ -418,6 +418,10 @@
                 <source>label.nodiffs</source>
                 <target>La recherche n'a pas relevé de différences entre les deux bases de données</target>
             </trans-unit>
+            <trans-unit id="105">
+                <source>progression.general</source>
+                <target>Progression générale</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

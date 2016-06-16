@@ -2,8 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Business\DiffHandler;
-use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -31,11 +29,19 @@ class ComputeController extends Controller
 
         $defaults = array(
             'startDate' => new \DateTime('today'),
+            'collectionCode' => $collectionCode
         );
 
-        $form = $this->createFormBuilder($defaults)
+        $form = $this->createFormBuilder($defaults,
+            [
+                'attr' => [
+                    'class' => 'js-formSearch',
+                    //'action'=>$this->generateUrl('configureSearchDiff', ['collectionCode'=>$collectionCode])
+                ]
+            ])
             ->add('startDate', DateType::class, ['label' => 'label.startDate'])
             ->add('cookieTGC', HiddenType::class, ['attr' => ['class' => 'js-cookieTGC']])
+            ->add('collectionCode', HiddenType::class, ['attr' => ['class' => 'js-collectionCode']])
             ->getForm();
 
         $form->handleRequest($request);
@@ -46,12 +52,14 @@ class ComputeController extends Controller
                 throw new AccessDeniedException('cookieTGC is empty - javascript must be enabled');
             }
 
-            return $this->redirectToRoute('newSearchDiff',
-                [
-                    'collectionCode' => $collectionCode,
-                    'startDate' => $data['startDate']->getTimestamp(),
-                    'cookieTGC' => $data['cookieTGC'],
-                ]);
+            if ($data['startDate'] instanceof \DateTime) {
+                return $this->redirectToRoute('newSearchDiffStreamed',
+                    [
+                        'collectionCode' => $collectionCode,
+                        'startDate' => $data['startDate']->getTimestamp(),
+                        'cookieTGC' => $data['cookieTGC'],
+                    ]);
+            }
         }
 
         return $this->render('@App/Compute/configure.html.twig', [
@@ -59,6 +67,90 @@ class ComputeController extends Controller
             'collection' => $collection
         ]);
     }
+
+
+    /**
+     * @Route("{collectionCode}/newSearchDiffStreamed/{startDate}/{cookieTGC}", name="newSearchDiffStreamed",
+     *                                                                          options={"expose"=true})
+     * @param string $collectionCode
+     * @param string $startDate
+     * @param string $cookieTGC
+     * @return Response
+     */
+    public function newSearchDiffActionStreamedAction($collectionCode, $startDate, $cookieTGC)
+    {
+        $command = $this->get('command.search_diffs');
+        $command->setContainer($this->container);
+
+        $params = [
+            'startDate' => \DateTime::createFromFormat('U', $startDate)->format('d/m/Y'),
+            'username' => $this->getUser()->getUsername(),
+            'collectionCode' => $collectionCode
+        ];
+
+        $consoleDir = realpath('/'.$this->get('kernel')->getRootDir().'/../bin/console');
+        $command = sprintf("%s diff:search %s %s %s --cookieTGC=%s",
+            $consoleDir, (string) $params['startDate'], $params['collectionCode'], $params['username'], $cookieTGC);
+
+
+        $process = new Process($command);
+        $process->setTimeout(null);
+
+        $response = new StreamedResponse();
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache');
+
+        $this->newSearchDiffSetCallBack($response, $process);
+        $response->send();
+
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $this->redirectToRoute('viewfile', ['collectionCode' => $collectionCode]);
+
+    }
+
+    /**
+     * @param StreamedResponse $response
+     * @param Process          $process
+     */
+    private function newSearchDiffSetCallBack(StreamedResponse $response, Process $process)
+    {
+        $response->setCallback(function() use ($process) {
+            $server = new RecolnatServer();
+            $progress = 0;
+            $server->step->send(\json_encode(['name' => 'general', 'progress' => $progress]));
+            $process->run(function($type, $buffer) use ($server, &$progress) {
+                $step = 100 / count(DiffManager::ENTITIES_NAME);
+                if (Process::ERR === $type) {
+                    $server->error->send($buffer);
+                } else {
+                    $data = \json_decode($buffer);
+                    // Cas ou des retours sont reçus simultanément
+                    if (is_null($data)) {
+                        $validJson = '['.str_replace('}'.PHP_EOL.'{', '},{', $buffer).']';
+                        $arrayJson = \json_decode($validJson);
+                        foreach ($arrayJson as $value) {
+                            $server->step->send(\json_encode($value));
+                        }
+
+                    } else {
+                        $server->step->send($buffer);
+                    }
+
+                    if (isset($data->progress) && $data->progress == 100) {
+                        $progress += $step;
+                    }
+                    $server->step->send(\json_encode(['name' => 'general', 'progress' => $progress]));
+                }
+            });
+            $server->step->send(\json_encode(['name' => 'general', 'progress' => 100]));
+            $server->stop->send(\json_encode(['name' => 'general', 'progress' => 100]));
+        });
+    }
+
 
     /**
      * @Route("{collectionCode}/newSearchDiff/{startDate}/{cookieTGC}", name="newSearchDiff")
@@ -73,7 +165,7 @@ class ComputeController extends Controller
         $command->setContainer($this->container);
 
         $params = [
-            'startDate' => (\DateTime::createFromFormat('U', $startDate)->format('d/m/Y')),
+            'startDate' => (\DateTime::createFromFormat('U', $startDate)->format('dmY')),
             'username' => $this->getUser()->getUsername(),
             'collectionCode' => $collectionCode
         ];
@@ -82,7 +174,7 @@ class ComputeController extends Controller
         $command = sprintf('%s diff:search -vvv %s %s %s --cookieTGC=%s',
             $consoleDir, $params['startDate'], $params['collectionCode'], $params['username'], $cookieTGC);
 
-        $process = new Process($command);
+        $process = new Process(escapeshellcmd($command));
         $process->setTimeout(null);
         $process->run();
         if (!$process->isSuccessful()) {
@@ -91,68 +183,5 @@ class ComputeController extends Controller
 
         return $this->redirectToRoute('viewfile', ['collectionCode' => $collectionCode]);
 
-    }
-
-    /**
-     * @Route("{collectionCode}/diff/search", name="searchDiff", options={"expose"=true})
-     * @param string $collectionCode
-     * @return Response
-     */
-    public function searchDiffAction($collectionCode)
-    {
-        $collection = $this->get('utility')->getCollection($collectionCode);
-
-        $diffManager = $this->get('diff.manager');
-        $diffManager->init($collection);
-
-        $diffComputer = $this->get('diff.computer');
-        $diffComputer->setCollection($collection);
-
-        $diffHandler = new DiffHandler($this->getUser()->getDataDirPath(), $collection,
-            $this->getParameter('user_group'));
-
-        $response = new StreamedResponse();
-
-        $response->headers->set('Content-Type', 'text/event-stream');
-        $response->headers->set('Cache-Control', 'no-cache');
-
-
-        $this->searchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler);
-
-        $response->send();
-    }
-
-    /**
-     * @param StreamedResponse $response
-     * @param DiffManager      $diffManager
-     * @param DiffComputer     $diffComputer
-     * @param DiffHandler      $diffHandler
-     */
-    private function searchDiffSetCallBack($response, $diffManager, $diffComputer, $diffHandler)
-    {
-        $response->setCallback(function() use ($diffManager, $diffComputer, $diffHandler) {
-            $server = new RecolnatServer();
-            $catalogNumbers = [];
-
-            // Nb total d'étapes :  Search / Compute pour chaque entité
-            // +1 étape sauvegarde
-            $server->steps->send(count($diffManager::ENTITIES_NAME) * 2 + 1);
-            $countStep = 0;
-            foreach ($diffManager::ENTITIES_NAME as $entityName) {
-
-                $server->step->send(json_encode(['count' => $countStep++, 'step' => $entityName.' : recherche']));
-                $catalogNumbers[$entityName] = $diffManager->getDiff($entityName);
-                $server->step->send(json_encode(['count' => $countStep++, 'step' => $entityName.' : traitement']));
-
-                $diffComputer->setCatalogNumbers($catalogNumbers);
-                $diffComputer->computeClassname($entityName);
-            }
-
-            $datas = $diffComputer->getAllDatas();
-
-            $server->step->send(json_encode(['count' => $countStep++, 'step' => 'save']));
-            $diffHandler->saveDiffs($datas);
-            $server->step->send(json_encode(['count' => $countStep, 'step' => 'done']));
-        });
     }
 }

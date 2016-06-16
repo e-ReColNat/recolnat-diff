@@ -19,23 +19,6 @@ class TestController extends Controller
 {
 
     /**
-     * @Route("/generateDiff/{collectionCode}/{compt}", name="generateDiff")
-     * @param string  $collectionCode
-     * @param integer $number
-     * @return Response
-     */
-    public function generateDiffAction($collectionCode, $number)
-    {
-        $collection = $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
-        /* @var $diffManager \AppBundle\Manager\DiffManager */
-        $diffManager = $this->get('diff.manager');
-        $diffManager->generateDiff($collection, $number, rand(1, 5));
-
-        return $this->render('@App/Front/generateDiff.html.twig');
-    }
-
-    /**
      * @Route("/testdate")
      */
     public function testDateAction()

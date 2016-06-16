@@ -64,11 +64,11 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @param $cookieTGC
-     * @param $serverLoginUrl
-     * @param $serverTicketUrl
-     * @param $apiRecolnatServiceUrl
-     * @param $verifySsl
+     * @param string $cookieTGC
+     * @param string $serverLoginUrl
+     * @param string $serverTicketUrl
+     * @param string $apiRecolnatServiceUrl
+     * @param bool   $verifySsl
      * @return bool
      */
     public function checkServiceTicket(
@@ -78,44 +78,39 @@ class User implements UserInterface, \Serializable
         $apiRecolnatServiceUrl,
         $verifySsl
     ) {
-        try {
-            $defaultHeaders = [
-                'Accept' => '*/*',
-                'Accept-Encoding' => 'gzip, deflate'
-            ];
-            $client = new Client(['base_uri' => $serverLoginUrl]);
-            $response = $client->request(
-                'POST',
-                $serverTicketUrl.'/'.$cookieTGC,
+        $defaultHeaders = [
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip, deflate'
+        ];
+        $client = new Client(['base_uri' => $serverLoginUrl]);
+        $response = $client->request(
+            'POST',
+            $serverTicketUrl.'/'.$cookieTGC,
+            [
+                'form_params' => [
+                    'service' => $apiRecolnatServiceUrl
+                ],
+                'headers' => $defaultHeaders,
+                'verify' => $verifySsl
+            ]
+        );
+        if ($response->getStatusCode() == 200 && $response->getReasonPhrase() == "OK") {
+            $serviceTicket = $response->getBody()->getContents();
+            $queryParams = ['service' => $apiRecolnatServiceUrl, 'ticket' => $serviceTicket];
+            $response = $client->request('GET', 'validate?'.http_build_query($queryParams),
                 [
-                    'form_params' => [
-                        'service' => $apiRecolnatServiceUrl
-                    ],
                     'headers' => $defaultHeaders,
                     'verify' => $verifySsl
-                ]
-            );
+                ]);
             if ($response->getStatusCode() == 200 && $response->getReasonPhrase() == "OK") {
-                $serviceTicket = $response->getBody()->getContents();
-                $queryParams = ['service' => $apiRecolnatServiceUrl, 'ticket' => $serviceTicket];
-                $response = $client->request('GET', 'validate?'.http_build_query($queryParams),
-                    [
-                        'headers' => $defaultHeaders,
-                        'verify' => $verifySsl
-                    ]);
-                if ($response->getStatusCode() == 200 && $response->getReasonPhrase() == "OK") {
-                    $data = $response->getBody()->getContents();
-                    if (strstr($data, $this->username)) {
-                        return true;
-                    }
+                $data = $response->getBody()->getContents();
+                if (strstr($data, $this->username)) {
+                    return true;
                 }
             }
-
-            return false;
-        } catch (ClientException $e) {
-            echo \GuzzleHttp\Psr7\str($e->getRequest());
-            echo \GuzzleHttp\Psr7\str($e->getResponse());
         }
+
+        return false;
     }
 
     /**

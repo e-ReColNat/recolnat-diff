@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\User\Prefs;
 use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
@@ -61,6 +62,7 @@ class FrontController extends Controller
      */
     public function statsAction($collectionCode, $page = 1)
     {
+        /** @var Prefs $prefs */
         $prefs = $this->getUser()->getPrefs();
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
@@ -80,7 +82,7 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/view", name="viewfile")
+     * @Route("{collectionCode}/view", name="viewfile", options={"expose"=true})
      * @param string  $collectionCode
      * @return Response
      */
@@ -383,6 +385,16 @@ class FrontController extends Controller
             'type' => $type
         ));
 
+    }
+
+    /**
+     * @Route("{collectionCode}/diff/search/error/", name="SearchDiffError", options={"expose"=true})
+     * @param string $collectionCode
+     * @return Response
+     */
+    public function searchDiffErrorAction($collectionCode)
+    {
+        return $this->render('@App/Front/searchDiffError.html.twig');
     }
 
     /**

@@ -34,7 +34,7 @@ class UtilityService
      */
     public static function isDateWellFormatted($date)
     {
-        return (boolean) preg_match('#\d{2}(/)\d{2}(/)\d{4}#', $date);
+        return (boolean) preg_match('#\d{2}/\d{2}/\d{4}#', $date);
     }
 
     public static function formatRawId($rawId)
@@ -65,12 +65,19 @@ class UtilityService
         return realpath($path);
     }
 
-    public static function createFile($path, $group)
+    /**
+     * @param string      $path
+     * @param string|null $group
+     * @return string
+     */
+    public static function createFile($path, $group = null)
     {
         if (!file_exists($path)) {
             touch($path);
             chmod($path, 0775);
-            chgrp($path, $group);
+            if (!is_null($group)) {
+                chgrp($path, $group);
+            }
         }
 
         return realpath($path);

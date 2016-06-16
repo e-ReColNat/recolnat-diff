@@ -107,7 +107,8 @@ class DiffComputer
     }
 
     /**
-     * @param $className
+     * @param string $className
+     * @throws \Exception
      */
     public function computeClassname($className)
     {

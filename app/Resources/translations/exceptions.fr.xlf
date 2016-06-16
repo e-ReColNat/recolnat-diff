@@ -30,6 +30,10 @@
                 <source>access.denied.tgc_username</source>
                 <target>Username ou cookietgc manquant</target>
             </trans-unit>
+            <trans-unit id="8" approved="yes">
+                <source>searchDiffError</source>
+                <target>Une erreur s'est produite lors de la recherche des différences. Veuillez contacter l'administrateur.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

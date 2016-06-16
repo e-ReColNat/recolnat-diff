@@ -6,18 +6,19 @@ namespace AppBundle\Command;
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\User\User;
 use AppBundle\Manager\DiffComputer;
-use AppBundle\Manager\NewDiffManager;
+use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\UtilityService;
 use epierce\CasRestClient;
-use Jack\Symfony\ProcessManager;
+use AppBundle\Manager\ProcessManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
+use AppBundle\Business\Process;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Translation\Translator;
 
 class SearchDiffCommand extends ContainerAwareCommand
 {
@@ -27,8 +28,16 @@ class SearchDiffCommand extends ContainerAwareCommand
     private $apiRecolnatBaseUri;
     private $collectionCode;
     private $apiRecolnatUserPath;
+    /** @var  Translator */
     private $translator;
 
+    private $collectionPath;
+
+    private $logFileTemplate = 'log-%s.txt';
+
+    /** @var  \SplFileObject|null */
+    private $logFile;
+    private $user;
     /**
      * @var \DateTime
      */
@@ -79,12 +88,12 @@ class SearchDiffCommand extends ContainerAwareCommand
                 'cookieTGC',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'cookieTGC for cas Authentification'
+                'cookieTGC for cas Authentication'
             );
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @return string
      * @throws \Exception
@@ -93,21 +102,24 @@ class SearchDiffCommand extends ContainerAwareCommand
     {
         $this->translator = $this->getContainer()->get('translator');
         $this->collectionCode = $input->getArgument('collectionCode');
-        $translator = $this->getContainer()->get('translator');
+        $this->user = $this->getUser($input);
+        $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
+        $diffHandler = new DiffHandler($this->user->getDataDirPath(), $collection,
+            $this->getContainer()->getParameter('user_group'));
+        $this->collectionPath = $diffHandler->getCollectionPath();
+
+        $this->setLogFilePath();
 
         if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
             $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
         } else {
-            throw new \Exception($translator->trans('access.denied.wrongDateFormat', [], 'exceptions'));
+            throw new \Exception($this->translator->trans('access.denied.wrongDateFormat', [], 'exceptions'));
         }
 
-        $user = $this->getUser($input);
-        $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
+        $this->log('startDate : '.$this->startDate->format('c'));
+        $this->log('Collection Code : '.$this->collectionCode);
 
-        $diffHandler = new DiffHandler($user->getDataDirPath(), $collection,
-            $this->getContainer()->getParameter('user_group'));
-
-        $diffManager = $this->getContainer()->get('diff.newmanager');
+        $diffManager = $this->getContainer()->get('diff.manager');
         $diffManager->setCollectionCode($this->collectionCode);
         $diffManager->setStartDate($this->startDate);
         $diffManager->harvestDiffs();
@@ -115,16 +127,17 @@ class SearchDiffCommand extends ContainerAwareCommand
         $diffComputer = $this->getContainer()->get('diff.computer');
         $diffComputer->setCollection($collection);
 
-
         $catalogNumbersFiles = $this->createCatalogNumbersFiles($diffManager, $diffHandler);
 
-        $this->lauchDiffProcesses($diffManager, $diffHandler);
+        $this->launchDiffProcesses($diffManager, $output);
 
         $datas = $this->mergeFiles($diffManager::ENTITIES_NAME, $diffHandler->getCollectionPath());
 
         $diffHandler->saveDiffs($datas);
 
         $this->removeCatalogNumbersFiles($catalogNumbersFiles);
+
+        $this->closeLogFile();
     }
 
     private function removeCatalogNumbersFiles(array $catalogNumbersFiles)
@@ -179,16 +192,38 @@ class SearchDiffCommand extends ContainerAwareCommand
         $statsLonesomeRecords = DiffComputer::computeStatsLonesomeRecords($lonesomesRecords);
     }
 
+    /**
+     * @param DiffManager     $diffManager
+     * @param OutputInterface $output
+     */
+    protected function launchDiffProcesses(
+        DiffManager $diffManager,
+        OutputInterface $output
+    ) {
+        $processes = $this->getComputeProcess($diffManager);
 
-    private function getComputeProcess(NewDiffManager $diffManager, $savePath)
+        $processManager = new ProcessManager();
+        $max_parallel_processes = 8;
+        $polling_interval = 1000; // microseconds
+        $processManager->runParallel($processes, $max_parallel_processes, $polling_interval, $output, $this->getLogFile());
+    }
+
+    /**
+     * @param DiffManager $diffManager
+     * @return array
+     */
+    private function getComputeProcess(DiffManager $diffManager)
     {
         $processes = [];
+        $consoleDir = realpath('/'.$this->getContainer()->get('kernel')->getRootDir().'/../bin/console');
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
-            $consoleDir = realpath('/'.$this->getContainer()->get('kernel')->getRootDir().'/../bin/console');
-            $command = sprintf('%s diff:compute -vvv %s %s %s',
-                $consoleDir, $this->collectionCode, $entityName, $savePath);
+            $command = sprintf('%s diff:compute %s %s %s', $consoleDir, $this->collectionCode, $entityName,
+                $this->collectionPath);
 
             $process = new Process($command);
+            //$process->startOutput = \json_encode(['name' => $entityName, 'progress' => 0]);
+            //$process->endOutput = \json_encode(['name' => $entityName, 'progress' => 100]);
+            $process->setName($entityName);
             $process->setTimeout(null);
             $processes[] = $process;
         }
@@ -234,14 +269,14 @@ class SearchDiffCommand extends ContainerAwareCommand
             if (isset($requestOptions['verify']) && !$requestOptions['verify']) {
                 $verifySsl = false;
             }
-            if (
-            !$user->checkServiceTicket(
-                $cookieTGC,
-                $this->getContainer()->getParameter('server_login_url'),
-                $this->getContainer()->getParameter('api_recolnat_server_ticket_path'),
-                $this->getContainer()->getParameter('api_recolnat_auth_service_url'),
-                $verifySsl)
-            ) {
+            try {
+                $user->checkServiceTicket(
+                    $cookieTGC,
+                    $this->getContainer()->getParameter('server_login_url'),
+                    $this->getContainer()->getParameter('api_recolnat_server_ticket_path'),
+                    $this->getContainer()->getParameter('api_recolnat_auth_service_url'),
+                    $verifySsl);
+            } catch (\Exception $e) {
                 throw new AccessDeniedException($this->translator->trans('access.denied.wrongPermission', [],
                     'exceptions'));
             }
@@ -293,38 +328,24 @@ class SearchDiffCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param NewDiffManager $diffManager
-     * @param DiffHandler    $diffHandler
+     * @param DiffManager $diffManager
+     * @param DiffHandler $diffHandler
      * @return array
      */
-    protected function createCatalogNumbersFiles(NewDiffManager $diffManager, DiffHandler $diffHandler)
+    protected function createCatalogNumbersFiles(DiffManager $diffManager, DiffHandler $diffHandler)
     {
         $catalogNumbersFiles = [];
         $fs = new Filesystem();
+        $this->log('CatalogNumbers');
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
             $catalogNumbers = $diffManager->getResultByClassName($entityName);
+            $this->log("\t$entityName : ".count($catalogNumbers));
             $catalogNumbersFilename = $diffHandler->getCollectionPath().'/catalogNumbers_'.$entityName.'.json';
             $fs->dumpFile($catalogNumbersFilename, \json_encode($catalogNumbers));
             $catalogNumbersFiles[] = $catalogNumbersFilename;
         }
 
         return $catalogNumbersFiles;
-    }
-
-    /**
-     * @param NewDiffManager  $diffManager
-     * @param DiffHandler     $diffHandler
-     */
-    protected function lauchDiffProcesses(
-        NewDiffManager $diffManager,
-        DiffHandler $diffHandler
-    ) {
-        $processes = $this->getComputeProcess($diffManager, $diffHandler->getCollectionPath());
-
-        $processManager = new ProcessManager();
-        $max_parallel_processes = 8;
-        $polling_interval = 1000; // microseconds
-        $processManager->runParallel($processes, $max_parallel_processes, $polling_interval);
     }
 
 
@@ -367,4 +388,30 @@ class SearchDiffCommand extends ContainerAwareCommand
 
         return $merged;
     }
+
+    private function log($message)
+    {
+        $this->logFile->fwrite($message.PHP_EOL);
+    }
+
+    public function getLogFile()
+    {
+        return $this->logFile;
+    }
+
+    public function closeLogFile()
+    {
+        $this->logFile = null;
+    }
+
+
+    private function setLogFilePath()
+    {
+        $now = new \DateTime();
+        $logFilePath = sprintf($this->collectionPath.'/'.$this->logFileTemplate, $now->format('d-m-Y-H-i-s'));
+
+        $this->logFile = new \SplFileObject($logFilePath, 'w+');
+    }
+
+
 }

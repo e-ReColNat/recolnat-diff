@@ -17,14 +17,14 @@
             </div>
         </div>
     </div>
+    {% include "@App/Front/partial/searchDiffModal.html.twig" %}
 {% endblock body %}
 
 {% block javascripts %}
     <script type="text/javascript">
         $(document).ready(function () {
             function getTGCCookiesValue() {
-                var fname = getCookie('CASTGC');
-                return fname;
+                return getCookie('CASTGC');
             }
 
             function getCookie(cname) {
@@ -37,11 +37,79 @@
                     if (c.indexOf(name) == 0)
                         return c.substring(name.length, c.length);
                 }
-                return null;
+                return false;
             }
-            console.log(getTGCCookiesValue());
-            $('.js-cookieTGC').val(getTGCCookiesValue());
-        });
 
+            function addProgressBar(template, element, id, title) {
+                clone = template.clone().appendTo(element).show();
+                clone.find('.progress-step-title').html(title);
+                return clone.find('.progress-bar').attr('id', id)
+            }
+            $('.js-cookieTGC').val(getTGCCookiesValue());
+
+
+            $(".js-formSearch").on('submit', function (event) {
+                event.preventDefault();
+                $("#modal").modal({
+                    backdrop: 'static',
+                    keyboard: false
+                }).modal('show');
+
+                var progressbarTemplate = $("#modal").find(".js-progress-template");
+                var modalBody = $("#modal .modal-body");
+
+                //var progressbar = progressbarTemplate.clone().appendTo().show();
+                var progressBars = [] ;
+                progressBars['general'] = addProgressBar(progressbarTemplate, modalBody, 'general', Translator.trans('progression.general'));
+                progressBars['Specimen'] = addProgressBar(progressbarTemplate, modalBody, 'Specimen', Translator.trans('label.specimen.title'));
+                progressBars['Taxon'] = addProgressBar(progressbarTemplate, modalBody, 'Taxon', Translator.trans('label.taxon.title'));
+                progressBars['Stratigraphy'] = addProgressBar(progressbarTemplate, modalBody, 'Stratigraphy', Translator.trans('label.stratigraphy.title'));
+                progressBars['Determination'] = addProgressBar(progressbarTemplate, modalBody, 'Determination', Translator.trans('label.determination.title'));
+                progressBars['Recolte'] = addProgressBar(progressbarTemplate, modalBody, 'Recolte', Translator.trans('label.recolte.title'));
+                progressBars['Multimedia'] = addProgressBar(progressbarTemplate, modalBody, 'Multimedia', Translator.trans('label.multimedia.title'));
+                progressBars['Localisation'] = addProgressBar(progressbarTemplate, modalBody, 'Localisation', Translator.trans('label.localisation.title'));
+                progressBars['Bibliography'] = addProgressBar(progressbarTemplate, modalBody, 'Bibliography', Translator.trans('label.bibliography.title'));
+
+                try {
+
+                    var startDate = new Date($("#form_startDate_year").prop('value'), $("#form_startDate_month").prop('value')-1, $("#form_startDate_day").prop('value'));
+
+                    var source = new EventSource(Routing.generate('newSearchDiffStreamed',
+                            {
+                                'collectionCode': $('.js-collectionCode').val(),
+                                'startDate': startDate.getTime()/1000,
+                                'cookieTGC': $('.js-cookieTGC').val()
+                            }
+                    ));
+
+                    source.onopen = function () {
+                        return;
+                    };
+                    source.addEventListener('error', function (evt) {
+                        $("#modal").modal('hide');
+                    });
+                    source.addEventListener('steps', function (evt) {
+                        steps = parseInt(evt.data);
+                    });
+                    source.addEventListener('step', function (evt) {
+                        data = JSON.parse(evt.data);
+                        progress(data.progress, progressBars[data.name], data.progress);
+                        if (data.name == 'general' && parseInt(data.progress) == 100) {
+                            source.close();
+                            window.location=Routing.generate('viewfile', {'collectionCode': $('.js-collectionCode').val()});
+                        }
+                    });
+                    source.addEventListener('stop', function () {
+                        window.location=Routing.generate('viewfile', {'collectionCode': $('.js-collectionCode').val()});
+                    });
+
+                } catch (e) {
+                }
+            });
+            function progress(percent, $element, label) {
+                $element.css('width', percent + "%").html(Math.ceil(percent) + "%");
+                $element.parent().next().html(Translator.trans(label));
+            }
+        });
     </script>
 {% endblock %}
