@@ -234,13 +234,21 @@ abstract class AbstractDiff
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
                 $dataR = $recordRecolnat[$fieldName];
                 $dataI = $recordInstitution[$fieldName];
-                if ($dataR instanceof \DateTime && $dataI instanceof \DateTime) {
+                if ($dataR instanceof \DateTime) {
                     /** @var \DateTime $dataR */
+                    $dataR = $dataR->format('c');
+
+                    //$dataR = $dataR->format('c');
+                    //$dataI = $dataI->format('c');
+                    /*if ($dataR !== $dataI) {
+                        $this->addStat($fieldName, $catalogNumber, $idRecord, $dataR.'abc', $dataI.'abc');
+                    }*/
+                }
+                if ($dataI instanceof \DateTime) {
                     /** @var \DateTime $dataI */
-                    if ($dataR->format('c') !== $dataI->format('c')) {
-                        $this->addStat($fieldName, $catalogNumber, $idRecord, $dataR, $dataI);
-                    }
-                } elseif ($dataR !== $dataI) {
+                    $dataI = $dataI->format('c');
+                }
+                if ($dataR !== $dataI) {
                     $this->addStat($fieldName, $catalogNumber, $idRecord, $dataR, $dataI);
                 }
             }

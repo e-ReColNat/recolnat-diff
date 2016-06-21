@@ -148,6 +148,16 @@ class DiffHandler
         return $this->getDiffsFile()->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
     }
 
+    /**
+     * @param string      $db
+     * @param null|string $selectedClassName
+     * @return array
+     */
+    public function getLonesomeRecordsOrderedByCatalogNumbers($db, $selectedClassName = null)
+    {
+        return $this->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers($db, $selectedClassName);
+    }
+
 
     /**
      * @param $items

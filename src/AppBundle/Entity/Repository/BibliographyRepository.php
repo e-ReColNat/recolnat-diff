@@ -90,9 +90,11 @@ class BibliographyRepository extends AbstractRecolnatRepository
         $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
-        $qb = $this->getEntityManager()->createQueryBuilder()
+        $qb = $this->createQueryBuilder('b');
+
+        $qb
             ->select('b')
-            ->from('AppBundle:Bibliography', 'b')
+            //->from('AppBundle:Bibliography', 'b')
             ->addSelect($this->getExprCatalogNumber().' as catalognumber')
             ->join('b.specimen', 's');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);

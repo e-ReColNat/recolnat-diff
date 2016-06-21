@@ -172,7 +172,11 @@ class FrontController extends Controller
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         $lonesomeRecords = $exportManager->getDiffHandler()
+            ->getLonesomeRecordsOrderedByCatalogNumbers($db, $selectedClassName);
+        dump($lonesomeRecords);
+        $lonesomeRecords = $exportManager->getDiffHandler()
             ->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
+        dump($lonesomeRecords);
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomeRecords, $page, $maxItemPerPage);

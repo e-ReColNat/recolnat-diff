@@ -337,7 +337,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         $this->log('CatalogNumbers');
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
             $catalogNumbers = $diffManager->getResultByClassName($entityName);
-            $this->log("\t".$entityName." : ".count($catalogNumbers));
+            $this->log("\t".$entityName.' : '.count($catalogNumbers));
             $catalogNumbersFilename = $diffHandler->getCollectionPath().'/catalogNumbers_'.$entityName.'.json';
             $fs->dumpFile($catalogNumbersFilename, \json_encode($catalogNumbers));
             $catalogNumbersFiles[] = $catalogNumbersFilename;
