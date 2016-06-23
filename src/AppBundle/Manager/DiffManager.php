@@ -90,7 +90,7 @@ class DiffManager
             }
         }
 
-        return $catalogNumberByClassName;
+        return array_unique($catalogNumberByClassName);
     }
 
     /**

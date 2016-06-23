@@ -27,6 +27,10 @@ class DiffHandler
 
     protected $userGroup;
 
+    protected $lonesomeRecordsFile;
+    protected $statsFile;
+    protected $taxonsFile;
+
     /**
      * DiffHandler constructor.
      * @param string     $dirPath
@@ -49,11 +53,54 @@ class DiffHandler
     }
 
     /**
+     * @param array $lonesomeRecords
+     */
+    public function saveLonesomeRecords(array $lonesomeRecords)
+    {
+        $this->getLonesomeRecordsFile()->save($lonesomeRecords);
+    }
+
+    /**
+     * @param array $stats
+     */
+    public function saveStats(array $stats)
+    {
+        $this->getStatsFile()->save($stats);
+    }
+
+    public function getStats() {
+        return $this->getStatsFile()->getData();
+    }
+
+
+    /**
+     * @param array $taxons
+     */
+    public function saveTaxons(array $taxons)
+    {
+        $this->getTaxonsFile()->save($taxons);
+    }
+
+    public function getTaxons($catalogNumbers = null) {
+        if (is_null($catalogNumbers)) {
+            return $this->getTaxonsFile()->getData();
+        }
+        else {
+            return $this->getTaxonsFile()->getTaxons($catalogNumbers);
+        }
+    }
+
+    public function saveData(array $data) {
+        $this->saveDiffs(['datas'=>$data['datas'], 'classes'=>$data['classes']]);
+        $this->saveLonesomeRecords($data['statsLonesomeRecords']);
+        $this->saveStats(['stats'=>$data['stats'], 'classes'=>$data['classes']]);
+    }
+    /**
      * @return bool
      */
     public function shouldSearchDiffs()
     {
-        return !is_file($this->getCollectionPath().Diffs::DIFF_FILENAME);
+        return !is_file($this->getCollectionPath().Diffs::FILENAME);
     }
 
     /**
@@ -109,23 +156,66 @@ class DiffHandler
     }
 
     /**
-     * @return DiffHandler
+     *
+     * @return LonesomeRecords
      */
-    public function setChoicesFile()
+    public function getLonesomeRecordsFile()
     {
-        $this->choicesFile = new Choices($this->getCollectionPath(), $this->userGroup);
+        if (is_null($this->lonesomeRecordsFile)) {
+            $this->setLonesomeRecordsFile();
+        }
 
-        return $this;
+        return $this->lonesomeRecordsFile;
     }
 
     /**
-     * @return DiffHandler
+     *
+     * @return Stats
      */
-    public function setDiffsFile()
+    public function getStatsFile()
+    {
+        if (is_null($this->statsFile)) {
+            $this->setStatsFile();
+        }
+
+        return $this->statsFile;
+    }
+
+    private function setStatsFile()
+    {
+        $this->statsFile = new Stats($this->getCollectionPath(), $this->userGroup);
+    }
+    /**
+     *
+     * @return Taxons
+     */
+    public function getTaxonsFile()
+    {
+        if (is_null($this->taxonsFile)) {
+            $this->setTaxonsFile();
+        }
+
+        return $this->taxonsFile;
+    }
+
+    private function setTaxonsFile()
+    {
+        $this->taxonsFile = new Taxons($this->getCollectionPath(), $this->userGroup);
+    }
+
+    private function setChoicesFile()
+    {
+        $this->choicesFile = new Choices($this->getCollectionPath(), $this->userGroup);
+    }
+
+    private function setDiffsFile()
     {
         $this->diffsFile = new Diffs($this->getCollectionPath(), $this->userGroup);
+    }
 
-        return $this;
+    private function setLonesomeRecordsFile()
+    {
+        $this->lonesomeRecordsFile = new LonesomeRecords($this->getCollectionPath(), $this->userGroup);
     }
 
     /**
@@ -135,27 +225,7 @@ class DiffHandler
      */
     public function getLonesomeRecords($db = null, $selectedClassesNames = null)
     {
-        return $this->getDiffsFile()->getLonesomeRecords($db, $selectedClassesNames);
-    }
-
-    /**
-     * @param string      $db
-     * @param null|string $selectedClassName
-     * @return array
-     */
-    public function getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName = null)
-    {
-        return $this->getDiffsFile()->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
-    }
-
-    /**
-     * @param string      $db
-     * @param null|string $selectedClassName
-     * @return array
-     */
-    public function getLonesomeRecordsOrderedByCatalogNumbers($db, $selectedClassName = null)
-    {
-        return $this->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers($db, $selectedClassName);
+        return $this->getLonesomeRecordsFile()->getLonesomeRecords($db, $selectedClassesNames);
     }
 
 
@@ -231,8 +301,8 @@ class DiffHandler
     {
         $catalogNumbers = [];
         $search = strtolower($search);
-        $filteredData = array_filter($this->getDiffsFile()->getData()['datas'], function($el) use ($search) {
-            return (strpos(strtolower($el['taxon']), $search) !== false);
+        $filteredData = array_filter($this->getTaxons(), function($taxon) use ($search) {
+            return (strpos(strtolower($taxon), $search) !== false);
         });
         if (!empty($filteredData)) {
             $catalogNumbers = array_keys($filteredData);

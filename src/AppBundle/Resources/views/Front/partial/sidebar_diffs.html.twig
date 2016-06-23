@@ -11,8 +11,7 @@
 {% set firstLetter = '' %}
 <ul class="nav sidebar-nav sidebar-choices">
     {% for catalogNumber, datas in diffs.datas %}
-        {% set taxon = datas.taxon %}
-        {% set classWithDiff = datas.classes %}
+        {% set taxon = attribute(taxons, catalogNumber) %}
         {% set path='' %}
         {% if page != currentPage %}
             {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
@@ -34,7 +33,7 @@
 
             <a href="{{ path }}#{{ catalogNumber }}" data-currentpage="{{ page != currentPage ? 'false' : 'true' }}">{{ taxon }}</a>
             <ul class="choices">
-                {% for className in classWithDiff | keys %}
+                {% for className in datas | keys %}
                     {% set nbDiffs = countDiffs(datas, className) %}
                     {% set nbChoices = countChoices(choices, catalogNumber, className) %}
                     <li class="{{ className|lower }} light">

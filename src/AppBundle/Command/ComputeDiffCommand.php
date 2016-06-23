@@ -54,6 +54,7 @@ class ComputeDiffCommand extends ContainerAwareCommand
 
             $fs = new Filesystem();
             $fs->dumpFile($savePath.'/'.$entityName.'.json', \json_encode($datas, JSON_PRETTY_PRINT));
+            $fs->dumpFile($savePath.'/taxons_'.$entityName.'.json', \json_encode($diffComputer->getTaxons()));
 
         }
     }

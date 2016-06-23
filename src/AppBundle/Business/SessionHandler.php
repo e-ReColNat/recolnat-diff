@@ -28,8 +28,8 @@ class SessionHandler
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
 
-        $this->sessionManager->set('stats', $data['stats']);
-        unset($data['stats']);
+        //$this->sessionManager->set('stats', $data['stats']);
+        //unset($data['stats']);
 
         $this->sessionManager->set('selectedSpecimens', $data['selectedSpecimens']);
         unset($data['selectedSpecimens']);
@@ -92,8 +92,8 @@ class SessionHandler
     private function getCatalogNumbers()
     {
         $stats = $this->sessionManager->get('diffs');
-        if (is_array($stats['datas'])) {
-            return array_keys($stats['datas']);
+        if (is_array($stats)) {
+            return array_keys($stats);
         }
         return [];
     }

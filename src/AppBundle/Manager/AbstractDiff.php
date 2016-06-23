@@ -16,6 +16,8 @@ abstract class AbstractDiff
 {
     protected $class;
     protected $classFullName;
+    const KEY_RECOLNAT = 0;
+    const KEY_INSTITUTION = 1;
     /**
      * Records set venant de la base Recolnat
      * @var array
@@ -32,7 +34,7 @@ abstract class AbstractDiff
      * Records set venant du fichier de l'institution
      * @var array
      */
-    public $lonesomeRecords = ['recolnat' => [], 'institution' => []];
+    public $lonesomeRecords = [self::KEY_RECOLNAT => [], self::KEY_INSTITUTION => []];
     /**
      * Holds the Doctrine entity manager for eRecolnat database interaction
      * @var EntityManager
@@ -75,6 +77,10 @@ abstract class AbstractDiff
         $this->emB = $managerRegistry->getManager('buffer');
     }
 
+    public static function getKeysRef()
+    {
+        return ['recolnat'=>self::KEY_RECOLNAT, 'institution'=>self::KEY_INSTITUTION];
+    }
     /**
      * @param Collection $collection
      * @param string     $class
@@ -120,8 +126,8 @@ abstract class AbstractDiff
             $this->stats[$catalogNumber][$id] = [];
         }
         $this->stats[$catalogNumber][$id][$fieldName] = [];
-        $this->stats[$catalogNumber][$id][$fieldName]['recolnat'] = $dataR;
-        $this->stats[$catalogNumber][$id][$fieldName]['institution'] = $dataI;
+        $this->stats[$catalogNumber][$id][$fieldName][self::KEY_RECOLNAT] = $dataR;
+        $this->stats[$catalogNumber][$id][$fieldName][self::KEY_INSTITUTION] = $dataI;
         $this->fields[$fieldName]++;
     }
 
@@ -168,17 +174,17 @@ abstract class AbstractDiff
         }
 
         // Traitement des enregistrements restants de recolnat
-        foreach ($filteredRecords['recolnat'] as $catalogNumber => $item) {
+        foreach ($filteredRecords[self::KEY_RECOLNAT] as $catalogNumber => $item) {
             foreach ($item as $id) {
                 $record = $this->recordsRecolnat[$catalogNumber][$id];
-                $this->setLonesomeRecord('recolnat', $record, $catalogNumber);
+                $this->setLonesomeRecord(self::KEY_RECOLNAT, $record, $catalogNumber);
             }
         }
         // Traitement des enregistrements restants de l'institution
-        foreach ($filteredRecords['institution'] as $catalogNumber => $item) {
+        foreach ($filteredRecords[self::KEY_INSTITUTION] as $catalogNumber => $item) {
             foreach ($item as $id) {
                 $record = $this->recordsInstitution[$catalogNumber][$id];
-                $this->setLonesomeRecord('institution', $record, $catalogNumber);
+                $this->setLonesomeRecord(self::KEY_INSTITUTION, $record, $catalogNumber);
             }
         }
     }
@@ -188,19 +194,19 @@ abstract class AbstractDiff
      */
     private function getFilteredRecords()
     {
-        $arrayRecords = ['common' => [], 'recolnat' => [], 'institution' => []];
+        $arrayRecords = ['common' => [], self::KEY_RECOLNAT => [], self::KEY_INSTITUTION => []];
         foreach ($this->recordsRecolnat as $catalogNumber => $item) {
             if (isset($this->recordsInstitution[$catalogNumber])) {
                 foreach ($item as $id => $record) {
                     if (isset($this->recordsInstitution[$catalogNumber][$id])) {
                         $arrayRecords['common'][$catalogNumber][] = $id;
                     } else {
-                        $arrayRecords['recolnat'][$catalogNumber][] = $id;
+                        $arrayRecords[self::KEY_RECOLNAT][$catalogNumber][] = $id;
                     }
                 }
             } else {
                 foreach ($item as $id => $record) {
-                    $arrayRecords['recolnat'][$catalogNumber][] = $id;
+                    $arrayRecords[self::KEY_RECOLNAT][$catalogNumber][] = $id;
                 }
             }
         }
@@ -208,12 +214,12 @@ abstract class AbstractDiff
             if (isset($this->recordsRecolnat[$catalogNumber])) {
                 foreach ($item as $id => $record) {
                     if (!isset($this->recordsRecolnat[$catalogNumber][$id])) {
-                        $arrayRecords['institution'][$catalogNumber][] = $id;
+                        $arrayRecords[self::KEY_INSTITUTION][$catalogNumber][] = $id;
                     }
                 }
             } else {
                 foreach ($item as $id => $record) {
-                    $arrayRecords['institution'][$catalogNumber][] = $id;
+                    $arrayRecords[self::KEY_INSTITUTION][$catalogNumber][] = $id;
                 }
             }
         }
@@ -237,12 +243,6 @@ abstract class AbstractDiff
                 if ($dataR instanceof \DateTime) {
                     /** @var \DateTime $dataR */
                     $dataR = $dataR->format('c');
-
-                    //$dataR = $dataR->format('c');
-                    //$dataI = $dataI->format('c');
-                    /*if ($dataR !== $dataI) {
-                        $this->addStat($fieldName, $catalogNumber, $idRecord, $dataR.'abc', $dataI.'abc');
-                    }*/
                 }
                 if ($dataI instanceof \DateTime) {
                     /** @var \DateTime $dataI */

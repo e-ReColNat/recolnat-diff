@@ -25,6 +25,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 
 class TestController extends Controller
@@ -64,7 +65,7 @@ class TestController extends Controller
      */
     public function json2Action()
     {
-        $jsonFile = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/MHNAIX/AIX/diffs.json' ;
+        $jsonFile = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/diffs.json' ;
         $classesJsonFile = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/MHNAIX/AIX/classes.json';
         $collectionCode = 'AIX';
 
@@ -106,10 +107,57 @@ class TestController extends Controller
      */
     public function json3Action()
     {
-        $file = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/diffs.json';
+        /*$file = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/diffs.json';
         $allData = \json_decode(file_get_contents($file), true);
+        $lonesomeRecords = $allData['lonesomeRecords'] ;
+        $reformatted = [];
+        dump(current($lonesomeRecords['Specimen']['recolnat']));
+        foreach($lonesomeRecords as $class=>$items) {
+            foreach($items as $db=>$itemsPerDb) {
+                foreach ($itemsPerDb as $item) {
+                    if (!isset($reformatted[$class])) {
+                        $reformatted[$class] = [0 => [], 1 => []];
+                    }
+                    if ($db == 'recolnat') {
+                        $index = 0;
+                    } else {
+                        $index = 1;
+                    }
+                    $reformatted[$class][$index][] = [
+                        0 => $item['catalogNumber'],
+                        1 => $item['id'],
+                        2 => $item['taxon'],
+                    ];
+                }
+            }
+        }
+        dump(current($reformatted['Specimen'][0]));
+        $fs = new Filesystem();
+        $utility = $this->get('utility');
+        $utility::createFile('/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/lonesome1.json');
+        $utility::createFile('/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/lonesome2.json');
+        $fs->dumpFile('/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/lonesome1.json', \json_encode($lonesomeRecords, JSON_PRETTY_PRINT));
+        $fs->dumpFile('/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/lonesome2.json', \json_encode($reformatted, JSON_PRETTY_PRINT));/*/
+
+        $jsonFile1 = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/lonesome1.json';
+        $jsonFile2 = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/CLF/CLF/lonesome2.json';
+        $stopWatch = new Stopwatch();
+        /*$stopWatch->start('file1');
+        $arrayFile1 = \json_decode(file_get_contents($jsonFile1));
+        $event1 = $stopWatch->stop('file1');*/
+        $stopWatch->start('file2');
+        $arrayFile2 = \json_decode(file_get_contents($jsonFile2), true);
+        $event2 = $stopWatch->stop('file2');
+
+        //dump($event1->getPeriods());
+        dump($event2->getPeriods());
+
+
+
+
+
         //dump($allData);
-        $catalogNumbers=['AIX000087',"AIX013097",
+        /*$catalogNumbers=['AIX000087',"AIX013097",
             "AIX020865",
             "AIX000397",
             "AIX019963",
@@ -136,7 +184,7 @@ class TestController extends Controller
             }
         }
         dump($diff);
-        dump($lonesomes);
+        dump($lonesomes);*/
         return $this->render('@App/base.html.twig', [
         ]);
     }

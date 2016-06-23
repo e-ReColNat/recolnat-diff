@@ -4,6 +4,8 @@ namespace AppBundle\Business;
 
 
 use AppBundle\Business\User\User;
+use AppBundle\Manager\AbstractDiff;
+use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\ExportManager;
 
 class StatsManager
@@ -22,7 +24,7 @@ class StatsManager
     }
 
     /**
-     * @param User $user
+     * @param User   $user
      * @param string $collectionCode
      * @return $this
      */
@@ -31,6 +33,7 @@ class StatsManager
         $this->user = $user;
         $this->collectionCode = $collectionCode;
         $this->exportManager = $this->exportManager->init($this->user)->setCollectionCode($this->collectionCode);
+
         return $this;
     }
 
@@ -40,16 +43,28 @@ class StatsManager
     public function getStatsLonesomeRecords()
     {
         $lonesomeRecords = $this->exportManager->getDiffHandler()->getLoneSomeRecords();
-        $stats = [];
+
+        $stats = $this->setEmptyArrayStatsLonesomeRecords();
         if (is_array($lonesomeRecords)) {
-            foreach ($lonesomeRecords as $className => $items) {
-                $stats[$className]['recolnat'] = isset($items['recolnat']) ? count($items['recolnat']) : 0;
-                $stats[$className]['institution'] = isset($items['institution']) ? count($items['institution']) : 0;
+            foreach ($lonesomeRecords as $catalogNumber => $items) {
+                foreach ($items as $item) {
+                    $stats[$item['class']][$item['db']]++;
+                }
             }
         }
+
         return $stats;
     }
 
+    private function setEmptyArrayStatsLonesomeRecords()
+    {
+        $emptyArray = [];
+        foreach (DiffManager::ENTITIES_NAME as $entityName) {
+            $emptyArray[$entityName] = [AbstractDiff::KEY_RECOLNAT => 0, AbstractDiff::KEY_INSTITUTION => 0];
+        }
+
+        return $emptyArray;
+    }
 
     /**
      * @return array
@@ -57,11 +72,12 @@ class StatsManager
     public function getSumLonesomeRecords()
     {
         $statsLonesomeRecords = $this->getStatsLonesomeRecords();
-        $sumLonesomeRecords = ['recolnat' => 0, 'institution' => 0];
+        $sumLonesomeRecords = [AbstractDiff::KEY_RECOLNAT => 0, AbstractDiff::KEY_INSTITUTION => 0];
         foreach ($statsLonesomeRecords as $lonesomeRecords) {
-            $sumLonesomeRecords['recolnat'] += $lonesomeRecords['recolnat'];
-            $sumLonesomeRecords['institution'] += $lonesomeRecords['institution'];
+            $sumLonesomeRecords[AbstractDiff::KEY_RECOLNAT] += $lonesomeRecords[AbstractDiff::KEY_RECOLNAT];
+            $sumLonesomeRecords[AbstractDiff::KEY_INSTITUTION] += $lonesomeRecords[AbstractDiff::KEY_INSTITUTION];
         }
+
         return $sumLonesomeRecords;
     }
 
@@ -86,6 +102,7 @@ class StatsManager
         };
         array_walk($choices, $callbackCountChoices);
         $statsChoices['sum'] = array_sum($statsChoices);
+
         return $statsChoices;
     }
 
@@ -94,10 +111,11 @@ class StatsManager
      */
     public function getStats()
     {
-        if (is_array($this->exportManager->sessionManager->get('stats'))) {
+        /*if (is_array($this->exportManager->sessionManager->get('stats'))) {
             return $this->exportManager->sessionManager->get('stats');
         }
-        return [];
+        return [];*/
+        return $this->exportManager->getDiffHandler()->getStatsFile()->getData();
     }
 
     /**
@@ -112,6 +130,7 @@ class StatsManager
             $sumStats['diffs'] += $datas['diffs'];
             $sumStats['fields'] += count($datas['fields']);
         }
+
         return $sumStats;
     }
 
@@ -122,10 +141,10 @@ class StatsManager
      */
     public function getExpandedStats($order = 'desc')
     {
-        $stats = [];
-        $diffs = $this->exportManager->getDiffs();
-        foreach ($this->getStats() as $className => $fields) {
-            $stats[$className]['diffs'] = array_sum($fields);
+        $expandedStats = [];
+        $fullStats = $this->getStats();
+        foreach ($fullStats['stats'] as $className => $fields) {
+            $expandedStats[$className]['diffs'] = array_sum($fields);
             $tempFields = $fields;
             switch ($order) {
                 case 'desc':
@@ -135,10 +154,11 @@ class StatsManager
                     asort($tempFields);
                     break;
             }
-            $stats[$className]['fields'] = $tempFields;
-            $stats[$className]['specimens'] = count($diffs['classes'][$className]);
+            $expandedStats[$className]['fields'] = $tempFields;
+            $expandedStats[$className]['specimens'] = count($fullStats['classes'][$className]);
         }
-        return $stats;
+
+        return $expandedStats;
     }
 
     /**
@@ -159,35 +179,40 @@ class StatsManager
 
         $dataSeparator = '\#|#/';
         $stats = [];
+        $catalogNumbers = [];
         foreach ($classesName as $className) {
             if (isset($diffs['classes'][$className]) && !empty($diffs['classes'][$className])) {
                 foreach ($diffs['classes'][$className] as $catalogNumber) {
                     if (isset($diffs['datas'][$catalogNumber])) {
-                        $details = $diffs['datas'][$catalogNumber]['classes'][$className];
-                        $taxon = $diffs['datas'][$catalogNumber]['taxon'];
+                        $details = $diffs['datas'][$catalogNumber][$className];
                         foreach ($details['fields'] as $fieldName => $datas) {
                             // Traitement des dates
-                            if (is_array($datas['recolnat']) && isset($datas['recolnat']['date'])) {
-                                $date = new \DateTime($datas['recolnat']['date']);
-                                $datas['recolnat'] = $date->format($dateFormat);
+                            if (is_array($datas[AbstractDiff::KEY_RECOLNAT]) && isset($datas[AbstractDiff::KEY_RECOLNAT]['date'])) {
+                                $date = new \DateTime($datas[AbstractDiff::KEY_RECOLNAT]['date']);
+                                $datas[AbstractDiff::KEY_RECOLNAT] = $date->format($dateFormat);
                             }
-                            if (is_array($datas['institution']) && isset($datas['institution']['date'])) {
-                                $date = new \DateTime($datas['institution']['date']);
+                            if (is_array($datas[AbstractDiff::KEY_INSTITUTION]) && isset($datas[AbstractDiff::KEY_INSTITUTION]['date'])) {
+                                $date = new \DateTime($datas[AbstractDiff::KEY_INSTITUTION]['date']);
                                 $datas['institution'] = $date->format($dateFormat);
                             }
                             // Création d'une clé unique
                             $concatDatas = md5(implode($dataSeparator,
-                                [$className, $fieldName, $datas['recolnat'], $datas['institution']]));
+                                [
+                                    $className,
+                                    $fieldName,
+                                    $datas[AbstractDiff::KEY_RECOLNAT],
+                                    $datas[AbstractDiff::KEY_INSTITUTION]
+                                ]));
 
                             if (!isset($stats[$concatDatas])) {
                                 $stats[$concatDatas] = ['taxons' => [], 'catalogNumbers' => []];
                             }
 
                             $stats[$concatDatas]['catalogNumbers'][$catalogNumber] = $details['id'];
-                            $stats[$concatDatas]['taxons'][$catalogNumber] = $taxon;
                             $stats[$concatDatas]['datas'] = $datas;
                             $stats[$concatDatas]['className'] = $className;
                             $stats[$concatDatas]['fieldName'] = $fieldName;
+                            $catalogNumbers[] = $catalogNumber;
                         }
                     }
                 }
@@ -196,9 +221,11 @@ class StatsManager
         uasort($stats, function($a, $b) {
             $a = count($a['catalogNumbers']);
             $b = count($b['catalogNumbers']);
+
             return ($a == $b) ? 0 : (($a > $b) ? -1 : 1);
         });
-        return $stats;
+
+        return [$stats, $catalogNumbers];
     }
 
     /**
@@ -210,6 +237,7 @@ class StatsManager
         foreach ($this->getStats() as $className => $fields) {
             $stats[$className] = array_sum($fields);
         }
+
         return $stats;
     }
 
@@ -227,6 +255,7 @@ class StatsManager
         };
         $stats = $this->getExpandedStats();
         uasort($stats, $functionSortStats);
+
         return $stats;
     }
 }

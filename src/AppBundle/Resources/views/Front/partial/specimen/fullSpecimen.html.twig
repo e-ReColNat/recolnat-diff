@@ -1,6 +1,7 @@
 {% if db is not defined %}
     {% set db = 'recolnat' %}
 {% endif %}
+
 {% if app.request.attributes.get('_route') != 'lonesomes' %}
     {% set specimenRecolnat = attribute(specimens.recolnat, catalogNumber) | first %}
     {% set specimenInstitution = attribute(specimens.institution, catalogNumber) | first %}

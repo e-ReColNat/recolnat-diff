@@ -191,15 +191,14 @@ class ExportManager
      * @param array $diffs
      * @return array
      */
-    public static function orderDiffsByTaxon(array $diffs)
+    public function orderDiffsByTaxon(array $diffs)
     {
         $sortedDiffs = $diffs;
         if (count($diffs['datas'])) {
             $datas = $diffs['datas'];
-            $taxons = [];
-            foreach ($datas as $catalogNumber => $diff) {
-                $taxons[$catalogNumber] = $diff['taxon'];
-            }
+
+            $taxons = $this->getDiffHandler()->getTaxons(array_keys($diffs['datas'])) ;
+
             array_multisort($taxons, SORT_ASC, SORT_NATURAL|SORT_FLAG_CASE, $datas);
             $sortedDiffs['datas'] = $datas;
         }
@@ -339,7 +338,7 @@ class ExportManager
         // ajout des nouveaux enregistrements de specimens complets
         // Un seul côté
         if ($this->exportPrefs->getSideForNewRecords() != 'both') {
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
+            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getLonesomeRecordsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
                 $this->exportPrefs->getSideForNewRecords()));
 
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
@@ -350,7 +349,7 @@ class ExportManager
 
         } // des deux côtés
         else {
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
+            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getLonesomeRecordsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
                 'recolnat'));
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
                 $this->collection,
@@ -358,7 +357,7 @@ class ExportManager
             $data = array_merge($data, $datasNewRecords);
 
 
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
+            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getLonesomeRecordsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
                 'institution'));
             $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('institution',
                 $this->collection,

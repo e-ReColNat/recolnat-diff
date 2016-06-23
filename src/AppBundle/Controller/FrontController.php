@@ -3,10 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\Taxons;
 use AppBundle\Business\User\Prefs;
 use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use AppBundle\Form\Type\ExportPrefsType;
+use AppBundle\Manager\AbstractDiff;
 use AppBundle\Manager\ExportManager;
 use Doctrine\ORM\AbstractQuery;
 use Knp\Component\Pager\Pagination\AbstractPagination;
@@ -31,12 +33,11 @@ class FrontController extends Controller
 
         $exportManager = $this->get('exportmanager')->init($this->getUser());
 
-        $managedCollectionsByInstitution=[];
+        $managedCollectionsByInstitution = [];
         if ($user->isSuperAdmin()) {
-         $managedCollections = $this->getDoctrine()->getManager()
-             ->getRepository('AppBundle:Collection')->findAllOrderByInstitution();
-        }
-        else {
+            $managedCollections = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Collection')->findAllOrderByInstitution();
+        } else {
             $managedCollections = $this->getDoctrine()->getManager()
                 ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $user->getManagedCollections()]);
         }
@@ -67,35 +68,44 @@ class FrontController extends Controller
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
 
-        $statsBySimilarity = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
+        list($statsBySimilarity, $catalogNumbers) = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $statsManager->getSumStats();
 
         $paginator = $this->get('knp_paginator');
         /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($statsBySimilarity, $page, 100);
 
+        /* @var $exportManager \AppBundle\Manager\ExportManager */
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $taxons = $exportManager->getDiffHandler()->getTaxons($catalogNumbers);
+
         return $this->render('@App/Front/stats.html.twig', array(
             'collectionCode' => $collectionCode,
             'sumStats' => $sumStats,
             'pagination' => $pagination,
+            'keyRecolnat' => AbstractDiff::KEY_RECOLNAT,
+            'keyInstitution' => AbstractDiff::KEY_INSTITUTION,
+            'taxons' => $taxons,
         ));
     }
 
     /**
      * @Route("{collectionCode}/view", name="viewfile", options={"expose"=true})
-     * @param string  $collectionCode
+     * @param string $collectionCode
      * @return Response
      */
-    public function viewFileAction( $collectionCode)
+    public function viewFileAction($collectionCode)
     {
         $collection = $this->get('utility')->getCollection($collectionCode);
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
-
+        $statsManager->getSumLonesomeRecords();
 
         return $this->render('@App/Front/viewFile.html.twig', array(
             'statsManager' => $statsManager,
             'collection' => $collection,
+            'keyRecolnat' => AbstractDiff::KEY_RECOLNAT,
+            'keyInstitution' => AbstractDiff::KEY_INSTITUTION
         ));
     }
 
@@ -132,7 +142,10 @@ class FrontController extends Controller
         $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
             $specimensWithoutChoices);
 
+
         $paginator = $this->get('knp_paginator');
+
+        $taxons = $exportManager->getDiffHandler()->getTaxons(array_keys($diffs['datas']));
         /** @var AbstractPagination $pagination */
         $pagination = $paginator->paginate($diffs['datas'], $page, $maxItemPerPage);
         $catalogNumbers = array_keys($pagination->getItems());
@@ -148,6 +161,7 @@ class FrontController extends Controller
             'specimens' => $specimens,
             'pagination' => $pagination,
             'exportManager' => $exportManager,
+            'taxons' => $taxons,
         ));
     }
 
@@ -171,12 +185,9 @@ class FrontController extends Controller
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
-        $lonesomeRecords = $exportManager->getDiffHandler()
-            ->getLonesomeRecordsOrderedByCatalogNumbers($db, $selectedClassName);
-        dump($lonesomeRecords);
-        $lonesomeRecords = $exportManager->getDiffHandler()
-            ->getLonesomeRecordsIndexedByCatalogNumber($db, $selectedClassName);
-        dump($lonesomeRecords);
+        $lonesomeRecords = $exportManager->getDiffHandler()->getLonesomeRecords($db, $selectedClassName);
+
+        $taxons = $exportManager->getDiffHandler()->getTaxons(array_keys($lonesomeRecords));
 
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($lonesomeRecords, $page, $maxItemPerPage);
@@ -197,6 +208,7 @@ class FrontController extends Controller
             'db' => $db,
             'exportManager' => $exportManager,
             'lonesomeRecords' => $lonesomeRecords,
+            'taxons' => $taxons,
         ));
     }
 
@@ -274,6 +286,8 @@ class FrontController extends Controller
             'statsChoices' => $statsChoices,
             'sumLonesomeRecords' => $sumLonesomeRecords,
             'form' => $form->createView(),
+            'keyRecolnat' => AbstractDiff::KEY_RECOLNAT,
+            'keyInstitution' => AbstractDiff::KEY_INSTITUTION
         ));
     }
 
@@ -295,6 +309,7 @@ class FrontController extends Controller
 
         list($pagination, $diffs, $specimens) = $this->getDataForDisplay($page, $catalogNumbers, $request,
             $exportManager, $collection);
+        $taxons = $exportManager->getDiffHandler()->getTaxons($catalogNumbers);
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'collection' => $collection,
@@ -302,6 +317,7 @@ class FrontController extends Controller
             'specimens' => $specimens,
             'exportManager' => $exportManager,
             'pagination' => $pagination,
+            'taxons' => $taxons
         ));
     }
 
@@ -329,6 +345,8 @@ class FrontController extends Controller
         list($pagination, $diffs, $specimens) = $this->getDataForDisplay($page, $catalogNumbers, $request,
             $exportManager, $collection);
 
+        $taxons = $exportManager->getDiffHandler()->getTaxons(array_keys($specimens));
+
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'collection' => $collection,
             'diffs' => $diffs,
@@ -336,6 +354,7 @@ class FrontController extends Controller
             'exportManager' => $exportManager,
             'search' => $search,
             'pagination' => $pagination,
+            'taxons' => $taxons,
         ));
     }
 
@@ -360,18 +379,20 @@ class FrontController extends Controller
                 break;
             case 'selected':
                 $catalogNumbers = $this->get('session')->get('selectedSpecimens');
-                $specimens = $exportManager::orderDiffsByTaxon($exportManager->getDiffsByCatalogNumbers($catalogNumbers))['datas'];
+                $specimens = $exportManager->orderDiffsByTaxon($exportManager->getDiffsByCatalogNumbers($catalogNumbers))['datas'];
                 break;
         }
+        $taxons = $exportManager->getDiffHandler()->getTaxons(array_keys($specimens));
         if (count($specimens)) {
             $withoutTaxon = [];
             foreach ($specimens as $catalogNumber => $specimen) {
-                if (!(empty($specimen['taxon']))) {
-                    $firstLetter = mb_substr($specimen['taxon'], 0, 1);
+                isset($taxons[$catalogNumber]) ? $taxon = $taxons[$catalogNumber] : $taxon = null;
+                if (!(empty($taxon))) {
+                    $firstLetter = mb_substr($taxon, 0, 1);
                     $letter = mb_strtoupper($firstLetter, 'UTF-8');
                     $orderSpecimens[$letter][$catalogNumber] = $specimen;
                 } else {
-                    $specimen['taxon'] = null;
+                    $taxon = null;
                     $withoutTaxon[$catalogNumber] = $specimen;
                 }
                 if (count($withoutTaxon)) {
@@ -386,7 +407,8 @@ class FrontController extends Controller
             'collection' => $collection,
             'exportManager' => $exportManager,
             'orderSpecimens' => $orderSpecimensOutput,
-            'type' => $type
+            'type' => $type,
+            'taxons' => $taxons
         ));
 
     }
@@ -409,6 +431,8 @@ class FrontController extends Controller
         $catalogNumbers = $pagination->getItems();
 
         $diffs = $exportManager->getDiffsByCatalogNumbers($catalogNumbers);
+        $lonesomeRecords = $exportManager->getDiffHandler()->getLonesomeRecordsFile()
+            ->getLonesomeRecordsForCatalogNumbers($catalogNumbers);
         $specimens = [];
 
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')

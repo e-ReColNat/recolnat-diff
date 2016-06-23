@@ -161,6 +161,10 @@ class DiffComputer
         return null;
     }
 
+    public function getTaxons()
+    {
+        return $this->taxons;
+    }
     /**
      * @param string $catalogNumber
      */
@@ -179,16 +183,15 @@ class DiffComputer
         $this->stats[$className] = [];
         if (isset($this->diffs['classes'][$className])) {
             foreach ($this->diffs['classes'][$className] as $catalogNumber => $rows) {
-                $this->setTaxon($catalogNumber);
+                //$this->setTaxon($catalogNumber);
                 if (!isset($this->diffs['datas'][$catalogNumber])) {
                     $this->diffs['datas'][$catalogNumber] = [];
-                    $this->diffs['datas'][$catalogNumber]['classes'] = [];
-                    $this->diffs['datas'][$catalogNumber]['classes'][$className] = [];
+                    $this->diffs['datas'][$catalogNumber][$className] = [];
                 }
                 foreach ($rows as $recordId => $fields) {
                     $this->setStatsForClass($className, $fields);
-                    $this->diffs['datas'][$catalogNumber]['classes'][$className]['fields'] = $fields;
-                    $this->diffs['datas'][$catalogNumber]['classes'][$className]['id'] = $recordId;
+                    $this->diffs['datas'][$catalogNumber][$className]['fields'] = $fields;
+                    $this->diffs['datas'][$catalogNumber][$className]['id'] = $recordId;
                 }
             }
         }
@@ -251,7 +254,7 @@ class DiffComputer
      * @param string $className
      * @param array  $lonesomeRecords
      */
-    public function setLonesomeRecords($className, $lonesomeRecords)
+    private function setLonesomeRecords($className, $lonesomeRecords)
     {
         $this->lonesomeRecords[$className] = [];
         foreach ($lonesomeRecords as $db => $items) {
@@ -264,7 +267,6 @@ class DiffComputer
             foreach ($items as $lonesomeRecord) {
                 $catalogNumber = $lonesomeRecord['catalogNumber'];
 
-                $lonesomeRecord['taxon'] = $this->getTaxon($catalogNumber);
                 $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
                 if (!isset($this->statsLonesomeRecords[$catalogNumber])) {
                     $this->statsLonesomeRecords[$catalogNumber] = [];

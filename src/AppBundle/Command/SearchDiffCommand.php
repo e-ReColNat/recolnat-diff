@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\User\User;
+use AppBundle\Manager\AbstractDiff;
 use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\UtilityService;
@@ -127,13 +128,15 @@ class SearchDiffCommand extends ContainerAwareCommand
         $diffComputer = $this->getContainer()->get('diff.computer');
         $diffComputer->setCollection($collection);
 
+
         $catalogNumbersFiles = $this->createCatalogNumbersFiles($diffManager, $diffHandler);
 
         $this->launchDiffProcesses($diffManager, $output);
 
-        $datas = $this->mergeFiles($diffManager::ENTITIES_NAME, $diffHandler->getCollectionPath());
+        $mergeResult = $this->mergeFiles($diffManager::ENTITIES_NAME, $diffHandler->getCollectionPath());
 
-        $diffHandler->saveDiffs($datas);
+        $diffHandler->saveData($mergeResult['data']);
+        $diffHandler->saveTaxons($mergeResult['taxons']);
 
         $this->removeCatalogNumbersFiles($catalogNumbersFiles);
 
@@ -152,38 +155,45 @@ class SearchDiffCommand extends ContainerAwareCommand
     private function mergeFiles(array $entityNames, $path)
     {
         $mergeData = [];
+        $mergeTaxons = [];
         foreach ($entityNames as $entityName) {
-            $pathName = $path.'/'.$entityName.'.json';
-            $datas = json_decode(file_get_contents($pathName), true);
-            unlink($pathName);
+            $dataPathName = $path.'/'.$entityName.'.json';
+            $taxonsPathName = $path.'/taxons_'.$entityName.'.json';
+            $datas = json_decode(file_get_contents($dataPathName), true);
+            $taxons = json_decode(file_get_contents($taxonsPathName), true);
+            unlink($dataPathName);
+            unlink($taxonsPathName);
             $mergeData = $this->arrayMergeRecursiveDistinct($mergeData, $datas);
+            $mergeTaxons = $this->arrayMergeRecursiveDistinct($mergeTaxons, $taxons);
         }
         $this->filterLonesomesRecords($mergeData['lonesomeRecords'], $mergeData['statsLonesomeRecords']);
 
-        return $mergeData;
+        return ['data' => $mergeData, 'taxons' => $mergeTaxons];
     }
 
     public function filterLonesomesRecords(array &$lonesomesRecords, array &$statsLonesomeRecords)
     {
+        $keyRecolnat = AbstractDiff::KEY_RECOLNAT;
+        $keyInstitution = AbstractDiff::KEY_INSTITUTION;
         $specimens = $lonesomesRecords['Specimen'];
-        $catalogNumbersSpecimen = ['recolnat' => [], 'institution' => []];
-        $catalogNumbersSpecimen['recolnat'] = array_column($specimens['recolnat'], 'catalogNumber');
-        $catalogNumbersSpecimen['institution'] = array_column($specimens['institution'], 'catalogNumber');
+        $catalogNumbersSpecimen = [$keyRecolnat => [], $keyInstitution => []];
+        $catalogNumbersSpecimen[$keyRecolnat] = array_column($specimens[$keyRecolnat], 'catalogNumber');
+        $catalogNumbersSpecimen[$keyInstitution] = array_column($specimens[$keyInstitution], 'catalogNumber');
 
 
         foreach ($lonesomesRecords as $entityName => $records) {
             if ($entityName !== 'Specimen') {
-                if (count($records['recolnat'])) {
-                    foreach ($records['recolnat'] as $key => $record) {
-                        if (in_array($record['catalogNumber'], $catalogNumbersSpecimen['recolnat'])) {
-                            unset($lonesomesRecords[$entityName]['recolnat'][$key]);
+                if (count($records[$keyRecolnat])) {
+                    foreach ($records[$keyRecolnat] as $key => $record) {
+                        if (in_array($record['catalogNumber'], $catalogNumbersSpecimen[$keyRecolnat])) {
+                            unset($lonesomesRecords[$entityName][$keyRecolnat][$key]);
                         }
                     }
                 }
-                if (count($records['institution'])) {
-                    foreach ($records['institution'] as $key => $record) {
-                        if (in_array($record['catalogNumber'], $catalogNumbersSpecimen['institution'])) {
-                            unset($lonesomesRecords[$entityName]['institution'][$key]);
+                if (count($records[$keyInstitution])) {
+                    foreach ($records[$keyInstitution] as $key => $record) {
+                        if (in_array($record['catalogNumber'], $catalogNumbersSpecimen[$keyInstitution])) {
+                            unset($lonesomesRecords[$entityName][$keyInstitution][$key]);
                         }
                     }
                 }
@@ -325,12 +335,17 @@ class SearchDiffCommand extends ContainerAwareCommand
         return true;
     }
 
+    private function createTaxonsFile($taxons)
+    {
+        $fs = new Filesystem();
+    }
+
     /**
      * @param DiffManager $diffManager
      * @param DiffHandler $diffHandler
      * @return array
      */
-    protected function createCatalogNumbersFiles(DiffManager $diffManager, DiffHandler $diffHandler)
+    private function createCatalogNumbersFiles(DiffManager $diffManager, DiffHandler $diffHandler)
     {
         $catalogNumbersFiles = [];
         $fs = new Filesystem();
