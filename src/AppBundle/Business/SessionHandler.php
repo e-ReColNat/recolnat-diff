@@ -91,9 +91,9 @@ class SessionHandler
      */
     private function getCatalogNumbers()
     {
-        $stats = $this->sessionManager->get('diffs');
-        if (is_array($stats)) {
-            return array_keys($stats);
+        $diffs = $this->sessionManager->get('diffs');
+        if (is_array($diffs['datas'])) {
+            return array_keys($diffs['datas']);
         }
         return [];
     }

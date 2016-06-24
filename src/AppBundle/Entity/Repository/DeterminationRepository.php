@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
-use AppBundle\Entity\Collection;
 use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
+use AppBundle\Manager\DiffDetermination;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -15,18 +15,20 @@ use Doctrine\ORM\Query\Expr\Join;
  */
 class DeterminationRepository extends AbstractRecolnatRepository
 {
+    public static function getEntityIdField()
+    {
+        return DiffDetermination::getIdField();
+    }
+
     /**
-     * @param Collection $collection
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getQueryBuilderFindByCollection(Collection $collection)
+    public function getQueryBuilderJoinSpecimen()
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('d.identificationid as id')
-            ->from('AppBundle\Entity\Determination', 'd')
-            ->join('d.specimen', 's')
-            ->andWhere('s.collection = :collection')
-            ->setParameter('collection', $collection);
+            ->select('d')
+            ->from('AppBundle:Determination', 'd')
+            ->join('d.specimen', 's');
     }
 
     /**
@@ -62,45 +64,7 @@ class DeterminationRepository extends AbstractRecolnatRepository
      */
     public function findOneByIdToArray($id)
     {
-
         return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @return array
-     */
-    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('d')
-            ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @param int        $hydratationMode
-     * @return array
-     */
-    public function findByCatalogNumbers(
-        Collection $collection,
-        $catalogNumbers,
-        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
-    ) {
-        $qb = $this->createQueryBuilder('d');
-
-        $qb
-            ->select('d')
-            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
-            ->join('d.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'identificationid');
     }
 
     /**
@@ -117,7 +81,7 @@ class DeterminationRepository extends AbstractRecolnatRepository
             ->join('AppBundle\Entity\Specimen', 's', Join::WITH, 's.occurrenceid = :occurrenceid');
         $qb->setParameter('occurrenceid', $occurrenceId, 'rawid');
 
-        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getOneOrNullResult(), 'identificationid');
+        return $this->orderResultSetByCatalogNumberAndId($qb->getQuery()->getOneOrNullResult(), 'identificationid');
     }
 
     /**

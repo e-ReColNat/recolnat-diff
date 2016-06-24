@@ -5,12 +5,12 @@ class DiffRecolte extends AbstractDiff
 {
     public $excludeFieldsName = ['eventdate', 'sourcefileid', 'averagealtituderounded', 'created', 'modified'];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getEventid';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'eventid';
     }

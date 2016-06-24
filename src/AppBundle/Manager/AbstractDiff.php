@@ -60,10 +60,13 @@ abstract class AbstractDiff
      */
     public $maxNbSpecimenPerPass;
 
-    abstract protected function getIdSetter();
+    public static function getIdSetter(){
+        throw new \LogicException('method getIdSetter must be implemented') ;
+    }
 
-    abstract protected function getIdField();
-
+    public static function getIdField(){
+        throw new \LogicException('method getIdField must be implemented') ;
+    }
     /**
      * DiffAbstract constructor.
      * @param ManagerRegistry $managerRegistry
@@ -95,10 +98,10 @@ abstract class AbstractDiff
         if (count($arrayChunkCatalogNumbers)) {
             foreach ($arrayChunkCatalogNumbers as $chunkCatalogNumbers) {
                 $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
-                    ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
+                    ->findByCatalogNumbersAndId($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
                 $this->recordsInstitution = $this->emB->getRepository($this->classFullName)
-                    ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
+                    ->findByCatalogNumbersAndId($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
                 $this->emR->clear();
                 $this->emB->clear();
@@ -238,6 +241,7 @@ abstract class AbstractDiff
         $recordInstitution = $this->recordsInstitution[$catalogNumber][$idRecord];
         foreach ($fieldNames as $fieldName) {
             if (!(in_array($fieldName, $this->excludeFieldsName))) {
+                $idRecord = strtoupper($recordRecolnat[$this->getIdField()]);
                 $dataR = $recordRecolnat[$fieldName];
                 $dataI = $recordInstitution[$fieldName];
                 if ($dataR instanceof \DateTime) {
@@ -269,7 +273,7 @@ abstract class AbstractDiff
             $id = $record->{$this->getIdSetter()}();
         }
         if (!is_null($id)) {
-            $this->lonesomeRecords[$db][] = ['catalogNumber' => $catalogNumber, 'id' => $id];
+            $this->lonesomeRecords[$db][] = ['catalogNumber' => $catalogNumber, 'id' => strtoupper($id)];
         }
     }
 

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
-use AppBundle\Entity\Collection;
 use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
+use AppBundle\Manager\DiffStratigraphy;
 use Doctrine\ORM\AbstractQuery;
 
 /**
@@ -11,18 +11,19 @@ use Doctrine\ORM\AbstractQuery;
  */
 class StratigraphyRepository extends AbstractRecolnatRepository
 {
+    public static function getEntityIdField(){
+        return DiffStratigraphy::getIdField();
+    }
+
     /**
-     * @param Collection $collection
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getQueryBuilderFindByCollection(Collection $collection)
+    public function getQueryBuilderJoinSpecimen()
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('st.geologicalcontextid as id')
+            ->select('st')
             ->from('AppBundle:Stratigraphy', 'st')
-            ->join('st.specimen', 's')
-            ->andWhere('s.collection = :collection')
-            ->setParameter('collection', $collection);
+            ->join('st.specimen', 's');
     }
 
     /**
@@ -50,46 +51,6 @@ class StratigraphyRepository extends AbstractRecolnatRepository
     public function findOneById($id, $fetchMode = AbstractQuery::HYDRATE_OBJECT)
     {
         return $this->getQueryFindOneById('stratigraphy', $id)->getOneOrNullResult($fetchMode);
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @return array
-     */
-    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
-    {
-        $qb = $this->createQueryBuilder('st');
-
-        $qb
-            ->select('st')
-            ->join('st.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @param int        $hydratationMode
-     * @return array
-     */
-    public function findByCatalogNumbers(
-        Collection $collection,
-        $catalogNumbers,
-        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
-    ) {
-        $qb = $this->createQueryBuilder('st');
-
-        $qb
-            ->select('st')
-            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
-            ->join('st.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode),
-            'geologicalcontextid');
     }
 
     /**

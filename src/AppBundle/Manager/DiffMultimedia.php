@@ -5,12 +5,12 @@ class DiffMultimedia extends AbstractDiff
 {
     public $excludeFieldsName = ['created', 'modified', 'discriminator'];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getMultimediaid';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'multimediaid';
     }

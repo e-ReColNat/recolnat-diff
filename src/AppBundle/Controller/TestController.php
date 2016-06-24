@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
+use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\ListMatchUps;
 use AppBundle\Business\SelectedSpecimensHandler;
 use AppBundle\Business\SessionHandler;
@@ -102,6 +103,50 @@ class TestController extends Controller
         ]);
     }
 
+    /** @Route("testExport") */
+    public function testExport()
+    {
+        $collection = $this->get('utility')->getCollection('AIX');
+        $filesystem = new Filesystem();
+        $exportPrefs = new ExportPrefs();
+        $exportPrefs->setSideForChoicesNotSet('recolnat');
+        $exportPrefs->setSideForNewRecords('recolnat');
+
+        $dwcFilePath = $this->get('exportmanager')->init($this->getUser())
+            ->setCollectionCode($collection->getCollectioncode())->export('dwc', $exportPrefs);
+        /*$diffComputer = $this->get('diff.computer');
+
+
+        $entityName = 'Localisation';
+        $savePath = '/home/tpateffoz/www/recolnat-diff/src/AppBundle/Data/tpateffoz/MHNAIX/AIX';
+        $fileCatalogNumbers = new \SplFileObject($savePath.'/catalogNumbers_'.$entityName.'.json');
+        $catalogNumbers[$entityName] = json_decode(file_get_contents($fileCatalogNumbers->getPathname()), true);
+
+        $diffComputer->setCollection($collection);
+
+        $diffComputer->setCatalogNumbers($catalogNumbers);
+        $diffComputer->computeClassname($entityName);
+
+        $datas = $diffComputer->getAllDatas();*/
+
+        return $this->render('@App/base.html.twig', [
+        ]);
+    }
+    /** @Route("testLonesome") */
+    public function testLonesomeAction()
+    {
+        $collectionCode = 'AIX';
+        $collection = $this->get('utility')->getCollection($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser());
+
+        $exportManager->setCollectionCode($collectionCode);
+
+        $lonesomes = $exportManager->getDiffHandler()->getLonesomeRecordsFile()->getLonesomeRecordsByBase('recolnat');
+
+        dump($lonesomes);
+        return $this->render('@App/base.html.twig', [
+        ]);
+    }
     /**
      * @Route("json3")
      */

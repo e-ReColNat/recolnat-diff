@@ -18,10 +18,8 @@
                 {% include '@App/Front/partial/pagination.html.twig' %}
                 <div id="diffs" data-collectionCode="{{ collectionCode }}" data-selectedclassname="{{ selectedClassName }}">
 
-                    {% for catalogNumber, records in specimens %}
-                        {% for occurrenceid, specimen in records %}
-                            {% include '@App/Front/partial/specimen/fullSpecimen.html.twig' with {'loop' : loop.parent.loop} %}
-                        {% endfor %}
+                    {% for catalogNumber, specimen in specimens %}
+                        {% include '@App/Front/partial/specimen/fullSpecimen.html.twig'  %}
                     {% endfor %}
 
                     <div class="text-center">

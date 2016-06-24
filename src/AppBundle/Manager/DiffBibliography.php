@@ -6,12 +6,12 @@ class DiffBibliography extends AbstractDiff
 {
     public $excludeFieldsName = ['sourcefileid', 'created', 'modified'];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getReferenceId';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'referenceid';
     }

@@ -68,11 +68,10 @@ class LonesomeRecords extends AbstractFile
 
     /**
      * retourne les nouveaux enregistrements pour des catalog numbers et une base
-     * @param array       $catalogNumbers
-     * @param null|string $db
+     * @param array $catalogNumbers
      * @return array
      */
-    public function getLonesomeRecordsForCatalogNumbers($catalogNumbers = [], $db = null)
+    public function getLonesomeRecordsByCatalogNumbers($catalogNumbers = [])
     {
         $lonesomeRecords = [];
         if (count($catalogNumbers)) {
@@ -82,40 +81,36 @@ class LonesomeRecords extends AbstractFile
                 }
             }
         }
-        if (count($lonesomeRecords)) {
-            if (!is_null($db)) {
-                $lonesomeRecords = array_filter($lonesomeRecords, function($el) use ($db) {
-                    return $el['db'] == $db;
-                });
-            }
-
-        }
 
         return $lonesomeRecords;
     }
 
     /**
      * Retourne les nouveaux enregistrements pour une base
-     * @param null|string $className
-     * @param string      $db
+     * @param string $db
      * @return array
      */
-    public function getLonesomeRecordsOrderedByCatalogNumbers($db, $className = null)
+    public function getLonesomeRecordsByBase($db)
     {
-        if (!is_null($className)) {
-            $className = ucfirst(strtolower($className));
-        }
+        $keyRef = AbstractDiff::getKeysRef();
+        $db = $keyRef[$db];
+        $lonesomeRecords = $this->getData() ;
 
-        return array_filter($this->getData(), function($items) use ($db, $className) {
-            $itemsFiltered = array_filter($items, function($item) use ($db, $className) {
-                if (is_null($className)) {
+        foreach ($lonesomeRecords as $catalogNumber => $classesWithItems) {
+            $filteredLonesomeRecords = array_filter($classesWithItems, function($items) use ($db) {
+                $itemsFiltered = array_filter($items, function($item) use ($db) {
                     return $item['db'] == $db;
-                } else {
-                    return $item['db'] == $db && $item['class'] == $className;
-                }
-            });
+                });
 
-            return count($itemsFiltered) > 0;
-        });
+                return count($itemsFiltered) > 0;
+            });
+            if (count($filteredLonesomeRecords)) {
+                $lonesomeRecords[$catalogNumber] = $filteredLonesomeRecords;
+            }
+            else {
+                unset($lonesomeRecords[$catalogNumber]);
+            }
+        }
+        return $lonesomeRecords;
     }
 }

@@ -45,7 +45,7 @@ class DiffComputer
     protected $statsLonesomeRecords = [];
     protected $taxons = [];
 
-    protected $logQueries = false;
+    protected $logQueries = true;
 
     private $classOrder = [
         'Specimen',
@@ -257,25 +257,7 @@ class DiffComputer
     private function setLonesomeRecords($className, $lonesomeRecords)
     {
         $this->lonesomeRecords[$className] = [];
-        /*foreach ($lonesomeRecords as $db => $items) {
-            $this->setTaxons(array_column($items, 'catalogNumber'), $db);
 
-            foreach ($items as $lonesomeRecord) {
-                if (!isset($this->lonesomeRecords[$lonesomeRecord['catalogNumber']])) {
-                    $this->lonesomeRecords[$lonesomeRecord['catalogNumber']] = [];
-                }
-
-                if (!isset($this->lonesomeRecords[$lonesomeRecord['catalogNumber']][$className])) {
-                    $this->lonesomeRecords[$lonesomeRecord['catalogNumber']][$className] = [];
-                }
-
-                $this->lonesomeRecords[$lonesomeRecord['catalogNumber']][$className][] = [
-                    'id' => $lonesomeRecord['id'],
-                    'db' => $lonesomeRecord['db']
-                ];
-
-            }
-        }*/
         foreach ($lonesomeRecords as $db => $items) {
             $this->setTaxons(array_column($items, 'catalogNumber'), $db);
 

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity\Repository;
 
-use AppBundle\Entity\Collection;
 use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
+use AppBundle\Manager\DiffBibliography;
 use Doctrine\ORM\AbstractQuery;
 
 /**
@@ -11,18 +11,21 @@ use Doctrine\ORM\AbstractQuery;
  */
 class BibliographyRepository extends AbstractRecolnatRepository
 {
+
+    public static function getEntityIdField()
+    {
+        return DiffBibliography::getIdField();
+    }
+
     /**
-     * @param Collection $collection
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getQueryBuilderFindByCollection(Collection $collection)
+    public function getQueryBuilderJoinSpecimen()
     {
         return $this->getEntityManager()->createQueryBuilder()
-            ->select('b.referenceid as id')
+            ->select('b')
             ->from('AppBundle:Bibliography', 'b')
-            ->join('b.specimen', 's')
-            ->andWhere('s.collection = :collection')
-            ->setParameter('collection', $collection);
+            ->join('b.specimen', 's');
     }
 
     /**
@@ -60,46 +63,6 @@ class BibliographyRepository extends AbstractRecolnatRepository
     public function findOneByIdToArray($id)
     {
         return $this->findOneById($id, AbstractQuery::HYDRATE_ARRAY);
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @return mixed
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('b')
-            ->from('AppBundle:Bibliography', 'b')
-            ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @param int        $hydratationMode
-     * @return array
-     */
-    public function findByCatalogNumbers(
-        Collection $collection,
-        $catalogNumbers,
-        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
-    ) {
-        $qb = $this->createQueryBuilder('b');
-
-        $qb
-            ->select('b')
-            //->from('AppBundle:Bibliography', 'b')
-            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
-            ->join('b.specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'referenceid');
     }
 
     /**

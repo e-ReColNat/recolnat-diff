@@ -93,6 +93,6 @@ class ExportManager extends Units\Test
     public function testOrderDiffsByTaxon()
     {
         $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->catalogNumbers))
-            ->array(\AppBundle\Manager\ExportManager::orderDiffsByTaxon($diff));
+            ->array($this->exportManager->orderDiffsByTaxon($diff));
     }
 }

@@ -3,6 +3,8 @@
     {% if determination is not null %}
         {% set display = true %}
         {% if id is defined %}
+            {% dump(id) %}
+            {% dump(determination.identificationid) %}
             {% if determination.identificationid != id %}
                 {% set display = false %}
             {% endif %}

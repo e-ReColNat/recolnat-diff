@@ -155,6 +155,7 @@ class FrontController extends Controller
         $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
             'buffer')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
+        dump($diffs);
         return $this->render('@App/Front/viewDiffs.html.twig', array(
             'collection' => $collection,
             'diffs' => $diffs,
@@ -200,10 +201,7 @@ class FrontController extends Controller
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
                 'buffer')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
         }
-        dump($specimens);
-        foreach($specimens as $specimen) {
 
-        }
         return $this->render('@App/Front/viewLonesome.html.twig', array(
             'collection' => $collection,
             'specimens' => $specimens,
@@ -435,7 +433,7 @@ class FrontController extends Controller
 
         $diffs = $exportManager->getDiffsByCatalogNumbers($catalogNumbers);
         $lonesomeRecords = $exportManager->getDiffHandler()->getLonesomeRecordsFile()
-            ->getLonesomeRecordsForCatalogNumbers($catalogNumbers);
+            ->getLonesomeRecordsByCatalogNumbers($catalogNumbers);
         $specimens = [];
 
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')

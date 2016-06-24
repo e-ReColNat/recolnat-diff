@@ -338,38 +338,38 @@ class ExportManager
         // ajout des nouveaux enregistrements de specimens complets
         // Un seul côté
         if ($this->exportPrefs->getSideForNewRecords() != 'both') {
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getLonesomeRecordsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                $this->exportPrefs->getSideForNewRecords()));
-
-            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
-                $this->exportPrefs->getSideForNewRecords(),
-                $this->collection,
-                $catalogNumbersLonesomeRecords);
-            $data = array_merge($data, $datasNewRecords);
-
+            $dataNewRecords = $this->getSpecimenForLonesomeRecords($this->exportPrefs->getSideForNewRecords());
+            $data = array_merge($data, $dataNewRecords);
         } // des deux côtés
         else {
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getLonesomeRecordsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                'recolnat'));
-            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
-                $this->collection,
-                array_keys($catalogNumbersLonesomeRecords));
-            $data = array_merge($data, $datasNewRecords);
+            $dataNewRecords = $this->getSpecimenForLonesomeRecords('recolnat');
+            $data = array_merge($data, $dataNewRecords);
 
-
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getLonesomeRecordsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                'institution'));
-            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('institution',
-                $this->collection,
-                $catalogNumbersLonesomeRecords);
-            $data = array_merge($data, $datasNewRecords);
-
+            $dataNewRecords = $this->getSpecimenForLonesomeRecords('institution');
+            $data = array_merge($data, $dataNewRecords);
         }
         $data = $this->filterDataByCatalogNumbers($data);
 
         return $data;
     }
 
+    /**
+     * @param string $side
+     * @return array
+     */
+    private function getSpecimenForLonesomeRecords($side)
+    {
+        $dataNewRecords=[];
+        $lonesomeRecords = $this->diffHandler->getLonesomeRecordsFile()
+            ->getLonesomeRecordsByBase($side);
+        if (count($lonesomeRecords)) {
+            $catalogNumbersLonesomeRecords = array_keys($lonesomeRecords);
+            $dataNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
+                $this->exportPrefs->getSideForNewRecords(), $this->collection, $catalogNumbersLonesomeRecords);
+        }
+
+        return $dataNewRecords;
+    }
     /**
      * Dédoublonne les spécimens avant export
      * @param $data
@@ -378,8 +378,10 @@ class ExportManager
     private function filterDataByCatalogNumbers($data)
     {
         $filteredCatalogNumbersLonesomeRecords = [];
-        foreach ($data as $index => $specimen) {
-            $filteredCatalogNumbersLonesomeRecords[$specimen['catalognumber']] = $specimen;
+        if (count($data)) {
+            foreach ($data as $index => $specimen) {
+                $filteredCatalogNumbersLonesomeRecords[$specimen['catalognumber']] = $specimen;
+            }
         }
 
         return $filteredCatalogNumbersLonesomeRecords;
@@ -465,4 +467,5 @@ class ExportManager
 
         return $datasWithChoices;
     }
+
 }

@@ -5,12 +5,12 @@ class DiffLocalisation extends AbstractDiff
 {
     public $excludeFieldsName = ['sourcefileid', 'created', 'modified'];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getLocationid';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'locationid';
     }

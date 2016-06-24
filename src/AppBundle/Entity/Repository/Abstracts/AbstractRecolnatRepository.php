@@ -26,6 +26,11 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     ];
     const ENTITY_PREFIX = 'AppBundle\\Entity\\';
 
+    public static function getEntityIdField()
+    {
+        throw new \LogicException('method getEntityIdField must be implemented');
+    }
+
     /**
      * @param Collection $collection
      * @param array      $catalogNumbers
@@ -33,24 +38,50 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      * @return array
      * @internal param array $specimenCodes
      */
-    abstract public function findByCatalogNumbers(
+    public function findByCatalogNumbers(
         Collection $collection,
         $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
-    );
+    ) {
+        $qb = $this->getQueryBuilderJoinSpecimen($collection);
+        if ($hydratationMode == AbstractQuery::HYDRATE_OBJECT) {
+            $qb->addSelect('s');
+        } elseif ($this->getEntityName() != 'Specimen') {
+            $qb->addSelect($this->getExprCatalogNumber().' as catalognumber');
+        }
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode));
+    }
 
     /**
      * @param Collection $collection
      * @param array      $catalogNumbers
      * @return mixed
      */
-    abstract public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers);
+    public function findByCatalogNumbersAndId(
+        Collection $collection,
+        $catalogNumbers,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
+
+        $qb = $this->getQueryBuilderJoinSpecimen($collection);
+        $qb->addSelect($this->getExprCatalogNumber().' as catalognumber');
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+
+        return $this->orderResultSetByCatalogNumberAndId($qb->getQuery()->getResult($hydratationMode),
+            $this->getEntityIdField());
+    }
 
     /**
      * @param Collection $collection
      * @return \Doctrine\ORM\QueryBuilder
      */
-    abstract public function getQueryBuilderFindByCollection(Collection $collection);
+    //abstract public function getQueryBuilderFindByCollectionWithCatalogNumber(Collection $collection);
+
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    abstract public function getQueryBuilderJoinSpecimen();
 
     /**
      *
@@ -88,7 +119,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
      * @param string $identifierName
      * @return array
      */
-    protected function orderResultSetByCatalogNumber($resultsSet, $identifierName)
+    protected function orderResultSetByCatalogNumberAndId($resultsSet, $identifierName)
     {
         $orderResultSet = [];
         if (count($resultsSet)) {
@@ -103,6 +134,32 @@ abstract class AbstractRecolnatRepository extends EntityRepository
                         $orderResultSet[$catalogNumber][$row[$identifierName]] = $row;
                     } else {
                         $orderResultSet[$resultRow->getCatalogNumber()][$resultRow->{'get'.$identifierName}()] = $resultRow;
+                    }
+                }
+            }
+        }
+
+        return $orderResultSet;
+    }
+
+
+    /**
+     * @param array  $resultsSet
+     * @param string $identifierName
+     * @return array
+     */
+    protected function orderResultSetByCatalogNumber($resultsSet)
+    {
+        $orderResultSet = [];
+        if (count($resultsSet)) {
+            foreach ($resultsSet as $resultRow) {
+                if (!empty($resultRow)) {
+                    if (is_array($resultRow)) {
+                        $row = $resultRow[0];
+                        $catalogNumber = $resultRow['catalognumber'];
+                        $orderResultSet[$catalogNumber] = $row;
+                    } else {
+                        $orderResultSet[$resultRow->getCatalogNumber()] = $resultRow;
                     }
                 }
             }

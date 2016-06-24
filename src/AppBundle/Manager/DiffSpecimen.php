@@ -13,12 +13,12 @@ class DiffSpecimen extends AbstractDiff
         'explore_url'
     ];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getOccurrenceid';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'occurrenceid';
     }

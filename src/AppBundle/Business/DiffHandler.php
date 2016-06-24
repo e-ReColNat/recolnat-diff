@@ -241,8 +241,8 @@ class DiffHandler
     {
         if (count($items) > 0) {
             foreach ($items as $catalogNumber => $row) {
-                foreach ($row['classes'] as $className => $data) {
-                    $rowClass = $diffs['datas'][$catalogNumber]['classes'][$className];
+                foreach ($row as $className => $data) {
+                    $rowClass = $diffs['datas'][$catalogNumber][$className];
                     $relationId = $rowClass['id'];
                     foreach ($rowClass['fields'] as $fieldName => $rowFields) {
                         $doUpdate = false;

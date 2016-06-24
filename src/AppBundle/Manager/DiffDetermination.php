@@ -6,12 +6,12 @@ class DiffDetermination extends AbstractDiff
 
     public $excludeFieldsName = ['hascoordinates', 'sourcefileid', 'created', 'modified'];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getIdentificationId';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'identificationid';
     }
