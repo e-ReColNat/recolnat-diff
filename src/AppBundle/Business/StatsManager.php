@@ -46,9 +46,11 @@ class StatsManager
 
         $stats = $this->setEmptyArrayStatsLonesomeRecords();
         if (is_array($lonesomeRecords)) {
-            foreach ($lonesomeRecords as $catalogNumber => $items) {
-                foreach ($items as $item) {
-                    $stats[$item['class']][$item['db']]++;
+            foreach ($lonesomeRecords as $catalogNumber => $itemsPerClassName) {
+                foreach ($itemsPerClassName as $className => $items) {
+                    foreach($items as $item) {
+                        $stats[$className][$item['db']]++;
+                    }
                 }
             }
         }

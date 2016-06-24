@@ -41,22 +41,24 @@ class LonesomeRecords extends AbstractFile
         $returnLonesomes = [];
 
         if (count($lonesomeRecords)) {
-            foreach ($lonesomeRecords as $catalogNumber => $records) {
+            foreach ($lonesomeRecords as $catalogNumber => $classesInLonesomeRecords) {
                 $return = null;
-                foreach ($records as $record) {
-                    $flag = true;
-                    if (!is_null($db) && $keyRef[$db] != $record['db']) {
-                        $flag = false;
+                foreach ($classesInLonesomeRecords as $className => $records) {
+                    foreach ($records as $record) {
+                        $flag = true;
+                        if (!is_null($db) && $keyRef[$db] != $record['db']) {
+                            $flag = false;
+                        }
+                        if ($flag && empty($validClassesName)) {
+                            $return[] = $record;
+                        }
+                        if (!empty($validClassesName) && in_array($className, $validClassesName) && $flag) {
+                            $return[] = $record;
+                        }
                     }
-                    if ($flag && empty($validClassesName)) {
-                        $return[] = $record;
+                    if (!is_null($return)) {
+                        $returnLonesomes[$catalogNumber][$className] = $return;
                     }
-                    if (!empty($validClassesName) && in_array($record['class'], $validClassesName) && $flag) {
-                        $return[] = $record;
-                    }
-                }
-                if (!is_null($return)) {
-                    $returnLonesomes[$catalogNumber] = $return;
                 }
             }
         }
@@ -66,11 +68,11 @@ class LonesomeRecords extends AbstractFile
 
     /**
      * retourne les nouveaux enregistrements pour des catalog numbers et une base
-     * @param array      $catalogNumbers
+     * @param array       $catalogNumbers
      * @param null|string $db
      * @return array
      */
-    public function getLonesomeRecordsForCatalogNumbers($catalogNumbers=[], $db = null)
+    public function getLonesomeRecordsForCatalogNumbers($catalogNumbers = [], $db = null)
     {
         $lonesomeRecords = [];
         if (count($catalogNumbers)) {

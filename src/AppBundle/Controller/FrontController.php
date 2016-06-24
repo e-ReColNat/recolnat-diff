@@ -200,7 +200,10 @@ class FrontController extends Controller
             $specimens = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
                 'buffer')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
         }
+        dump($specimens);
+        foreach($specimens as $specimen) {
 
+        }
         return $this->render('@App/Front/viewLonesome.html.twig', array(
             'collection' => $collection,
             'specimens' => $specimens,
