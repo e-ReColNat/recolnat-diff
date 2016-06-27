@@ -87,6 +87,7 @@
                         return;
                     };
                     source.addEventListener('error', function (evt) {
+                        window.location=Routing.generate('SearchDiffError', {'collectionCode': $('.js-collectionCode').val()});
                         $("#modal").modal('hide');
                     });
                     source.addEventListener('steps', function (evt) {

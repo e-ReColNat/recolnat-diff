@@ -8,23 +8,15 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\ListMatchUps;
-use AppBundle\Business\SelectedSpecimensHandler;
-use AppBundle\Business\SessionHandler;
 use AppBundle\Business\User\User;
 use AppBundle\Manager\DiffBibliography;
 use AppBundle\Manager\UtilityService;
 use Doctrine\ORM\AbstractQuery;
-use JsonStreamingParser\Listener\IdleListener;
-use JsonStreamingParser\Listener\InMemoryListener;
-use JsonStreamingParser\Parser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Stopwatch\Stopwatch;
 

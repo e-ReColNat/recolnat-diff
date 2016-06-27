@@ -42,3 +42,4 @@ parameters:
     mailer_password:   ~
 
     user_group: www-data
+    data_path: "src/AppBundle/Data"

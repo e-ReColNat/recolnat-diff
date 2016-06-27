@@ -165,15 +165,6 @@ class DiffComputer
     {
         return $this->taxons;
     }
-    /**
-     * @param string $catalogNumber
-     */
-    private function setTaxon($catalogNumber)
-    {
-        if (!isset($this->diffs['datas'][$catalogNumber]['taxon'])) {
-            $this->diffs['datas'][$catalogNumber]['taxon'] = $this->getTaxon($catalogNumber);
-        }
-    }
 
     /**
      * @param string $className
@@ -183,7 +174,6 @@ class DiffComputer
         $this->stats[$className] = [];
         if (isset($this->diffs['classes'][$className])) {
             foreach ($this->diffs['classes'][$className] as $catalogNumber => $rows) {
-                //$this->setTaxon($catalogNumber);
                 if (!isset($this->diffs['datas'][$catalogNumber])) {
                     $this->diffs['datas'][$catalogNumber] = [];
                     $this->diffs['datas'][$catalogNumber][$className] = [];

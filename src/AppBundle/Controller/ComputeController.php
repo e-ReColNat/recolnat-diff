@@ -102,10 +102,6 @@ class ComputeController extends Controller
         $this->newSearchDiffSetCallBack($response, $process);
         $response->send();
 
-        $process->run();
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
 
         return $this->redirectToRoute('viewfile', ['collectionCode' => $collectionCode]);
 
@@ -125,6 +121,7 @@ class ComputeController extends Controller
                 $step = 100 / count(DiffManager::ENTITIES_NAME);
                 if (Process::ERR === $type) {
                     $server->error->send($buffer);
+
                 } else {
                     $data = \json_decode($buffer);
                     // Cas ou des retours sont reçus simultanément
@@ -186,11 +183,11 @@ class ComputeController extends Controller
 
 
     /**
-     * @Route("{collectionCode}/diff/search/error/", name="SearchDiffError", options={"expose"=true})
+     * @Route("diff/search/error/", name="SearchDiffError", options={"expose"=true})
      * @param string $collectionCode
      * @return Response
      */
-    public function searchDiffErrorAction($collectionCode)
+    public function searchDiffErrorAction()
     {
         return $this->render('@App/Front/searchDiffError.html.twig');
     }

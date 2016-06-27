@@ -91,7 +91,7 @@ class Determination
      */
     public function getIdentificationid()
     {
-        return $this->identificationid;
+        return strtoupper($this->identificationid);
     }
 
     /**

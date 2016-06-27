@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Business\Exporter\ExportPrefs;
-use AppBundle\Business\Taxons;
 use AppBundle\Business\User\Prefs;
 use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
@@ -155,7 +154,6 @@ class FrontController extends Controller
         $specimens['institution'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen',
             'buffer')->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_OBJECT);
 
-        dump($diffs);
         return $this->render('@App/Front/viewDiffs.html.twig', array(
             'collection' => $collection,
             'diffs' => $diffs,
@@ -432,8 +430,6 @@ class FrontController extends Controller
         $catalogNumbers = $pagination->getItems();
 
         $diffs = $exportManager->getDiffsByCatalogNumbers($catalogNumbers);
-        $lonesomeRecords = $exportManager->getDiffHandler()->getLonesomeRecordsFile()
-            ->getLonesomeRecordsByCatalogNumbers($catalogNumbers);
         $specimens = [];
 
         $specimens['recolnat'] = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')

@@ -43,7 +43,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
-        $qb = $this->getQueryBuilderJoinSpecimen($collection);
+        $qb = $this->getQueryBuilderJoinSpecimen();
         if ($hydratationMode == AbstractQuery::HYDRATE_OBJECT) {
             $qb->addSelect('s');
         } elseif ($this->getEntityName() != 'Specimen') {
@@ -64,7 +64,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
 
-        $qb = $this->getQueryBuilderJoinSpecimen($collection);
+        $qb = $this->getQueryBuilderJoinSpecimen();
         $qb->addSelect($this->getExprCatalogNumber().' as catalognumber');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 

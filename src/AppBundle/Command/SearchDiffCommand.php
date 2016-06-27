@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\User\User;
+use AppBundle\Entity\Collection;
 use AppBundle\Manager\AbstractDiff;
 use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
@@ -34,7 +35,9 @@ class SearchDiffCommand extends ContainerAwareCommand
 
     private $collectionPath;
 
-    private $logFileTemplate = 'log-%s.txt';
+    private $logFileTemplate = 'log-%s-%s-%s.txt';
+    /** @var  Collection */
+    private $collection ;
 
     /** @var  \SplFileObject|null */
     private $logFile;
@@ -103,17 +106,23 @@ class SearchDiffCommand extends ContainerAwareCommand
     {
         $this->translator = $this->getContainer()->get('translator');
         $this->collectionCode = $input->getArgument('collectionCode');
+
+
+        $this->collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
+
+        $this->setLogFilePath();
+
         $this->user = $this->getUser($input);
-        $collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
-        $diffHandler = new DiffHandler($this->user->getDataDirPath(), $collection,
+
+        $diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collection,
             $this->getContainer()->getParameter('user_group'));
         $this->collectionPath = $diffHandler->getCollectionPath();
 
-        $this->setLogFilePath();
 
         if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
             $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
         } else {
+            $this->log($this->translator->trans($input->getArgument('username').' '.'access.denied.wrongDateFormat', [], 'exceptions'));
             throw new \Exception($this->translator->trans('access.denied.wrongDateFormat', [], 'exceptions'));
         }
 
@@ -126,7 +135,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         $diffManager->harvestDiffs();
 
         $diffComputer = $this->getContainer()->get('diff.computer');
-        $diffComputer->setCollection($collection);
+        $diffComputer->setCollection($this->collection);
 
 
         $catalogNumbersFiles = $this->createCatalogNumbersFiles($diffManager, $diffHandler);
@@ -253,6 +262,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
 
         if (!$user->isManagerFor($this->collectionCode)) {
+            $this->log($this->translator->trans($input->getArgument('username').' '.'access.denied.wrongPermission', [],'exceptions'));
             throw new AccessDeniedException($this->translator->trans('access.denied.wrongPermission', [],
                 'exceptions'));
         }
@@ -285,10 +295,12 @@ class SearchDiffCommand extends ContainerAwareCommand
                     $this->getContainer()->getParameter('api_recolnat_auth_service_url'),
                     $verifySsl);
             } catch (\Exception $e) {
+                $this->log($input->getArgument('username').' '.$this->translator->trans('access.denied.wrongPermission', [],'exceptions'));
                 throw new AccessDeniedException($this->translator->trans('access.denied.wrongPermission', [],
                     'exceptions'));
             }
         } else {
+            $this->log($input->getArgument('username').' '.$this->translator->trans('access.denied.tgc_username', [], 'exceptions'));
             throw new AccessDeniedException($this->translator->trans('access.denied.tgc_username', [], 'exceptions'));
         }
 
@@ -317,10 +329,12 @@ class SearchDiffCommand extends ContainerAwareCommand
 
                 return $user;
             } else {
+                $this->log($this->translator->trans($username.' access.denied.wrongPermission', [],'exceptions'));
                 throw new AccessDeniedException($this->getContainer()->get('translator')
                     ->trans('access.denied.wrongPassword', [], 'exceptions'));
             }
         } else {
+            $this->log($this->translator->trans($username.' access.denied.wrongPermission', [],'exceptions'));
             throw new AccessDeniedException($this->getContainer()->get('translator')
                 ->trans('access.denied.wrongPassword', [], 'exceptions'));
         }
@@ -333,11 +347,6 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
 
         return true;
-    }
-
-    private function createTaxonsFile($taxons)
-    {
-        $fs = new Filesystem();
     }
 
     /**
@@ -421,7 +430,9 @@ class SearchDiffCommand extends ContainerAwareCommand
     private function setLogFilePath()
     {
         $now = new \DateTime();
-        $logFilePath = sprintf($this->collectionPath.'/'.$this->logFileTemplate, $now->format('d-m-Y-H-i-s'));
+        $logFilePath = sprintf($this->getContainer()->getParameter('export_path').'/'.
+            $this->logFileTemplate, $this->collection->getInstitution()->getInstitutioncode(),
+            $this->collection->getCollectioncode(), $now->format('d-m-Y-H-i-s'));
 
         $this->logFile = new \SplFileObject($logFilePath, 'w+');
     }
