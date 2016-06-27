@@ -4,7 +4,6 @@ namespace AppBundle\Business;
 
 
 use AppBundle\Manager\UtilityService;
-use Symfony\Component\Filesystem\Filesystem;
 
 class SelectedSpecimensHandler extends AbstractFile
 {

@@ -10,9 +10,11 @@ use Doctrine\ORM\AbstractQuery;
 
 class SpecimenRepository extends AbstractRecolnatRepository
 {
-    public static function getEntityIdField(){
+    public static function getEntityIdField()
+    {
         return DiffSpecimen::getIdField();
     }
+
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */
@@ -29,6 +31,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
             ->leftJoin('s.stratigraphy', 'st')
             ->leftJoin('s.recolte', 'r')
             ->leftJoin('r.localisation', 'l');
+
         return $qb;
     }
 
@@ -70,6 +73,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
     {
         $qb = $this->getQueryBuilderJoinSpecimen();
         $this->setSpecimenCodesWhereClause($collection, $qb, [$catalogNumber]);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
