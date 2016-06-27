@@ -113,10 +113,6 @@ class StatsManager
      */
     public function getStats()
     {
-        /*if (is_array($this->exportManager->sessionManager->get('stats'))) {
-            return $this->exportManager->sessionManager->get('stats');
-        }
-        return [];*/
         return $this->exportManager->getDiffHandler()->getStatsFile()->getData();
     }
 

@@ -205,7 +205,6 @@ class FrontController extends Controller
             'specimens' => $specimens,
             'pagination' => $pagination,
             'db' => $db,
-            'exportManager' => $exportManager,
             'lonesomeRecords' => $lonesomeRecords,
             'taxons' => $taxons,
         ));
@@ -285,8 +284,7 @@ class FrontController extends Controller
             'statsChoices' => $statsChoices,
             'sumLonesomeRecords' => $sumLonesomeRecords,
             'form' => $form->createView(),
-            'keyRecolnat' => AbstractDiff::KEY_RECOLNAT,
-            'keyInstitution' => AbstractDiff::KEY_INSTITUTION
+            'keysRef' => AbstractDiff::getKeysRef(),
         ));
     }
 
@@ -308,7 +306,7 @@ class FrontController extends Controller
 
         list($pagination, $diffs, $specimens) = $this->getDataForDisplay($page, $catalogNumbers, $request,
             $exportManager, $collection);
-        $taxons = $exportManager->getDiffHandler()->getTaxons($catalogNumbers);
+        $diffs['taxons'] = $exportManager->getDiffHandler()->getTaxons($catalogNumbers);
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'collection' => $collection,
@@ -316,7 +314,6 @@ class FrontController extends Controller
             'specimens' => $specimens,
             'exportManager' => $exportManager,
             'pagination' => $pagination,
-            'taxons' => $taxons
         ));
     }
 
@@ -344,7 +341,7 @@ class FrontController extends Controller
         list($pagination, $diffs, $specimens) = $this->getDataForDisplay($page, $catalogNumbers, $request,
             $exportManager, $collection);
 
-        $taxons = $exportManager->getDiffHandler()->getTaxons(array_keys($specimens));
+        $diffs['taxons'] = $exportManager->getDiffHandler()->getTaxons(array_keys($specimens));
 
         return $this->render('@App/Front/viewSpecimens.html.twig', array(
             'collection' => $collection,
@@ -353,7 +350,6 @@ class FrontController extends Controller
             'exportManager' => $exportManager,
             'search' => $search,
             'pagination' => $pagination,
-            'taxons' => $taxons,
         ));
     }
 

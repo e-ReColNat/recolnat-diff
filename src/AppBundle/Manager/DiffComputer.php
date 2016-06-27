@@ -152,14 +152,6 @@ class DiffComputer
         }
     }
 
-    private function getTaxon($catalogNumber)
-    {
-        if (isset($this->taxons[$catalogNumber])) {
-            return $this->taxons[$catalogNumber];
-        }
-
-        return null;
-    }
 
     public function getTaxons()
     {

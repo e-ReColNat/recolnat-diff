@@ -69,7 +69,7 @@ class SpecimenRepository extends AbstractRecolnatRepository
     public function findOneByCatalogNumber(Collection $collection, $catalogNumber)
     {
         $qb = $this->getQueryBuilderJoinSpecimen();
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumber);
+        $this->setSpecimenCodesWhereClause($collection, $qb, [$catalogNumber]);
         return $qb->getQuery()->getOneOrNullResult();
     }
 

@@ -6,9 +6,9 @@ namespace AppBundle\Business;
 use AppBundle\Manager\UtilityService;
 use Symfony\Component\Filesystem\Filesystem;
 
-class SelectedSpecimensHandler extends \SplFileObject
+class SelectedSpecimensHandler extends AbstractFile
 {
-    const SELECTED_FILENAME = '/selected.json';
+    const FILENAME = '/selected.json';
 
     /**
      * @param string $dirPath
@@ -16,27 +16,10 @@ class SelectedSpecimensHandler extends \SplFileObject
      */
     public function __construct($dirPath, $userGroup)
     {
-        $path = UtilityService::createFile($dirPath.self::SELECTED_FILENAME, $userGroup);
+        $path = UtilityService::createFile($dirPath.self::FILENAME, $userGroup);
         parent::__construct($path, 'c+');
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
-    {
-        $fs = new Filesystem();
-        if ($fs->exists($this->getPathname())) {
-            $fileContent = json_decode(file_get_contents($this->getPathname()), true);
-            if (is_null($fileContent)) {
-                $fileContent = [];
-            }
-
-            return $fileContent;
-        }
-
-        return [];
-    }
 
     /**
      * @param string $catalogNumber
@@ -69,15 +52,4 @@ class SelectedSpecimensHandler extends \SplFileObject
         return $data;
     }
 
-    /**
-     * @param array $selectedSpecimens
-     */
-    public function save(array $selectedSpecimens)
-    {
-        $fs = new Filesystem();
-        if ($fs->exists($this->getPathname())) {
-            $responseJson = json_encode($selectedSpecimens, JSON_PRETTY_PRINT);
-            $fs->dumpFile($this->getPathname(), $responseJson);
-        }
-    }
 }

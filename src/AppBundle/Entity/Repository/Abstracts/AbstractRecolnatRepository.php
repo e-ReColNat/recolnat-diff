@@ -73,12 +73,6 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     }
 
     /**
-     * @param Collection $collection
-     * @return \Doctrine\ORM\QueryBuilder
-     */
-    //abstract public function getQueryBuilderFindByCollectionWithCatalogNumber(Collection $collection);
-
-    /**
      * @return \Doctrine\ORM\QueryBuilder
      */
     abstract public function getQueryBuilderJoinSpecimen();
@@ -145,7 +139,6 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
     /**
      * @param array  $resultsSet
-     * @param string $identifierName
      * @return array
      */
     protected function orderResultSetByCatalogNumber($resultsSet)

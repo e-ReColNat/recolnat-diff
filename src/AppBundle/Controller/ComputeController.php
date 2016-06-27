@@ -184,7 +184,6 @@ class ComputeController extends Controller
 
     /**
      * @Route("diff/search/error/", name="SearchDiffError", options={"expose"=true})
-     * @param string $collectionCode
      * @return Response
      */
     public function searchDiffErrorAction()
