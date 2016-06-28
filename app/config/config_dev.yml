@@ -11,6 +11,9 @@ web_profiler:
     toolbar: true
     intercept_redirects: false
 
+swiftmailer:
+    delivery_address: thomas.pateffoz@ird.fr
+
 monolog:
     handlers:
         main:
@@ -41,5 +44,4 @@ monolog:
         #    type:   chromephp
         #    level:  info
 
-#swiftmailer:
-#    delivery_address: me@example.com
+

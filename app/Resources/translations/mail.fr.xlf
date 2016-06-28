@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="fr" target-language="fr" datatype="plaintext" original="mail.xliff">
+        <body>
+            <trans-unit id="1" approved="yes">
+                <source>searchDiffs.end.success</source>
+                <target state="translated">La recherche de différence pour la collection %collectionLabel% a été executée avec succés</target>
+            </trans-unit>
+            <trans-unit id="2" approved="yes">
+                <source>searchDiff.success.link</source>
+                <target state="translated">Vous pouvez à présent naviguer et sélectionner les données qui vous intéressent en vous rendant à cette adresse
+                </target>
+            </trans-unit>
+            <trans-unit id="3" approved="yes">
+                <source>subject.success</source>
+                <target state="translated">Recolnat - Recherche de différences pour %collectionLabel%
+                </target>
+            </trans-unit>
+            <trans-unit id="4" approved="yes">
+                <source>searchDiffs.end.error</source>
+                <target state="translated">La recherche de différence pour la collection %collectionLabel% n'a pas été executée avec succés</target>
+            </trans-unit>
+            <trans-unit id="5" approved="yes">
+                <source>subject.error</source>
+                <target state="translated">Recolnat - Erreur dans la recherche de différences pour %collectionLabel%
+                </target>
+            </trans-unit>
+            <trans-unit id="6" approved="yes">
+                <source>searchDiff.error.link</source>
+                <target state="translated">Une erreur s'est produite lors de la recherche de différences. Merci de prendre contact avec l'administrateur d'e-ReColNat.
+                </target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -1,0 +1,15 @@
+{% extends '@App/Compute/templateMail.html.twig' %}
+
+{% block mail_content %}
+    <h1>{{ 'searchDiffs.end.error' | trans({'%collectionLabel%':collectionLabel}, 'mail') }}</h1>
+    <table class="callout">
+        <tr>
+            <th class="callout-inner alert">
+                <p>
+                    {{ 'searchDiff.error.link' | trans({}, 'mail') }}
+                </p>
+            </th>
+            <th class="expander"></th>
+        </tr>
+    </table>
+{% endblock %}

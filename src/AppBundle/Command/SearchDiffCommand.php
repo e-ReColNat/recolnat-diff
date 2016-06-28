@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use AppBundle\Business\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\Translator;
 
@@ -37,10 +38,11 @@ class SearchDiffCommand extends ContainerAwareCommand
 
     private $logFileTemplate = 'log-%s-%s-%s.txt';
     /** @var  Collection */
-    private $collection ;
+    private $collection;
 
     /** @var  \SplFileObject|null */
     private $logFile;
+    /** @var  User */
     private $user;
     /**
      * @var \DateTime
@@ -122,7 +124,8 @@ class SearchDiffCommand extends ContainerAwareCommand
         if (UtilityService::isDateWellFormatted($input->getArgument('startDate'))) {
             $this->startDate = \DateTime::createFromFormat('d/m/Y', $input->getArgument('startDate'));
         } else {
-            $this->log($this->translator->trans($input->getArgument('username').' '.'access.denied.wrongDateFormat', [], 'exceptions'));
+            $this->log($this->translator->trans($input->getArgument('username').' '.'access.denied.wrongDateFormat', [],
+                'exceptions'));
             throw new \Exception($this->translator->trans('access.denied.wrongDateFormat', [], 'exceptions'));
         }
 
@@ -140,16 +143,53 @@ class SearchDiffCommand extends ContainerAwareCommand
 
         $catalogNumbersFiles = $this->createCatalogNumbersFiles($diffManager, $diffHandler);
 
-        $this->launchDiffProcesses($diffManager, $output);
+        try {
+            $this->launchDiffProcesses($diffManager, $output);
 
-        $mergeResult = $this->mergeFiles($diffManager::ENTITIES_NAME, $diffHandler->getCollectionPath());
+            $mergeResult = $this->mergeFiles($diffManager::ENTITIES_NAME, $diffHandler->getCollectionPath());
 
-        $diffHandler->saveData($mergeResult['data']);
-        $diffHandler->saveTaxons($mergeResult['taxons']);
+            $diffHandler->saveData($mergeResult['data']);
+            $diffHandler->saveTaxons($mergeResult['taxons']);
 
-        $this->removeCatalogNumbersFiles($catalogNumbersFiles);
+            $this->removeCatalogNumbersFiles($catalogNumbersFiles);
+            $this->sendMail('success');
+        } catch (ProcessFailedException $e) {
+            $this->sendMail('error');
+            throw $e;
+        }
 
         $this->closeLogFile();
+    }
+
+    private function sendMail($type = 'success')
+    {
+        $collectionLabel = sprintf('%s - %s', $this->collection->getInstitution()->getInstitutioncode(),
+            $this->collection->getCollectioncode());
+
+        $templateMail = '@App/Compute/inlinedMailSuccess.html.twig';
+
+        $subject = 'subject.success';
+        if ($type != 'success') {
+            $templateMail = '@App/Compute/inlinedMailError.html.twig';
+            $subject = 'subject.error';
+        }
+
+        $message = \Swift_Message::newInstance()
+            ->setSubject($this->translator->trans($subject, ['%collectionLabel%' => $collectionLabel],
+                'mail'))
+            ->setFrom('recolnatdiff@recolnat.org')
+            ->setTo($this->user->getEmail())
+            ->setBody(
+                $this->getContainer()->get('templating')->render(
+                    $templateMail,
+                    array(
+                        'collectionLabel' => $collectionLabel,
+                        'collection' => $this->collection
+                    )
+                ),
+                'text/html'
+            );
+        $this->getContainer()->get('mailer')->send($message);
     }
 
     private function removeCatalogNumbersFiles(array $catalogNumbersFiles)
@@ -262,7 +302,8 @@ class SearchDiffCommand extends ContainerAwareCommand
         }
 
         if (!$user->isManagerFor($this->collectionCode)) {
-            $this->log($this->translator->trans($input->getArgument('username').' '.'access.denied.wrongPermission', [],'exceptions'));
+            $this->log($this->translator->trans($input->getArgument('username').' '.'access.denied.wrongPermission', [],
+                'exceptions'));
             throw new AccessDeniedException($this->translator->trans('access.denied.wrongPermission', [],
                 'exceptions'));
         }
@@ -295,12 +336,14 @@ class SearchDiffCommand extends ContainerAwareCommand
                     $this->getContainer()->getParameter('api_recolnat_auth_service_url'),
                     $verifySsl);
             } catch (\Exception $e) {
-                $this->log($input->getArgument('username').' '.$this->translator->trans('access.denied.wrongPermission', [],'exceptions'));
+                $this->log($input->getArgument('username').' '.$this->translator->trans('access.denied.wrongPermission',
+                        [], 'exceptions'));
                 throw new AccessDeniedException($this->translator->trans('access.denied.wrongPermission', [],
                     'exceptions'));
             }
         } else {
-            $this->log($input->getArgument('username').' '.$this->translator->trans('access.denied.tgc_username', [], 'exceptions'));
+            $this->log($input->getArgument('username').' '.$this->translator->trans('access.denied.tgc_username', [],
+                    'exceptions'));
             throw new AccessDeniedException($this->translator->trans('access.denied.tgc_username', [], 'exceptions'));
         }
 
@@ -329,12 +372,12 @@ class SearchDiffCommand extends ContainerAwareCommand
 
                 return $user;
             } else {
-                $this->log($this->translator->trans($username.' access.denied.wrongPermission', [],'exceptions'));
+                $this->log($this->translator->trans($username.' access.denied.wrongPermission', [], 'exceptions'));
                 throw new AccessDeniedException($this->getContainer()->get('translator')
                     ->trans('access.denied.wrongPassword', [], 'exceptions'));
             }
         } else {
-            $this->log($this->translator->trans($username.' access.denied.wrongPermission', [],'exceptions'));
+            $this->log($this->translator->trans($username.' access.denied.wrongPermission', [], 'exceptions'));
             throw new AccessDeniedException($this->getContainer()->get('translator')
                 ->trans('access.denied.wrongPassword', [], 'exceptions'));
         }

@@ -4,6 +4,7 @@ namespace AppBundle\Manager;
 
 use AppBundle\Business\Process;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ProcessManager extends \Jack\Symfony\ProcessManager
 {
@@ -54,6 +55,10 @@ class ProcessManager extends \Jack\Symfony\ProcessManager
             // remove all finished processes from the stack
             foreach ($currentProcesses as $index => $process) {
                 if (!$process->isRunning()) {
+                    if (!empty($process->getErrorOutput())) {
+                        $this->log($process->getErrorOutput());
+                        throw new ProcessFailedException($process);
+                    }
                     $this->sendOutput($process->getEndOutput('json'));
                     $this->log($process->getTimer());
                     unset($currentProcesses[$index]);
