@@ -4,15 +4,15 @@ services:
         arguments:
             managerRegistry: "@doctrine"
             maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
+#    diff.manager:
+#        class: AppBundle\Manager\OldDiffManager
+#        arguments:
+#            managerRegistry: "@doctrine"
+#            recolnat_alias: "%database_user%"
+#            recolnat_diff_alias: "%database_user_diff%"
+
     diff.manager:
         class: AppBundle\Manager\DiffManager
-        arguments:
-            managerRegistry: "@doctrine"
-            recolnat_alias: "%database_user%"
-            recolnat_diff_alias: "%database_user_diff%"
-
-    diff.newmanager:
-        class: AppBundle\Manager\NewDiffManager
         arguments:
             managerRegistry: "@doctrine"
             recolnatAlias: "%database_user%"
@@ -29,7 +29,6 @@ services:
             managerRegistry: "@doctrine"
             sessionManager: "@session"
             genericEntityManager: "@genericentitymanager"
-            diffManager: "@diff.manager"
             maxItemPerPage: "%knp_paginator.page_range%"
             diffComputer: "@diff.computer"
             userGroup: "%user_group%"
@@ -78,16 +77,23 @@ services:
         class: AppBundle\Security\RecolnatUserProvider
         arguments:
             exportPath: "%export_path%"
-            apiRecolnatUser: "%api_recolnat_user%"
+            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
+            apiRecolnatUserPath: "%api_recolnat_user_path%"
             userGroup: "%user_group%"
 
     # Command
     command.search_diffs:
         class: AppBundle\Command\SearchDiffCommand
         tags:
-                    -  { name: console.command }
+            -  { name: console.command }
         arguments:
             serverLoginUrl: "%server_login_url%"
-            serverTicket: "v1/tickets"
+            serverTicket: "%api_recolnat_server_ticket_path%"
             requestOptions: "%request_options%"
-            apiRecolnatUser: "%api_recolnat_user%"
+            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
+            apiRecolnatUserPath: "%api_recolnat_user_path%"
+
+    command.compute_diffs:
+            class: AppBundle\Command\ComputeDiffCommand
+            tags:
+                -  { name: console.command }

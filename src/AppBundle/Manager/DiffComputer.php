@@ -45,7 +45,7 @@ class DiffComputer
     protected $statsLonesomeRecords = [];
     protected $taxons = [];
 
-    protected $logQueries = false;
+    protected $logQueries = true;
 
     private $classOrder = [
         'Specimen',
@@ -107,7 +107,8 @@ class DiffComputer
     }
 
     /**
-     * @param $className
+     * @param string $className
+     * @throws \Exception
      */
     public function computeClassname($className)
     {
@@ -121,6 +122,8 @@ class DiffComputer
             $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
             $this->computeDiffs($className);
             unset($diffClassManager);
+        } else {
+            throw new \Exception('no catalognumber for '.$className);
         }
         $this->diffs['classes'] = $this->classes;
     }
@@ -149,23 +152,10 @@ class DiffComputer
         }
     }
 
-    private function getTaxon($catalogNumber)
-    {
-        if (isset($this->taxons[$catalogNumber])) {
-            return $this->taxons[$catalogNumber];
-        }
 
-        return null;
-    }
-
-    /**
-     * @param string $catalogNumber
-     */
-    private function setTaxon($catalogNumber)
+    public function getTaxons()
     {
-        if (!isset($this->diffs['datas'][$catalogNumber]['taxon'])) {
-            $this->diffs['datas'][$catalogNumber]['taxon'] = $this->getTaxon($catalogNumber);
-        }
+        return $this->taxons;
     }
 
     /**
@@ -176,16 +166,14 @@ class DiffComputer
         $this->stats[$className] = [];
         if (isset($this->diffs['classes'][$className])) {
             foreach ($this->diffs['classes'][$className] as $catalogNumber => $rows) {
-                $this->setTaxon($catalogNumber);
                 if (!isset($this->diffs['datas'][$catalogNumber])) {
                     $this->diffs['datas'][$catalogNumber] = [];
-                    $this->diffs['datas'][$catalogNumber]['classes'] = [];
-                    $this->diffs['datas'][$catalogNumber]['classes'][$className] = [];
+                    $this->diffs['datas'][$catalogNumber][$className] = [];
                 }
                 foreach ($rows as $recordId => $fields) {
                     $this->setStatsForClass($className, $fields);
-                    $this->diffs['datas'][$catalogNumber]['classes'][$className]['fields'] = $fields;
-                    $this->diffs['datas'][$catalogNumber]['classes'][$className]['id'] = $recordId;
+                    $this->diffs['datas'][$catalogNumber][$className]['fields'] = $fields;
+                    $this->diffs['datas'][$catalogNumber][$className]['id'] = $recordId;
                 }
             }
         }
@@ -248,41 +236,52 @@ class DiffComputer
      * @param string $className
      * @param array  $lonesomeRecords
      */
-    public function setLonesomeRecords($className, $lonesomeRecords)
+    private function setLonesomeRecords($className, $lonesomeRecords)
     {
         $this->lonesomeRecords[$className] = [];
+
         foreach ($lonesomeRecords as $db => $items) {
             $this->setTaxons(array_column($items, 'catalogNumber'), $db);
 
             if (!isset($this->lonesomeRecords[$className][$db])) {
                 $this->lonesomeRecords[$className][$db] = [];
             }
-            $catalogNumbersNewSpecimenRecords = [];
-            if ($className != 'Specimen') {
-                $catalogNumbersNewSpecimenRecords = array_column($this->lonesomeRecords['Specimen'][$db],
-                    'catalogNumber');
-            }
 
             foreach ($items as $lonesomeRecord) {
                 $catalogNumber = $lonesomeRecord['catalogNumber'];
 
-                if ($className == 'Specimen' || !in_array($catalogNumber, $catalogNumbersNewSpecimenRecords)
-                ) {
-                    $lonesomeRecord['taxon'] = $this->getTaxon($catalogNumber);
-                    $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
-                    if (!isset($this->statsLonesomeRecords[$catalogNumber])) {
-                        $this->statsLonesomeRecords[$catalogNumber] = [];
+                $this->lonesomeRecords[$className][$db][] = $lonesomeRecord;
+                if (!isset($this->statsLonesomeRecords[$catalogNumber])) {
+                    $this->statsLonesomeRecords[$catalogNumber] = [];
+                }
+            }
+        }
+    }
+
+    public static function computeStatsLonesomeRecords($lonesomeRecordsByClassName)
+    {
+        $stats = [];
+        foreach ($lonesomeRecordsByClassName as $className => $lonesomeRecordsByDb) {
+            foreach ($lonesomeRecordsByDb as $db => $lonesomeRecords) {
+                foreach ($lonesomeRecords as $lonesomeRecord) {
+                    $catalogNumber = $lonesomeRecord['catalogNumber'];
+                    if (!isset($stats[$catalogNumber])) {
+                        $stats[$catalogNumber] = [];
                     }
 
-                    $this->statsLonesomeRecords[$catalogNumber][] =
+                    if (!isset($stats[$catalogNumber][$className])) {
+                        $stats[$catalogNumber][$className] = [];
+                    }
+                    $stats[$catalogNumber][$className][] =
                         [
-                            'class' => $className,
                             'id' => $lonesomeRecord['id'],
                             'db' => $db,
                         ];
                 }
             }
         }
+
+        return $stats;
     }
 
     /**

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-    <file source-language="fr" target-language="fr" datatype="plaintext" original="messages.xliff">
+    <file source-language="fr" target-language="fr" datatype="plaintext" original="exceptions.xliff">
         <body>
             <trans-unit id="1" approved="yes">
                 <source>access.denied</source>
@@ -25,6 +25,14 @@
             <trans-unit id="6" approved="yes">
                 <source>access.denied.wrongDateFormat</source>
                 <target>La date doit être au format jj/mm/aaaa (ex : 15/09/2016)</target>
+            </trans-unit>
+            <trans-unit id="7" approved="yes">
+                <source>access.denied.tgc_username</source>
+                <target>Username ou cookietgc manquant</target>
+            </trans-unit>
+            <trans-unit id="8" approved="yes">
+                <source>searchDiffError</source>
+                <target>Une erreur s'est produite lors de la recherche des différences. Veuillez contacter l'administrateur.</target>
             </trans-unit>
         </body>
     </file>

@@ -33,8 +33,6 @@ class ExportManager
      */
     private $collectionCode = null;
 
-    /** @var \AppBundle\Manager\DiffManager */
-    protected $diffManager;
     /**
      * @var integer
      */
@@ -76,7 +74,6 @@ class ExportManager
      * @param ManagerRegistry      $managerRegistry
      * @param Session              $sessionManager
      * @param GenericEntityManager $genericEntityManager
-     * @param DiffManager          $diffManager
      * @param int                  $maxItemPerPage
      * @param DiffComputer         $diffComputer
      * @param string               $userGroup
@@ -85,7 +82,6 @@ class ExportManager
         ManagerRegistry $managerRegistry,
         Session $sessionManager,
         GenericEntityManager $genericEntityManager,
-        DiffManager $diffManager,
         $maxItemPerPage,
         DiffComputer $diffComputer,
         $userGroup
@@ -93,7 +89,6 @@ class ExportManager
         $this->managerRegistry = $managerRegistry;
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
-        $this->diffManager = $diffManager;
         $this->maxItemPerPage = $maxItemPerPage;
         $this->diffComputer = $diffComputer;
         $this->userGroup = $userGroup;
@@ -124,7 +119,6 @@ class ExportManager
         if (is_null($this->collection)) {
             throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
         } else {
-            $this->diffManager->init($this->collection);
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collection, $this->userGroup);
 
             if (!$this->getDiffHandler()->shouldSearchDiffs()) {
@@ -138,26 +132,6 @@ class ExportManager
         }
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function launchDiffProcess()
-    {
-        if ($this->getDiffHandler()->shouldSearchDiffs()) {
-            $diffs = $this->diffManager->searchDiffs();
-            $diffComputer = $this->diffComputer->init($this->collection, $diffs);
-            $data = $diffComputer->getAllDatas();
-            $this->getDiffHandler()->saveDiffs($data);
-            $this->getDiffHandler()->getDiffsFile()->searchDiffs = false;
-        } else {
-            $data = $this->getDiffHandler()->getDiffsFile()->getData();
-        }
-
-        $data['selectedSpecimens'] = $this->selectedSpecimensHandler->getData();
-
-        return $data;
     }
 
     /**
@@ -217,15 +191,14 @@ class ExportManager
      * @param array $diffs
      * @return array
      */
-    public static function orderDiffsByTaxon(array $diffs)
+    public function orderDiffsByTaxon(array $diffs)
     {
         $sortedDiffs = $diffs;
         if (count($diffs['datas'])) {
             $datas = $diffs['datas'];
-            $taxons = [];
-            foreach ($datas as $catalogNumber => $diff) {
-                $taxons[$catalogNumber] = $diff['taxon'];
-            }
+
+            $taxons = $this->getDiffHandler()->getTaxons(array_keys($diffs['datas'])) ;
+
             array_multisort($taxons, SORT_ASC, SORT_NATURAL|SORT_FLAG_CASE, $datas);
             $sortedDiffs['datas'] = $datas;
         }
@@ -365,38 +338,38 @@ class ExportManager
         // ajout des nouveaux enregistrements de specimens complets
         // Un seul côté
         if ($this->exportPrefs->getSideForNewRecords() != 'both') {
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                $this->exportPrefs->getSideForNewRecords()));
-
-            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
-                $this->exportPrefs->getSideForNewRecords(),
-                $this->collection,
-                $catalogNumbersLonesomeRecords);
-            $data = array_merge($data, $datasNewRecords);
-
+            $dataNewRecords = $this->getSpecimenForLonesomeRecords($this->exportPrefs->getSideForNewRecords());
+            $data = array_merge($data, $dataNewRecords);
         } // des deux côtés
         else {
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                'recolnat'));
-            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('recolnat',
-                $this->collection,
-                array_keys($catalogNumbersLonesomeRecords));
-            $data = array_merge($data, $datasNewRecords);
+            $dataNewRecords = $this->getSpecimenForLonesomeRecords('recolnat');
+            $data = array_merge($data, $dataNewRecords);
 
-
-            $catalogNumbersLonesomeRecords = array_keys($this->diffHandler->getDiffsFile()->getLonesomeRecordsOrderedByCatalogNumbers(
-                'institution'));
-            $datasNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens('institution',
-                $this->collection,
-                $catalogNumbersLonesomeRecords);
-            $data = array_merge($data, $datasNewRecords);
-
+            $dataNewRecords = $this->getSpecimenForLonesomeRecords('institution');
+            $data = array_merge($data, $dataNewRecords);
         }
         $data = $this->filterDataByCatalogNumbers($data);
 
         return $data;
     }
 
+    /**
+     * @param string $side
+     * @return array
+     */
+    private function getSpecimenForLonesomeRecords($side)
+    {
+        $dataNewRecords=[];
+        $lonesomeRecords = $this->diffHandler->getLonesomeRecordsFile()
+            ->getLonesomeRecordsByBase($side);
+        if (count($lonesomeRecords)) {
+            $catalogNumbersLonesomeRecords = array_keys($lonesomeRecords);
+            $dataNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
+                $this->exportPrefs->getSideForNewRecords(), $this->collection, $catalogNumbersLonesomeRecords);
+        }
+
+        return $dataNewRecords;
+    }
     /**
      * Dédoublonne les spécimens avant export
      * @param $data
@@ -405,8 +378,10 @@ class ExportManager
     private function filterDataByCatalogNumbers($data)
     {
         $filteredCatalogNumbersLonesomeRecords = [];
-        foreach ($data as $index => $specimen) {
-            $filteredCatalogNumbersLonesomeRecords[$specimen['catalognumber']] = $specimen;
+        if (count($data)) {
+            foreach ($data as $index => $specimen) {
+                $filteredCatalogNumbersLonesomeRecords[$specimen['catalognumber']] = $specimen;
+            }
         }
 
         return $filteredCatalogNumbersLonesomeRecords;
@@ -466,10 +441,10 @@ class ExportManager
         $datasWithChoices = $this->prepareExport($exportPrefs);
         switch ($type) {
             case 'dwc':
-                $exporter = new DwcExporter($datasWithChoices, $this->getExportDirPath());
+                $exporter = new DwcExporter($datasWithChoices, $this->getExportDirPath(), $this->userGroup);
                 break;
             case 'csv':
-                $exporter = new CsvExporter($datasWithChoices, $this->getExportDirPath());
+                $exporter = new CsvExporter($datasWithChoices, $this->getExportDirPath(), $this->userGroup);
         }
         if ($exporter instanceof AbstractExporter) {
             return $exporter->generate($this->user->getPrefs());
@@ -487,10 +462,10 @@ class ExportManager
         $this->exportPrefs = $exportPrefs;
         $catalogNumbers = $this->sessionManager->get('catalogNumbers');
         $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForChoicesNotSet(),
-            $this->collection,
-            $catalogNumbers);
+            $this->collection, $catalogNumbers);
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
 
         return $datasWithChoices;
     }
+
 }

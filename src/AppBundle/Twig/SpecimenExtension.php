@@ -207,7 +207,7 @@ class SpecimenExtension extends \Twig_Extension
                 is_array($relations)
             ) {
                 foreach ($relations as $relation) {
-                    if ($relation->{$getter}() == $id) {
+                    if (strtolower($relation->{$getter}()) == strtolower($id)) {
                         $return = $relation;
                     }
                 }

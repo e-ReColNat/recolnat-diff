@@ -85,18 +85,18 @@
                             {% endif %}
                         </td>
                         <td class="col-sm-1">
-                            {% if attribute(statsLonesomeRecords, className)['recolnat'] > 0 %}
+                            {% if attribute(statsLonesomeRecords, className)[keyRecolnat] > 0 %}
                                 <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
-                                    {{ attribute(statsLonesomeRecords, className)['recolnat'] }}
+                                    {{ attribute(statsLonesomeRecords, className)[keyRecolnat] }}
                                 </a>
                             {% else %}
                                 0
                             {% endif %}
                         </td>
                         <td class="col-sm-1">
-                            {% if attribute(statsLonesomeRecords, className)['institution'] > 0 %}
+                            {% if attribute(statsLonesomeRecords, className)[keyInstitution] > 0 %}
                                 <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
-                                    {{ attribute(statsLonesomeRecords, className)['institution'] }}
+                                    {{ attribute(statsLonesomeRecords, className)[keyInstitution] }}
                                 </a>
                             {% else %}
                                 0
@@ -145,10 +145,6 @@
                                         {{ 'delete.diffs'|trans }}
                                     </a>
                                 </p>
-                                <p>
-                                    <a href="{{ path('generateDiff', {'collectionCode' : collectionCode, 'compt' : 5}) }}"
-                                       class="btn btn-primary" role="button">Generate diff</a>
-                                </p>
                                 {% endif %}
                             </td>
                         {% endif %}
@@ -178,17 +174,19 @@
                     </td>
                     <td>
                         <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode}) }}">
-                            {{ sumLonesomeRecords.recolnat }}
+                            {{ attribute(sumLonesomeRecords, keyRecolnat) }}
                         </a>
                     </td>
                     <td>
                         <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode}) }}">
-                            {{ sumLonesomeRecords.institution }}
+                            {{ attribute(sumLonesomeRecords, keyInstitution) }}
                         </a>
                     </td>
                 </tr>
                 </tbody>
             </table>
+        {% else %}
+            {{ "label.nodiffs" | trans }}
         {% endif %}
 
     </div>
@@ -210,8 +208,8 @@
                 differences: {{ detailedStats.diffs }},
                 todos: {{ attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs }},
                 choices: {{ attribute(statsChoices, className) is defined ? attribute(statsChoices, className) : 0 }},
-                excluRecolnat: {{ attribute(statsLonesomeRecords, className)['recolnat'] }},
-                excluInstitution: {{ attribute(statsLonesomeRecords, className)['institution'] }}
+                excluRecolnat: {{ attribute(statsLonesomeRecords, className)[keyRecolnat] }},
+                excluInstitution: {{ attribute(statsLonesomeRecords, className)[keyInstitution] }}
             }
             {{ loop.last == false ? ',':'' }}
 
@@ -247,7 +245,6 @@
                                             window.location = path;
                                         })
                                         .fail(function (data) {
-                                            console.log(data);
                                         })
                                 ;
                             });
@@ -280,7 +277,6 @@
                                 }
                             })
                             .done(function (data) {
-                                console.log(data);
                             })
                             .success(function () {
                                 window.location.reload();

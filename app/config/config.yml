@@ -8,7 +8,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: fr
-    export_path: "%kernel.root_dir%/../src/AppBundle/Data"
+    export_path: "%kernel.root_dir%/../%data_path%"
     maxitemperpage:
         - 5
         - 10
@@ -128,3 +128,5 @@ swiftmailer:
     host:      '%mailer_host%'
     username:  '%mailer_user%'
     password:  '%mailer_password%'
+    encryption: '%mailer_encryption%'
+    port: '%mailer_port%'

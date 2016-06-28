@@ -6,6 +6,7 @@
 
 {% block body %}
     {% set datas = diffs.datas %}
+    {% set taxons = diffs.taxons %}
     {% if datas is not empty %}
         <div id="wrapper" class="toggled">
             {% include '@App/Front/partial/module_diff.html.twig' with { 'currentPage': pagination.getCurrentPageNumber} %}

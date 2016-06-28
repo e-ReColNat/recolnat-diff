@@ -37,11 +37,10 @@
     </nav>
 {% endblock navbar %}
 <div class="container-fluid">
-    <h1>{{ "error.occured" | trans({}, 'exceptions') }}</h1>
-    <h2>{{ "access.denied" | trans({}, 'exceptions') }}</h2>
-
-    <div>
-        {{ "access.denied.explanations" | trans({}, 'exceptions') }}
+    <div class="bs-callout bs-callout-danger">
+        <h4>{{ "error.occured" | trans({}, 'exceptions') }}</h4>
+        <p>{{ "access.denied" | trans({}, 'exceptions') }}</p>
+        <p>{{ "access.denied.explanations" | trans({}, 'exceptions') }}</p>
     </div>
 </div>
 </body>

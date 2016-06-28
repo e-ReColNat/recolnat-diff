@@ -135,7 +135,7 @@ class DwcExporter extends AbstractExporter
         $this->setDwcLineBreak($prefs->getDwcLineBreak());
         $this->setDwcDateFormat($prefs->getDwcDateFormat());
         $this->formattedDatas = $this->formatDatas();
-        $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath());
+        $csvExporter = new CsvExporter($this->formattedDatas, $this->getExportDirPath(), $this->userGroup);
         $this->csvFiles = $csvExporter->generate($prefs, ['dwc' => true]);
 
         $fileExport = new Filesystem();

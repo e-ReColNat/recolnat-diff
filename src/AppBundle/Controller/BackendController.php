@@ -253,7 +253,6 @@ class BackendController extends Controller
         $diffHandler = $exportManager->getDiffHandler();
         $diffs = $diffHandler->getDiffsFile();
         $diffs->deleteChoices();
-        $exportManager->launchDiffProcess();
         $this->get('session')->clear();
         $response = new JsonResponse();
         $response->setData(['deleteDiffs' => true]);

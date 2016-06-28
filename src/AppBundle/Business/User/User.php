@@ -34,15 +34,17 @@ class User implements UserInterface, \Serializable
     /**
      * @var string
      */
-    protected $apiRecolnatUser;
+    protected $apiRecolnatBaseUri;
+    protected $apiRecolnatUserPath;
 
     protected $userGroup;
 
-    public function __construct($username, $apiRecolnatUser, $userGroup)
+    public function __construct($username, $apiRecolnatBaseUri, $apiRecolnatUserPath, $userGroup)
     {
         $this->username = $username;
 
-        $this->apiRecolnatUser = $apiRecolnatUser;
+        $this->apiRecolnatBaseUri = $apiRecolnatBaseUri;
+        $this->apiRecolnatUserPath = $apiRecolnatUserPath;
         $this->userGroup = $userGroup;
         $this->setData();
         $this->setRoles();
@@ -62,13 +64,63 @@ class User implements UserInterface, \Serializable
     }
 
     /**
+     * @param string $cookieTGC
+     * @param string $serverLoginUrl
+     * @param string $serverTicketUrl
+     * @param string $apiRecolnatServiceUrl
+     * @param bool   $verifySsl
+     * @return bool
+     */
+    public function isGrantedByCheckServiceTicket(
+        $cookieTGC,
+        $serverLoginUrl,
+        $serverTicketUrl,
+        $apiRecolnatServiceUrl,
+        $verifySsl
+    ) {
+        $defaultHeaders = [
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip, deflate'
+        ];
+        $client = new Client(['base_uri' => $serverLoginUrl]);
+        $response = $client->request(
+            'POST',
+            $serverTicketUrl.'/'.$cookieTGC,
+            [
+                'form_params' => [
+                    'service' => $apiRecolnatServiceUrl
+                ],
+                'headers' => $defaultHeaders,
+                'verify' => $verifySsl
+            ]
+        );
+        if ($response->getStatusCode() == 200 && $response->getReasonPhrase() == "OK") {
+            $serviceTicket = $response->getBody()->getContents();
+            $queryParams = ['service' => $apiRecolnatServiceUrl, 'ticket' => $serviceTicket];
+            $response = $client->request('GET', 'validate?'.http_build_query($queryParams),
+                [
+                    'headers' => $defaultHeaders,
+                    'verify' => $verifySsl
+                ]);
+            if ($response->getStatusCode() == 200 && $response->getReasonPhrase() == "OK") {
+                $data = $response->getBody()->getContents();
+                if (strstr($data, $this->username)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Grab data through webservice
      */
     private function setData()
     {
         try {
-            $client = new Client();
-            $response = $client->get($this->apiRecolnatUser.urlencode($this->getUsername()));
+            $client = new Client(['base_uri' => $this->apiRecolnatBaseUri]);
+            $response = $client->request('GET', $this->apiRecolnatUserPath.urlencode($this->getUsername()));
             $this->data = \GuzzleHttp\json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
             echo \GuzzleHttp\Psr7\str($e->getRequest());
@@ -100,7 +152,7 @@ class User implements UserInterface, \Serializable
         $data = $this->getData();
 
         if (count($data->roles)) {
-            foreach($data->roles as $role) {
+            foreach ($data->roles as $role) {
                 $this->roles[] = new Role($role->name);
             }
         }

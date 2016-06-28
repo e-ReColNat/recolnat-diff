@@ -24,18 +24,24 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    server_login_url: https://localhost:8443/cas/
-    server_validation_url: https://localhost:8443/cas/serviceValidate
-    server_logout_url: https://localhost:8443/cas/logout
+    server_login_url: https://cas.recolnat.org/
+    server_validation_url: https://cas.recolnat.org/serviceValidate
+    server_logout_url: https://cas.recolnat.org/logout
     xml_namespace: cas
     request_options:
 
     url_recolnat: https://explore.recolnat.org/#/specimen/
-    api_recolnat_user: https://api.recolnat.org/erecolnat/v1/users/login/
+    api_recolnat_base_uri: https://api.recolnat.org/erecolnat/
+    api_recolnat_server_ticket_path: v1/tickets/
+    api_recolnat_user_path: users/login/
+    api_recolnat_auth_service_url: https://api.recolnat.org/erecolnat/auth/
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
     mailer_user:       ~
     mailer_password:   ~
+    mailer_encryption: ~
+    mailer_port: ~
 
     user_group: www-data
+    data_path: "src/AppBundle/Data"

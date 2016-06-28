@@ -137,7 +137,6 @@ class CsvExporter extends AbstractExporter
      */
     private function createFile($className, $extension = 'csv')
     {
-
         $fileName = $this->exportPath.'/'.strtolower($className).'.'.$extension;
         if (!is_file($fileName)) {
             exec('touch '.$fileName);

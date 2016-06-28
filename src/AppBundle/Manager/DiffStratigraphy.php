@@ -6,12 +6,12 @@ class DiffStratigraphy extends AbstractDiff
 {
     public $excludeFieldsName = ['sourcefileid', 'created', 'modified'];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getGeologicalcontextid';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'geologicalcontextid';
     }

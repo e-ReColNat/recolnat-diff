@@ -52,8 +52,8 @@ class ExportExtension extends \Twig_Extension
      */
     public function getCountDiffs($specimenData, $className)
     {
-        if (isset($specimenData['classes'][$className])) {
-            return count($specimenData['classes'][$className]['fields']);
+        if (isset($specimenData[$className])) {
+            return count($specimenData[$className]['fields']);
         }
 
         return 0;

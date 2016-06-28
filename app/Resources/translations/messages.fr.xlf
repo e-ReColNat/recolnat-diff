@@ -403,7 +403,7 @@
                 <target>Liste alphabétique des spécimens</target>
             </trans-unit>
             <trans-unit id="101">
-                <source>label.nodiffs</source>
+                <source>label.nosearch</source>
                 <target>La recherche n'a pas été effectuée</target>
             </trans-unit>
             <trans-unit id="102">
@@ -413,6 +413,14 @@
             <trans-unit id="103">
                 <source>label.institution</source>
                 <target>institution</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>label.nodiffs</source>
+                <target>La recherche n'a pas relevé de différences entre les deux bases de données</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>progression.general</source>
+                <target>Progression générale</target>
             </trans-unit>
         </body>
     </file>

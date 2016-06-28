@@ -50,13 +50,13 @@ class ExportManager extends Units\Test
             $managerRegistry,
             $this->container->get('session'),
             $this->container->get('genericentitymanager'),
-            $this->container->get('diff.manager'),
             $this->container->getParameter('maxitemperpage')[1],
             $this->container->get('diff.computer'),
             $this->container->getParameter('user_group')
         );
 
-        $user = new User('tpateffoz', $this->container->getParameter('api_recolnat_user'),
+        $user = new User('tpateffoz', $this->container->getParameter('api_recolnat_base_uri'),
+            $this->container->getParameter('api_recolnat_user_path'),
             $this->container->getParameter('user_group'));
         $user->setExportPath($this->container->getParameter('export_path'));
         $this->exportManager->init($user)->setCollectionCode('AIX');
@@ -93,6 +93,6 @@ class ExportManager extends Units\Test
     public function testOrderDiffsByTaxon()
     {
         $this->if($diff = $this->exportManager->getDiffsByCatalogNumbers($this->catalogNumbers))
-            ->array(\AppBundle\Manager\ExportManager::orderDiffsByTaxon($diff));
+            ->array($this->exportManager->orderDiffsByTaxon($diff));
     }
 }

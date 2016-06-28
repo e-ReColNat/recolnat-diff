@@ -100,7 +100,7 @@ class Bibliography
      */
     public function getReferenceid()
     {
-        return $this->referenceid;
+        return strtoupper($this->referenceid);
     }
 
     /**

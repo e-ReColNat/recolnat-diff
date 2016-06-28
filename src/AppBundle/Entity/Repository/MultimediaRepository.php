@@ -2,12 +2,16 @@
 
 namespace AppBundle\Entity\Repository;
 
-use AppBundle\Entity\Collection;
 use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
+use AppBundle\Manager\DiffMultimedia;
 use Doctrine\ORM\AbstractQuery;
 
 class MultimediaRepository extends AbstractRecolnatRepository
 {
+    public static function getEntityIdField()
+    {
+        return DiffMultimedia::getIdField();
+    }
 
     /**
      * @param string $id
@@ -30,53 +34,13 @@ class MultimediaRepository extends AbstractRecolnatRepository
     }
 
 
-    public function getQueryBuilderFindByCollection(Collection $collection)
+    public function getQueryBuilderJoinSpecimen()
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('m')
             ->from('AppBundle\Entity\Multimedia', 'm')
-            ->join('AppBundle\Entity\Specimen', 's')
-            ->andWhere('s.collection = :collection')
-            ->setParameter('collection', $collection);
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @return mixed
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('m')
-            ->from('AppBundle\Entity\Multimedia', 'm')
-            ->join('AppBundle\Entity\Specimen', 's');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @param int        $hydratationMode
-     * @return array
-     */
-    public function findByCatalogNumbers(
-        Collection $collection,
-        $catalogNumbers,
-        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
-    ) {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('m')
-            ->addSelect($this->getExprCatalogNumber().' as catalognumber')
-            ->from('AppBundle\Entity\Multimedia', 'm')
             ->innerJoin('m.specimens', 's')
             ->orderBy('m.identifier', 'ASC');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-
-        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode), 'multimediaid');
     }
 
     /**

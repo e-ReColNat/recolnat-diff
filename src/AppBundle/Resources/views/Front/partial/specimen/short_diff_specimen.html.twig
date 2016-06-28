@@ -10,7 +10,7 @@
         </colgroup>
         <tbody>
         {% set specimen = attribute(diffs.datas, catalogNumber) %}
-        {% for className, details in specimen.classes %}
+        {% for className, details in specimen %}
             {% set relationId = details.id %}
             {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}
             {% set relationInstitution = relationById(specimenInstitution, className, relationId) %}
@@ -38,6 +38,7 @@
                 </td>
             </tr>
 
+            {% dump(relationRecolnat) %}
             {% for fieldName, datas in details.fields %}
                 <tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
                     <td>

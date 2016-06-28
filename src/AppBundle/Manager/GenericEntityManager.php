@@ -4,6 +4,7 @@ namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Intl\Locale;
 
@@ -119,7 +120,7 @@ class GenericEntityManager
     {
         $em = $this->getEntityManager($base);
         $entities = $em->getRepository($this->getFullClassName($className))
-            ->findByCatalogNumbersUnordered($collection, $catalogNumbers);
+            ->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
         return $entities;
     }

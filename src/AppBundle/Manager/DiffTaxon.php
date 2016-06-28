@@ -5,12 +5,12 @@ class DiffTaxon extends AbstractDiff
 {
     public $excludeFieldsName = ['created', 'modified', 'sourcefileid', 'dwcataxonid'];
 
-    protected function getIdSetter()
+    public static function getIdSetter()
     {
         return 'getTaxonid';
     }
 
-    protected function getIdField()
+    public static function getIdField()
     {
         return 'taxonid';
     }

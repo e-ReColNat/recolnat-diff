@@ -15,14 +15,10 @@ class ExportPrefsType extends AbstractType
         $builder
             ->add('sideForChoicesNotSet', ChoiceType::class, array(
                 'choices'  => ExportPrefs::OPTIONS_SIDE_NOT_SET,
-                // *this line is important*
-                'choices_as_values' => true,
                 'label' => 'export.sideForChoicesNotSet'
             ))
             ->add('sideForNewRecords', ChoiceType::class, array(
                 'choices'  => ExportPrefs::OPTIONS_NEW_RECORDS,
-                // *this line is important*
-                'choices_as_values' => true,
                 'label' => 'export.sideForNewRecords'
             ))
         ;

@@ -3,10 +3,11 @@
 <ul class="nav sidebar-nav sidebar-choices">
     {% for catalogNumber, lonesomeRecord in lonesomeRecords %}
         <li>
-            {% set taxon = lonesomeRecord.taxon %}
-            {% if taxon is null %}
-                {% set taxon = 'label.notaxon' | trans %}
-            {% endif %}
+            {#{% set taxon = lonesomeRecord.taxon %}#}
+            {#{% if taxon is null %}#}
+                {#{% set taxon = 'label.notaxon' | trans %}#}
+            {#{% endif %}#}
+            {% set taxon = attribute(taxons, catalogNumber) %}
             {% set path='' %}
             {% if page != currentPage %}
                 {% set path = path('lonesomes', {'collectionCode' : collectionCode, 'db' : db, 'page' : page, 'selectedClassName' : selectedClassName}) %}

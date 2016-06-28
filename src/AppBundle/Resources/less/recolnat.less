@@ -451,73 +451,44 @@ see : http://jsfiddle.net/D2RLR/7569/ */
 .panel-managed-collections > .list-group > div:last-child {
   border-bottom: none;
 }
-/*.panel-managed-collections > .list-group div.row:nth-of-type(odd) div {
-  background-color: lighten(spin(@panel-info-heading-bg, -10), 5%);
-}*/
 
-/*.panel-managed-collections > .list-group div.row:nth-of-type(odd) .list-group-item{
-  background-color: lighten(@panel-info-heading-bg, 90%);
-}*/
+// Callout
+.bs-callout {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+}
 
-/*{
+.bs-callout h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.bs-callout p:last-child {
   margin-bottom: 0;
 }
-.panel > .list-group .list-group-item
-{
-  border-width: 1px 0;
+
+.bs-callout code {
+  border-radius: 3px;
 }
-.panel > .list-group .list-group-item:first-child
-{
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
+
+.bs-callout+.bs-callout {
+  margin-top: -5px;
 }
-.panel > .list-group .list-group-item:last-child
-{
-  border-bottom: 0;
+
+.bs-mixin(@name, @callout-color, @font-color) {
+  .@{name},
+  &.@{name} h4 {
+    border-left-color: @callout-color;
+    color: @font-color;
+  }
 }
-.panel-heading + .list-group .list-group-item:first-child
-{
-  border-top-width: 0;
-}
-.panel-default .list-group-item.active
-{
-  color: #000;
-  background-color: #DDD;
-  border-color: #DDD;
-}
-.panel-primary .list-group-item.active
-{
-  color: @btn-primary-color;
-  background-color: @brand-primary;
-  border-color: @brand-primary;
-}
-.panel-success .list-group-item.active
-{
-  color: #3C763D;
-  background-color: #DFF0D8;
-  border-color: #D6E9C6;
-}
-.panel-info .list-group-item.active
-{
-  color: #31708F;
-  background-color: #D9EDF7;
-  border-color: #BCE8F1;
-}
-.panel-warning .list-group-item.active
-{
-  color: #8A6D3B;
-  background-color: #FCF8E3;
-  border-color: #FAEBCC;
-}
-.panel-danger .list-group-item.active
-{
-  color: #A94442;
-  background-color: #F2DEDE;
-  border-color: #EBCCD1;
-}
-.panel a.list-group-item.active:hover, a.list-group-item.active:focus
-{
-  color: #000;
-  background-color: #DDD;
-  border-color: #DDD;
-}*/
+
+.bs-mixin(bs-callout-default, @gray-lighter, darken(@gray-lighter, 50%));
+.bs-mixin(bs-callout-primary, @brand-primary, @brand-primary);
+.bs-mixin(bs-callout-info, @brand-info, @brand-info);
+.bs-mixin(bs-callout-danger, @brand-danger, @brand-danger);
+.bs-mixin(bs-callout-warning, @brand-warning, @brand-warning);
+.bs-mixin(bs-callout-success, @brand-success, @brand-success);

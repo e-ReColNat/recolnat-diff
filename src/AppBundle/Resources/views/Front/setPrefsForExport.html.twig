@@ -1,5 +1,7 @@
 {% form_theme form '@App/Themes/bootstrap_3_form_modal.html.twig' %}
 
+{%  set sumLonesomeRecordsRecolnat = attribute(sumLonesomeRecords, keysRef.recolnat)%}
+{%  set sumLonesomeRecordsInstitution = attribute(sumLonesomeRecords, keysRef.institution)%}
 <div class="modal-content">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -8,8 +10,8 @@
     <div class="modal-body">
         {%  set countChoices = sumStats.diffs - statsChoices.sum  %}
         <p>{{ 'label.export.choices' | transchoice(countChoices, {'%count%':countChoices}) }}</p>
-        <p>{{ 'label.export.lonesomes.recolnat' | transchoice(sumLonesomeRecords.recolnat, {'%count%':sumLonesomeRecords.recolnat}) }}</p>
-        <p>{{ 'label.export.lonesomes.collection' | transchoice(sumLonesomeRecords.institution, {'%count%':sumLonesomeRecords.institution, '%collection%':collectionCode}) }}</p>
+        <p>{{ 'label.export.lonesomes.recolnat' | transchoice(sumLonesomeRecordsRecolnat, {'%count%':sumLonesomeRecordsRecolnat}) }}</p>
+        <p>{{ 'label.export.lonesomes.collection' | transchoice(sumLonesomeRecordsInstitution, {'%count%':sumLonesomeRecordsInstitution, '%collection%':collectionCode}) }}</p>
 
         {{ form_start(form) }}
         {{ form_widget(form) }}

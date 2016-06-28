@@ -1062,71 +1062,53 @@ a.sidebar-wrapper li:hover a:focus {
 .panel-managed-collections > .list-group > div:last-child {
   border-bottom: none;
 }
-/*.panel-managed-collections > .list-group div.row:nth-of-type(odd) div {
-  background-color: lighten(spin(@panel-info-heading-bg, -10), 5%);
-}*/
-/*.panel-managed-collections > .list-group div.row:nth-of-type(odd) .list-group-item{
-  background-color: lighten(@panel-info-heading-bg, 90%);
-}*/
-/*{
+.bs-callout {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.bs-callout h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.bs-callout p:last-child {
   margin-bottom: 0;
 }
-.panel > .list-group .list-group-item
-{
-  border-width: 1px 0;
+.bs-callout code {
+  border-radius: 3px;
 }
-.panel > .list-group .list-group-item:first-child
-{
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
+.bs-callout + .bs-callout {
+  margin-top: -5px;
 }
-.panel > .list-group .list-group-item:last-child
-{
-  border-bottom: 0;
+.bs-callout-default,
+.bs-callout-default h4 {
+  border-left-color: #eeeeee;
+  color: #6f6f6f;
 }
-.panel-heading + .list-group .list-group-item:first-child
-{
-  border-top-width: 0;
+.bs-callout-primary,
+.bs-callout-primary h4 {
+  border-left-color: #337ab7;
+  color: #337ab7;
 }
-.panel-default .list-group-item.active
-{
-  color: #000;
-  background-color: #DDD;
-  border-color: #DDD;
+.bs-callout-info,
+.bs-callout-info h4 {
+  border-left-color: #5bc0de;
+  color: #5bc0de;
 }
-.panel-primary .list-group-item.active
-{
-  color: @btn-primary-color;
-  background-color: @brand-primary;
-  border-color: @brand-primary;
+.bs-callout-danger,
+.bs-callout-danger h4 {
+  border-left-color: #d9534f;
+  color: #d9534f;
 }
-.panel-success .list-group-item.active
-{
-  color: #3C763D;
-  background-color: #DFF0D8;
-  border-color: #D6E9C6;
+.bs-callout-warning,
+.bs-callout-warning h4 {
+  border-left-color: #f0ad4e;
+  color: #f0ad4e;
 }
-.panel-info .list-group-item.active
-{
-  color: #31708F;
-  background-color: #D9EDF7;
-  border-color: #BCE8F1;
+.bs-callout-success,
+.bs-callout-success h4 {
+  border-left-color: #5cb85c;
+  color: #5cb85c;
 }
-.panel-warning .list-group-item.active
-{
-  color: #8A6D3B;
-  background-color: #FCF8E3;
-  border-color: #FAEBCC;
-}
-.panel-danger .list-group-item.active
-{
-  color: #A94442;
-  background-color: #F2DEDE;
-  border-color: #EBCCD1;
-}
-.panel a.list-group-item.active:hover, a.list-group-item.active:focus
-{
-  color: #000;
-  background-color: #DDD;
-  border-color: #DDD;
-}*/

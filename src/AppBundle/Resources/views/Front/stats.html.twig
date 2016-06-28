@@ -62,12 +62,12 @@
                     <td>
                         <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="recolnat">
                     </td>
-                    <td>{{data.datas.recolnat is not empty ? data.datas.recolnat : emptyField}}</td>
+                    <td>{{attribute(data.datas, keyRecolnat) is not empty ? attribute(data.datas, keyRecolnat) : emptyField}}</td>
 
                     <td>
                         <input type="radio" class="choice" name="{{md5key}}" data-class="{{data.className}}" data-fieldname="{{data.fieldName}}" value="institution">
                     </td>
-                    <td>{{data.datas.institution is not empty ? data.datas.institution : emptyField}}</td>
+                    <td>{{attribute(data.datas, keyInstitution) is not empty ? attribute(data.datas, keyInstitution) : emptyField}}</td>
 
                 </tr>
                 <tr id="taxon-{{md5key}}" class="collapse">
@@ -78,7 +78,7 @@
                         </a>
                         {% endif %}
                         <ul>
-                        {% for catalogNumber, taxon in data.taxons %}
+                        {% for catalogNumber, taxon in taxons %}
                             <li>
                                 <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonCatalogNumbers' : ([catalogNumber] | json_encode)})}}">
                                     {{taxon}}

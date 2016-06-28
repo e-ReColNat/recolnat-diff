@@ -4,22 +4,35 @@ namespace AppBundle\Entity\Repository;
 
 use AppBundle\Entity\Collection;
 use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
+use AppBundle\Manager\DiffSpecimen;
 use Doctrine\ORM\AbstractQuery;
 
 
 class SpecimenRepository extends AbstractRecolnatRepository
 {
+    public static function getEntityIdField()
+    {
+        return DiffSpecimen::getIdField();
+    }
+
     /**
-     * @param Collection $collection
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getQueryBuilderFindByCollection(Collection $collection)
+    public function getQueryBuilderJoinSpecimen()
     {
-        return $this->getEntityManager()->createQueryBuilder()
-            ->select('s.occurrenceid as id')
-            ->from('AppBundle:Specimen', 's')
-            ->andWhere('s.collection = :collection')
-            ->setParameter('collection', $collection);
+        $qb = $this->createQueryBuilder('s');
+
+        $qb
+            ->select('s, b, d, t, m, st, r, l')
+            ->leftJoin('s.bibliographies', 'b')
+            ->leftJoin('s.determinations', 'd')
+            ->leftJoin('d.taxon', 't')
+            ->leftJoin('s.multimedias', 'm')
+            ->leftJoin('s.stratigraphy', 'st')
+            ->leftJoin('s.recolte', 'r')
+            ->leftJoin('r.localisation', 'l');
+
+        return $qb;
     }
 
     /**
@@ -58,39 +71,10 @@ class SpecimenRepository extends AbstractRecolnatRepository
      */
     public function findOneByCatalogNumber(Collection $collection, $catalogNumber)
     {
-        $query = $this->getQbForFindByCatalogNumber($collection, [$catalogNumber]);
+        $qb = $this->getQueryBuilderJoinSpecimen();
+        $this->setSpecimenCodesWhereClause($collection, $qb, [$catalogNumber]);
 
-        return $query->getOneOrNullResult();
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @return array
-     */
-    public function findByCatalogNumbersUnordered(Collection $collection, $catalogNumbers)
-    {
-        $query = $this->getQbForFindByCatalogNumber($collection, $catalogNumbers);
-
-        return $query->getArrayResult();
-    }
-
-    /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @param int        $hydratationMode
-     * @return array
-     */
-    public function findByCatalogNumbers(
-        Collection $collection,
-        $catalogNumbers,
-        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
-    ) {
-        $query = $this->getQbForFindByCatalogNumber($collection, $catalogNumbers);
-
-        $query->useResultCache(true, 300);
-
-        return $this->orderResultSetByCatalogNumber($query->getResult($hydratationMode), 'occurrenceid');
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
 
@@ -110,46 +94,22 @@ class SpecimenRepository extends AbstractRecolnatRepository
     }
 
     /**
-     * @param Collection $collection
-     * @param array      $catalogNumbers
-     * @return \Doctrine\ORM\Query
-     */
-    public function getQbForFindByCatalogNumber(Collection $collection, $catalogNumbers)
-    {
-        $qb = $this->createQueryBuilder('s');
-
-        $qb
-            ->select('s, b, d, t, m, st, r, l')
-            ->leftJoin('s.bibliographies', 'b')
-            ->leftJoin('s.determinations', 'd')
-            ->leftJoin('d.taxon', 't')
-            ->leftJoin('s.multimedias', 'm')
-            ->leftJoin('s.stratigraphy', 'st')
-            ->leftJoin('s.recolte', 'r')
-            ->leftJoin('r.localisation', 'l');
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
-        $query = $qb->getQuery();
-
-        return $query;
-    }
-
-
-    /**
      * @param string $collectionCode
      * @return \DateTime|null
      */
     public function getMinDate($collectionCode)
     {
 
-        $date =  $this->createQueryBuilder('s')
+        $date = $this->createQueryBuilder('s')
             ->select('MIN(s.modified)')
             ->where('s.collectioncode = :collectionCode')
             ->setParameter('collectionCode', $collectionCode)
             ->getQuery()
-            ->getSingleScalarResult() ;
+            ->getSingleScalarResult();
         if (!is_null($date)) {
-            return \DateTime::createFromFormat('Y-m-d H:i:s', $date) ;
+            return \DateTime::createFromFormat('Y-m-d H:i:s', $date);
         }
+
         return null;
     }
 }

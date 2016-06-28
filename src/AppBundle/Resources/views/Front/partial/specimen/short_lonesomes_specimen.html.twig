@@ -1,12 +1,15 @@
 {% set lonesomeRecord = attribute(datas, catalogNumber) %}
 {% set flag = '' %}
-{% for item in lonesomeRecord.data %}
-    {% if item.className != flag and item.className|lower not in ['taxon', 'localisation'] %}
-        {% set flag = item.className %}
-        <span class="label label-primary {{ item.className|lower }}">
-            {{ ('label.'~item.className|lower) | transchoice(loop.length, {}, 'entity')}} - {{ db }}</span>
-    {% endif %}
-    {% set templatePath = '@App/Front/partial/specimen/tab-' ~ item.className|lower ~ '.html.twig' %}
-    {% include templatePath with {'catalogNumber':catalogNumber,'id':item.id} %}
+{% dump(lonesomeRecord) %}
+{% for className, items in lonesomeRecord %}
+    {% for item in items %}
+        {% if className != flag and className|lower not in ['taxon', 'localisation'] %}
+            {% set flag = className %}
+            <span class="label label-primary {{ className|lower }}">
+            {{ ('label.'~className|lower) | transchoice(loop.length, {}, 'entity') }} - {{ db }}</span>
+        {% endif %}
+        {% set templatePath = '@App/Front/partial/specimen/tab-' ~ className|lower ~ '.html.twig' %}
+        {% include templatePath with {'catalogNumber':catalogNumber,'id':item.id} %}
+    {% endfor %}
 
 {% endfor %}

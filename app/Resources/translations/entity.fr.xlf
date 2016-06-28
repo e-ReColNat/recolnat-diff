@@ -670,6 +670,38 @@
                 <source>label.stratigraphy.fields.group_</source>
                 <target state="translated">Groupe</target>
             </trans-unit>
+            <trans-unit id="168" approved="yes">
+                <source>label.specimen.title</source>
+                <target state="translated">Specimen</target>
+            </trans-unit>
+            <trans-unit id="169" approved="yes">
+                <source>label.taxon.title</source>
+                <target state="translated">Taxon</target>
+            </trans-unit>
+            <trans-unit id="170" approved="yes">
+                <source>label.stratigraphy.title</source>
+                <target state="translated">Stratigraphie</target>
+            </trans-unit>
+            <trans-unit id="171" approved="yes">
+                <source>label.determination.title</source>
+                <target state="translated">Determination</target>
+            </trans-unit>
+            <trans-unit id="172" approved="yes">
+                <source>label.recolte.title</source>
+                <target state="translated">Recolte</target>
+            </trans-unit>
+            <trans-unit id="173" approved="yes">
+                <source>label.multimedia.title</source>
+                <target state="translated">Multimedia</target>
+            </trans-unit>
+            <trans-unit id="174" approved="yes">
+                <source>label.localisation.title</source>
+                <target state="translated">Localisation</target>
+            </trans-unit>
+            <trans-unit id="175" approved="yes">
+                <source>label.bibliography.title</source>
+                <target state="translated">Bibliographie</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
