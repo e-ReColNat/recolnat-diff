@@ -20,4 +20,15 @@ class CollectionRepository extends EntityRepository
             ->getQuery()->getResult();
     }
 
+    public function findOneByCollectionAndInstitution($institutionCode, $collectionCode)
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.institution', 'i')
+            ->andWhere('i.institutioncode = :institutionCode')
+            ->andWhere('c.collectioncode = :collectionCode')
+            ->setParameter(':institutionCode', $institutionCode)
+            ->setParameter(':collectionCode', $collectionCode)
+            ->getQuery()->getOneOrNullResult();
+    }
+
 }

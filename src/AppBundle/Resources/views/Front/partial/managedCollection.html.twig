@@ -6,7 +6,7 @@
     <div class="col-md-4">
         <span class="list-group-item">{{ 'label.collection' | trans }} :
 
-            <a href="{{ path('viewfile', {'collectionCode':collectionCode}) }}">
+            <a href="{{ path('viewfile', {'institutionCode':collection.institution.institutionCode,'collectionCode':collectionCode}) }}">
                 {{ collectionCode }}
             </a>
         </span>
@@ -30,7 +30,7 @@
     </div>
 {% endif %}
     <div class="col-md-3">
-        <a class="list-group-item searchDiffButton pull-right" href="{{ path('configureSearchDiff', {'collectionCode' : collectionCode}) }}">
+        <a class="list-group-item searchDiffButton pull-right" href="{{ path('configureSearchDiff', {'institutionCode':collection.institution.institutionCode, 'collectionCode' : collectionCode}) }}">
             <span class="glyphicon glyphicon-search" aria-hidden="true"></span> {{ 'label.searchDiffs' | trans }}
         </a>
     </div>

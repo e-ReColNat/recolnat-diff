@@ -19,22 +19,24 @@ class BackendController extends Controller
 {
 
     /**
-     * @Route("{collectionCode}/export/{type}/", name="export", requirements={"type": "csv|dwc"})
+     * @Route("{institutionCode}/{collectionCode}/export/{type}/", name="export", requirements={"type": "csv|dwc"})
      * @param string  $type
      * @param Request $request
      * @param string  $collectionCode
+     * @param string  $institutionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function exportAction($type, $collectionCode, Request $request)
+    public function exportAction($institutionCode, $collectionCode, $type, Request $request)
     {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         /** @var ExportPrefs $exportPrefs */
         $exportPrefs = unserialize($request->get('exportPrefs'));
         if (!($exportPrefs instanceof ExportPrefs)) {
             throw new \Exception('parameters must be an instance of ExportPrefs');
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $file = $exportManager->export($type, $exportPrefs);
         $response = new JsonResponse();
         if (is_null($file)) {
@@ -85,16 +87,18 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/setChoice/{collectionCode}", name="setChoice", options={"expose"=true})
+     * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
      * @param Request $request
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @return JsonResponse
      */
-    public function setChoiceAction(Request $request, $collectionCode)
+    public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
     {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         $choices = $request->get('choices');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $exportManager->setChoices($choices);
 
         $response = new JsonResponse();
@@ -106,15 +110,17 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/setChoices/{collectionCode}", name="setChoices", options={"expose"=true})
+     * @Route("/setChoices/{institutionCode}/{collectionCode}", name="setChoices", options={"expose"=true})
      * @param Request $request
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @return JsonResponse
      */
-    public function setChoicesAction(Request $request, $collectionCode)
+    public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
     {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         list($inputOrigin, $inputSpecimens, $inputClassesName, $page, $selectedSpecimens, $selectedClassName, $type) =
@@ -221,15 +227,17 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/deleteChoices/{collectionCode}", name="deleteChoices", options={"expose"=true})
+     * @Route("/deleteChoices/{institutionCode}/{collectionCode}", name="deleteChoices", options={"expose"=true})
+     * @param string $institutionCode
      * @param string $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function deleteChoicesAction($collectionCode)
+    public function deleteChoicesAction($institutionCode, $collectionCode)
     {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
         $choices = $diffHandler->getChoicesFile();
         $choices->deleteChoices();
@@ -241,15 +249,17 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("/deleteDiffs/{collectionCode}", name="deleteDiffs", options={"expose"=true})
+     * @Route("/deleteDiffs/{institutionCode}/{collectionCode}", name="deleteDiffs", options={"expose"=true})
+     * @param string $institutionCode
      * @param string $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function deleteDiffsAction($collectionCode)
+    public function deleteDiffsAction($institutionCode, $collectionCode)
     {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
         $diffs = $diffHandler->getDiffsFile();
         $diffs->deleteChoices();
@@ -261,18 +271,20 @@ class BackendController extends Controller
     }
 
     /**
-     * @Route("selectedSpecimen/{collectionCode}", name="selectedSpecimen")
+     * @Route("selectedSpecimen/{institutionCode}/{collectionCode}", name="selectedSpecimen")
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @param Request $request
      * @return JsonResponse
      * @throws \Exception
      */
-    public function selectedSpecimenAction(Request $request, $collectionCode)
+    public function selectedSpecimenAction(Request $request, $institutionCode, $collectionCode)
     {
         $session = $this->get('session');
         $action = $request->get('action');
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
 
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
 
         $catalogNumber = $request->get('catalogNumber');
         $selectedSpecimensHandler = $exportManager->getSelectedSpecimenHandler();

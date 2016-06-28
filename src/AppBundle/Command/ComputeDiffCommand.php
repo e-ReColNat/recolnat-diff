@@ -17,6 +17,11 @@ class ComputeDiffCommand extends ContainerAwareCommand
             ->setName('diff:compute')
             ->setDescription('Search diffs between buffer and the reference database of e-ReColNat')
             ->addArgument(
+                'institutionCode',
+                InputArgument::REQUIRED,
+                'institutionCode ?'
+            )
+            ->addArgument(
                 'collectionCode',
                 InputArgument::REQUIRED,
                 'collectionCode ?'
@@ -36,7 +41,10 @@ class ComputeDiffCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $diffComputer = $this->getContainer()->get('diff.computer');
-        $collection = $this->getContainer()->get('utility')->getCollection($input->getArgument('collectionCode'));
+        $collection = $this->getContainer()->get('utility')->getCollection(
+            $input->getArgument('institutionCode'),
+            $input->getArgument('collectionCode')
+        );
 
         if (!is_null($collection)) {
             $savePath = $input->getArgument('savePath');

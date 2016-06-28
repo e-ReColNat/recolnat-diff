@@ -30,6 +30,7 @@ class SearchDiffCommand extends ContainerAwareCommand
     private $requestOptions;
     private $apiRecolnatBaseUri;
     private $collectionCode;
+    private $institutionCode;
     private $apiRecolnatUserPath;
     /** @var  Translator */
     private $translator;
@@ -75,6 +76,11 @@ class SearchDiffCommand extends ContainerAwareCommand
                 'Start Date ?'
             )
             ->addArgument(
+                'institutionCode',
+                InputArgument::REQUIRED,
+                'institution code ?'
+            )
+            ->addArgument(
                 'collectionCode',
                 InputArgument::REQUIRED,
                 'collection code ?'
@@ -108,9 +114,10 @@ class SearchDiffCommand extends ContainerAwareCommand
     {
         $this->translator = $this->getContainer()->get('translator');
         $this->collectionCode = $input->getArgument('collectionCode');
+        $this->institutionCode = $input->getArgument('institutionCode');
 
 
-        $this->collection = $this->getContainer()->get('utility')->getCollection($this->collectionCode);
+        $this->collection = $this->getContainer()->get('utility')->getCollection($this->institutionCode, $this->collectionCode);
 
         $this->setLogFilePath();
 
@@ -276,8 +283,8 @@ class SearchDiffCommand extends ContainerAwareCommand
         $processes = [];
         $consoleDir = realpath('/'.$this->getContainer()->get('kernel')->getRootDir().'/../bin/console');
         foreach ($diffManager::ENTITIES_NAME as $entityName) {
-            $command = sprintf('%s diff:compute %s %s %s', $consoleDir, $this->collectionCode, $entityName,
-                $this->collectionPath);
+            $command = sprintf('%s diff:compute %s %s %s %s',
+                $consoleDir, $this->institutionCode, $this->collectionCode, $entityName, $this->collectionPath);
 
             $process = new Process($command);
             $process->setName($entityName);

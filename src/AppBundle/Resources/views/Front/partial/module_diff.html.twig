@@ -12,7 +12,7 @@
         <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
     </button>
 
-    <form id="js-search-form" class="search-form" action="{{ path('search', {'collectionCode':collectionCode}) }}"
+    <form id="js-search-form" class="search-form" action="{{ path('search', {'institutionCode':institutionCode,'collectionCode':collectionCode}) }}"
           role="search">
         <input type="text" placeholder="{{ 'label.search' | trans }}" id="js-search-input" name="search" class="form-control">
     </form>
@@ -22,7 +22,7 @@
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
     </button>
 
-    <a href="{{ path('list', {'collectionCode' : collection.collectioncode, 'type':'selected'}) }}" class="btn btn-primary btn-selected">
+    <a href="{{ path('list', {'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'type':'selected'}) }}" class="btn btn-primary btn-selected">
         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
     </a>
 

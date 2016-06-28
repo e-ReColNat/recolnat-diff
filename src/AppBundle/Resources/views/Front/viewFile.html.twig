@@ -47,7 +47,7 @@
                         <th class="row-header col-sm-2">{{ ('label.'~className|lower) | transchoice(detailedStats.specimens, {}, 'entity')|capitalize }}</th>
                         <td class="col-sm-1">
                             {% if detailedStats.specimens > 0 %}
-                                <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
+                                <a href="{{ path('diffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
                                     {{ detailedStats.specimens }}
                                 </a>
                             {% else %}
@@ -56,7 +56,7 @@
                         </td>
                         <td class="col-sm-1">
                             {% if detailedStats.diffs > 0 %}
-                                <a href="{{ path('diffs', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
+                                <a href="{{ path('diffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
                                     {{ detailedStats.diffs }}
                                 </a>
                             {% else %}
@@ -66,7 +66,7 @@
                         <td class="col-sm-1">
                             {% set nbTodos = attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs %}
                             {% if nbTodos > 0 %}
-                                <a href="{{ path('todos', {'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
+                                <a href="{{ path('todos', {'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'selectedClassName' : className|lower}) }}">
                                     {{ nbTodos }}
                                 </a>
                             {% else %}
@@ -76,7 +76,7 @@
                         <td class="col-sm-1">
                             {% set nbChoices = attribute(statsChoices, className) is defined ? attribute(statsChoices, className) : 0 %}
                             {% if nbChoices > 0 %}
-                                <a href="{{ path('choices', {'collectionCode':collectionCode,'selectedClassName':className|lower}) }}"
+                                <a href="{{ path('choices', {'institutionCode':institutionCode, 'collectionCode':collectionCode,'selectedClassName':className|lower}) }}"
                                    title="">
                                     {{ nbChoices }}
                                 </a>
@@ -86,7 +86,7 @@
                         </td>
                         <td class="col-sm-1">
                             {% if attribute(statsLonesomeRecords, className)[keyRecolnat] > 0 %}
-                                <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
+                                <a href="{{ path('lonesomes', {'db':'recolnat','institutionCode':institutionCode, 'collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
                                     {{ attribute(statsLonesomeRecords, className)[keyRecolnat] }}
                                 </a>
                             {% else %}
@@ -95,7 +95,7 @@
                         </td>
                         <td class="col-sm-1">
                             {% if attribute(statsLonesomeRecords, className)[keyInstitution] > 0 %}
-                                <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
+                                <a href="{{ path('lonesomes', {'db':'institution','institutionCode':institutionCode, 'collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
                                     {{ attribute(statsLonesomeRecords, className)[keyInstitution] }}
                                 </a>
                             {% else %}
@@ -106,7 +106,7 @@
                             <td class="col-sm-5" rowspan="{{ loop.length + 1 }}"
                                 style="background-color: transparent;text-align:right">
                                 <p>
-                                    <a href="{{ path('stats', {'collectionCode' : collectionCode}) }}"
+                                    <a href="{{ path('stats', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
                                        class="btn btn-primary"
                                        role="button">
                                         {{ 'stats.details'| trans }}
@@ -114,33 +114,33 @@
                                 </p>
                                 <p>
                                     <a data-toggle="modal"
-                                       href="{{ path('setPrefsForExport', {'type':'dwc', 'collectionCode' : collectionCode}) }}"
+                                       href="{{ path('setPrefsForExport', {'type':'dwc', 'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
                                        class=" btn btn-primary checkprefs" role="button" data-target="#spinnerModal">
                                         {{ 'downloadDwc'|trans }}
                                     </a>
                                 </p>
                                 <p>
                                     <a data-toggle="modal"
-                                       href="{{ path('setPrefsForExport', {'type':'csv', 'collectionCode' : collectionCode}) }}"
+                                       href="{{ path('setPrefsForExport', {'type':'csv', 'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
                                        class=" btn btn-primary checkprefs" role="button" data-target="#spinnerModal">
                                         {{ 'downloadCsv'|trans }}
                                     </a>
                                 </p>
                                 <p>
-                                    <a href="{{ path('deleteChoices', {'collectionCode' : collectionCode}) }}"
+                                    <a href="{{ path('deleteChoices', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
                                        class="delete deleteChoices btn btn-primary" role="button">
                                         {{ 'delete.choices'|trans }}
                                     </a>
                                 </p>
                                 <p>
-                                    <a href="{{ path('list', {'collectionCode' : collectionCode, 'type' : 'alpha'}) }}"
+                                    <a href="{{ path('list', {'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'type' : 'alpha'}) }}"
                                        class="btn btn-primary" role="button">
                                         {{ 'list.alpha'|trans }}
                                     </a>
                                 </p>
                                 {% if app.environment=='dev' %}
                                 <p>
-                                    <a href="{{ path('deleteDiffs', {'collectionCode' : collectionCode}) }}"
+                                    <a href="{{ path('deleteDiffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
                                        class="delete deleteDiffs btn btn-primary" role="button">
                                         {{ 'delete.diffs'|trans }}
                                     </a>
@@ -153,32 +153,32 @@
                 <tr>
                     <td>{{ 'label.total' | trans }}</td>
                     <td>
-                        <a href="{{ path('diffs', {'collectionCode':collectionCode}) }}">
+                        <a href="{{ path('diffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ sumStats.specimens }}
                         </a>
                     </td>
                     <td>
-                        <a href="{{ path('diffs', {'collectionCode':collectionCode}) }}">
+                        <a href="{{ path('diffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ sumStats.diffs }}
                         </a>
                     </td>
                     <td>
-                        <a href="{{ path('todos', {'collectionCode':collectionCode}) }}">
+                        <a href="{{ path('todos', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ sumStats.diffs - statsChoices.sum }}
                         </a>
                     </td>
                     <td>
-                        <a href="{{ path('choices', {'collectionCode':collectionCode}) }}">
+                        <a href="{{ path('choices', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ statsChoices.sum }}
                         </a>
                     </td>
                     <td>
-                        <a href="{{ path('lonesomes', {'db':'recolnat','collectionCode':collectionCode}) }}">
+                        <a href="{{ path('lonesomes', {'db':'recolnat','institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ attribute(sumLonesomeRecords, keyRecolnat) }}
                         </a>
                     </td>
                     <td>
-                        <a href="{{ path('lonesomes', {'db':'institution','collectionCode':collectionCode}) }}">
+                        <a href="{{ path('lonesomes', {'db':'institution','institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ attribute(sumLonesomeRecords, keyInstitution) }}
                         </a>
                     </td>
@@ -199,7 +199,8 @@
 {% block javascripts %}
     <script src="{{ asset('assets/AppBundle/js/d3-3.5.17.min.js') }}" charset="utf-8"></script>
     <script type="text/javascript">
-        var collectionCode = '{{ collectionCode }}';
+        var collectionCode = '{{ collection.collectionCode }}';
+        var institutionCode = '{{ collection.institution.institutioncode }}';
         var datas = [
             {% for className, detailedStats in stats %}
             {

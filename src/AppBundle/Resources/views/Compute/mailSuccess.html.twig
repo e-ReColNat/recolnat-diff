@@ -7,7 +7,9 @@
             <th class="callout-inner success">
                 <p>
                     {{ 'searchDiff.success.link' | trans({}, 'mail') }}
-                    <a href="{{ url('viewfile', {'collectionCode':collection.collectionCode}) }}">{{ url('viewfile', {'collectionCode':collection.collectionCode}) }}</a>
+                    <a href="{{ url('viewfile', {'institutionCode':collection.institution.institutionCode, 'collectionCode':collection.collectionCode}) }}">
+                        {{ url('viewfile', {'institutionCode':collection.institution.institutionCode, 'collectionCode':collection.collectionCode}) }}
+                    </a>
                 </p>
             </th>
             <th class="expander"></th>

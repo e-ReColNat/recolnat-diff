@@ -106,16 +106,17 @@ class ExportManager
         return $this;
     }
 
+
     /**
-     * @param string $collectionCode
+     * @param Collection $collection
      * @return $this
      * @throws \Exception
      */
-    public function setCollectionCode($collectionCode)
+    public function setCollection($collection)
     {
-        $this->collectionCode = $collectionCode;
-        $this->collection = $this->managerRegistry->getManager('default')
-            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $this->collectionCode]);
+        $this->collection = $collection;
+        $this->collectionCode = $collection->getCollectioncode();
+
         if (is_null($this->collection)) {
             throw new \Exception('Can\'t found the collection with collectionCode = '.$this->collectionCode);
         } else {

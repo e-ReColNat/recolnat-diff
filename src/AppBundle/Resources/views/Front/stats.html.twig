@@ -73,14 +73,14 @@
                 <tr id="taxon-{{md5key}}" class="collapse">
                     <td colspan="7">
                         {% if data.catalogNumbers | length > 1 %}
-                        <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonCatalogNumbers' : data.catalogNumbers | keys | json_encode})}}">
+                        <a href="{{path('viewSpecimens', {'institutionCode':institutionCode, 'collectionCode':collectionCode, 'jsonCatalogNumbers' : data.catalogNumbers | keys | json_encode})}}">
                             {{ 'view.specimens' | trans({'%count%' : (data.catalogNumbers | length) })}}
                         </a>
                         {% endif %}
                         <ul>
                         {% for catalogNumber, taxon in taxons %}
                             <li>
-                                <a href="{{path('viewSpecimens', {'collectionCode':collectionCode, 'jsonCatalogNumbers' : ([catalogNumber] | json_encode)})}}">
+                                <a href="{{path('viewSpecimens', {'institutionCode':institutionCode, 'collectionCode':collectionCode, 'jsonCatalogNumbers' : ([catalogNumber] | json_encode)})}}">
                                     {{taxon}}
                                 </a>
                             </li>
@@ -122,7 +122,7 @@
                 choices.push(temp);
             });
         $.ajax({
-                url : Routing.generate('setChoice', {collectionCode:'{{collectionCode}}'}),
+                url : Routing.generate('setChoice', {'institutionCode':institutionCode, collectionCode:'{{collectionCode}}'}),
                 data: {'choices' : choices},
                 method: "POST"
             })

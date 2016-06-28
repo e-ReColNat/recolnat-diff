@@ -16,14 +16,14 @@
 
             var url;
             {% if app.request.attributes.get('_route') == 'lonesomes' %}
-                url = "{{ path('lonesomes',{'db' : db, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
+                url = "{{ path('lonesomes',{'db' : db,'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
             {% elseif app.request.attributes.get('_route') == 'viewSpecimens' %}
-                url = "{{ path('viewSpecimens',{'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','jsonCatalogNumbers' : diffs.datas | keys | json_encode}) }}";
+                url = "{{ path('viewSpecimens',{'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','jsonCatalogNumbers' : diffs.datas | keys | json_encode}) }}";
             {% elseif app.request.attributes.get('_route') == 'search' %}
-                url = "{{ path('search',{'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','search' : search}) }}";
+                url = "{{ path('search',{'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','search' : search}) }}";
             {% else %}
                 url = "{{ path(app.request.attributes.get('_route'),
-                {'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
+                {'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'maxItemPerPage': '_itemNum','selectedClassName' : selectedClassName}) }}";
             {% endif %}
 
             var maxItemPerPage = $maxItemPerPage.find(":selected").text();

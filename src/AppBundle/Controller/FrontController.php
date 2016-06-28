@@ -15,7 +15,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class FrontController extends Controller
 {
@@ -54,18 +53,21 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/stats/{page}", name="stats",defaults={ "page" = 1},
+     * @Route("{institutionCode}/{collectionCode}/stats/{page}", name="stats",defaults={ "page" = 1},
      *     requirements={"page": "\d+"})
+     * @param string $institutionCode
      * @param string $collectionCode
      * @param int    $page
      * @return Response
      */
-    public function statsAction($collectionCode, $page = 1)
+    public function statsAction($institutionCode, $collectionCode, $page = 1)
     {
         /** @var Prefs $prefs */
         $prefs = $this->getUser()->getPrefs();
 
-        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+
+        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collection);
 
         list($statsBySimilarity, $catalogNumbers) = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $statsManager->getSumStats();
@@ -75,11 +77,11 @@ class FrontController extends Controller
         $pagination = $paginator->paginate($statsBySimilarity, $page, 100);
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $taxons = $exportManager->getDiffHandler()->getTaxons($catalogNumbers);
 
         return $this->render('@App/Front/stats.html.twig', array(
-            'collectionCode' => $collectionCode,
+            'collection' => $collection,
             'sumStats' => $sumStats,
             'pagination' => $pagination,
             'keyRecolnat' => AbstractDiff::KEY_RECOLNAT,
@@ -89,15 +91,16 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/view", name="viewfile", options={"expose"=true})
+     * @Route("{institutionCode}/{collectionCode}/view", name="viewfile", options={"expose"=true})
+     * @param string $institutionCode
      * @param string $collectionCode
      * @return Response
      */
-    public function viewFileAction($collectionCode)
+    public function viewFileAction($institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
 
-        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
+        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collection);
         $statsManager->getSumLonesomeRecords();
 
         return $this->render('@App/Front/viewFile.html.twig', array(
@@ -110,24 +113,30 @@ class FrontController extends Controller
 
 
     /**
-     * @Route("{collectionCode}/diffs/{selectedClassName}/{page}", name="diffs",
+     * @Route("{institutionCode}/{collectionCode}/diffs/{selectedClassName}/{page}", name="diffs",
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
-     * @Route("{collectionCode}/choices/{selectedClassName}/{page}", name="choices",
+     * @Route("{institutionCode}/{collectionCode}/choices/{selectedClassName}/{page}", name="choices",
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
-     * @Route("{collectionCode}/todo/{selectedClassName}/{page}", name="todos",
+     * @Route("{institutionCode}/{collectionCode}/todo/{selectedClassName}/{page}", name="todos",
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+"}, options={"expose"=true})
      *
      * @param Request $request
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @param string  $selectedClassName
      * @param int     $page
      * @return Response
      */
-    public function viewDiffsAction(Request $request, $collectionCode, $selectedClassName = 'all', $page = 1)
-    {
-        $collection = $this->get('utility')->getCollection($collectionCode);
+    public function viewDiffsAction(
+        Request $request,
+        $institutionCode,
+        $collectionCode,
+        $selectedClassName = 'all',
+        $page = 1
+    ) {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
@@ -165,23 +174,30 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/lonesomes/{db}/{selectedClassName}/{page}", name="lonesomes",
+     * @Route("{institutionCode}/{collectionCode}/lonesomes/{db}/{selectedClassName}/{page}", name="lonesomes",
      * defaults={"selectedClassName" = "all", "page" = 1}, requirements={"page": "\d+", "db"="recolnat|institution"},
      * options={"expose"=true})
      *
      * @param Request $request
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @param string  $selectedClassName
      * @param int     $page
      * @param string  $db
      * @return Response
      */
-    public function viewLonesomesAction(Request $request, $collectionCode, $db, $selectedClassName = 'all', $page = 1)
-    {
-        $collection = $this->get('utility')->getCollection($collectionCode);
+    public function viewLonesomesAction(
+        Request $request,
+        $institutionCode,
+        $collectionCode,
+        $db,
+        $selectedClassName = 'all',
+        $page = 1
+    ) {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         $lonesomeRecords = $exportManager->getDiffHandler()->getLonesomeRecords($db, $selectedClassName);
@@ -211,17 +227,18 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/specimen/tab/{catalogNumber}/{type}/{db}",
+     * @Route("{institutionCode}/{collectionCode}/specimen/tab/{catalogNumber}/{type}/{db}",
      *     requirements={"page": "\d+", "db"="recolnat|institution"}, name="tabSpecimen", options={"expose"=true})
-     * @ParamConverter("collection", options={"mapping": {"collectionCode": "collectioncode"}})
-     * @param Collection $collection
-     * @param string     $catalogNumber
-     * @param string     $type
-     * @param string     $db
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @param string $catalogNumber
+     * @param string $type
+     * @param string $db
      * @return Response
      */
-    public function viewSpecimenTabAction(Collection $collection, $catalogNumber, $type, $db)
+    public function viewSpecimenTabAction($institutionCode, $collectionCode, $catalogNumber, $type, $db)
     {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         if ($db == 'recolnat') {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')
                 ->findOneByCatalogNumber($collection, $catalogNumber);
@@ -240,21 +257,24 @@ class FrontController extends Controller
 
 
     /**
-     * @Route("{collectionCode}/export/setPrefs/{type}", name="setPrefsForExport",
+     * @Route("{institutionCode}/{collectionCode}/export/setPrefs/{type}", name="setPrefsForExport",
      *     requirements={"type"="dwc|csv"})
      * @param Request $request
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @param string  $type
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function setPrefsForExportAction(Request $request, $collectionCode, $type)
+    public function setPrefsForExportAction(Request $request, $institutionCode, $collectionCode, $type)
     {
-        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $statsManager = $this->get('statsmanager')->init($this->getUser(), $collection);
 
         $exportPrefs = new ExportPrefs();
 
         $form = $this->createForm(ExportPrefsType::class, $exportPrefs, [
             'action' => $this->generateUrl('setPrefsForExport', [
+                'institutionCode' => $institutionCode,
                 'collectionCode' => $collectionCode,
                 'type' => $type
             ])
@@ -264,6 +284,7 @@ class FrontController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $paramsExport = [
                 'collectionCode' => $collectionCode,
+                'institutionCode' => $institutionCode,
                 'exportPrefs' => serialize($exportPrefs)
             ];
             switch ($type) {
@@ -279,7 +300,7 @@ class FrontController extends Controller
 
 
         return $this->render('@App/Front/setPrefsForExport.html.twig', array(
-            'collectionCode' => $collectionCode,
+            'collection' => $collection,
             'sumStats' => $sumStats,
             'statsChoices' => $statsChoices,
             'sumLonesomeRecords' => $sumLonesomeRecords,
@@ -289,18 +310,24 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/specimens/view/{jsonCatalogNumbers}/{page}", name="viewSpecimens",
+     * @Route("{institutionCode}/{collectionCode}/specimens/view/{jsonCatalogNumbers}/{page}", name="viewSpecimens",
      * options={"expose"=true}, defaults={"page"= 1}, requirements={"page": "\d+"})
      * @param Request $request
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @param string  $jsonCatalogNumbers
      * @param int     $page
      * @return Response
      */
-    public function viewSpecimensAction(Request $request, $collectionCode, $jsonCatalogNumbers, $page = 1)
-    {
-        $collection = $this->get('utility')->getCollection($collectionCode);
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+    public function viewSpecimensAction(
+        Request $request,
+        $institutionCode,
+        $collectionCode,
+        $jsonCatalogNumbers,
+        $page = 1
+    ) {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
 
         $catalogNumbers = json_decode($jsonCatalogNumbers);
 
@@ -318,23 +345,29 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/search/{page}", name="search", defaults={"page"= 1}, requirements={"page": "\d+"})
+     * @Route("{institutionCode}/{collectionCode}/search/{page}", name="search", defaults={"page"= 1},
+     *                                                            requirements={"page": "\d+"})
+     * @param String  $institutionCode
      * @param String  $collectionCode
      * @param Integer $page
      * @param Request $request
      * @return Response
      */
-    public function searchAction(Request $request, $collectionCode, $page = 1)
+    public function searchAction(Request $request, $institutionCode, $collectionCode, $page = 1)
     {
         $search = $request->get('search', '');
 
         if (empty($search)) {
-            return $this->redirectToRoute('viewfile', ['collectionCode' => $collectionCode]);
+            return $this->redirectToRoute('viewfile', [
+                    'institutionCode' => $institutionCode,
+                    'collectionCode' => $collectionCode
+                ]
+            );
         }
-        $collection = $this->get('utility')->getCollection($collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
 
         $catalogNumbers = $exportManager->getDiffHandler()->search($search);
 
@@ -354,16 +387,18 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{collectionCode}/list/{type}/{page}", name="list", defaults={"page"= 1}, requirements={"page": "\d+"})
+     * @Route("{institutionCode}/{collectionCode}/list/{type}/{page}", name="list", defaults={"page"= 1},
+     *                                                                 requirements={"page": "\d+"})
+     * @param String $institutionCode
      * @param String $collectionCode
      * @param String $type
      * @return Response
      */
-    public function listSpecimensAction($collectionCode, $type)
+    public function listSpecimensAction($institutionCode, $collectionCode, $type)
     {
-        $collection = $this->get('utility')->getCollection($collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollectionCode($collectionCode);
+        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
 
         $specimens = [];
         $orderSpecimens = [];

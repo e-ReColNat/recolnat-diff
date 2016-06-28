@@ -14,7 +14,7 @@
         {% set taxon = attribute(taxons, catalogNumber) %}
         {% set path='' %}
         {% if page != currentPage %}
-            {% set path = path('diffs', {'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
+            {% set path = path('diffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'page' : page, 'selectedClassName' : selectedClassName}) %}
         {% endif %}
 
         <li id="js_sb_{{ catalogNumber }}">

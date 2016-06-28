@@ -19,13 +19,15 @@ class UtilityService
     }
 
     /**
+     * @param string $institutionCode
      * @param string $collectionCode
      * @return \AppBundle\Entity\Collection
      */
-    public function getCollection($collectionCode)
+    public function getCollection($institutionCode, $collectionCode)
     {
         return $this->managerRegistry->getManager('default')
-            ->getRepository('AppBundle:Collection')->findOneBy(['collectioncode' => $collectionCode]);
+            ->getRepository('AppBundle:Collection')->findOneByCollectionAndInstitution($institutionCode,
+                $collectionCode);
     }
 
     /**

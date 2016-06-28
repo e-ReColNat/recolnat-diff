@@ -18,18 +18,20 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ComputeController extends Controller
 {
     /**
-     * @Route("{collectionCode}/diff/configure/", name="configureSearchDiff", options={"expose"=true})
+     * @Route("{institutionCode}/{collectionCode}/diff/configure/", name="configureSearchDiff", options={"expose"=true})
+     * @param string  $institutionCode
      * @param string  $collectionCode
      * @param Request $request
      * @return Response
      */
-    public function configureSearchDiffAction(Request $request, $collectionCode)
+    public function configureSearchDiffAction(Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
 
         $defaults = array(
             'startDate' => new \DateTime('today'),
-            'collectionCode' => $collectionCode
+            'collectionCode' => $collectionCode,
+            'institutionCode' => $institutionCode
         );
 
         $form = $this->createFormBuilder($defaults,
@@ -41,6 +43,7 @@ class ComputeController extends Controller
             ->add('startDate', DateType::class, ['label' => 'label.startDate'])
             ->add('cookieTGC', HiddenType::class, ['attr' => ['class' => 'js-cookieTGC']])
             ->add('collectionCode', HiddenType::class, ['attr' => ['class' => 'js-collectionCode']])
+            ->add('institutionCode', HiddenType::class, ['attr' => ['class' => 'js-institutionCode']])
             ->getForm();
 
         $form->handleRequest($request);
@@ -52,8 +55,9 @@ class ComputeController extends Controller
             }
 
             if ($data['startDate'] instanceof \DateTime) {
-                return $this->redirectToRoute('newSearchDiffStreamed',
+                return $this->redirectToRoute('searchDiffStreamed',
                     [
+                        'institutionCode' => $institutionCode,
                         'collectionCode' => $collectionCode,
                         'startDate' => $data['startDate']->getTimestamp(),
                         'cookieTGC' => $data['cookieTGC'],
@@ -69,28 +73,22 @@ class ComputeController extends Controller
 
 
     /**
-     * @Route("{collectionCode}/newSearchDiffStreamed/{startDate}/{cookieTGC}", name="newSearchDiffStreamed",
-     *                                                                          options={"expose"=true})
+     * @Route("{institutionCode}/{collectionCode}/searchDiffStreamed/{startDate}/{cookieTGC}", name="searchDiffStreamed",
+     *                                                                                         options={"expose"=true})
+     * @param string $institutionCode
      * @param string $collectionCode
      * @param string $startDate
      * @param string $cookieTGC
      * @return Response
      */
-    public function newSearchDiffActionStreamedAction($collectionCode, $startDate, $cookieTGC)
+    public function searchDiffActionStreamedAction($institutionCode, $collectionCode, $startDate, $cookieTGC)
     {
-        $command = $this->get('command.search_diffs');
-        $command->setContainer($this->container);
-
-        $params = [
-            'startDate' => \DateTime::createFromFormat('U', $startDate)->format('d/m/Y'),
-            'username' => $this->getUser()->getUsername(),
-            'collectionCode' => $collectionCode
-        ];
+        $startDate = \DateTime::createFromFormat('U', $startDate)->format('d/m/Y');
+        $username = $this->getUser()->getUsername();
 
         $consoleDir = realpath('/'.$this->get('kernel')->getRootDir().'/../bin/console');
-        $command = sprintf('%s diff:search %s %s %s --cookieTGC=%s',
-            $consoleDir, (string) $params['startDate'], $params['collectionCode'], $params['username'], $cookieTGC);
-
+        $command = sprintf('%s diff:search %s %s %s %s --cookieTGC=%s',
+            $consoleDir, $startDate, $institutionCode, $collectionCode, $username, $cookieTGC);
 
         $process = new Process($command);
         $process->setTimeout(null);
@@ -99,7 +97,7 @@ class ComputeController extends Controller
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
 
-        $this->newSearchDiffSetCallBack($response, $process);
+        $this->searchDiffSetCallBack($response, $process);
         $response->send();
 
 
@@ -111,7 +109,7 @@ class ComputeController extends Controller
      * @param StreamedResponse $response
      * @param Process          $process
      */
-    private function newSearchDiffSetCallBack(StreamedResponse $response, Process $process)
+    private function searchDiffSetCallBack(StreamedResponse $response, Process $process)
     {
         $response->setCallback(function() use ($process) {
             $server = new RecolnatServer();
@@ -121,7 +119,6 @@ class ComputeController extends Controller
                 $step = 100 / count(DiffManager::ENTITIES_NAME);
                 if (Process::ERR === $type) {
                     $server->error->send($buffer);
-
                 } else {
                     $data = \json_decode($buffer);
                     // Cas ou des retours sont reçus simultanément
@@ -149,7 +146,7 @@ class ComputeController extends Controller
 
 
     /**
-     * @Route("{collectionCode}/newSearchDiff/{startDate}/{cookieTGC}", name="newSearchDiff")
+     * @Route("{collectionCode}/searchDiff/{startDate}/{cookieTGC}", name="newSearchDiff")
      * @param string $collectionCode
      * @param int    $startDate
      * @param string $cookieTGC
@@ -183,7 +180,7 @@ class ComputeController extends Controller
 
 
     /**
-     * @Route("diff/search/error/", name="SearchDiffError", options={"expose"=true})
+     * @Route("diff/search/error/", name="searchDiffError", options={"expose"=true})
      * @return Response
      */
     public function searchDiffErrorAction()

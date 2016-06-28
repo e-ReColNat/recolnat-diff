@@ -50,13 +50,15 @@ abstract class AbstractRecolnatRepository extends EntityRepository
             $qb->addSelect($this->getExprCatalogNumber().' as catalognumber');
         }
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+
         return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode));
     }
 
     /**
      * @param Collection $collection
      * @param array      $catalogNumbers
-     * @return mixed
+     * @param int        $hydratationMode
+     * @return array
      */
     public function findByCatalogNumbersAndId(
         Collection $collection,
@@ -138,7 +140,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
 
     /**
-     * @param array  $resultsSet
+     * @param array $resultsSet
      * @return array
      */
     protected function orderResultSetByCatalogNumber($resultsSet)

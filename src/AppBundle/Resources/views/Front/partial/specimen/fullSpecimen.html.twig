@@ -27,37 +27,37 @@
             </li>
             <li class="specimen">
                 <a href="#{{ loop.index }}-specimen" data-toggle="tab"
-                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'catalogNumber': catalogNumber, 'type':'specimen'}) }}">
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'catalogNumber': catalogNumber, 'type':'specimen'}) }}">
                     {{ 'tab.specimen'| trans }}
                 </a>
             </li>
             <li class="determination {{ specimenRecolnat.determinations | length == 0 ? 'disabled' : '' }}">
                 <a href="#{{ loop.index }}-deter" data-toggle="tab"
-                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'catalogNumber': catalogNumber, 'type':'determination'}) }}">
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'catalogNumber': catalogNumber, 'type':'determination'}) }}">
                     {{ 'tab.determination'| trans }} <span class="badge">{{ specimenRecolnat.determinations|length }}</span>
                 </a>
             </li>
             <li class="recolte">
                 <a href="#{{ loop.index }}-recolte" data-toggle="tab"
-                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'catalogNumber': catalogNumber, 'type':'recolte'}) }}">
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'catalogNumber': catalogNumber, 'type':'recolte'}) }}">
                     {{ 'tab.recolte'| trans }}
                 </a>
             </li>
             <li class="multimedia {{ specimenRecolnat.multimedias | length == 0 ? 'disabled' : '' }}">
                 <a href="#{{ loop.index }}-multimedia" data-toggle="tab"
-                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'catalogNumber': catalogNumber, 'type':'multimedia'}) }}">
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'catalogNumber': catalogNumber, 'type':'multimedia'}) }}">
                     {{ 'tab.multimedia'| trans }} <span class="badge">{{ specimenRecolnat.multimedias|length }}</span>
                 </a>
             </li>
             <li class="bibliography {{ specimenRecolnat.bibliographies | length == 0 ? 'disabled' : '' }}">
                 <a href="#{{ loop.index }}-biblio" data-toggle="tab"
-                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'catalogNumber': catalogNumber, 'type':'bibliography'}) }}">
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'catalogNumber': catalogNumber, 'type':'bibliography'}) }}">
                     {{ 'tab.bibliography'| trans }} <span class="badge">{{ specimenRecolnat.bibliographies|length }}</span>
                 </a>
             </li>
             <li class="stratigraphy {{ specimenRecolnat.stratigraphy | length == 0 ? 'disabled' : '' }}">
                 <a href="#{{ loop.index }}-strati" data-toggle="tab"
-                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'collectionCode':collectionCode, 'catalogNumber': catalogNumber, 'type':'stratigraphy'}) }}">
+                   data-tab-remote="{{ path('tabSpecimen', {'db':db, 'institutionCode':institutionCode, 'collectionCode' : collectionCode, 'catalogNumber': catalogNumber, 'type':'stratigraphy'}) }}">
                     {{ 'tab.stratigraphy'| trans }}
                 </a>
             </li>

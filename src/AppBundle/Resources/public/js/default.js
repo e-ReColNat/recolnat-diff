@@ -79,6 +79,7 @@ $(document).ready(function () {
             }
         });
     var $parameters = $("#parameters");
+    var institutionCode = $parameters.data("institutionCode") ;
     var collectionCode = $parameters.data("collectioncode") ;
     var $checkboxSpecimen = $(".js_specimen").find("[name^='check-specimen']");
 
@@ -94,6 +95,7 @@ $(document).ready(function () {
 
     function setLinkViewSelected() {
         var url = Routing.generate('viewSpecimens', {
+            institutionCode: institutionCode,
             collectionCode: collectionCode,
             jsonCatalogNumbers: localStorage.getItem('selectedSpecimens')
         });
@@ -163,6 +165,7 @@ $(document).ready(function () {
     var boolScrollToHash = true;
     var offsetTopContent = $('.navbar-fixed-top').height() + parseInt($('.navbar-fixed-top').css('margin-bottom'), 10);
 
+    // Gestion des onglets
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 
         boolScrollToHash = false;
@@ -177,6 +180,7 @@ $(document).ready(function () {
         boolScrollToHash = true;
     });
 
+    // Gestion du décalage du à la barre de menu statique
     function maybeScrollToHash() {
         // Permet de placer le scroll au bon endroit en prenant en compte la barre de menu fixe
         var $hash = $(window.location.hash);

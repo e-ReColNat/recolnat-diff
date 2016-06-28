@@ -59,7 +59,8 @@ class ExportManager extends Units\Test
             $this->container->getParameter('api_recolnat_user_path'),
             $this->container->getParameter('user_group'));
         $user->setExportPath($this->container->getParameter('export_path'));
-        $this->exportManager->init($user)->setCollectionCode('AIX');
+        $collection = $this->container->get('utility')->getCollection('MHNAIX', 'AIX');
+        $this->exportManager->init($user)->setCollection($collection);
     }
 
     public function testGetDiffs()

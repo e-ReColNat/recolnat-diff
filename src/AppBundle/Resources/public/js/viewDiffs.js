@@ -19,7 +19,8 @@ $(document).ready(function () {
     });
 
     var $diffs = $('#diffs');
-    var collectionCode = $diffs.data('collectioncode');
+    var institutionCode = $("#parameters").data('institutioncode');
+    var collectionCode = $("#parameters").data('collectioncode');
     var selectedClassName = $diffs.data('selectedclassname');
     var smallModal = $('#smallModal');
     var selectedSpecimens = [];
@@ -157,7 +158,7 @@ $(document).ready(function () {
                     setChoice(choices, $(this), catalogNumber);
                 });
         $.ajax({
-                url: Routing.generate('setChoice', { collectionCode: collectionCode}),
+                url: Routing.generate('setChoice', { institutionCode: institutionCode, collectionCode: collectionCode}),
                 data: {'choices': choices},
                 method: "POST"
             })
@@ -187,7 +188,7 @@ $(document).ready(function () {
                 setChoice(choices, $(this), catalogNumber);
             }
             $.ajax({
-                    url: Routing.generate('setChoice', { collectionCode: collectionCode}),
+                    url: Routing.generate('setChoice', { institutionCode: institutionCode, collectionCode: collectionCode}),
                     data: {'choices': choices},
                     method: "POST"
                 })
@@ -263,7 +264,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-                url: Routing.generate('setChoices', { collectionCode: collectionCode}),
+                url: Routing.generate('setChoices', { institutionCode: institutionCode, collectionCode: collectionCode}),
                 data: data,
                 method: "POST"
             })

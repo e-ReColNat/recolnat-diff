@@ -18,12 +18,14 @@
         </div>
     </div>
     {% include "@App/Front/partial/searchDiffModal.html.twig" %}
-    <script src="{{ asset('assets/AppBundle/js/eventsource.min.js') }}"></script>
+    {#<script src="{{ asset('assets/AppBundle/js/eventsource.min.js') }}"></script>#}
 {% endblock body %}
 
 {% block javascripts %}
     <script type="text/javascript">
         $(document).ready(function () {
+            var institutionCode = $('.js-institutionCode').val();
+            var collectionCode =  $('.js-collectionCode').val();
             function getTGCCookiesValue() {
                 return getCookie('CASTGC');
             }
@@ -75,9 +77,10 @@
 
                     var startDate = new Date($("#form_startDate_year").prop('value'), $("#form_startDate_month").prop('value')-1, $("#form_startDate_day").prop('value'));
 
-                    var source = new EventSource(Routing.generate('newSearchDiffStreamed',
+                    var source = new EventSource(Routing.generate('searchDiffStreamed',
                             {
-                                'collectionCode': $('.js-collectionCode').val(),
+                                'institutionCode': institutionCode,
+                                'collectionCode': collectionCode,
                                 'startDate': startDate.getTime()/1000,
                                 'cookieTGC': $('.js-cookieTGC').val()
                             }
@@ -87,7 +90,7 @@
                         return;
                     };
                     source.addEventListener('error', function (evt) {
-                        window.location=Routing.generate('SearchDiffError', {'collectionCode': $('.js-collectionCode').val()});
+                        window.location=Routing.generate('searchDiffError', {'collectionCode': $('.js-collectionCode').val()});
                         $("#modal").modal('hide');
                     });
                     source.addEventListener('steps', function (evt) {
@@ -98,11 +101,17 @@
                         progress(data.progress, progressBars[data.name], data.progress);
                         if (data.name == 'general' && parseInt(data.progress) == 100) {
                             source.close();
-                            window.location=Routing.generate('viewfile', {'collectionCode': $('.js-collectionCode').val()});
+                            window.location=Routing.generate('viewfile', {
+                                'institutionCode': institutionCode,
+                                'collectionCode': collectionCode
+                            });
                         }
                     });
                     source.addEventListener('stop', function () {
-                        window.location=Routing.generate('viewfile', {'collectionCode': $('.js-collectionCode').val()});
+                        window.location=Routing.generate('viewfile', {
+                            'institutionCode': institutionCode,
+                            'collectionCode': collectionCode
+                        });
                     });
 
                 } catch (e) {

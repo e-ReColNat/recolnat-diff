@@ -4,6 +4,7 @@ namespace AppBundle\Business;
 
 
 use AppBundle\Business\User\User;
+use AppBundle\Entity\Collection;
 use AppBundle\Manager\AbstractDiff;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\ExportManager;
@@ -15,7 +16,8 @@ class StatsManager
      */
     public $exportManager;
 
-    private $collectionCode;
+    /** @var  Collection */
+    private $collection;
     private $user;
 
     public function __construct(ExportManager $exportManager)
@@ -25,14 +27,14 @@ class StatsManager
 
     /**
      * @param User   $user
-     * @param string $collectionCode
+     * @param Collection $collection
      * @return $this
      */
-    public function init(User $user, $collectionCode)
+    public function init(User $user, $collection)
     {
         $this->user = $user;
-        $this->collectionCode = $collectionCode;
-        $this->exportManager = $this->exportManager->init($this->user)->setCollectionCode($this->collectionCode);
+        $this->collection = $collection;
+        $this->exportManager = $this->exportManager->init($this->user)->setCollection($this->collection);
 
         return $this;
     }

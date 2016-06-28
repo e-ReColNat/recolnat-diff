@@ -59,7 +59,11 @@
 
                 <div class="row">
                     <div class="col-sm-6">
-                        <a href="{{ path('viewSpecimens', {'jsonCatalogNumbers' : ([catalogNumber] | json_encode), 'collectionCode' : collectionCode }) }}">
+                        <a href="{{ path('viewSpecimens', {
+                            'jsonCatalogNumbers' : ([catalogNumber] | json_encode),
+                            'collectionCode' : collectionCode,
+                            'institutionCode' : institutionCode
+                        }) }}">
                             {{ taxon }}
                         </a>&nbsp;
                     </div>

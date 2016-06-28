@@ -3,7 +3,11 @@
     {% if app.request.get('_route') =='viewfile' %}
         <li class="active">{{ collectionCode }}</li>
     {% else %}
-        <li><a href="{{ path('viewfile', {'collectionCode' : collectionCode, }) }}">{{ collectionCode }}</a></li>
+        <li>
+            <a href="{{ path('viewfile', {'institutionCode':institutionCode, 'collectionCode' : collectionCode }) }}">
+                {{ institutionCode }} - {{ collectionCode }}
+            </a>
+        </li>
         {% if app.request.get('_route') =='todos' %}
             <li>{{ 'label.todo' | trans }}</li>
         {% endif %}

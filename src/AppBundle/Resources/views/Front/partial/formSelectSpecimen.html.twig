@@ -1,4 +1,4 @@
-<form action="{{ path('selectedSpecimen', {collectionCode:collectionCode}) }}" class="js-form-selectedSpecimen" data-catalognumber="{{ catalogNumber }}">
+<form action="{{ path('selectedSpecimen', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}" class="js-form-selectedSpecimen" data-catalognumber="{{ catalogNumber }}">
     {% set isSelectedSpecimen = isSelected(catalogNumber) %}
     <button type="submit" class="btn btn-default btn-xs js-form-selectedSpecimen" name="{{ isSelectedSpecimen ? 'remove' : 'add' }}"
             title="{{ isSelectedSpecimen ? 'remove.selection' | trans : 'add.selection' | trans }}"
