@@ -1,6 +1,5 @@
 {% set lonesomeRecord = attribute(datas, catalogNumber) %}
 {% set flag = '' %}
-{% dump(lonesomeRecord) %}
 {% for className, items in lonesomeRecord %}
     {% for item in items %}
         {% if className != flag and className|lower not in ['taxon', 'localisation'] %}

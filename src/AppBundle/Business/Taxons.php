@@ -39,6 +39,9 @@ class Taxons extends AbstractFile
                 if (isset($taxons[$catalogNumber])) {
                     $returnTaxons[$catalogNumber] = $taxons[$catalogNumber];
                 }
+                else {
+                    $returnTaxons[$catalogNumber] = null;
+                }
             }
         }
 

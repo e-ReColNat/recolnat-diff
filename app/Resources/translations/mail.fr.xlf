@@ -4,7 +4,7 @@
         <body>
             <trans-unit id="1" approved="yes">
                 <source>searchDiffs.end.success</source>
-                <target state="translated">La recherche de différence pour la collection %collectionLabel% a été executée avec succés</target>
+                <target state="translated">La recherche de différence pour la collection %collectionLabel% a été exécutée avec succés</target>
             </trans-unit>
             <trans-unit id="2" approved="yes">
                 <source>searchDiff.success.link</source>
@@ -18,7 +18,7 @@
             </trans-unit>
             <trans-unit id="4" approved="yes">
                 <source>searchDiffs.end.error</source>
-                <target state="translated">La recherche de différence pour la collection %collectionLabel% n'a pas été executée avec succés</target>
+                <target state="translated">La recherche de différence pour la collection %collectionLabel% n'a pas été exécutée avec succés</target>
             </trans-unit>
             <trans-unit id="5" approved="yes">
                 <source>subject.error</source>
