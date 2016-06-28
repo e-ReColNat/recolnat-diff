@@ -112,7 +112,7 @@ class ExportManager
      * @return $this
      * @throws \Exception
      */
-    public function setCollection($collection)
+    public function setCollection(Collection $collection)
     {
         $this->collection = $collection;
         $this->collectionCode = $collection->getCollectioncode();
