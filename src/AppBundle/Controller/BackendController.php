@@ -29,7 +29,7 @@ class BackendController extends Controller
      */
     public function exportAction($institutionCode, $collectionCode, $type, Request $request)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         /** @var ExportPrefs $exportPrefs */
         $exportPrefs = unserialize($request->get('exportPrefs'));
         if (!($exportPrefs instanceof ExportPrefs)) {
@@ -95,7 +95,7 @@ class BackendController extends Controller
      */
     public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         $choices = $request->get('choices');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
@@ -118,7 +118,7 @@ class BackendController extends Controller
      */
     public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -235,7 +235,7 @@ class BackendController extends Controller
      */
     public function deleteChoicesAction($institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
@@ -257,7 +257,7 @@ class BackendController extends Controller
      */
     public function deleteDiffsAction($institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
@@ -282,7 +282,7 @@ class BackendController extends Controller
     {
         $session = $this->get('session');
         $action = $request->get('action');
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
 
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
 

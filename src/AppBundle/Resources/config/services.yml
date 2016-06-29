@@ -42,6 +42,7 @@ services:
         class: AppBundle\Manager\UtilityService
         arguments:
             managerRegistry: "@doctrine"
+            translator: "@translator"
 
     # TWIG EXTENSIONS
     app.twig_multimedia_extension:

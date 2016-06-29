@@ -3,31 +3,43 @@
 namespace AppBundle\Manager;
 
 
+use AppBundle\Business\User\User;
+use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class UtilityService
 {
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ManagerRegistry */
     protected $managerRegistry;
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    /** @var TranslatorInterface */
+    protected $translator;
+
+    public function __construct(ManagerRegistry $managerRegistry, TranslatorInterface $translator)
     {
         $this->managerRegistry = $managerRegistry;
+        $this->translator = $translator;
     }
 
     /**
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @return \AppBundle\Entity\Collection
+     * @param string    $institutionCode
+     * @param string    $collectionCode
+     * @param User|null $user
+     * @return Collection|AccessDeniedException
      */
-    public function getCollection($institutionCode, $collectionCode)
+    public function getCollection($institutionCode, $collectionCode, User $user = null)
     {
-        return $this->managerRegistry->getManager('default')
+        $collection = $this->managerRegistry->getManager('default')
             ->getRepository('AppBundle:Collection')->findOneByCollectionAndInstitution($institutionCode,
                 $collectionCode);
+        if (!is_null($user) && !is_null($collection)) {
+            $this->checkUserRight($user, $collection);
+        }
+
+        return $collection;
     }
 
     /**
@@ -83,5 +95,13 @@ class UtilityService
         }
 
         return realpath($path);
+    }
+
+    public function checkUserRight(User $user, Collection $collection)
+    {
+        if (!$user->isManagerFor($collection->getCollectioncode())) {
+            throw new AccessDeniedException($this->translator->trans('access.denied.wrongPermission', [],
+                'exceptions'));
+        }
     }
 }

@@ -9,7 +9,7 @@
     </div>
     <div class="modal-body">
         {%  set countChoices = sumStats.diffs - statsChoices.sum  %}
-        <p>{{ 'label.export.choices' | transchoice(countChoices, {'%count%':countChoices}) }}</p>
+        {#<p>{{ 'label.export.choices' | transchoice(countChoices, {'%count%':countChoices}) }}</p>#}
         <p>{{ 'label.export.lonesomes.recolnat' | transchoice(sumLonesomeRecordsRecolnat, {'%count%':sumLonesomeRecordsRecolnat}) }}</p>
         <p>{{ 'label.export.lonesomes.collection' | transchoice(sumLonesomeRecordsInstitution, {'%count%':sumLonesomeRecordsInstitution, '%collection%':collection.collectionCode}) }}</p>
 

@@ -40,6 +40,7 @@ class FrontController extends Controller
                 ->getRepository('AppBundle:Collection')->findBy(['collectioncode' => $user->getManagedCollections()]);
         }
         if (count($managedCollections)) {
+            /** @var Collection $collection */
             foreach ($managedCollections as $collection) {
                 $managedCollectionsByInstitution[$collection->getInstitution()->getInstitutioncode()][] = $collection;
             }
@@ -65,7 +66,7 @@ class FrontController extends Controller
         /** @var Prefs $prefs */
         $prefs = $this->getUser()->getPrefs();
 
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collection);
 
@@ -98,7 +99,7 @@ class FrontController extends Controller
      */
     public function viewFileAction($institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collection);
         $statsManager->getSumLonesomeRecords();
@@ -134,7 +135,7 @@ class FrontController extends Controller
         $selectedClassName = 'all',
         $page = 1
     ) {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
@@ -194,7 +195,7 @@ class FrontController extends Controller
         $selectedClassName = 'all',
         $page = 1
     ) {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
@@ -238,7 +239,7 @@ class FrontController extends Controller
      */
     public function viewSpecimenTabAction($institutionCode, $collectionCode, $catalogNumber, $type, $db)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         if ($db == 'recolnat') {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')
                 ->findOneByCatalogNumber($collection, $catalogNumber);
@@ -267,7 +268,7 @@ class FrontController extends Controller
      */
     public function setPrefsForExportAction(Request $request, $institutionCode, $collectionCode, $type)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collection);
 
         $exportPrefs = new ExportPrefs();
@@ -294,6 +295,8 @@ class FrontController extends Controller
                     return $this->redirectToRoute('export', array_merge($paramsExport, ['type' => 'csv']));
             }
         }
+
+        //{% set nbTodos = attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs %}
         $sumStats = $statsManager->getSumStats();
         $statsChoices = $statsManager->getStatsChoices();
         $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
@@ -326,7 +329,7 @@ class FrontController extends Controller
         $jsonCatalogNumbers,
         $page = 1
     ) {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
 
         $catalogNumbers = json_decode($jsonCatalogNumbers);
@@ -364,7 +367,7 @@ class FrontController extends Controller
                 ]
             );
         }
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
@@ -396,7 +399,7 @@ class FrontController extends Controller
      */
     public function listSpecimensAction($institutionCode, $collectionCode, $type)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         /* @var $exportManager \AppBundle\Manager\ExportManager */
         $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
 

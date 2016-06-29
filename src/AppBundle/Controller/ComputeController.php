@@ -26,7 +26,7 @@ class ComputeController extends Controller
      */
     public function configureSearchDiffAction(Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
 
         $defaults = array(
             'startDate' => new \DateTime('today'),
@@ -83,6 +83,8 @@ class ComputeController extends Controller
      */
     public function searchDiffActionStreamedAction($institutionCode, $collectionCode, $startDate, $cookieTGC)
     {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+
         $startDate = \DateTime::createFromFormat('U', $startDate)->format('d/m/Y');
         $username = $this->getUser()->getUsername();
 
@@ -142,40 +144,6 @@ class ComputeController extends Controller
             $server->step->send(\json_encode(['name' => 'general', 'progress' => 100]));
             $server->stop->send(\json_encode(['name' => 'general', 'progress' => 100]));
         });
-    }
-
-
-    /**
-     * @Route("{collectionCode}/searchDiff/{startDate}/{cookieTGC}", name="newSearchDiff")
-     * @param string $collectionCode
-     * @param int    $startDate
-     * @param string $cookieTGC
-     * @return Response
-     */
-    public function newSearchDiffAction($collectionCode, $startDate, $cookieTGC)
-    {
-        $command = $this->get('command.search_diffs');
-        $command->setContainer($this->container);
-
-        $params = [
-            'startDate' => (\DateTime::createFromFormat('U', $startDate)->format('dmY')),
-            'username' => $this->getUser()->getUsername(),
-            'collectionCode' => $collectionCode
-        ];
-
-        $consoleDir = realpath('/'.$this->get('kernel')->getRootDir().'/../bin/console');
-        $command = sprintf('%s diff:search -vvv %s %s %s --cookieTGC=%s',
-            $consoleDir, $params['startDate'], $params['collectionCode'], $params['username'], $cookieTGC);
-
-        $process = new Process(escapeshellcmd($command));
-        $process->setTimeout(null);
-        $process->run();
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        return $this->redirectToRoute('viewfile', ['collectionCode' => $collectionCode]);
-
     }
 
 
