@@ -55,7 +55,7 @@ class ProcessManager extends \Jack\Symfony\ProcessManager
             // remove all finished processes from the stack
             foreach ($currentProcesses as $index => $process) {
                 if (!$process->isRunning()) {
-                    if (!empty($process->getErrorOutput())) {
+                    if (!($process->isSuccessful())) {
                         $this->log($process->getErrorOutput());
                         throw new ProcessFailedException($process);
                     }
