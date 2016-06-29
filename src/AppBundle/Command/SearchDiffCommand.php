@@ -372,7 +372,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         $client->verifySSL($this->verifySsl());
 
         if ($client->login()) {
-            $response = $client->post('https://localhost/recolnat-diff/search');
+            $response = $client->post($this->getServiceRoute());
             if ($response->getStatusCode() == 200) {
                 $user = new User($username, $this->apiRecolnatBaseUri, $this->apiRecolnatUserPath,
                     $this->getContainer()->getParameter('user_group'));
@@ -388,6 +388,28 @@ class SearchDiffCommand extends ContainerAwareCommand
             throw new AccessDeniedException($this->getContainer()->get('translator')
                 ->trans('access.denied.wrongPassword', [], 'exceptions'));
         }
+    }
+
+    /**
+     * Retourne une route valide (le composant router de symfony 3.1 buggue en cli !)
+     * @return string
+     */
+    private function getServiceRoute()
+    {
+        $context = $this->getContainer()->get('router')->getContext();
+
+        $path = $this->getContainer()->get('router')->generate('viewfile', [
+            'institutionCode' => $this->institutionCode,
+            'collectionCode' => $this->collectionCode
+        ]);
+        if ($path{0} == '/') {
+            $path = substr($path, 1);
+        }
+        $pattern = '%1$s://%2$s/%3$s' ;
+        if (!empty($context->getBaseUrl())) {
+            $pattern = '%1$s://%2$s/%4$s/%3$s' ;
+        }
+        return sprintf($pattern, $context->getScheme(), $context->getHost(), $path, $context->getBaseUrl());
     }
 
     private function verifySsl()
