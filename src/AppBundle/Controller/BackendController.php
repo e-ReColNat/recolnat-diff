@@ -29,6 +29,7 @@ class BackendController extends Controller
      */
     public function exportAction($institutionCode, $collectionCode, $type, Request $request)
     {
+        set_time_limit(0);
         $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
         /** @var ExportPrefs $exportPrefs */
         $exportPrefs = unserialize($request->get('exportPrefs'));
