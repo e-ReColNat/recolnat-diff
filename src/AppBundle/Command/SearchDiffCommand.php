@@ -398,10 +398,7 @@ class SearchDiffCommand extends ContainerAwareCommand
     {
         $context = $this->getContainer()->get('router')->getContext();
 
-        $path = $this->getContainer()->get('router')->generate('viewfile', [
-            'institutionCode' => $this->institutionCode,
-            'collectionCode' => $this->collectionCode
-        ]);
+        $path = $this->getContainer()->get('router')->generate('index');
         if ($path{0} == '/') {
             $path = substr($path, 1);
         }
