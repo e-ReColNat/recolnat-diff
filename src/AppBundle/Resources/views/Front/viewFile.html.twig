@@ -153,34 +153,58 @@
                 <tr>
                     <td>{{ 'label.total' | trans }}</td>
                     <td>
+                        {% if sumStats.specimens > 0 %}
                         <a href="{{ path('diffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ sumStats.specimens }}
                         </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                     <td>
+                        {% if sumStats.diffs > 0 %}
                         <a href="{{ path('diffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ sumStats.diffs }}
                         </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                     <td>
+                        {% if sumStats.diffs - statsChoices.sum > 0 %}
                         <a href="{{ path('todos', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ sumStats.diffs - statsChoices.sum }}
                         </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                     <td>
+                        {% if statsChoices.sum > 0 %}
                         <a href="{{ path('choices', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ statsChoices.sum }}
                         </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                     <td>
+                        {% if attribute(sumLonesomeRecords, keyRecolnat) > 0 %}
                         <a href="{{ path('lonesomes', {'db':'recolnat','institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ attribute(sumLonesomeRecords, keyRecolnat) }}
                         </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                     <td>
+                        {% if attribute(sumLonesomeRecords, keyInstitution) > 0 %}
                         <a href="{{ path('lonesomes', {'db':'institution','institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}">
                             {{ attribute(sumLonesomeRecords, keyInstitution) }}
                         </a>
+                        {% else %}
+                            0
+                        {% endif %}
                     </td>
                 </tr>
                 </tbody>
