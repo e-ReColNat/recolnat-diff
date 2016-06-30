@@ -4,12 +4,7 @@ services:
         arguments:
             managerRegistry: "@doctrine"
             maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
-#    diff.manager:
-#        class: AppBundle\Manager\OldDiffManager
-#        arguments:
-#            managerRegistry: "@doctrine"
-#            recolnat_alias: "%database_user%"
-#            recolnat_diff_alias: "%database_user_diff%"
+
 
     diff.manager:
         class: AppBundle\Manager\DiffManager
@@ -22,6 +17,7 @@ services:
         class: AppBundle\Manager\GenericEntityManager
         arguments:
             managerRegistry: "@doctrine"
+            maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
 
     exportmanager:
         class: AppBundle\Manager\ExportManager
@@ -95,6 +91,17 @@ services:
             apiRecolnatUserPath: "%api_recolnat_user_path%"
 
     command.compute_diffs:
-            class: AppBundle\Command\ComputeDiffCommand
-            tags:
-                -  { name: console.command }
+        class: AppBundle\Command\ComputeDiffCommand
+        tags:
+            -  { name: console.command }
+
+    command.export_diffs:
+        class: AppBundle\Command\ExportCommand
+        tags:
+            -  { name: console.command }
+        arguments:
+            serverLoginUrl: "%server_login_url%"
+            serverTicket: "%api_recolnat_server_ticket_path%"
+            requestOptions: "%request_options%"
+            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
+            apiRecolnatUserPath: "%api_recolnat_user_path%"

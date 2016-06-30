@@ -50,8 +50,10 @@ class StatsManager
         if (is_array($lonesomeRecords)) {
             foreach ($lonesomeRecords as $catalogNumber => $itemsPerClassName) {
                 foreach ($itemsPerClassName as $className => $items) {
-                    foreach($items as $item) {
-                        $stats[$className][$item['db']]++;
+                    if ($className != 'Taxon' && $className != 'Localisation') {
+                        foreach ($items as $item) {
+                            $stats[$className][$item['db']]++;
+                        }
                     }
                 }
             }

@@ -122,14 +122,14 @@ class ExportManager
         } else {
             $this->diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collection, $this->userGroup);
 
-            if (!$this->getDiffHandler()->shouldSearchDiffs()) {
-                $this->selectedSpecimensHandler = new SelectedSpecimensHandler($this->diffHandler->getCollectionPath(),
-                    $this->userGroup);
-                $data = $this->getDiffHandler()->getDiffsFile()->getData();
-                $data['selectedSpecimens'] = $this->selectedSpecimensHandler->getData();
-                $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
-                $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
-            }
+            //if (!$this->getDiffHandler()->shouldSearchDiffs()) {
+            $this->selectedSpecimensHandler = new SelectedSpecimensHandler($this->diffHandler->getCollectionPath(),
+                $this->userGroup);
+            $data = $this->getDiffHandler()->getDiffsFile()->getData();
+            $data['selectedSpecimens'] = $this->selectedSpecimensHandler->getData();
+            $this->sessionHandler = new SessionHandler($this->sessionManager, $this->genericEntityManager, $data);
+            $this->getSessionHandler()->init($this->getDiffHandler(), $this->collectionCode);
+            //}
         }
 
         return $this;
@@ -198,7 +198,7 @@ class ExportManager
         if (count($diffs['datas'])) {
             $datas = $diffs['datas'];
 
-            $taxons = $this->getDiffHandler()->getTaxons(array_keys($diffs['datas'])) ;
+            $taxons = $this->getDiffHandler()->getTaxons(array_keys($diffs['datas']));
 
             array_multisort($taxons, SORT_ASC, SORT_NATURAL|SORT_FLAG_CASE, $datas);
             $sortedDiffs['datas'] = $datas;
@@ -349,7 +349,7 @@ class ExportManager
             $dataNewRecords = $this->getSpecimenForLonesomeRecords('institution');
             $data = array_merge($data, $dataNewRecords);
         }
-        $data = $this->filterDataByCatalogNumbers($data);
+        //$data = $this->filterDataByCatalogNumbers($data);
 
         return $data;
     }
@@ -360,7 +360,7 @@ class ExportManager
      */
     private function getSpecimenForLonesomeRecords($side)
     {
-        $dataNewRecords=[];
+        $dataNewRecords = [];
         $lonesomeRecords = $this->diffHandler->getLonesomeRecordsFile()
             ->getLonesomeRecordsByBase($side);
         if (count($lonesomeRecords)) {
@@ -371,6 +371,7 @@ class ExportManager
 
         return $dataNewRecords;
     }
+
     /**
      * Dédoublonne les spécimens avant export
      * @param $data
@@ -401,7 +402,6 @@ class ExportManager
             'Multimedia',
             'Bibliography',
         ];
-        $data = $this->addLonesomesRecords($data);
 
         foreach ($data as $catalogNumber => $specimen) {
 
@@ -440,7 +440,7 @@ class ExportManager
     {
         $exporter = null;
         $datasWithChoices = $this->prepareExport($exportPrefs);
-        switch ($type) {
+        switch (strtolower($type)) {
             case 'dwc':
                 $exporter = new DwcExporter($datasWithChoices, $this->getExportDirPath(), $this->userGroup);
                 break;
@@ -462,10 +462,16 @@ class ExportManager
     {
         $this->exportPrefs = $exportPrefs;
         $catalogNumbers = $this->sessionManager->get('catalogNumbers');
-        $datas = $this->genericEntityManager->getEntitiesLinkedToSpecimens($this->exportPrefs->getSideForChoicesNotSet(),
-            $this->collection, $catalogNumbers);
+
+        $datas = $this->genericEntityManager
+            ->getEntitiesLinkedToSpecimens(
+                $this->exportPrefs->getSideForChoicesNotSet(),
+                $this->collection,
+                $catalogNumbers);
+
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
 
+        $datasWithChoices = $this->addLonesomesRecords($datasWithChoices);
         return $datasWithChoices;
     }
 

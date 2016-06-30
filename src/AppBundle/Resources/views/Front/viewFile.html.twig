@@ -84,6 +84,10 @@
                                 0
                             {% endif %}
                         </td>
+                        {% if className|lower in ['taxon', 'localisation'] %}
+                            <td class="col-sm-1"> - </td>
+                            <td class="col-sm-1"> - </td>
+                        {% else %}
                         <td class="col-sm-1">
                             {% if attribute(statsLonesomeRecords, className)[keyRecolnat] > 0 %}
                                 <a href="{{ path('lonesomes', {'db':'recolnat','institutionCode':institutionCode, 'collectionCode':collectionCode,'selectedClassName':className|lower}) }}">
@@ -102,6 +106,7 @@
                                 0
                             {% endif %}
                         </td>
+                        {% endif %}
                         {% if loop.first %}
                             <td class="col-sm-5" rowspan="{{ loop.length + 1 }}"
                                 style="background-color: transparent;text-align:right">

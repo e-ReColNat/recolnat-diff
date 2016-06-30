@@ -1,7 +1,7 @@
 <ol class="breadcrumb col-sm-offset-1">
 
     {% if app.request.get('_route') =='viewfile' %}
-        <li class="active">{{ collectionCode }}</li>
+        <li class="active">{{ institutionCode }} - {{ collectionCode }}</li>
     {% else %}
         <li>
             <a href="{{ path('viewfile', {'institutionCode':institutionCode, 'collectionCode' : collectionCode }) }}">

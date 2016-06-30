@@ -103,6 +103,8 @@ class FrontController extends Controller
 
         $statsManager = $this->get('statsmanager')->init($this->getUser(), $collection);
         $statsManager->getSumLonesomeRecords();
+        $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
+
 
         return $this->render('@App/Front/viewFile.html.twig', array(
             'statsManager' => $statsManager,
@@ -283,6 +285,7 @@ class FrontController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            set_time_limit(0);
             $paramsExport = [
                 'collectionCode' => $collectionCode,
                 'institutionCode' => $institutionCode,
@@ -296,7 +299,6 @@ class FrontController extends Controller
             }
         }
 
-        //{% set nbTodos = attribute(statsChoices, className) is defined ? detailedStats.diffs - attribute(statsChoices, className) : detailedStats.diffs %}
         $sumStats = $statsManager->getSumStats();
         $statsChoices = $statsManager->getStatsChoices();
         $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();

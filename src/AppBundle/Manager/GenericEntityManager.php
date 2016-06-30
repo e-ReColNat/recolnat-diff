@@ -32,16 +32,19 @@ class GenericEntityManager
     protected $managerRegistry;
     protected $stats = array();
     protected $excludeFieldsName = [];
+    protected $maxNbSpecimenPerPass ;
 
     /**
      * GenericEntityManager constructor.
      * @param ManagerRegistry $managerRegistry
+     * @param int $maxNbSpecimenPerPass
      */
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass)
     {
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
         $this->emB = $managerRegistry->getManager('buffer');
+        $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
     }
 
     /**
@@ -119,10 +122,18 @@ class GenericEntityManager
     public function getEntitiesByCatalogNumbers($base, Collection $collection, $className, $catalogNumbers)
     {
         $em = $this->getEntityManager($base);
-        $entities = $em->getRepository($this->getFullClassName($className))
-            ->findByCatalogNumbers($collection, $catalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
-        return $entities;
+        $mergeEntities = [];
+        $arrayChunkCatalogNumbers = array_chunk($catalogNumbers, $this->maxNbSpecimenPerPass);
+        if (count($arrayChunkCatalogNumbers)) {
+            foreach ($arrayChunkCatalogNumbers as $chunkCatalogNumbers) {
+                $entities = $em->getRepository($this->getFullClassName($className))
+                    ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
+                $mergeEntities = array_merge($entities, $mergeEntities);
+            }
+        }
+
+        return $mergeEntities;
     }
 
     /**

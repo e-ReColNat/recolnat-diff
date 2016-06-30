@@ -43,28 +43,9 @@ class SessionHandler
     public function init(DiffHandler $diffHandler, $collectionCode)
     {
         $this->collectionCode = $collectionCode;
-        $doReload = $this->shouldReload();
-        if ($doReload) {
-            $this->set('choices', $diffHandler->getChoicesFile()->getContent());
-        } else {
-            $this->set('file', $this->collectionCode);
-        }
+        $this->set('choices', $diffHandler->getChoicesFile()->getContent());
     }
 
-    /**
-     * @return bool
-     */
-    public function shouldReload()
-    {
-        $doReload = false;
-        if (!($this->sessionManager->has('file') || $this->sessionManager->get('file') != $this->collectionCode)) {
-            $doReload = true;
-        }
-        if (!($this->sessionManager->has('choices')) || empty($this->sessionManager->get('choices'))) {
-            $doReload = true;
-        }
-        return $doReload;
-    }
 
     /**
      * @param string $name
