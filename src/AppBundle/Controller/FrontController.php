@@ -92,7 +92,7 @@ class FrontController extends Controller
     }
 
     /**
-     * @Route("{institutionCode}/{collectionCode}/view", name="viewfile", options={"expose"=true})
+     * @Route("{institutionCode}/{collectionCode}/file/view", name="viewfile", options={"expose"=true})
      * @param string $institutionCode
      * @param string $collectionCode
      * @return Response
