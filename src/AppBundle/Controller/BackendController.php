@@ -4,11 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\User\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Description of AjaxDiffsController
@@ -20,6 +22,7 @@ class BackendController extends Controller
 
     /**
      * @Route("{institutionCode}/{collectionCode}/export/{type}/", name="export", requirements={"type": "csv|dwc"})
+     * @param UserInterface|User $user
      * @param string  $type
      * @param Request $request
      * @param string  $collectionCode
@@ -27,10 +30,10 @@ class BackendController extends Controller
      * @return JsonResponse
      * @throws \Exception
      */
-    public function exportAction($institutionCode, $collectionCode, $type, Request $request)
+    public function exportAction(UserInterface $user, $institutionCode, $collectionCode, $type, Request $request)
     {
         set_time_limit(0);
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
         /** @var ExportPrefs $exportPrefs */
         $exportPrefs = unserialize($request->get('exportPrefs'));
         if (!($exportPrefs instanceof ExportPrefs)) {
@@ -89,17 +92,18 @@ class BackendController extends Controller
 
     /**
      * @Route("/setChoice/{institutionCode}/{collectionCode}", name="setChoice", options={"expose"=true})
+     * @param UserInterface|User $user
      * @param Request $request
      * @param string  $institutionCode
      * @param string  $collectionCode
      * @return JsonResponse
      */
-    public function setChoiceAction(Request $request, $institutionCode, $collectionCode)
+    public function setChoiceAction(UserInterface $user, Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
         $choices = $request->get('choices');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
+        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
         $exportManager->setChoices($choices);
 
         $response = new JsonResponse();
@@ -112,16 +116,17 @@ class BackendController extends Controller
 
     /**
      * @Route("/setChoices/{institutionCode}/{collectionCode}", name="setChoices", options={"expose"=true})
+     * @param UserInterface|User $user
      * @param Request $request
      * @param string  $institutionCode
      * @param string  $collectionCode
      * @return JsonResponse
      */
-    public function setChoicesAction(Request $request, $institutionCode, $collectionCode)
+    public function setChoicesAction(UserInterface $user, Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
+        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         list($inputOrigin, $inputSpecimens, $inputClassesName, $page, $selectedSpecimens, $selectedClassName, $type) =
@@ -229,16 +234,17 @@ class BackendController extends Controller
 
     /**
      * @Route("/deleteChoices/{institutionCode}/{collectionCode}", name="deleteChoices", options={"expose"=true})
+     * @param UserInterface|User $user
      * @param string $institutionCode
      * @param string $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function deleteChoicesAction($institutionCode, $collectionCode)
+    public function deleteChoicesAction(UserInterface $user, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
+        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
         $choices = $diffHandler->getChoicesFile();
         $choices->deleteChoices();
@@ -251,16 +257,17 @@ class BackendController extends Controller
 
     /**
      * @Route("/deleteDiffs/{institutionCode}/{collectionCode}", name="deleteDiffs", options={"expose"=true})
+     * @param UserInterface|User $user
      * @param string $institutionCode
      * @param string $collectionCode
      * @return JsonResponse
      * @throws \Exception
      */
-    public function deleteDiffsAction($institutionCode, $collectionCode)
+    public function deleteDiffsAction(UserInterface $user, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
+        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
         $diffs = $diffHandler->getDiffsFile();
         $diffs->deleteChoices();
@@ -273,19 +280,20 @@ class BackendController extends Controller
 
     /**
      * @Route("selectedSpecimen/{institutionCode}/{collectionCode}", name="selectedSpecimen")
+     * @param UserInterface|User $user
      * @param string  $institutionCode
      * @param string  $collectionCode
      * @param Request $request
      * @return JsonResponse
      * @throws \Exception
      */
-    public function selectedSpecimenAction(Request $request, $institutionCode, $collectionCode)
+    public function selectedSpecimenAction(UserInterface $user, Request $request, $institutionCode, $collectionCode)
     {
         $session = $this->get('session');
         $action = $request->get('action');
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
 
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
+        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
 
         $catalogNumber = $request->get('catalogNumber');
         $selectedSpecimensHandler = $exportManager->getSelectedSpecimenHandler();

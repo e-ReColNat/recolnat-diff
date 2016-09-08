@@ -3,7 +3,7 @@
 !var/logs/.gitkeep
 !var/sessions/.gitkeep
 /phpunit.xml
-
+app/bootstrap.php.cache
 
 # Parameters
 /app/config/parameters.yml

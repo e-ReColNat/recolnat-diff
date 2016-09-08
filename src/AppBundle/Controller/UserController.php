@@ -2,12 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\User\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\UserPrefsType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Description of UserController
@@ -19,11 +21,11 @@ class UserController extends Controller
 
     /**
      * @Route("/user/prefs/view", name="viewPrefsUser")
+     * @param UserInterface|User $user
      * @return Response
      */
-    public function indexAction()
+    public function indexAction(UserInterface $user)
     {
-        $user = $this->getUser();
         $prefs = $user->getPrefs();
         return $this->render('@App/User/viewPrefs.html.twig', array(
             'prefs' => $prefs,
@@ -32,12 +34,12 @@ class UserController extends Controller
 
     /**
      * @Route("/user/prefs/edit", name="editPrefsUser")
+     * @param UserInterface|User $user
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function editAction(Request $request)
+    public function editAction(UserInterface $user, Request $request)
     {
-        $user = $this->getUser();
         $prefs = $user->getPrefs();
         $form = $this->createForm(UserPrefsType::class, $prefs);
 

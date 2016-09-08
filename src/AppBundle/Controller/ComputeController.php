@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\User\User;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ComputeController extends Controller
 {
@@ -75,18 +77,19 @@ class ComputeController extends Controller
     /**
      * @Route("{institutionCode}/{collectionCode}/searchDiffStreamed/{startDate}/{cookieTGC}", name="searchDiffStreamed",
      *                                                                                         options={"expose"=true})
+     * @param UserInterface|User $user
      * @param string $institutionCode
      * @param string $collectionCode
      * @param string $startDate
      * @param string $cookieTGC
      * @return Response
      */
-    public function searchDiffActionStreamedAction($institutionCode, $collectionCode, $startDate, $cookieTGC)
+    public function searchDiffActionStreamedAction(UserInterface $user, $institutionCode, $collectionCode, $startDate, $cookieTGC)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
 
         $startDate = \DateTime::createFromFormat('U', $startDate)->format('d/m/Y');
-        $username = $this->getUser()->getUsername();
+        $username = $user->getUsername();
 
         $consoleDir = realpath('/'.$this->get('kernel')->getRootDir().'/../bin/console');
         $command = sprintf('%s diff:search %s %s %s %s --cookieTGC=%s',
