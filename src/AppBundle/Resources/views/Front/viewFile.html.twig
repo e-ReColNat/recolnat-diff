@@ -250,6 +250,11 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var modalSpinner = $("#spinnerModal");
+            function getTGCCookiesValue() {
+                console.log(getCookie('CASTGC'))
+                return getCookie('CASTGC');
+            }
+            $('.js-cookieTGC').val(getTGCCookiesValue());
             $(".checkprefs").on('click', function (event) {
                 var url = $(this).attr('href');
                 var modalPrefs = $("#modal").clone();
@@ -259,6 +264,7 @@
                         })
                         .success(function () {
                             var urlDownload = modalPrefs.find('form').attr('action');
+                            modalPrefs.find('.js-cookieTGC').val(getTGCCookiesValue())
                             modalPrefs.find('.confirm').on('click', function (event) {
                                 $.ajax({
                                             url: urlDownload,

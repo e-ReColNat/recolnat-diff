@@ -4,7 +4,9 @@ services:
         arguments:
             managerRegistry: "@doctrine"
             maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
-
+            logger : "@logger"
+        tags:
+            - { name: monolog.handler, channel: compute }
 
     diff.manager:
         class: AppBundle\Manager\DiffManager

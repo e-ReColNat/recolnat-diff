@@ -15,6 +15,14 @@ class SpecimenRepository extends AbstractRecolnatRepository
         return DiffSpecimen::getIdField();
     }
 
+    public function getQueryBuilderJoinSpecimenForResearch() {
+        $qb = $this->createQueryBuilder('s');
+
+        $qb
+            ->select('s');
+
+        return $qb;
+    }
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */

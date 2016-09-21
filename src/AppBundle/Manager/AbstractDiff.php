@@ -6,6 +6,7 @@ use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Monolog\Logger;
 
 /**
  * Description of DiffInterface
@@ -59,6 +60,7 @@ abstract class AbstractDiff
      * Nombre max de specimens à requêter par pass
      */
     public $maxNbSpecimenPerPass;
+    protected $logger;
 
     public static function getIdSetter(){
         throw new \LogicException('method getIdSetter must be implemented') ;
@@ -71,11 +73,13 @@ abstract class AbstractDiff
      * DiffAbstract constructor.
      * @param ManagerRegistry $managerRegistry
      * @param int             $maxNbSpecimenPerPass
+ * @param Logger            $logger
      */
-    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass)
+    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass, Logger $logger)
     {
         $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
         $this->managerRegistry = $managerRegistry;
+        $this->logger = $logger;
         $this->emR = $managerRegistry->getManager('default');
         $this->emB = $managerRegistry->getManager('buffer');
     }
@@ -94,18 +98,30 @@ abstract class AbstractDiff
     {
         $this->class = $class;
         $this->classFullName = 'AppBundle:'.ucfirst($class);
+        $repositoryRecolnat = $this->emR->getRepository($this->classFullName);
+        $repositoryRecolnat->setLogger($this->logger);
+        $repositoryInstitution = $this->emB->getRepository($this->classFullName);
+        $repositoryInstitution->setLogger($this->logger);
         $arrayChunkCatalogNumbers = array_chunk($catalogNumbers, $this->maxNbSpecimenPerPass);
+        $compt=0;
+        $comptRecords=0;
         if (count($arrayChunkCatalogNumbers)) {
             foreach ($arrayChunkCatalogNumbers as $chunkCatalogNumbers) {
-                $this->recordsRecolnat = $this->emR->getRepository($this->classFullName)
+                $strDebug = sprintf('passage #%d enregistrement %d->%d/%d', ++$compt, $comptRecords, $comptRecords+count($chunkCatalogNumbers), count($catalogNumbers));
+                $this->logger->debug($strDebug);
+                $comptRecords=$comptRecords+count($chunkCatalogNumbers);
+
+                $this->recordsRecolnat = $repositoryRecolnat
                     ->findByCatalogNumbersAndId($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
-                $this->recordsInstitution = $this->emB->getRepository($this->classFullName)
+                $this->recordsInstitution = $repositoryInstitution
                     ->findByCatalogNumbersAndId($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
 
                 $this->emR->clear();
                 $this->emB->clear();
+                $this->logger->debug('comparaison des enregistrements passage #'.$compt);
                 $this->compare();
+                $this->logger->debug('fin comparaison passage #'.$compt);
             }
         }
 

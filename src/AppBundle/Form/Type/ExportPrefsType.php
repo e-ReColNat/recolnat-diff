@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,6 +22,7 @@ class ExportPrefsType extends AbstractType
                 'choices'  => ExportPrefs::OPTIONS_NEW_RECORDS,
                 'label' => 'export.sideForNewRecords'
             ))
+            ->add('cookieTGC', HiddenType::class, ['attr' => ['class' => 'js-cookieTGC']])
         ;
     }
 

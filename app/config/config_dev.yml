@@ -12,9 +12,10 @@ web_profiler:
     intercept_redirects: false
 
 swiftmailer:
-    delivery_address: thomas.pateffoz@ird.fr
+    delivery_address: webmastard@gmail.com
 
 monolog:
+    channels: ['compute']
     handlers:
         main:
             type:   stream
@@ -35,6 +36,11 @@ monolog:
                 VERBOSITY_VERY_VERBOSE: NOTICE
                 VERBOSITY_DEBUG: DEBUG
             channels: ["doctrine"]
+        compute:
+            level:    debug
+            type:     stream
+            path:     '%kernel.logs_dir%/%kernel.environment%.compute.log'
+            channels: ["compute"]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:

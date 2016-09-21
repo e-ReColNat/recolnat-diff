@@ -43,24 +43,26 @@ class DwcExporter extends AbstractExporter
         $this->setEmptyClasses();
 
         foreach ($this->datas as $key => $data) {
-            $formattedData[$key] = [];
-            $occurrenceid = $data['Specimen']['occurrenceid'];
+            if (isset($data['Specimen']) && isset($data['Specimen']['occurrenceid'])) {
+                $formattedData[$key] = [];
+                $occurrenceid = $data['Specimen']['occurrenceid'];
 
-            $formattedData[$key]['Specimen'] = $this->getSpecimenData($data);
+                $formattedData[$key]['Specimen'] = $this->getSpecimenData($data);
 
-            $determinationData = $this->getDeterminationData($data, $occurrenceid);
-            if (!empty($determinationData)) {
-                $formattedData[$key]['Determination'] = $determinationData;
-            }
+                $determinationData = $this->getDeterminationData($data, $occurrenceid);
+                if (!empty($determinationData)) {
+                    $formattedData[$key]['Determination'] = $determinationData;
+                }
 
-            $bibliographyData = $this->getBibliographyData($data, $occurrenceid);
-            if (!empty($bibliographyData)) {
-                $formattedData[$key]['Bibliography'] = $bibliographyData;
-            }
+                $bibliographyData = $this->getBibliographyData($data, $occurrenceid);
+                if (!empty($bibliographyData)) {
+                    $formattedData[$key]['Bibliography'] = $bibliographyData;
+                }
 
-            $multimediaData = $this->getMultimediaData($data, $occurrenceid);
-            if (!empty($multimediaData)) {
-                $formattedData[$key]['Multimedia'] = $multimediaData;
+                $multimediaData = $this->getMultimediaData($data, $occurrenceid);
+                if (!empty($multimediaData)) {
+                    $formattedData[$key]['Multimedia'] = $multimediaData;
+                }
             }
         }
 

@@ -10,7 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Description of AjaxDiffsController
@@ -30,18 +32,28 @@ class BackendController extends Controller
      * @return JsonResponse
      * @throws \Exception
      */
-    public function exportAction(UserInterface $user, $institutionCode, $collectionCode, $type, Request $request)
+    public function exportAction(UserInterface $user, $institutionCode, $type, $collectionCode, Request $request)
     {
-        set_time_limit(0);
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
-        /** @var ExportPrefs $exportPrefs */
+        $username = $user->getUsername();
         $exportPrefs = unserialize($request->get('exportPrefs'));
         if (!($exportPrefs instanceof ExportPrefs)) {
             throw new \Exception('parameters must be an instance of ExportPrefs');
         }
-        /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($this->getUser())->setCollection($collection);
-        $file = $exportManager->export($type, $exportPrefs);
+
+        $consoleDir = realpath('/'.$this->get('kernel')->getRootDir().'/../bin/console');
+        $command = sprintf('%s diff:export %s %s %s %s --cookieTGC=%s',
+            $consoleDir, $institutionCode, $collectionCode, $type, $username, $exportPrefs->getCookieTGC());
+
+        $process = new Process($command);
+        $process->setTimeout(null);
+
+        $process->run();
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $file =  trim($process->getOutput());
         $response = new JsonResponse();
         if (is_null($file)) {
             $message = $this->get('translator')->trans('export.probleme');
@@ -52,9 +64,44 @@ class BackendController extends Controller
 
             return $response;
         }
-
         return $response->setData(['file' => urlencode($file)]);
     }
+
+    /**
+     * @Route("{institutionCode}/{collectionCode}/exportold/{type}/", name="export", requirements={"type": "csv|dwc"})
+     * @param UserInterface|User $user
+     * @param string  $type
+     * @param Request $request
+     * @param string  $collectionCode
+     * @param string  $institutionCode
+     * @return JsonResponse
+     * @throws \Exception
+     */
+//    public function exportAction(UserInterface $user, $institutionCode, $collectionCode, $type, Request $request)
+//    {
+//        set_time_limit(0);
+//        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+//        /** @var ExportPrefs $exportPrefs */
+//        $exportPrefs = unserialize($request->get('exportPrefs'));
+//        if (!($exportPrefs instanceof ExportPrefs)) {
+//            throw new \Exception('parameters must be an instance of ExportPrefs');
+//        }
+//        /* @var $exportManager \AppBundle\Manager\ExportManager */
+//        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+//        $file = $exportManager->export($type, $exportPrefs);
+//        $response = new JsonResponse();
+//        if (is_null($file)) {
+//            $message = $this->get('translator')->trans('export.probleme');
+//            $response->setContent($message);
+//
+//            $this->addFlash('error', $message);
+//            $response->setStatusCode(400);
+//
+//            return $response;
+//        }
+//
+//        return $response->setData(['file' => urlencode($file)]);
+//    }
 
     /**
      * @Route("/download/{path}", name="download", options={"expose"=true})

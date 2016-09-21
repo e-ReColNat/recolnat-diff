@@ -28,6 +28,11 @@ class ExportPrefs
     protected $sideForNewRecords;
 
     /**
+     * @var string
+     */
+    protected $cookieTGC;
+
+    /**
      * @return string
      */
     public function getSideForChoicesNotSet()
@@ -58,4 +63,22 @@ class ExportPrefs
     {
         $this->sideForNewRecords = $sideForNewRecords;
     }
+
+    /**
+     * @return string
+     */
+    public function getCookieTGC()
+    {
+        return $this->cookieTGC;
+    }
+
+    /**
+     * @param string $cookieTGC
+     */
+    public function setCookieTGC($cookieTGC)
+    {
+        $this->cookieTGC = $cookieTGC;
+    }
+
+
 }

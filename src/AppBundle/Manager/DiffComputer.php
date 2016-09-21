@@ -5,6 +5,7 @@ namespace AppBundle\Manager;
 use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Monolog\Logger;
 
 /**
  * Description of DiffStatsManager
@@ -59,14 +60,20 @@ class DiffComputer
     ];
 
     protected $maxNbSpecimenPerPass;
+    /**
+     * @var Logger
+     */
+    protected $logger;
 
     /**
      * DiffComputer constructor.
      * @param ManagerRegistry $managerRegistry
-     * @param int             $maxNbSpecimenPerPass
+     * @param int $maxNbSpecimenPerPass
+     * @param Logger $logger
      */
-    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass)
+    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass, Logger $logger)
     {
+        $this->logger = $logger;
         $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
@@ -81,7 +88,7 @@ class DiffComputer
 
     /**
      * @param Collection $collection
-     * @param array      $catalogNumbers
+     * @param array $catalogNumbers
      * @return $this
      */
     public function init(Collection $collection, $catalogNumbers)
@@ -114,16 +121,16 @@ class DiffComputer
     {
         if (isset($this->catalogNumbers[ucfirst($className)])) {
             $catalogNumbers = $this->catalogNumbers[$className];
-            $nameDiffClassManager = '\\AppBundle\\Manager\\Diff'.ucfirst(strtolower($className));
+            $nameDiffClassManager = '\\AppBundle\\Manager\\Diff' . ucfirst(strtolower($className));
             /* @var $diffClassManager \AppBundle\Manager\AbstractDiff */
-            $diffClassManager = new $nameDiffClassManager($this->managerRegistry, $this->maxNbSpecimenPerPass);
+            $diffClassManager = new $nameDiffClassManager($this->managerRegistry, $this->maxNbSpecimenPerPass, $this->logger);
             $diffClassManager->init($this->collection, $className, $catalogNumbers);
             $this->setDiffs($className, $diffClassManager->getStats());
             $this->setLonesomeRecords($className, $diffClassManager->getLonesomeRecords());
             $this->computeDiffs($className);
             unset($diffClassManager);
         } else {
-            throw new \Exception('no catalognumber for '.$className);
+            throw new \Exception('no catalognumber for ' . $className);
         }
         $this->diffs['classes'] = $this->classes;
     }
@@ -134,7 +141,7 @@ class DiffComputer
             $catalogNumbers = $this->catalogNumbers;
         }
         $flattenCatalogNumbers = [];
-        array_walk_recursive($catalogNumbers, function($a) use (&$flattenCatalogNumbers) {
+        array_walk_recursive($catalogNumbers, function ($a) use (&$flattenCatalogNumbers) {
             $flattenCatalogNumbers[] = $a;
         });
         $em = $this->emR;
@@ -189,7 +196,7 @@ class DiffComputer
 
     /**
      * @param string $className
-     * @param array  $fields
+     * @param array $fields
      */
     private function setStatsForClass($className, $fields)
     {
@@ -234,7 +241,7 @@ class DiffComputer
     /**
      * Set les enregistrements orphelins
      * @param string $className
-     * @param array  $lonesomeRecords
+     * @param array $lonesomeRecords
      */
     private function setLonesomeRecords($className, $lonesomeRecords)
     {
@@ -286,7 +293,7 @@ class DiffComputer
 
     /**
      * @param string $className
-     * @param array  $stats
+     * @param array $stats
      */
     public function setDiffs($className, $stats)
     {

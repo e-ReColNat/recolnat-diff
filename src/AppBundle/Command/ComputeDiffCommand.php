@@ -15,7 +15,7 @@ class ComputeDiffCommand extends ContainerAwareCommand
     {
         $this
             ->setName('diff:compute')
-            ->setDescription('Search diffs between buffer and the reference database of e-ReColNat')
+            ->setDescription('Compute diffs between buffer and the reference database of e-ReColNat for a specific entity')
             ->addArgument(
                 'institutionCode',
                 InputArgument::REQUIRED,

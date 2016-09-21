@@ -54,6 +54,7 @@ class CsvExporter extends AbstractExporter
             'Multimedia',
             'Bibliography',
         ];
+
         foreach ($this->datas as $key => $record) {
             foreach ($record as $className => $datasPerClass) {
 

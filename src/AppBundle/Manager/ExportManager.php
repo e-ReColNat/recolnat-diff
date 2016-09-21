@@ -369,6 +369,11 @@ class ExportManager
                 $this->exportPrefs->getSideForNewRecords(), $this->collection, $catalogNumbersLonesomeRecords);
         }
 
+        foreach ($dataNewRecords as $catalogNumber => $specimen) {
+
+            $arraySpecimenWithEntities = $this->genericEntityManager->formatArraySpecimenForExport($specimen);
+            $dataNewRecords[$catalogNumber] = $arraySpecimenWithEntities;
+        }
         return $dataNewRecords;
     }
 
@@ -472,6 +477,7 @@ class ExportManager
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
 
         $datasWithChoices = $this->addLonesomesRecords($datasWithChoices);
+
         return $datasWithChoices;
     }
 

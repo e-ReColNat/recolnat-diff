@@ -6,6 +6,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Monolog\Logger;
 
 /**
  * Description of RecolnatRepository
@@ -25,11 +26,32 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         'taxon' => ['rawid' => true, 'identifier' => 'taxonid'],
     ];
     const ENTITY_PREFIX = 'AppBundle\\Entity\\';
+    /**
+     * @var Logger
+     */
+    protected $logger=null;
 
     public static function getEntityIdField()
     {
         throw new \LogicException('method getEntityIdField must be implemented');
     }
+
+    /**
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @param Logger $logger
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+    }
+
 
     /**
      * @param Collection $collection
@@ -66,19 +88,30 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
 
-        $qb = $this->getQueryBuilderJoinSpecimen();
+        $qb = $this->getQueryBuilderJoinSpecimenForResearch();
         $qb->addSelect($this->getExprCatalogNumber().' as catalognumber');
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
-        return $this->orderResultSetByCatalogNumberAndId($qb->getQuery()->getResult($hydratationMode),
+        $this->log('récuperation des enregistrements');
+        $resultsSet = $qb->getQuery()->getResult($hydratationMode);
+        $this->log('fin récuperation des enregistrements');
+        return $this->orderResultSetByCatalogNumberAndId($resultsSet,
             $this->getEntityIdField());
     }
 
+    private function log($message) {
+        if (!is_null($this->logger)) {
+            $this->logger->debug($message);
+        }
+    }
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */
     abstract public function getQueryBuilderJoinSpecimen();
 
+    public function getQueryBuilderJoinSpecimenForResearch() {
+        return $this->getQueryBuilderJoinSpecimen();
+    }
     /**
      *
      * @param array $ids
@@ -118,6 +151,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     protected function orderResultSetByCatalogNumberAndId($resultsSet, $identifierName)
     {
         $orderResultSet = [];
+        $this->log('tri des enregistrements');
         if (count($resultsSet)) {
             foreach ($resultsSet as $resultRow) {
                 if (!empty($resultRow)) {
@@ -134,6 +168,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
                 }
             }
         }
+        $this->log('fin tri des enregistrements');
 
         return $orderResultSet;
     }
