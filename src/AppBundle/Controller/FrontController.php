@@ -2,18 +2,15 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\User\Prefs;
 use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
-use AppBundle\Form\Type\ExportPrefsType;
 use AppBundle\Manager\AbstractDiff;
 use AppBundle\Manager\ExportManager;
 use Doctrine\ORM\AbstractQuery;
 use Knp\Component\Pager\Pagination\AbstractPagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -264,63 +261,6 @@ class FrontController extends Controller
         return $this->render('@App/Front/partial/specimen/' . $template, array(
             'specimen' => $specimen,
             'catalogNumber' => $catalogNumber,
-        ));
-    }
-
-
-    /**
-     * @Route("{institutionCode}/{collectionCode}/export/setPrefs/{type}", name="setPrefsForExport",
-     *     requirements={"type"="dwc|csv"})
-     * @param UserInterface|User $user
-     * @param Request $request
-     * @param string $institutionCode
-     * @param string $collectionCode
-     * @param string $type
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     */
-    public function setPrefsForExportAction(UserInterface $user, Request $request, $institutionCode, $collectionCode, $type)
-    {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
-        $statsManager = $this->get('statsmanager')->init($user, $collection);
-
-        $exportPrefs = new ExportPrefs();
-
-        $form = $this->createForm(ExportPrefsType::class, $exportPrefs, [
-            'action' => $this->generateUrl('setPrefsForExport', [
-                'institutionCode' => $institutionCode,
-                'collectionCode' => $collectionCode,
-                'type' => $type
-            ])
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            set_time_limit(0);
-            $paramsExport = [
-                'collectionCode' => $collectionCode,
-                'institutionCode' => $institutionCode,
-                'exportPrefs' => serialize($exportPrefs)
-            ];
-            switch ($type) {
-                case 'dwc':
-                    return $this->redirectToRoute('export', array_merge($paramsExport, ['type' => 'dwc']));
-                case 'csv':
-                    return $this->redirectToRoute('export', array_merge($paramsExport, ['type' => 'csv']));
-            }
-        }
-
-        $sumStats = $statsManager->getSumStats();
-        $statsChoices = $statsManager->getStatsChoices();
-        $sumLonesomeRecords = $statsManager->getSumLonesomeRecords();
-
-
-        return $this->render('@App/Front/setPrefsForExport.html.twig', array(
-            'collection' => $collection,
-            'sumStats' => $sumStats,
-            'statsChoices' => $statsChoices,
-            'sumLonesomeRecords' => $sumLonesomeRecords,
-            'form' => $form->createView(),
-            'keysRef' => AbstractDiff::getKeysRef(),
         ));
     }
 

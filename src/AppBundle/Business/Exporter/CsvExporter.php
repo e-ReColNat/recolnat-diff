@@ -105,7 +105,7 @@ class CsvExporter extends AbstractExporter
         $arrayFilesName = [];
         foreach ($this->getFiles() as $className => $csvFile) {
             /** @var \SplFileObject $csvFile */
-            $arrayFilesName[] = $csvFile->getPathName();
+            $arrayFilesName[] = $csvFile->getPathname();
             // Closing files
             $this->files[$className] = null;
         }

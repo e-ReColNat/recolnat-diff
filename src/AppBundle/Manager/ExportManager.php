@@ -2,18 +2,19 @@
 
 namespace AppBundle\Manager;
 
+use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\AbstractExporter;
+use AppBundle\Business\Exporter\CsvExporter;
+use AppBundle\Business\Exporter\DwcExporter;
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\SelectedSpecimensHandler;
 use AppBundle\Business\SessionHandler;
+use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Session\Session;
-use AppBundle\Business\DiffHandler;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Business\User\User;
-use AppBundle\Business\Exporter\DwcExporter;
-use AppBundle\Business\Exporter\CsvExporter;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Description of ExportManager
@@ -42,7 +43,7 @@ class ExportManager
     protected $user;
 
     /** @var \AppBundle\Business\DiffHandler */
-    private $diffHandler;
+    public $diffHandler;
 
     /** @var  SelectedSpecimensHandler */
     private $selectedSpecimensHandler;
@@ -71,12 +72,18 @@ class ExportManager
     protected $userGroup;
 
     /**
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
      * @param ManagerRegistry      $managerRegistry
      * @param Session              $sessionManager
      * @param GenericEntityManager $genericEntityManager
      * @param int                  $maxItemPerPage
      * @param DiffComputer         $diffComputer
      * @param string               $userGroup
+     * @param Logger $logger
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -84,7 +91,8 @@ class ExportManager
         GenericEntityManager $genericEntityManager,
         $maxItemPerPage,
         DiffComputer $diffComputer,
-        $userGroup
+        $userGroup,
+        Logger $logger
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->sessionManager = $sessionManager;
@@ -92,6 +100,7 @@ class ExportManager
         $this->maxItemPerPage = $maxItemPerPage;
         $this->diffComputer = $diffComputer;
         $this->userGroup = $userGroup;
+        $this->logger = $logger;
     }
 
     /**
@@ -363,10 +372,13 @@ class ExportManager
         $dataNewRecords = [];
         $lonesomeRecords = $this->diffHandler->getLonesomeRecordsFile()
             ->getLonesomeRecordsByBase($side);
+
+        $debut=microtime(true);
+
         if (count($lonesomeRecords)) {
             $catalogNumbersLonesomeRecords = array_keys($lonesomeRecords);
             $dataNewRecords = $this->genericEntityManager->getEntitiesLinkedToSpecimens(
-                $this->exportPrefs->getSideForNewRecords(), $this->collection, $catalogNumbersLonesomeRecords);
+                $this->exportPrefs->getSideForNewRecords(), $this->collection, $catalogNumbersLonesomeRecords, true);
         }
 
         foreach ($dataNewRecords as $catalogNumber => $specimen) {
@@ -374,6 +386,7 @@ class ExportManager
             $arraySpecimenWithEntities = $this->genericEntityManager->formatArraySpecimenForExport($specimen);
             $dataNewRecords[$catalogNumber] = $arraySpecimenWithEntities;
         }
+        $this->logger->addDebug(sprintf('%d records : fin : %s', count($lonesomeRecords), microtime(true) -$debut));
         return $dataNewRecords;
     }
 
@@ -398,7 +411,7 @@ class ExportManager
      * @param array $data
      * @return array
      */
-    private function getArrayDatasWithChoices($data)
+    public function getArrayDatasWithChoices($data)
     {
         $dataWithChoices = [];
         $entitiesNameWithArray = [
@@ -441,22 +454,29 @@ class ExportManager
      * @return \ArrayObject|string
      * @throws \Exception
      */
-    public function export($type, ExportPrefs $exportPrefs)
+    public function export($formattedDatas, $type, ExportPrefs $exportPrefs)
     {
         $exporter = null;
-        $datasWithChoices = $this->prepareExport($exportPrefs);
+        $debut=microtime(true);
+        //$datasWithChoices = $this->prepareExport($exportPrefs);
+        $this->logger->addDebug(sprintf('fin prepa export : %s', microtime(true) -$debut));
+        $debut=microtime(true);
         switch (strtolower($type)) {
             case 'dwc':
-                $exporter = new DwcExporter($datasWithChoices, $this->getExportDirPath(), $this->userGroup);
+                $exporter = new DwcExporter($formattedDatas, $this->getExportDirPath(), $this->userGroup);
                 break;
             case 'csv':
-                $exporter = new CsvExporter($datasWithChoices, $this->getExportDirPath(), $this->userGroup);
+                $exporter = new CsvExporter($formattedDatas, $this->getExportDirPath(), $this->userGroup);
         }
+        $this->logger->addDebug(sprintf('instanciation export : %s', microtime(true) -$debut));
+        $debut=microtime(true);
         if ($exporter instanceof AbstractExporter) {
-            return $exporter->generate($this->user->getPrefs());
+            $return = $exporter->generate($this->user->getPrefs());
         } else {
             throw new \Exception(sprintf('exporter %s has not been found', $type));
         }
+        $this->logger->addDebug(sprintf('creation export : %s', microtime(true) -$debut));
+        return $return;
     }
 
     /**
@@ -466,19 +486,27 @@ class ExportManager
     private function prepareExport(ExportPrefs $exportPrefs)
     {
         $this->exportPrefs = $exportPrefs;
-        $catalogNumbers = $this->sessionManager->get('catalogNumbers');
+        $catalogNumbers = $this->getDiffCatalogNumbers();
 
         $datas = $this->genericEntityManager
             ->getEntitiesLinkedToSpecimens(
                 $this->exportPrefs->getSideForChoicesNotSet(),
                 $this->collection,
-                $catalogNumbers);
+                $catalogNumbers, true);
 
         $datasWithChoices = $this->getArrayDatasWithChoices($datas);
 
         $datasWithChoices = $this->addLonesomesRecords($datasWithChoices);
 
         return $datasWithChoices;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDiffCatalogNumbers()
+    {
+        return $this->sessionManager->get('catalogNumbers');
     }
 
 }

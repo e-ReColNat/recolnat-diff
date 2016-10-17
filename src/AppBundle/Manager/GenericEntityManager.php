@@ -3,9 +3,12 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Monolog\Logger;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Intl\Locale;
 
 /**
@@ -35,16 +38,22 @@ class GenericEntityManager
     protected $maxNbSpecimenPerPass ;
 
     /**
+     * @var Logger
+     */
+    protected $logger;
+    /**
      * GenericEntityManager constructor.
      * @param ManagerRegistry $managerRegistry
      * @param int $maxNbSpecimenPerPass
+     * @param Logger $logger
      */
-    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass)
+    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass, Logger $logger)
     {
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');
         $this->emB = $managerRegistry->getManager('buffer');
         $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
+        $this->logger = $logger;
     }
 
     /**
@@ -117,19 +126,34 @@ class GenericEntityManager
      * @param Collection $collection
      * @param string     $className
      * @param array      $catalogNumbers
+     * @param boolean   $export
      * @return mixed
      */
-    public function getEntitiesByCatalogNumbers($base, Collection $collection, $className, $catalogNumbers)
+    public function getEntitiesByCatalogNumbers($base, Collection $collection, $className, $catalogNumbers, $export = false)
     {
         $em = $this->getEntityManager($base);
 
         $mergeEntities = [];
         $arrayChunkCatalogNumbers = array_chunk($catalogNumbers, $this->maxNbSpecimenPerPass);
+        $outputInterface = new ConsoleOutput();
         if (count($arrayChunkCatalogNumbers)) {
+            $countCatalogNumbers = count($catalogNumbers);
+            $outputInterface->writeln(sprintf('catalogNumbers : %d', $countCatalogNumbers));
+            $countChunkCatalogNumbers = 0;
             foreach ($arrayChunkCatalogNumbers as $chunkCatalogNumbers) {
-                $entities = $em->getRepository($this->getFullClassName($className))
-                    ->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
+                $countChunkCatalogNumbers+=count($chunkCatalogNumbers);
+                $outputInterface->writeln(sprintf('catalogNumbers : %d/%d', $countChunkCatalogNumbers, $countCatalogNumbers));
+                $debut = microtime(true);
+                /** @var AbstractRecolnatRepository $repo */
+                $repo = $em->getRepository($this->getFullClassName($className));
+                if ($export) {
+                    $entities = $repo->findByCatalogNumbersForExport($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
+                }
+                else {
+                    $entities = $repo->findByCatalogNumbers($collection, $chunkCatalogNumbers, AbstractQuery::HYDRATE_ARRAY);
+                }
                 $mergeEntities = array_merge($entities, $mergeEntities);
+                $this->logger->debug(sprintf('request %d records duree : %s ', count($chunkCatalogNumbers), microtime(true)-$debut));
             }
         }
 
@@ -149,11 +173,12 @@ class GenericEntityManager
      * @param string     $base
      * @param Collection $collection
      * @param array      $catalogNumbers
+     * @param boolean   $export
      * @return mixed
      */
-    public function getEntitiesLinkedToSpecimens($base, Collection $collection, $catalogNumbers)
+    public function getEntitiesLinkedToSpecimens($base, Collection $collection, $catalogNumbers, $export = false)
     {
-        return $this->getEntitiesByCatalogNumbers($base, $collection, 'Specimen', $catalogNumbers);
+        return $this->getEntitiesByCatalogNumbers($base, $collection, 'Specimen', $catalogNumbers, $export);
     }
 
 

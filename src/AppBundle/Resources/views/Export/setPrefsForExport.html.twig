@@ -1,0 +1,174 @@
+{% extends '@App/base.html.twig' %}
+
+{% block body %}
+{%  set sumLonesomeRecordsRecolnat = attribute(sumLonesomeRecords, keysRef.recolnat)%}
+{%  set sumLonesomeRecordsInstitution = attribute(sumLonesomeRecords, keysRef.institution)%}
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3>{{ ('export.'~type~'.title') | trans({}, 'messages') }}</h3>
+        <h4 class="modal-title">{{ 'prefs.save.title' | trans({}, 'prefs') }}</h4>
+    </div>
+    <div class="modal-body">
+        {%  set countChoices = sumStats.diffs - statsChoices.sum  %}
+        {#<p>{{ 'label.export.choices' | transchoice(countChoices, {'%count%':countChoices}) }}</p>#}
+        <p>{{ 'label.export.lonesomes.recolnat' | transchoice(sumLonesomeRecordsRecolnat, {'%count%':sumLonesomeRecordsRecolnat}) }}</p>
+        <p>{{ 'label.export.lonesomes.collection' | transchoice(sumLonesomeRecordsInstitution, {'%count%':sumLonesomeRecordsInstitution, '%collection%':collection.collectionCode}) }}</p>
+
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input type="submit" class="btn btn-primary confirm" value="{{'modal.agree' | trans}}" />
+        {{ form_end(form) }}
+    </div>
+    <div class="modal-footer">
+
+    </div>
+</div>
+{% include "@App/Front/partial/searchDiffModal.html.twig" %}
+{% endblock body %}
+
+
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+//            var institutionCode = $('.js-institutionCode').val();
+//            var collectionCode =  $('.js-collectionCode').val();
+        $(".js-formExport").on('submit', function (event) {
+            /*window.location = Routing.generate('export',
+                    {
+                        'institutionCode': '{{ institutionCode }}',
+                        'collectionCode': '{{ collectionCode }}',
+                        'cookieTGC': $('.js-cookieTGC').val(),
+                        'type':'{{ type }}',
+                        'exportPrefs':$(".js-formExport").serialize()
+                    }
+            );*/
+            event.preventDefault();
+            var modalWindow =  $("#modal");
+            modalWindow.modal({
+                backdrop: 'static',
+                keyboard: false
+            }).modal('show');
+
+            var progressbarTemplate = $("#modal").find(".js-progress-template");
+            var modalBody = $("#modal .modal-body");
+            function getTGCCookiesValue() {
+                return getCookie('CASTGC');
+            }
+
+            function getCookie(cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ')
+                        c = c.substring(1);
+                    if (c.indexOf(name) == 0)
+                        return c.substring(name.length, c.length);
+                }
+                return false;
+            }
+            function addProgressBar(template, element, id, title) {
+                clone = template.clone().appendTo(element).show();
+                clone.find('.progress-step-title').html(title);
+                return clone.find('.progress-bar').attr('id', id).addClass('active');
+            }
+            $('.js-cookieTGC').val(getTGCCookiesValue());
+
+            var progressBars = [] ;
+            //progressBars['general'] = addProgressBar(progressbarTemplate, modalBody, 'general', Translator.trans('progression.general'));
+            progressBars['export_diffs'] = addProgressBar(progressbarTemplate, modalBody, 'export_diffs', Translator.trans('label.export.diffs'));
+            progressBars['export_lonesomes'] = addProgressBar(progressbarTemplate, modalBody, 'export_lonesomes', Translator.trans('label.export.lonesomes'));
+            var totalSteps=[];
+            var countProgress=[];
+            countProgress['export_lonesomes'] = 0;
+            countProgress['export_diffs'] = 0;
+            var stepProgress=[];
+            stepProgress['export_lonesomes'] = 0;
+            stepProgress['export_diffs'] = 0;
+
+            try {
+                var source = new EventSource(Routing.generate('export',
+                        {
+                            'institutionCode': '{{ institutionCode }}',
+                            'collectionCode': '{{ collectionCode }}',
+                            'cookieTGC': $('.js-cookieTGC').val(),
+                            'type':'{{ type }}',
+                            'exportPrefs':$(".js-formExport").serialize()
+                        }
+                ));
+
+
+                source.onopen = function () {
+                    console.log('open');
+                    return;
+                };
+                source.addEventListener('error', function (evt) {
+                    console.log(evt);
+                    source.close();
+                    modalWindow.modal('hide');
+                });
+                source.addEventListener('close', function (evt) {
+                    console.log(evt);
+                    source.close();
+                    modalWindow.modal('hide');
+                });
+                source.addEventListener('total', function (evt) {
+                    data = JSON.parse(evt.data);
+                    totalSteps[data.name] = parseInt(data.steps);
+                    stepProgress[data.name] = 100 / totalSteps[data.name];
+                    console.log('stepProgress : ' + stepProgress[data.name]);
+                });
+                source.addEventListener('log', function (evt) {
+                    console.log(evt);
+                    console.log(evt.data);
+                });
+                source.addEventListener('step', function (evt) {
+                    try {
+                        if (evt.data !='') {
+                            data = JSON.parse(evt.data);
+
+                            console.log('data.progress : ' + data.progress);
+                            console.log('data.name : ' + data.name);
+                            if (parseInt(data.progress) == 100 && data.name != 'general') {
+                                countProgress[data.name] += stepProgress[data.name];
+                                progress(countProgress[data.name], progressBars[data.name], countProgress[data.name]);
+                            }
+                            if (data.name == 'general' && parseInt(data.progress) == 100) {
+                                progressBars[data.name].removeClass('active');
+                                window.location = Routing.generate('viewfile', {
+                                    'institutionCode': institutionCode,
+                                    'collectionCode': collectionCode
+                                });
+                            }
+                        }
+                    }
+                    catch (e1) {
+                        console.error(evt);
+                    }
+                });
+                source.addEventListener('file', function (evt) {
+                    data = JSON.parse(evt.data);
+                    source.close();
+                    modalWindow.modal('hide');
+                    window.location=Routing.generate('download', {
+                        'path': encodeURIComponent(data.file)
+                    });
+                });
+
+            } catch (e) {
+            }
+        });
+        function progress(percent, $element, label) {
+            if (percent>100) {
+                percent = 100;
+                label = 100;
+            }
+            $element.css('width', percent + "%").html(Math.ceil(percent) + "%");
+            $element.parent().next().html(Translator.trans(label));
+        }
+    });
+</script>
+{% endblock javascripts %}

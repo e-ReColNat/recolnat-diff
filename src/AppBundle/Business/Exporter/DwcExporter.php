@@ -177,7 +177,7 @@ class DwcExporter extends AbstractExporter
         if (is_array($this->csvFiles) && count($this->csvFiles) > 0) {
             foreach ($this->csvFiles as $className => $csvFile) {
                 /** @var \SplFileObject $csvFile */
-                $arrayFilesName[] = $csvFile->getPathName().' ';
+                $arrayFilesName[] = $csvFile->getPathname().' ';
                 // Closing files
                 $this->csvFiles[$className] = null;
             }

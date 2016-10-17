@@ -20,6 +20,9 @@ services:
         arguments:
             managerRegistry: "@doctrine"
             maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
+            logger : "@logger"
+        tags:
+            - { name: monolog.handler, channel: compute }
 
     exportmanager:
         class: AppBundle\Manager\ExportManager
@@ -30,6 +33,9 @@ services:
             maxItemPerPage: "%knp_paginator.page_range%"
             diffComputer: "@diff.computer"
             userGroup: "%user_group%"
+            logger : "@logger"
+        tags:
+            - { name: monolog.handler, channel: compute }
 
     statsmanager:
         class: AppBundle\Business\StatsManager
@@ -107,3 +113,12 @@ services:
             requestOptions: "%request_options%"
             apiRecolnatBaseUri: "%api_recolnat_base_uri%"
             apiRecolnatUserPath: "%api_recolnat_user_path%"
+            genericEntityManager: "@genericentitymanager"
+            maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
+
+    command.harvest_data:
+            class: AppBundle\Command\HarvestDataCommand
+            tags:
+                -  { name: console.command }
+            arguments:
+                genericEntityManager: "@genericentitymanager"

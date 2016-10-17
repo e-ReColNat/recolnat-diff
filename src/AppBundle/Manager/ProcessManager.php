@@ -66,9 +66,9 @@ class ProcessManager extends \Jack\Symfony\ProcessManager
                     // directly add and start new process after the previous finished
                     if (count($processesQueue) > 0) {
                         $nextProcess = array_shift($processesQueue);
+                        $this->sendOutput($nextProcess->getStartOutput('json'));
                         $nextProcess->start();
                         $this->log($nextProcess->getTimer());
-                        $this->sendOutput($nextProcess->startOutput);
                         $currentProcesses[] = $nextProcess;
                     }
                 }
@@ -84,6 +84,7 @@ class ProcessManager extends \Jack\Symfony\ProcessManager
         }
         $this->log($message);
     }
+
 
     private function log($message)
     {

@@ -23,7 +23,7 @@ class User implements UserInterface, \Serializable
     private $username;
     private $password;
     private $salt;
-    protected $roles;
+    protected $roles=[];
 
     private $data = null;
 

@@ -118,16 +118,24 @@
                                     </a>
                                 </p>
                                 <p>
-                                    <a data-toggle="modal"
+                                    <a href="{{ path('setPrefsForExport', {'type':'dwc', 'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
+                                       class=" btn btn-primary checkprefs" role="button" >
+                                        {{ 'downloadDwc'|trans }}
+                                    </a>
+                                    {#<a data-toggle="modal"
                                        href="{{ path('setPrefsForExport', {'type':'dwc', 'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
                                        class=" btn btn-primary checkprefs" role="button" data-target="#spinnerModal">
                                         {{ 'downloadDwc'|trans }}
-                                    </a>
+                                    </a>#}
                                 </p>
                                 <p>
-                                    <a data-toggle="modal"
+                                    {#<a data-toggle="modal"
                                        href="{{ path('setPrefsForExport', {'type':'csv', 'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
                                        class=" btn btn-primary checkprefs" role="button" data-target="#spinnerModal">
+                                        {{ 'downloadCsv'|trans }}
+                                    </a>#}
+                                    <a href="{{ path('setPrefsForExport', {'type':'csv', 'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
+                                       class=" btn btn-primary checkprefs" role="button" >
                                         {{ 'downloadCsv'|trans }}
                                     </a>
                                 </p>
@@ -143,15 +151,7 @@
                                         {{ 'list.alpha'|trans }}
                                     </a>
                                 </p>
-                                {% if app.environment=='dev' %}
-                                <p>
-                                    <a href="{{ path('deleteDiffs', {'institutionCode':institutionCode, 'collectionCode' : collectionCode}) }}"
-                                       class="delete deleteDiffs btn btn-primary" role="button">
-                                        {{ 'delete.diffs'|trans }}
-                                    </a>
-                                </p>
-                                {% endif %}
-                            </td>
+
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -251,75 +251,10 @@
         $(document).ready(function () {
             var modalSpinner = $("#spinnerModal");
             function getTGCCookiesValue() {
-                console.log(getCookie('CASTGC'))
                 return getCookie('CASTGC');
             }
             $('.js-cookieTGC').val(getTGCCookiesValue());
-            $(".checkprefs").on('click', function (event) {
-                var url = $(this).attr('href');
-                var modalPrefs = $("#modal").clone();
-                $.get(url, function (data) {
-                            modalPrefs.find('.modal-content').html(data);
-                            modalPrefs.modal('show');
-                        })
-                        .success(function () {
-                            var urlDownload = modalPrefs.find('form').attr('action');
-                            modalPrefs.find('.js-cookieTGC').val(getTGCCookiesValue())
-                            modalPrefs.find('.confirm').on('click', function (event) {
-                                $.ajax({
-                                            url: urlDownload,
-                                            method: "POST",
-                                            data: modalPrefs.find('form').serialize(),
-                                            beforeSend: function () {
-                                                modalSpinner.find('.modal-body h4').remove();
-                                                modalSpinner.find('.modal-body').prepend('<h4 class="modal-title center-block">Génération des fichiers en cours</h4>');
-                                                modalPrefs.modal('hide');
-                                            }
-                                        })
-                                        .success(function (data) {
-                                            path = Routing.generate('download', {path: data.file});
-                                            window.location = path;
-                                        })
-                                        .fail(function (data) {
-                                        })
-                                ;
-                            });
-                        });
-                event.preventDefault();
-            });
 
-            $(".delete").on('click', function (event) {
-                var modalDelete = $("#modal").clone();
-                var urlDeleteChoices = $(this).attr('href');
-                if ($(this).hasClass('deleteChoices')) {
-                    modalDelete.find('.modal-title').html('{{ 'deleteChoices.title' | trans }}');
-                    modalDelete.find('.modal-body>p').html('{{ 'deleteChoices.text' | trans }}');
-                }
-                else {
-                    modalDelete.find('.modal-title').html('{{ 'deleteDiffs.title' | trans }}');
-                    modalDelete.find('.modal-body>p').html('{{ 'deleteDiffs.text' | trans }}');
-                }
-                modalDelete.modal('show');
-                modalDelete.find('.confirm').on('click', function (event) {
-                    event.preventDefault();
-                    $.ajax({
-                                url: urlDeleteChoices,
-                                method: "POST",
-                                global: false, // désactive le spinner
-                                beforeSend: function () {
-                                    modalDelete.modal('hide');
-                                    modalSpinner.find('.modal-body').append('<p class="text-center">{{ 'generateDiffs' | trans }}</p>');
-                                    modalSpinner.modal('show');
-                                }
-                            })
-                            .done(function (data) {
-                            })
-                            .success(function () {
-                                window.location.reload();
-                            });
-                });
-                event.preventDefault();
-            })
         });
     </script>
 {% endblock %}

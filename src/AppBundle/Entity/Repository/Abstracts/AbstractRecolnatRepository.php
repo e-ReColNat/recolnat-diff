@@ -65,17 +65,47 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         $catalogNumbers,
         $hydratationMode = AbstractQuery::HYDRATE_ARRAY
     ) {
-        $qb = $this->getQueryBuilderJoinSpecimen();
-        if ($hydratationMode == AbstractQuery::HYDRATE_OBJECT) {
-            $qb->addSelect('s');
-        } elseif ($this->getEntityName() != 'Specimen') {
-            $qb->addSelect($this->getExprCatalogNumber().' as catalognumber');
-        }
-        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+        $qb = $this->getQueryBuilderForFindByCatalogNumbers($collection, $catalogNumbers, $hydratationMode);
+
+        $qb->addOrderBy('d.identificationverifstatus', 'DESC');
+        $qb->addOrderBy('d.dateidentified', 'DESC');
 
         return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode));
     }
 
+    /**
+     * @param Collection $collection
+     * @param array      $catalogNumbers
+     * @param int        $hydratationMode int
+     * @return array
+     * @internal param array $specimenCodes
+     */
+    public function findByCatalogNumbersForExport(
+        Collection $collection,
+        $catalogNumbers,
+        $hydratationMode = AbstractQuery::HYDRATE_ARRAY
+    ) {
+        $qb = $this->getQueryBuilderForFindByCatalogNumbers($collection, $catalogNumbers, $hydratationMode);
+
+        return $this->orderResultSetByCatalogNumber($qb->getQuery()->getResult($hydratationMode));
+    }
+    /**
+     * @param Collection $collection
+     * @param $catalogNumbers
+     * @param $hydratationMode
+     * @return QueryBuilder
+     */
+    private function getQueryBuilderForFindByCatalogNumbers(Collection $collection, $catalogNumbers, $hydratationMode)
+    {
+        $qb = $this->getQueryBuilderJoinSpecimen();
+        if ($hydratationMode == AbstractQuery::HYDRATE_OBJECT) {
+            $qb->addSelect('s');
+        } elseif ($this->getEntityName() != 'Specimen') {
+            $qb->addSelect($this->getExprCatalogNumber() . ' as catalognumber');
+        }
+        $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
+        return $qb;
+    }
     /**
      * @param Collection $collection
      * @param array      $catalogNumbers
@@ -93,7 +123,9 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         $this->log('récuperation des enregistrements');
+
         $resultsSet = $qb->getQuery()->getResult($hydratationMode);
+
         $this->log('fin récuperation des enregistrements');
         return $this->orderResultSetByCatalogNumberAndId($resultsSet,
             $this->getEntityIdField());
@@ -315,4 +347,6 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
         return $identifierName;
     }
+
+
 }

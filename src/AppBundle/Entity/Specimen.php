@@ -157,7 +157,6 @@ class Specimen
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Determination", mappedBy="specimen", fetch="EXTRA_LAZY")
-     * @ORM\OrderBy({"identificationverifstatus" = "DESC", "dateidentified" = "DESC"})
      */
     protected $determinations;
 

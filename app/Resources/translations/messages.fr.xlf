@@ -422,6 +422,22 @@
                 <source>progression.general</source>
                 <target>Progression générale</target>
             </trans-unit>
+            <trans-unit id="106">
+                <source>export.dwc.title</source>
+                <target>Export au format Darwin Core Archive (DWC-a)</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>export.csv.title</source>
+                <target>Export au format CSV</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>label.export.diffs</source>
+                <target>Export des différences</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.export.lonesomes</source>
+                <target>Export des enregistrements orphelins</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

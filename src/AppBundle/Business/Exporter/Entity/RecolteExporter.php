@@ -9,12 +9,12 @@ namespace AppBundle\Business\Exporter\Entity;
  */
 class RecolteExporter extends AbstractEntityExporter
 {
-    public function getExportProperties()
+/*  public function getExportProperties()
     {
         $localisationExporter = new LocalisationExporter();
         return array_merge($this->arrayExportTerm, $localisationExporter->getExportProperties());
     }
-
+*/
     public function setExportTerm()
     {
         $this->arrayExportTerm = [
@@ -27,6 +27,7 @@ class RecolteExporter extends AbstractEntityExporter
             'fieldnumber' => 'http://rs.tdwg.org/dwc/terms/fieldNumber',
             'habitat' => 'http://rs.tdwg.org/dwc/terms/habitat',
             'verbatimeventdate' => 'http://rs.tdwg.org/dwc/terms/verbatimEventDate',
+            'recordedby' => 'http://rs.tdwg.org/dwc/terms/recordedBy',
         ];
     }
 

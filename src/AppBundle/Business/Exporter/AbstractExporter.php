@@ -84,6 +84,9 @@ abstract class AbstractExporter
      */
     public static function convertField($value, $dateFormat)
     {
+        if (is_array($value) && isset($value['date']) && isset($value['timezone'])) {
+            $value = new \DateTime($value['date'], new \DateTimeZone($value['timezone']));
+        }
         if ($value instanceof \DateTime) {
             return $value->format($dateFormat);
         }

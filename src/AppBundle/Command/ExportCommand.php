@@ -2,8 +2,14 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Business\DiffHandler;
 use AppBundle\Business\Exporter\ExportPrefs;
+use AppBundle\Business\Process;
 use AppBundle\Business\User\User;
+use AppBundle\Entity\Collection;
+use AppBundle\Manager\ExportManager;
+use AppBundle\Manager\GenericEntityManager;
+use AppBundle\Manager\ProcessManager;
 use epierce\CasRestClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -26,19 +32,46 @@ class ExportCommand extends ContainerAwareCommand
     private $user;
     /** @var  Translator */
     private $translator;
+    
+    /** @var  ExportManager */
+    private $exportManager;
+    
+    /** @var  ExportPrefs */
+    private $exportPrefs;
+
+    /** @var  GenericEntityManager */
+    private $genericEntityManager;
+
+    /** @var  Collection */
+    private $collection;
+
+    private $maxNbSpecimenPerPass;
+
+    /** @var  \SplFileObject|null */
+    private $logFile;
+
+    private $logFileTemplate = 'log-%s-%s-%s.txt';
+
+    private $collectionPath;
+
+    private $debug = false;
 
     public function __construct(
         $serverLoginUrl,
         $serverTicket,
         $requestOptions,
         $apiRecolnatBaseUri,
-        $apiRecolnatUserPath
+        $apiRecolnatUserPath,
+        GenericEntityManager $genericEntityManager,
+        $maxNbSpecimenPerPass
     ) {
         $this->serverLoginUrl = $serverLoginUrl;
         $this->serverTicket = $serverTicket;
         $this->requestOptions = $requestOptions;
         $this->apiRecolnatBaseUri = $apiRecolnatBaseUri;
         $this->apiRecolnatUserPath = $apiRecolnatUserPath;
+        $this->genericEntityManager = $genericEntityManager;
+        $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
         parent::__construct();
     }
 
@@ -87,22 +120,166 @@ class ExportCommand extends ContainerAwareCommand
         $this->institutionCode = $input->getArgument('institutionCode');
         $this->translator = $this->getContainer()->get('translator');
         $this->user = $this->getUser($input);
-        $collection = $this->getContainer()->get('utility')
+        $this->collection = $this->getContainer()->get('utility')
             ->getCollection($this->institutionCode, $this->collectionCode, $this->user);
-        /** @var ExportPrefs $exportPrefs */
-        $exportPrefs = new ExportPrefs();
-        $exportPrefs->setSideForNewRecords('recolnat');
-        $exportPrefs->setSideForChoicesNotSet('recolnat');
 
-        if (!($exportPrefs instanceof ExportPrefs)) {
+        $this->setLogFilePath();
+
+        $diffHandler = new DiffHandler($this->user->getDataDirPath(), $this->collection,
+            $this->getContainer()->getParameter('user_group'));
+        $this->collectionPath = $diffHandler->getCollectionPath();
+
+        /** @var ExportPrefs $this->exportPrefs */
+        $this->exportPrefs = new ExportPrefs();
+        $this->exportPrefs->setSideForNewRecords('recolnat');
+        $this->exportPrefs->setSideForChoicesNotSet('recolnat');
+
+        if (!($this->exportPrefs instanceof ExportPrefs)) {
             throw new \Exception('parameters must be an instance of ExportPrefs');
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->getContainer()->get('exportmanager')->init($this->user)->setCollection($collection);
-        $file = $exportManager->export($input->getArgument('format'), $exportPrefs);
-        $output->writeln($file);
+        $this->exportManager = $this->getContainer()->get('exportmanager')->init($this->user)->setCollection($this->collection);
+
+        $datasWithChoices = $this->getDiffRecords($output);
+        $datasWithChoices = array_merge($datasWithChoices, $this->getLonesomesRecords($output));
+
+        $file = $this->exportManager->export($datasWithChoices, $input->getArgument('format'), $this->exportPrefs);
+        $output->writeln(\json_encode(['file' => $file]));
     }
 
+    private function getDiffRecords(OutputInterface $output) {
+        $catalogNumbers = $this->exportManager->getDiffCatalogNumbers();
+
+        return $this->getFormattedDatas($output, $catalogNumbers, $this->exportPrefs->getSideForChoicesNotSet(), 'diffs');
+
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @return array
+     */
+    private function getLonesomesRecords(OutputInterface $output) {
+        if ($this->exportPrefs->getSideForNewRecords() != 'both') {
+            $side = $this->exportPrefs->getSideForNewRecords();
+        } // des deux côtés
+        else {
+            $side = 'recolnat';
+        }
+        
+        $lonesomeRecords = $this->exportManager->diffHandler->getLonesomeRecordsFile()
+            ->getLonesomeRecordsByBase($side);
+
+        $catalogNumbers = array_keys($lonesomeRecords);
+        if ($this->debug) {
+            $catalogNumbers = array_slice($catalogNumbers, 0, 3500);
+        }
+        $formattedDatas = $this->getFormattedDatas($output, $catalogNumbers, $side, 'lonesomes');
+
+        return $formattedDatas;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param $catalogNumbers
+     * @param $side
+     * @return array
+     */
+    private function getFormattedDatas(OutputInterface $output, $catalogNumbers, $side, $type)
+    {
+        $formattedDatas = [];
+
+        if (count($catalogNumbers)) {
+
+            $arrayChunkCatalogNumbers = array_chunk($catalogNumbers, $this->maxNbSpecimenPerPass);
+
+            $output->writeln(\json_encode(['name' => 'export_'.$type, 'total' => count($catalogNumbers), 'steps'=>count($arrayChunkCatalogNumbers)]));
+
+            $datas = $this->launchHarvestProcesses($output, $arrayChunkCatalogNumbers, $side, $type);
+
+            if ($type=='diffs') {
+                $formattedDatas = $this->exportManager->getArrayDatasWithChoices($datas);
+            }
+            else {
+                foreach ($datas as $catalogNumber => $specimen) {
+                    $arraySpecimenWithEntities = $this->genericEntityManager->formatArraySpecimenForExport($specimen);
+                    $formattedDatas[$catalogNumber] = $arraySpecimenWithEntities;
+                }
+            }
+        }
+        else {
+            $output->writeln(\json_encode(['name' => 'export_'.$type, 'total' => count($catalogNumbers), 'steps'=>0]));
+        }
+        return $formattedDatas;
+    }
+
+    /**
+     * @param array $filePaths
+     * @return array
+     */
+    private function mergeFiles(array $filePaths) {
+        $mergeData = [];
+        $utilityService = $this->getContainer()->get('utility');
+        if (count($filePaths)) {
+            foreach ($filePaths as $filePath) {
+                $datas = json_decode(file_get_contents($filePath), true);
+                $mergeData=$utilityService::arrayMergeRecursiveDistinct($mergeData, $datas);
+            }
+        }
+        return $mergeData;
+    }
+
+
+    private function launchHarvestProcesses(
+        OutputInterface $output, $arrayChunkCatalogNumbers, $side, $type
+    ) {
+        $processes = [];
+        $filePaths = [];
+        $consoleDir = realpath('/'.$this->getContainer()->get('kernel')->getRootDir().'/../bin/console');
+
+        foreach ($arrayChunkCatalogNumbers as $key=>$chunkCatalogNumbers) {
+            $filePath = $this->collectionPath.'/'.$type.'_'.$key.'.json';
+            $process = $this->getHarvestProcess($consoleDir, $filePath, $type, $key, $side, $chunkCatalogNumbers);
+            $processes[] = $process;
+            $filePaths[] = $filePath;
+        }
+
+        $processManager = new ProcessManager();
+        $maxParallelProcesses = 8;
+        $pollingInterval = 1000; // microseconds
+        $processManager->runParallel($processes, $maxParallelProcesses, $pollingInterval, $output, $this->getLogFile());
+
+        $utilityService = $this->getContainer()->get('utility');
+        $datas = $this->mergeFiles($filePaths);
+        $utilityService::removeFiles($filePaths);
+
+        return $datas;
+    }
+
+    /**
+     * @param $arrayChunkCatalogNumbers array
+     * @param $side string
+     * @return Process
+     */
+    private function getHarvestProcess($consoleDir, $filePath, $type, $key, $side, $chunkCatalogNumbers)
+    {
+        if ($this->debug) {
+            //dump($chunkCatalogNumbers);
+        }
+        $command = sprintf('%s export:harvest_data %s %s %s %s %s',
+            $consoleDir,
+            $this->institutionCode,
+            $this->collectionCode,
+            $side,
+            $filePath,
+            implode(' ',$chunkCatalogNumbers));
+
+        $process = new Process($command);
+        $process->setName('export_'.$type);
+        $process->setTimeout(null);
+        $process->setKey($key);
+
+        return $process;
+    }
     /**
      * @param InputInterface $input
      * @return User
@@ -227,4 +404,31 @@ class ExportCommand extends ContainerAwareCommand
 
         return true;
     }
+    private function log($message)
+    {
+        $this->logFile->fwrite($message.PHP_EOL);
+    }
+
+    public function getLogFile()
+    {
+        return $this->logFile;
+    }
+
+    public function closeLogFile()
+    {
+        $this->logFile = null;
+    }
+
+
+    private function setLogFilePath()
+    {
+        $now = new \DateTime();
+        $logFilePath = sprintf($this->getContainer()->getParameter('export_path').'/'.
+            $this->logFileTemplate, $this->collection->getInstitution()->getInstitutioncode(),
+            $this->collection->getCollectioncode(), $now->format('d-m-Y-H-i-s'));
+
+        $this->logFile = new \SplFileObject($logFilePath, 'w+');
+    }
+
+
 }
