@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\TaxonRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="Taxons")
  */
 class Taxon
@@ -161,6 +162,16 @@ class Taxon
     private $determination;
 
     /**
+     * @var string
+     */
+    public $discriminationId;
+
+    /** @ORM\PostLoad */
+    public function postLoad()
+    {
+        $this->setDiscriminationId();
+    }
+    /**
      * Get taxonid
      *
      * @return string
@@ -168,6 +179,21 @@ class Taxon
     public function getTaxonid()
     {
         return $this->taxonid;
+    }
+
+
+    /**
+     * Renvoie la clé discriminative entre deux enregistrements de bases de comparaison
+     * @return string
+     */
+    public function getDiscriminationId()
+    {
+        return $this->discriminationId;
+    }
+
+    public function setDiscriminationId()
+    {
+        $this->discriminationId = $this->getScientificname() . '#' . $this->getScientificnameauthorship();
     }
 
     /**

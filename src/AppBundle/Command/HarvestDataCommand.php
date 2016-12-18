@@ -76,8 +76,5 @@ class HarvestDataCommand extends ContainerAwareCommand
             $fs = new Filesystem();
             $fs->dumpFile($input->getArgument('absFilePathname'), \json_encode($datas, JSON_PRETTY_PRINT));
         }
-        /*if (!empty(trim($inputCatalogNumbers))) {
-            $catalogNumbers = explode(' ', $input)
-        }*/
     }
 }

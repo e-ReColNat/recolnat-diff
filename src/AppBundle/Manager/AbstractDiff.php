@@ -3,6 +3,7 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
@@ -98,10 +99,15 @@ abstract class AbstractDiff
     {
         $this->class = $class;
         $this->classFullName = 'AppBundle:'.ucfirst($class);
+
+        /** @var AbstractRecolnatRepository $repositoryRecolnat */
         $repositoryRecolnat = $this->emR->getRepository($this->classFullName);
         $repositoryRecolnat->setLogger($this->logger);
+
+        /** @var AbstractRecolnatRepository $repositoryInstitution */
         $repositoryInstitution = $this->emB->getRepository($this->classFullName);
         $repositoryInstitution->setLogger($this->logger);
+
         $arrayChunkCatalogNumbers = array_chunk($catalogNumbers, $this->maxNbSpecimenPerPass);
         $compt=0;
         $comptRecords=0;
@@ -185,6 +191,9 @@ abstract class AbstractDiff
 
         $fieldNames = $metadata->getFieldNames();
         $filteredRecords = $this->getFilteredRecords();
+
+        $strDebug = print_r($filteredRecords, true);
+        $this->logger->debug($strDebug);
         // Traitement des enregistrements communs aux deux bases
         foreach ($filteredRecords['common'] as $catalogNumber => $item) {
             foreach ($item as $id) {

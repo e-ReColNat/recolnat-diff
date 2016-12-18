@@ -15,6 +15,10 @@ class TaxonRepository extends AbstractRecolnatRepository
     public static function getEntityIdField(){
         return DiffTaxon::getIdField();
     }
+
+    public static function getSqlDiscriminationId() {
+        return 'CONCAT(CONCAT(t.scientificname, \'#\'), t.scientificnameauthorship)';
+    }
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */

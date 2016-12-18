@@ -36,6 +36,10 @@ abstract class AbstractRecolnatRepository extends EntityRepository
         throw new \LogicException('method getEntityIdField must be implemented');
     }
 
+    public static function getSqlDiscriminationId()
+    {
+        return null;
+    }
     /**
      * @return Logger
      */
@@ -120,6 +124,11 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
         $qb = $this->getQueryBuilderJoinSpecimenForResearch();
         $qb->addSelect($this->getExprCatalogNumber().' as catalognumber');
+
+        if (null !== $this->getSqlDiscriminationId()) {
+            $qb->addSelect($this->getSqlDiscriminationId().' as discriminationId');
+        }
+
         $this->setSpecimenCodesWhereClause($collection, $qb, $catalogNumbers);
 
         $this->log('récuperation des enregistrements');

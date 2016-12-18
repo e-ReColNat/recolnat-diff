@@ -3,6 +3,7 @@
 namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
+use AppBundle\Entity\Repository\TaxonRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Monolog\Logger;
@@ -148,6 +149,7 @@ class DiffComputer
         if ($base != 'recolnat') {
             $em = $this->emB;
         }
+        /** @var TaxonRepository $taxonRepository */
         $taxonRepository = $em->getRepository('\AppBundle\Entity\Taxon');
 
         $arrayChunkCatalogNumbers = array_chunk($flattenCatalogNumbers, 300);

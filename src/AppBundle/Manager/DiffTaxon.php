@@ -7,11 +7,12 @@ class DiffTaxon extends AbstractDiff
 
     public static function getIdSetter()
     {
-        return 'getTaxonid';
+        return 'getDiscriminationId';
     }
 
     public static function getIdField()
     {
-        return 'taxonid';
+        //return 'taxonid';
+        return 'discriminationId';
     }
 }

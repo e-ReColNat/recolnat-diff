@@ -2,11 +2,16 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\DiffHandler;
 use AppBundle\Business\User\User;
+use AppBundle\Manager\AbstractDiff;
+use AppBundle\Manager\DiffComputer;
 use AppBundle\Manager\DiffManager;
 use AppBundle\Manager\RecolnatServer;
+use AppBundle\Manager\UtilityService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,9 +31,9 @@ class ComputeController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function configureSearchDiffAction(Request $request, $institutionCode, $collectionCode)
+    public function configureSearchDiffAction(Request $request, UserInterface $user, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $this->getUser());
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
 
         $defaults = array(
             'startDate' => new \DateTime('today'),
@@ -57,12 +62,18 @@ class ComputeController extends Controller
             }
 
             if ($data['startDate'] instanceof \DateTime) {
-                return $this->redirectToRoute('searchDiffStreamed',
+                /*return $this->redirectToRoute('searchDiffStreamed',
                     [
                         'institutionCode' => $institutionCode,
                         'collectionCode' => $collectionCode,
                         'startDate' => $data['startDate']->getTimestamp(),
                         'cookieTGC' => $data['cookieTGC'],
+                    ]);*/
+                return $this->redirectToRoute('searchDiffDebug',
+                    [
+                        'institutionCode' => $institutionCode,
+                        'collectionCode' => $collectionCode,
+                        'startDate' => $data['startDate'],
                     ]);
             }
         }
@@ -157,5 +168,180 @@ class ComputeController extends Controller
     public function searchDiffErrorAction()
     {
         return $this->render('@App/Front/searchDiffError.html.twig');
+    }
+
+    /**
+     * @Route("{institutionCode}/{collectionCode}/searchDiffDebug/{startDate}/", name="searchDiffDebug",
+     *                                                                                         options={"expose"=true})
+     * @param UserInterface|User $user
+     * @param string $institutionCode
+     * @param string $collectionCode
+     * @param string $startDate
+     * @return Response
+     * @throws \Exception
+     */
+    public function debugSearchDiffAction(UserInterface $user, $institutionCode, $collectionCode, $startDate)
+    {
+        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $diffHandler = new DiffHandler($user->getDataDirPath(), $collection,
+            $this->getParameter('user_group'));
+        $collectionPath = $diffHandler->getCollectionPath();
+
+        $dateTime = new \DateTime();
+        $dateTime->setTimestamp($startDate);
+        $startDate = $dateTime->format('d/m/Y');
+        if (UtilityService::isDateWellFormatted($startDate)) {
+            $startDate = \DateTime::createFromFormat('d/m/Y', $startDate);
+        } else {
+            throw new \Exception($this->get('translator')->trans('access.denied.wrongDateFormat', [], 'exceptions'));
+        }
+
+        $diffManager = $this->get('diff.manager');
+        $diffManager->setCollectionCode($collectionCode);
+        $diffManager->setStartDate($startDate);
+        $diffManager->harvestDiffs();
+
+        $diffComputer = $this->get('diff.computer');
+        $diffComputer->setCollection($collection);
+
+        $catalogNumbersFiles = $this->createCatalogNumbersFiles($diffManager, $diffHandler);
+
+        try {
+            foreach ($diffManager::ENTITIES_NAME as $entityName) {
+                $this->searchDiff($institutionCode, $collectionCode, $collectionPath, $entityName);
+            }
+
+            $mergeResult = $this->mergeFiles($diffManager::ENTITIES_NAME, $diffHandler->getCollectionPath());
+
+            $diffHandler->saveData($mergeResult['data']);
+            $diffHandler->saveTaxons($mergeResult['taxons']);
+
+            $this->removeCatalogNumbersFiles($catalogNumbersFiles);
+        } catch (ProcessFailedException $e) {
+            throw $e;
+        }
+
+        return $this->render('@App/base.html.twig');
+    }
+
+
+    /**
+     * @param DiffManager $diffManager
+     * @param DiffHandler $diffHandler
+     * @return array
+     */
+    private function createCatalogNumbersFiles(DiffManager $diffManager, DiffHandler $diffHandler)
+    {
+        $catalogNumbersFiles = [];
+        $fs = new Filesystem();
+        foreach ($diffManager::ENTITIES_NAME as $entityName) {
+            $catalogNumbers = $diffManager->getResultByClassName($entityName);
+            $catalogNumbersFilename = $diffHandler->getCollectionPath().'/catalogNumbers_'.$entityName.'.json';
+            $fs->dumpFile($catalogNumbersFilename, \json_encode($catalogNumbers));
+            $catalogNumbersFiles[] = $catalogNumbersFilename;
+        }
+
+
+        return $catalogNumbersFiles;
+    }
+
+    protected function searchDiff($institutionCode, $collectionCode, $savePath, $entityName)
+    {
+        $diffComputer = $this->get('diff.computer');
+        $collection = $this->get('utility')->getCollection(
+            $institutionCode,
+            $collectionCode
+        );
+
+        if (!is_null($collection)) {
+
+            $fileCatalogNumbers = new \SplFileObject($savePath.'/catalogNumbers_'.$entityName.'.json');
+            $catalogNumbers[$entityName] = json_decode(file_get_contents($fileCatalogNumbers->getPathname()), true);
+
+            $diffComputer->setCollection($collection);
+
+            $diffComputer->setCatalogNumbers($catalogNumbers);
+            $diffComputer->computeClassname($entityName);
+
+            $datas = $diffComputer->getAllDatas();
+
+            $fs = new Filesystem();
+            $fs->dumpFile($savePath.'/'.$entityName.'.json', \json_encode($datas, JSON_PRETTY_PRINT));
+            $fs->dumpFile($savePath.'/taxons_'.$entityName.'.json', \json_encode($diffComputer->getTaxons()));
+        }
+    }
+
+    private function mergeFiles(array $entityNames, $path)
+    {
+        $mergeData = [];
+        $mergeTaxons = [];
+        foreach ($entityNames as $entityName) {
+            $dataPathName = $path.'/'.$entityName.'.json';
+            $taxonsPathName = $path.'/taxons_'.$entityName.'.json';
+            $datas = json_decode(file_get_contents($dataPathName), true);
+            $taxons = json_decode(file_get_contents($taxonsPathName), true);
+            unlink($dataPathName);
+            unlink($taxonsPathName);
+            $mergeData = $this->arrayMergeRecursiveDistinct($mergeData, $datas);
+            $mergeTaxons = $this->arrayMergeRecursiveDistinct($mergeTaxons, $taxons);
+        }
+        $this->filterLonesomesRecords($mergeData['lonesomeRecords'], $mergeData['statsLonesomeRecords']);
+
+        return ['data' => $mergeData, 'taxons' => $mergeTaxons];
+    }
+
+    private function arrayMergeRecursiveDistinct(array &$array1, array &$array2)
+    {
+        $merged = $array1;
+
+        foreach ($array2 as $key => &$value) {
+            if (is_array($value) && isset ($merged [$key]) && is_array($merged [$key])) {
+                $merged [$key] = $this->arrayMergeRecursiveDistinct($merged [$key], $value);
+            } else {
+                $merged [$key] = $value;
+            }
+        }
+
+        return $merged;
+    }
+
+    public function filterLonesomesRecords(array &$lonesomesRecords, array &$statsLonesomeRecords)
+    {
+        $keyRecolnat = AbstractDiff::KEY_RECOLNAT;
+        $keyInstitution = AbstractDiff::KEY_INSTITUTION;
+        $specimens = $lonesomesRecords['Specimen'];
+        $catalogNumbersSpecimen = [$keyRecolnat => [], $keyInstitution => []];
+        $catalogNumbersSpecimen[$keyRecolnat] = array_column($specimens[$keyRecolnat], 'catalogNumber');
+        $catalogNumbersSpecimen[$keyInstitution] = array_column($specimens[$keyInstitution], 'catalogNumber');
+
+
+        foreach ($lonesomesRecords as $entityName => $records) {
+            if ($entityName !== 'Specimen') {
+                if (count($records[$keyRecolnat])) {
+                    foreach ($records[$keyRecolnat] as $key => $record) {
+                        if (in_array($record['catalogNumber'], $catalogNumbersSpecimen[$keyRecolnat])) {
+                            unset($lonesomesRecords[$entityName][$keyRecolnat][$key]);
+                        }
+                    }
+                }
+                if (count($records[$keyInstitution])) {
+                    foreach ($records[$keyInstitution] as $key => $record) {
+                        if (in_array($record['catalogNumber'], $catalogNumbersSpecimen[$keyInstitution])) {
+                            unset($lonesomesRecords[$entityName][$keyInstitution][$key]);
+                        }
+                    }
+                }
+            }
+        }
+        $statsLonesomeRecords = DiffComputer::computeStatsLonesomeRecords($lonesomesRecords);
+    }
+
+    private function removeCatalogNumbersFiles(array $catalogNumbersFiles)
+    {
+        foreach ($catalogNumbersFiles as $catalogNumbersFile) {
+            if (is_file($catalogNumbersFile)) {
+                unlink($catalogNumbersFile);
+            }
+        }
     }
 }
