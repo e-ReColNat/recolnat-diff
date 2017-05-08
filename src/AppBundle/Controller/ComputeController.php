@@ -73,7 +73,7 @@ class ComputeController extends Controller
                     [
                         'institutionCode' => $institutionCode,
                         'collectionCode' => $collectionCode,
-                        'startDate' => $data['startDate'],
+                        'startDate' => $data['startDate']->getTimestamp(),
                     ]);
             }
         }

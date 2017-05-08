@@ -10,6 +10,7 @@
     {% if display %}
         <div class="row">
             <div class="col-sm-6">
+                {{ printLabelAndField(recolte, 'recolte', 'discriminationId', true, '<br />')|raw }}
                 {{ printLabelAndField(recolte, 'recolte', 'decade', true, '<br />')|raw }}
                 {{ printLabelAndField(recolte, 'recolte', 'eday', true, '<br />')|raw }}
                 {{ printLabelAndField(recolte, 'recolte', 'emonth', true, '<br />')|raw }}

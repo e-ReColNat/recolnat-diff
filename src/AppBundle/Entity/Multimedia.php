@@ -116,6 +116,15 @@ class Multimedia
     }
 
     /**
+     * Renvoie la clé discriminative entre deux enregistrements de bases de comparaison
+     * @return string
+     */
+    public function getDiscriminationId()
+    {
+        return $this->getIdentifier();
+    }
+
+    /**
      * Get multimediaid
      *
      * @return string

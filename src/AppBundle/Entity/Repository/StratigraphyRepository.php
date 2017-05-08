@@ -15,6 +15,10 @@ class StratigraphyRepository extends AbstractRecolnatRepository
         return DiffStratigraphy::getIdField();
     }
 
+    public static function getSqlDiscriminationId() {
+        return 'geologicalcontextid';
+    }
+
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */

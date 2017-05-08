@@ -37,7 +37,7 @@ class BibliographyExporter extends AbstractEntityExporter
 
     public function getIdFieldName()
     {
-        return 'referenceid';
+        return 'discriminationId';
     }
     public function getCoreIdFieldName()
     {

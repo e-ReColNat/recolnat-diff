@@ -10,6 +10,7 @@
         {% if display %}
         <div class="row">
             <div class="col-sm-6">
+                {{ printLabelAndField(bibliography, 'bibliography', 'discriminationId', true, '<br />')|raw }}
                 {{printLabelAndField(bibliography, 'bibliography', 'title', true, '<br />')|raw}}
                 {{printLabelAndField(bibliography, 'bibliography', 'subject', true, '<br />')|raw}}
                 {{printLabelAndField(bibliography, 'bibliography', 'datePublication', true, '<br />')|raw}}

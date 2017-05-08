@@ -13,6 +13,11 @@ class MultimediaRepository extends AbstractRecolnatRepository
         return DiffMultimedia::getIdField();
     }
 
+
+    public static function getSqlDiscriminationId() {
+        return 'm.locationid';
+    }
+
     /**
      * @param string $id
      * @param int    $fetchMode

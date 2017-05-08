@@ -63,13 +63,16 @@ abstract class AbstractDiff
     public $maxNbSpecimenPerPass;
     protected $logger;
 
-    public static function getIdSetter(){
-        throw new \LogicException('method getIdSetter must be implemented') ;
+    public static function getIdSetter()
+    {
+        return 'getDiscriminationId';
     }
 
-    public static function getIdField(){
-        throw new \LogicException('method getIdField must be implemented') ;
+    public static function getIdField()
+    {
+        return 'discriminationId';
     }
+
     /**
      * DiffAbstract constructor.
      * @param ManagerRegistry $managerRegistry

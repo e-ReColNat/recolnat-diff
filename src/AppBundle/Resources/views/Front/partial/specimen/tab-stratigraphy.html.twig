@@ -10,6 +10,7 @@
     {% if display %}
         <div class="row">
             <div class="col-sm-6">
+                {{ printLabelAndField(stratigraphy, 'stratigraphy', 'discriminationId', true, '<br />')|raw }}
                 {{ printLabelAndField(stratigraphy, 'stratigraphy', 'bed', true, '<br />')|raw }}
                 {{ printLabelAndField(stratigraphy, 'stratigraphy', 'earliestageorloweststage', true, '<br />')|raw }}
                 {{ printLabelAndField(stratigraphy, 'stratigraphy', 'earliesteonorlowesteonothem', true, '<br />')|raw }}

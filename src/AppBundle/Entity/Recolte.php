@@ -118,6 +118,19 @@ class Recolte
     }
 
     /**
+     * Renvoie la clé discriminative entre deux enregistrements de bases de comparaison
+     * @return string
+     */
+    public function getDiscriminationId()
+    {
+        if (null !== $this->getEventdate()) {
+            return mb_strtolower($this->getRecordedby()).'#'.$this->getFieldnumber().'#'.$this->getEventdate()->getTimestamp();
+        }
+
+        return mb_strtolower($this->getRecordedby()).'#'.$this->getFieldnumber();
+    }
+
+    /**
      * Set decade
      *
      * @param integer $decade

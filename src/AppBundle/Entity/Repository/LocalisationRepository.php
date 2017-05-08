@@ -14,6 +14,10 @@ class LocalisationRepository extends AbstractRecolnatRepository
         return DiffLocalisation::getIdField();
     }
 
+    public static function getSqlDiscriminationId() {
+        return 'l.locationid';
+    }
+
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */

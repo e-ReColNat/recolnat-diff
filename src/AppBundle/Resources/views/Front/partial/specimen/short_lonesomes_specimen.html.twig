@@ -2,6 +2,7 @@
 {% set flag = '' %}
 {% for className, items in lonesomeRecord %}
     {% if className != flag and className|lower not in ['taxon', 'localisation'] %}
+        {% dump(items) %}
         {% for item in items %}
 
             {% set flag = className %}

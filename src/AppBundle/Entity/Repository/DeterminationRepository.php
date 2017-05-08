@@ -20,6 +20,10 @@ class DeterminationRepository extends AbstractRecolnatRepository
         return DiffDetermination::getIdField();
     }
 
+    public static function getSqlDiscriminationId() {
+        return 'CONCAT(CONCAT(d.dateidentified, \'#\'), d.identifiedby)';
+    }
+
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */

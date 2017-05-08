@@ -10,6 +10,7 @@
         {% if display %}
             <div class="row">
                 <div class="col-sm-4">
+                    {{ printLabelAndField(determination, 'determination', 'discriminationId', true, '<br />')|raw }}
                     {{ printLabelAndField(determination, 'determination', 'identifiedby', true, '<br />')|raw }}
                     {{ printLabelAndField(determination, 'determination', 'dateidentified', true, '<br />')|raw }}
                     {{ printLabelAndField(determination, 'determination', 'identificationqualifier', true, '<br />')|raw }}

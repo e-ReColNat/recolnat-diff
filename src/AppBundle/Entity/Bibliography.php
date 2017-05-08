@@ -104,6 +104,15 @@ class Bibliography
     }
 
     /**
+     * Renvoie la clé discriminative entre deux enregistrements de bases de comparaison
+     * @return string
+     */
+    public function getDiscriminationId()
+    {
+        return mb_strtolower($this->getTitle());
+    }
+
+    /**
      * Set bibliographiccitation
      *
      * @param string $bibliographiccitation

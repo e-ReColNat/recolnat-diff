@@ -15,6 +15,10 @@ class SpecimenRepository extends AbstractRecolnatRepository
         return DiffSpecimen::getIdField();
     }
 
+    public static function getSqlDiscriminationId() {
+        return 'CONCAT(CONCAT(s.collectioncode, \'#\'), s.catalognumber)';
+    }
+
     public function getQueryBuilderJoinSpecimenForResearch() {
         $qb = $this->createQueryBuilder('s');
 

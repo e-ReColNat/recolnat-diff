@@ -186,6 +186,15 @@ class Specimen
     }
 
     /**
+     * Renvoie la clé discriminative entre deux enregistrements de bases de comparaison
+     * @return string
+     */
+    public function getDiscriminationId()
+    {
+        return mb_strtolower($this->getCollectioncode().'#'.$this->getCatalognumber());
+    }
+
+    /**
      * Set accessrights
      *
      * @param string $accessrights

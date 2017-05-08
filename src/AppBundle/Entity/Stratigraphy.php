@@ -112,6 +112,15 @@ class Stratigraphy
     protected $modified;
 
     /**
+     * Renvoie la clé discriminative entre deux enregistrements de bases de comparaison
+     * @return string
+     */
+    public function getDiscriminationId()
+    {
+        return $this->getEarliestageorloweststage().'#'.$this->getLatestageorhigheststage();
+    }
+
+    /**
      * Get geologicalcontextid
      *
      * @return integer

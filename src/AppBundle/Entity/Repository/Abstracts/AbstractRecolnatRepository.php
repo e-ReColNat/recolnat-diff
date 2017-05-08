@@ -38,7 +38,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
 
     public static function getSqlDiscriminationId()
     {
-        return null;
+        throw new \LogicException('method getSqlDiscriminationId must be implemented');
     }
     /**
      * @return Logger
@@ -187,7 +187,7 @@ abstract class AbstractRecolnatRepository extends EntityRepository
     /**
      * @param array  $resultsSet
      * @param string $identifierName
-     * @return array
+     * @return mixed
      */
     protected function orderResultSetByCatalogNumberAndId($resultsSet, $identifierName)
     {
@@ -197,12 +197,21 @@ abstract class AbstractRecolnatRepository extends EntityRepository
             foreach ($resultsSet as $resultRow) {
                 if (!empty($resultRow)) {
                     if (is_array($resultRow)) {
-                        $row = $resultRow;
+                        /*$row = $resultRow;
                         if (!isset($resultRow[$identifierName])) {
                             $row = $resultRow[0];
-                        }
+                        }*/
+                        $row = $resultRow[0];
                         $catalogNumber = $resultRow['catalognumber'];
-                        $orderResultSet[$catalogNumber][$row[$identifierName]] = $row;
+                        if (isset($resultRow[0][$identifierName])) {
+                            $descriminationValue = $resultRow[0][$identifierName];
+                        }
+                        else {
+                            $descriminationValue = $resultRow[$identifierName];
+                        }
+                        //$orderResultSet[$catalogNumber][$row[$identifierName]] = $row;
+                        $row[$identifierName] = $descriminationValue;
+                        $orderResultSet[$catalogNumber][$descriminationValue] = $row;
                     } else {
                         $orderResultSet[$resultRow->getCatalogNumber()][$resultRow->{'get'.$identifierName}()] = $resultRow;
                     }

@@ -11,6 +11,11 @@ class RecolteRepository extends AbstractRecolnatRepository
     public static function getEntityIdField(){
         return DiffRecolte::getIdField();
     }
+
+    public static function getSqlDiscriminationId() {
+        return 'CONCAT(CONCAT(CONCAT(CONCAT(r.recordedby, \'#\'), r.fieldnumber), \'#\'), r.eventdate)';
+    }
+
     /**
      * @param string $id
      * @param int    $fetchMode

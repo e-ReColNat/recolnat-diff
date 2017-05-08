@@ -8,6 +8,7 @@
 {% if display %}
 <div class="row">
     <div class="col-sm-6">
+        {{ printLabelAndField(specimen, 'specimen', 'discriminationId', true, '<br />')|raw }}
         {{ printLabelAndField(specimen, 'specimen', 'catalognumber', true, '<br />')|raw }}
         {{ printLabelAndField(specimen, 'specimen', 'institutioncode', true, '<br />')|raw }}
         {{ printLabelAndField(specimen, 'specimen', 'collectioncode', true, '<br />')|raw }}
@@ -15,7 +16,6 @@
         {{ printLabelAndField(specimen, 'specimen', 'modified', true, '<br />')|raw }}
         {{ printLabelAndField(specimen, 'specimen', 'basisofrecord', true, '<br />')|raw }}
         {{ printLabelAndField(specimen, 'specimen', 'accessrights', true, '<br />')|raw }}
-
         {{ printLabelAndField(specimen, 'specimen', 'associatedmedia', true, '<br />')|raw }}
         {{ printLabelAndField(specimen, 'specimen', 'associatedreferences', true, '<br />')|raw }}
     </div>

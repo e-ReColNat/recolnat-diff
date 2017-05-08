@@ -17,6 +17,10 @@ class BibliographyRepository extends AbstractRecolnatRepository
         return DiffBibliography::getIdField();
     }
 
+    public static function getSqlDiscriminationId() {
+        return 'b.title';
+    }
+
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */

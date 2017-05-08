@@ -95,6 +95,19 @@ class Determination
     }
 
     /**
+     * Renvoie la clé discriminative entre deux enregistrements de bases de comparaison
+     * @return string
+     */
+    public function getDiscriminationId()
+    {
+        if (null !== $this->getDateidentified()) {
+            return $this->getDateidentified()->getTimestamp() . '#' . mb_strtolower($this->getIdentifiedby());
+        }
+
+        return mb_strtolower($this->getIdentifiedby());
+    }
+
+    /**
      * Set created
      *
      * @param \DateTime $created
