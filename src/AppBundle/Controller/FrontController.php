@@ -101,7 +101,6 @@ class FrontController extends Controller
         $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
 
         $statsManager = $this->get('statsmanager')->init($user, $collection);
-        $statsManager->getSumLonesomeRecords();
         $this->get('exportmanager')->init($user)->setCollection($collection);
 
 
