@@ -6,8 +6,8 @@ class DiffDetermination extends AbstractDiff
 {
 
     public $excludeFieldsName = [
-        'identificationid',
-        'occurrenceid',
+//        'identificationid',
+//        'occurrenceid',
         'hascoordinates',
         'sourcefileid',
         'created',

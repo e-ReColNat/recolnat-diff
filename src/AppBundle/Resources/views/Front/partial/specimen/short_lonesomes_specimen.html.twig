@@ -3,7 +3,6 @@
 {% for className, items in lonesomeRecord %}
     {% if className != flag and className|lower not in ['taxon', 'localisation'] %}
         {% for item in items %}
-
             {% set flag = className %}
             <span class="label label-primary {{ className|lower }}">
             {{ ('label.'~className|lower) | transchoice(loop.length, {}, 'entity') }} - {{ db }}</span>
@@ -12,5 +11,4 @@
             {% include templatePath with {'catalogNumber':catalogNumber,'id':item.id} %}
         {% endfor %}
     {% endif %}
-
 {% endfor %}

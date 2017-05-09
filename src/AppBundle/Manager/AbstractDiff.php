@@ -302,7 +302,12 @@ abstract class AbstractDiff
         }
         if (!is_null($id)) {
             $this->lonesomeRecords[$db][] = ['catalogNumber' => $catalogNumber, 'id' => strtoupper($id)];
+
+            /*if (!isset($this->stats[$catalogNumber])) {
+                $this->stats[$catalogNumber] = [];
+                $this->stats[$catalogNumber][$id] = [];
+            }
+            $this->stats[$catalogNumber][$id]['lonesomes'] = ['catalogNumber' => $catalogNumber, 'id' => strtoupper($id)];*/
         }
     }
-
 }

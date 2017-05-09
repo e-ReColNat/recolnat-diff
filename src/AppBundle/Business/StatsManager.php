@@ -26,7 +26,7 @@ class StatsManager
     }
 
     /**
-     * @param User   $user
+     * @param User $user
      * @param Collection $collection
      * @return $this
      */
@@ -53,6 +53,36 @@ class StatsManager
                     if ($className != 'Taxon' && $className != 'Localisation') {
                         foreach ($items as $item) {
                             $stats[$className][$item['db']]++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $stats;
+    }
+
+    /**
+     * Renvoie le nombre d'enregistrements orphelins par classe et par db
+     * @param string $requestedClassName
+     * @param int $db
+     *
+     * @return int
+     */
+    public function getStatsLonesomeRecordsByClassAndDb($requestedClassName, $db)
+    {
+        $lonesomeRecords = $this->exportManager->getDiffHandler()->getLoneSomeRecords();
+
+        $stats = 0;
+        if (is_array($lonesomeRecords)) {
+            foreach ($lonesomeRecords as $catalogNumber => $itemsPerClassName) {
+                foreach ($itemsPerClassName as $className => $items) {
+                    if ($className !== 'Taxon' && $className !== 'Localisation' && $className === $requestedClassName) {
+                        foreach ($items as $item) {
+                            if ($item['db'] === $db) {
+
+                            }
+                            $stats++;
                         }
                     }
                 }
@@ -96,7 +126,7 @@ class StatsManager
         $choices = $this->exportManager->getSessionHandler()->getChoicesForDisplay();
 
         $statsChoices = [];
-        $callbackCountChoices = function($value, $className) use (&$statsChoices) {
+        $callbackCountChoices = function ($value, $className) use (&$statsChoices) {
             if (is_array($value)) {
                 if (!isset($statsChoices[$className])) {
                     $statsChoices[$className] = 0;
@@ -146,6 +176,10 @@ class StatsManager
         $expandedStats = [];
         $fullStats = $this->getStats();
         foreach ($fullStats['stats'] as $className => $fields) {
+            if (isset($fields['lonesomes'])) {
+                $lonesomes = $fields['lonesomes'];
+                unset($fields['lonesomes']);
+            }
             $expandedStats[$className]['diffs'] = array_sum($fields);
             $tempFields = $fields;
             switch ($order) {
@@ -158,6 +192,7 @@ class StatsManager
             }
             $expandedStats[$className]['fields'] = $tempFields;
             $expandedStats[$className]['specimens'] = count($fullStats['classes'][$className]);
+            $expandedStats[$className]['lonesomes'] = $lonesomes;
         }
 
         return $expandedStats;
@@ -165,7 +200,7 @@ class StatsManager
 
     /**
      * Renvoie les statistiques de diffs présentant les mêmes données modifiées pour des champs identiques
-     * @param array  $classesName
+     * @param array $classesName
      * @param string $dateFormat
      * @return array
      */
@@ -175,7 +210,7 @@ class StatsManager
         if (empty($classesName)) {
             $classesName = array_keys($diffs['classes']);
         }
-        array_map(function($value) {
+        array_map(function ($value) {
             return ucfirst(strtolower($value));
         }, $classesName);
 
@@ -220,7 +255,7 @@ class StatsManager
                 }
             }
         }
-        uasort($stats, function($a, $b) {
+        uasort($stats, function ($a, $b) {
             $a = count($a['catalogNumbers']);
             $b = count($b['catalogNumbers']);
 
@@ -248,7 +283,7 @@ class StatsManager
      */
     public function getSortedStats()
     {
-        $functionSortStats = function($a, $b) {
+        $functionSortStats = function ($a, $b) {
             if ($a['diffs'] == $b['diffs']) {
                 return 0;
             }
