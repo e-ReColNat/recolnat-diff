@@ -85,9 +85,8 @@ class DiffHandler
         if (is_null($catalogNumbers)) {
             return $this->getTaxonsFile()->getData();
         }
-        else {
-            return $this->getTaxonsFile()->getTaxons($catalogNumbers);
-        }
+
+        return $this->getTaxonsFile()->getTaxons($catalogNumbers);
     }
 
     public function saveData(array $data) {

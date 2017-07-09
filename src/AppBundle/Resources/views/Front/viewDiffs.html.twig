@@ -1,6 +1,6 @@
 {% extends '@App/base.html.twig' %}
 
-{% set collectionCode = collection.collectioncode %}
+{% set collectionCode = collection.collectionCode %}
 {% set institution = collection.institution %}
 {% set choices = exportManager.sessionHandler.choicesForDisplay %}
 {% set selectedClassName = app.request.attributes.get('selectedClassName') %}

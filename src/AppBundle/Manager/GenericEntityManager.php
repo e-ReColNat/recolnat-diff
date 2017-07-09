@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Intl\Locale;
 
@@ -38,16 +39,16 @@ class GenericEntityManager
     protected $maxNbSpecimenPerPass ;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
     /**
      * GenericEntityManager constructor.
      * @param ManagerRegistry $managerRegistry
      * @param int $maxNbSpecimenPerPass
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass, Logger $logger)
+    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger, $maxNbSpecimenPerPass)
     {
         $this->managerRegistry = $managerRegistry;
         $this->emR = $managerRegistry->getManager('default');

@@ -4,7 +4,7 @@ namespace AppBundle\Manager;
 
 use AppBundle\Entity\Repository\Abstracts\AbstractRecolnatRepository;
 use Doctrine\ORM\EntityManager;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use \Doctrine\Common\Persistence\ManagerRegistry;
 
 class DiffManager
 {
@@ -51,9 +51,9 @@ class DiffManager
      * @param string          $recolnatBufferAlias
      */
     public function __construct(
-        ManagerRegistry $managerRegistry,
         $recolnatAlias,
-        $recolnatBufferAlias
+        $recolnatBufferAlias,
+        ManagerRegistry $managerRegistry
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->em = $managerRegistry->getManager('default');

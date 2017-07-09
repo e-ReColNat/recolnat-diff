@@ -10,16 +10,47 @@
         </colgroup>
         <tbody>
         {% set specimen = attribute(diffs.datas, catalogNumber) %}
+
+        {% dump(diffs.datas) %}
         {% for className, details in specimen %}
-            {% set relationId = details.id %}
+
+            {% if details.fields is defined %}
+                {# Affichage des différences d'un item avec des différences #}
+                {% include '@App/Front/partial/specimen/specimen_diff_classname.html.twig' %}
+            {% else %}
+                {# Affichage des différences d'un item orphelin #}
+                {% include '@App/Front/partial/specimen/specimen_lonesome_classname.html.twig' %}
+            {% endif %}
+{#
+
+            {% dump(specimen) %}
+            {% dump(className) %}
+            {% if details.lonesomes is defined %}
+                {% set relationId = details.id %}
+            {% else %}
+                {% set relationId = specimen.id %}
+            {% endif %}
             {% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}
             {% set relationInstitution = relationById(specimenInstitution, className, relationId) %}
             {% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
 
-            {% set rowspan = details.fields | length  +1 %}
-            <tr data-classname="{{ className| lower }}" class="{{ className | lower }} light">
+            {% set rowspan = 1 %}
+            {% if details.fields is defined %}
+                {% set rowspan = rowspan + details.fields | length %}
+                {% set fields = details.fields %}
+            {% else %}
+                {% set fields = [] %}
+            {% endif %}
+            {% if details.lonesomes is defined %}
+                {% set rowspan = rowspan + 1 %}
+                {% set lonesomes = details.lonesomes %}
+            {% else %}
+                {% set lonesomes = [] %}
+            {% endif %}
+
+            <tr data-classname="{{ className | lower }}" class="{{ className | lower }} light">
                 <td class="diff-class" rowspan="{{ rowspan }}" style="width: 10px !important;">
-                    <div>{{ ('label.' ~ className|lower ~ '.abbr') |trans({},'entity')|capitalize }}</div>
+                    <div>{{ ('label.' ~ className | lower ~ '.abbr') |trans({},'entity')|capitalize }}</div>
                 </td>
                 <td colspan="2"><h4>{{ relationToString }}</h4></td>
                 <td>
@@ -30,18 +61,37 @@
                 </td>
                 <td>&nbsp;</td>
                 <td>
-                    <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner data-class="{{ className }}"
-                            data-type='diff-entity' name="{{ relationId }}" value="institution">
+                    <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner"
+                            data-class="{{ className }}" data-type='diff-entity' name="{{ relationId }}" value="institution">
                         <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>&nbsp;
                             {{ 'choix.collection.all' | trans({'%collection%':collectionCode}) }}
                     </button>
                 </td>
             </tr>
 
-            {% for fieldName, datas in details.fields %}
-                <tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
+            {% if lonesomes %}
+                {% dump('lonesome') %}
+                {% set lonesomes = details.lonesomes %}
+                {% set lonesome = getLonesome(collection, catalogNumber, lonesomes[0] ? 'recolnat' : 'institution') %}
+                <tr data-classname="{{ className | lower }}" class="{{ className | lower }} lighter">
+                    <td colspan="5"> LONESOME : {{ relationId }} {{ lonesomes[0] ? 'recolnat' : 'institution' }}
+                    </td>
+                </tr>
+                #}
+{#{% set lonesome = getLonesome(collection, catalogNumber, lonesomes[0] ? 'recolnat' : 'institution') %}#}{#
+
+                #}
+{#{{ getLonesome(collection, catalogNumber, lonesomes[0] ? 'recolnat' : 'institution') }}#}{#
+
+                #}
+{#{% dump(lonesome) %}#}{#
+
+                #}
+{#<tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
                     <td>
-                        {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
+
+                        LONESOMES : {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
+
                     </td>
                     <td colspan="2" class="field-radio">
                         <div class="pull-left">{{ fieldToString(relationRecolnat, fieldName) }}</div>
@@ -51,8 +101,27 @@
                         <div class="pull-left">{{ fieldToString(relationInstitution, fieldName) }}</div>
                         <div class="pull-right">{% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}</div>
                     </td>
-                </tr>
-            {% endfor %}
+                </tr>#}{#
+
+            {% else %}
+                {% for fieldName, datas in fields if fields %}
+                    <tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
+                        <td>
+                            {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
+                        </td>
+                        <td colspan="2" class="field-radio">
+                            <div class="pull-left">{{ fieldToString(relationRecolnat, fieldName) }}</div>
+                            <div class="pull-right">{% include '@App/Front/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}</div>
+                        </td>
+                        <td colspan="2" class="field-radio">
+                            <div class="pull-left">{{ fieldToString(relationInstitution, fieldName) }}</div>
+                            <div class="pull-right">{% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+#}
+
         {% endfor %}
         </tbody>
     </table>

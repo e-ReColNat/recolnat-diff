@@ -30,7 +30,7 @@ class StatsManager
      * @param Collection $collection
      * @return $this
      */
-    public function init(User $user, $collection)
+    public function init(User $user, Collection $collection)
     {
         $this->user = $user;
         $this->collection = $collection;
@@ -176,6 +176,7 @@ class StatsManager
         $expandedStats = [];
         $fullStats = $this->getStats();
         foreach ($fullStats['stats'] as $className => $fields) {
+            $lonesomes = 0;
             if (isset($fields['lonesomes'])) {
                 $lonesomes = $fields['lonesomes'];
                 unset($fields['lonesomes']);
@@ -284,11 +285,11 @@ class StatsManager
     public function getSortedStats()
     {
         $functionSortStats = function ($a, $b) {
-            if ($a['diffs'] == $b['diffs']) {
+            if ($a['specimens'] === $b['specimens']) {
                 return 0;
             }
 
-            return ($a['diffs'] > $b['diffs']) ? -1 : 1;
+            return ($a['specimens'] > $b['specimens']) ? -1 : 1;
         };
         $stats = $this->getExpandedStats();
         uasort($stats, $functionSortStats);

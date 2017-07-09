@@ -1,52 +1,61 @@
 services:
-    diff.computer:
-        class: AppBundle\Manager\DiffComputer
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    AppBundle\Manager\DiffComputer:
+#        class: AppBundle\Manager\DiffComputer
         arguments:
-            managerRegistry: "@doctrine"
-            maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
-            logger : "@logger"
+#            - '@doctrine'
+            $maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
+#            - "@logger"
+        tags:
+            - { name: monolog.handler, channel: compute }
+        public: true
+
+    AppBundle\Manager\DiffManager:
+#        class: AppBundle\Manager\DiffManager
+        arguments:
+#            managerRegistry: "@doctrine"
+            $recolnatAlias: "%database_user%"
+            $recolnatBufferAlias: "%database_user_diff%"
+        public: true
+
+    AppBundle\Manager\GenericEntityManager:
+#        class: AppBundle\Manager\GenericEntityManager
+        arguments:
+#            managerRegistry: "@doctrine"
+            $maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
+#            logger : "@logger"
         tags:
             - { name: monolog.handler, channel: compute }
 
-    diff.manager:
-        class: AppBundle\Manager\DiffManager
+    AppBundle\Manager\ExportManager:
+#        class: AppBundle\Manager\ExportManager
+        public: true
         arguments:
-            managerRegistry: "@doctrine"
-            recolnatAlias: "%database_user%"
-            recolnatBufferAlias: "%database_user_diff%"
-
-    genericentitymanager:
-        class: AppBundle\Manager\GenericEntityManager
-        arguments:
-            managerRegistry: "@doctrine"
-            maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
-            logger : "@logger"
+#            managerRegistry: "@doctrine"
+#            sessionManager: "@session"
+#            genericEntityManager: "@genericentitymanager"
+            $maxItemPerPage: "%knp_paginator.page_range%"
+#            diffComputer: "@diff.computer"
+            $userGroup: "%user_group%"
+#            logger : "@logger"
         tags:
             - { name: monolog.handler, channel: compute }
 
-    exportmanager:
-        class: AppBundle\Manager\ExportManager
-        arguments:
-            managerRegistry: "@doctrine"
-            sessionManager: "@session"
-            genericEntityManager: "@genericentitymanager"
-            maxItemPerPage: "%knp_paginator.page_range%"
-            diffComputer: "@diff.computer"
-            userGroup: "%user_group%"
-            logger : "@logger"
-        tags:
-            - { name: monolog.handler, channel: compute }
-
-    statsmanager:
+    AppBundle\Business\StatsManager:
         class: AppBundle\Business\StatsManager
-        arguments:
-            exportManager: "@exportmanager"
+        public: true
+#        arguments:
+#            exportManager: "@exportmanager"
 
-    utility:
-        class: AppBundle\Manager\UtilityService
-        arguments:
-            managerRegistry: "@doctrine"
-            translator: "@translator"
+    AppBundle\Manager\UtilityService:
+#        class: AppBundle\Manager\UtilityService
+        public: true
+#            managerRegistry: "@doctrine"
+#            translator: "@translator"
 
     # TWIG EXTENSIONS
     app.twig_multimedia_extension:
@@ -57,10 +66,10 @@ services:
     app.twig_specimen_extension:
         class: AppBundle\Twig\SpecimenExtension
         arguments:
-            doctrine: "@doctrine"
-            translator: "@translator"
-            sessionManager: "@session"
-            urlRecolnat: "%url_recolnat%"
+#            doctrine: "@doctrine"
+#            translator: "@translator"
+#            sessionManager: "@session"
+            $urlRecolnat: "%url_recolnat%"
         public: false
         tags:
             - { name: twig.extension }
@@ -81,10 +90,10 @@ services:
     app.security.recolnat_user_provider:
         class: AppBundle\Security\RecolnatUserProvider
         arguments:
-            exportPath: "%export_path%"
-            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
-            apiRecolnatUserPath: "%api_recolnat_user_path%"
-            userGroup: "%user_group%"
+            - "%export_path%"
+            - "%api_recolnat_base_uri%"
+            - "%api_recolnat_user_path%"
+            - "%user_group%"
 
     # Command
     command.search_diffs:
@@ -92,11 +101,11 @@ services:
         tags:
             -  { name: console.command }
         arguments:
-            serverLoginUrl: "%server_login_url%"
-            serverTicket: "%api_recolnat_server_ticket_path%"
-            requestOptions: "%request_options%"
-            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
-            apiRecolnatUserPath: "%api_recolnat_user_path%"
+            - "%server_login_url%"
+            - "%api_recolnat_server_ticket_path%"
+            - "%request_options%"
+            - "%api_recolnat_base_uri%"
+            - "%api_recolnat_user_path%"
 
     command.compute_diffs:
         class: AppBundle\Command\ComputeDiffCommand
@@ -108,17 +117,17 @@ services:
         tags:
             -  { name: console.command }
         arguments:
-            serverLoginUrl: "%server_login_url%"
-            serverTicket: "%api_recolnat_server_ticket_path%"
-            requestOptions: "%request_options%"
-            apiRecolnatBaseUri: "%api_recolnat_base_uri%"
-            apiRecolnatUserPath: "%api_recolnat_user_path%"
-            genericEntityManager: "@genericentitymanager"
-            maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
+            $serverLoginUrl: "%server_login_url%"
+            $serverTicket: "%api_recolnat_server_ticket_path%"
+            $requestOptions: "%request_options%"
+            $apiRecolnatBaseUri: "%api_recolnat_base_uri%"
+            $apiRecolnatUserPath: "%api_recolnat_user_path%"
+#            - "@genericentitymanager"
+            $maxNbSpecimenPerPass: "%max_nb_specimen_par_pass%"
 
     command.harvest_data:
             class: AppBundle\Command\HarvestDataCommand
             tags:
                 -  { name: console.command }
-            arguments:
-                genericEntityManager: "@genericentitymanager"
+#            arguments:
+#                genericEntityManager: "@genericentitymanager"

@@ -4,9 +4,11 @@ namespace AppBundle\Manager;
 
 use AppBundle\Entity\Collection;
 use AppBundle\Entity\Repository\TaxonRepository;
+use AppBundle\Entity\Specimen;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Description of DiffStatsManager
@@ -62,7 +64,7 @@ class DiffComputer
 
     protected $maxNbSpecimenPerPass;
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -70,9 +72,9 @@ class DiffComputer
      * DiffComputer constructor.
      * @param ManagerRegistry $managerRegistry
      * @param int $maxNbSpecimenPerPass
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct(ManagerRegistry $managerRegistry, $maxNbSpecimenPerPass, Logger $logger)
+    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger, $maxNbSpecimenPerPass)
     {
         $this->logger = $logger;
         $this->maxNbSpecimenPerPass = $maxNbSpecimenPerPass;
@@ -146,7 +148,7 @@ class DiffComputer
             $flattenCatalogNumbers[] = $a;
         });
         $em = $this->emR;
-        if ($base != 'recolnat') {
+        if ($base !== 'recolnat') {
             $em = $this->emB;
         }
         /** @var TaxonRepository $taxonRepository */
@@ -168,27 +170,6 @@ class DiffComputer
     }
 
     /**
-     * @param string $className
-     */
-    private function computeDiffs($className)
-    {
-        $this->stats[$className] = [];
-        if (isset($this->diffs['classes'][$className])) {
-            foreach ($this->diffs['classes'][$className] as $catalogNumber => $rows) {
-                if (!isset($this->diffs['datas'][$catalogNumber])) {
-                    $this->diffs['datas'][$catalogNumber] = [];
-                    $this->diffs['datas'][$catalogNumber][$className] = [];
-                }
-                foreach ($rows as $recordId => $fields) {
-                    $this->setStatsForClass($className, $fields);
-                    $this->diffs['datas'][$catalogNumber][$className]['fields'] = $fields;
-                    $this->diffs['datas'][$catalogNumber][$className]['id'] = $recordId;
-                }
-            }
-        }
-    }
-
-    /**
      * @return array
      */
     public function getAllStats()
@@ -196,20 +177,6 @@ class DiffComputer
         return $this->stats;
     }
 
-    /**
-     * @param string $className
-     * @param array $fields
-     */
-    private function setStatsForClass($className, $fields)
-    {
-        $fieldsName = array_keys($fields);
-        foreach ($fieldsName as $fieldName) {
-            if (!isset($this->stats[$className][$fieldName])) {
-                $this->stats[$className][$fieldName] = 0;
-            }
-            $this->stats[$className][$fieldName]++;
-        }
-    }
 
     /**
      * @param string|null $className
@@ -332,4 +299,43 @@ class DiffComputer
         $this->collection = $collection;
     }
 
+    /**
+     * @param string $className
+     */
+    private function computeDiffs($className)
+    {
+        $this->stats[$className] = [];
+        if (isset($this->diffs['classes'][$className])) {
+            foreach ($this->diffs['classes'][$className] as $catalogNumber => $rows) {
+                if (!isset($this->diffs['datas'][$catalogNumber])) {
+                    $this->diffs['datas'][$catalogNumber] = [];
+                    $this->diffs['datas'][$catalogNumber][$className] = [];
+                }
+                foreach ($rows as $recordId => $fields) {
+                    $this->setStatsForClass($className, $fields);
+                    if (key($fields) === 'lonesomes') {
+                        $this->diffs['datas'][$catalogNumber][$className] = $fields;
+                    } else {
+                        $this->diffs['datas'][$catalogNumber][$className]['fields'] = $fields;
+                    }
+                    $this->diffs['datas'][$catalogNumber][$className]['id'] = $recordId;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $className
+     * @param array $fields
+     */
+    private function setStatsForClass($className, $fields)
+    {
+        $fieldsName = array_keys($fields);
+        foreach ($fieldsName as $fieldName) {
+            if (!isset($this->stats[$className][$fieldName])) {
+                $this->stats[$className][$fieldName] = 0;
+            }
+            $this->stats[$className][$fieldName]++;
+        }
+    }
 }

@@ -11,9 +11,10 @@ use AppBundle\Entity\Taxon;
 use AppBundle\Entity\Collection as rCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\PersistentCollection;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Intl\Locale;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -26,11 +27,12 @@ class SpecimenExtension extends \Twig_Extension
     protected $sessionManager;
 
     public function __construct(
-        RegistryInterface $doctrine,
+        ManagerRegistry $doctrine,
         TranslatorInterface $translator,
-        Session $sessionManager,
+        SessionInterface $sessionManager,
         $urlRecolnat
-    ) {
+    )
+    {
         $this->doctrine = $doctrine;
         $this->translator = $translator;
         $this->urlRecolnat = $urlRecolnat;
@@ -50,6 +52,7 @@ class SpecimenExtension extends \Twig_Extension
             new \Twig_SimpleFunction('getLink', array($this, 'getLink')),
             new \Twig_SimpleFunction('getFullLink', array($this, 'getFullLink')),
             new \Twig_SimpleFunction('isSelected', array($this, 'isSelected')),
+            new \Twig_SimpleFunction('getLonesome', array($this, 'getLonesome')),
         );
     }
 
@@ -65,21 +68,21 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Specimen    $specimen
+     * @param Specimen $specimen
      * @param rCollection $collection
-     * @param Taxon|null  $taxon
-     * @param string      $target
+     * @param Taxon|null $taxon
+     * @param string $target
      * @return string
      */
     public function getFullLink(Specimen $specimen, rCollection $collection, Taxon $taxon = null, $target = '_blank')
     {
         $text = '';
-        if (!is_null($taxon)) {
-            !empty($taxon->getFamily()) ? $text .= '<span><span>'.$taxon->getFamily().'</span> / </span>' : '';
-            !empty($taxon->getGenus()) ? $text .= '<span><i><span>'.$taxon->getGenus().'</span></i> / </span>' : '';
-            !empty($taxon->getScientificname()) ? $text .= '<span><i><span>'.$taxon->getScientificname().'</span></i> / </span>' : '';
-            !empty($taxon->getScientificnameauthorship()) ? $text .= '<span><i><span>'.$taxon->getScientificnameauthorship().'</span></i> / </span>' : '';
-            !empty($specimen->getCatalognumber()) ? $text .= '<span>'.$specimen->getCatalognumber().'</span>' : '';
+        if (null !== $taxon) {
+            !empty($taxon->getFamily()) ? $text .= '<span><span>' . $taxon->getFamily() . '</span> / </span>' : '';
+            !empty($taxon->getGenus()) ? $text .= '<span><i><span>' . $taxon->getGenus() . '</span></i> / </span>' : '';
+            !empty($taxon->getScientificname()) ? $text .= '<span><i><span>' . $taxon->getScientificname() . '</span></i> / </span>' : '';
+            !empty($taxon->getScientificnameauthorship()) ? $text .= '<span><i><span>' . $taxon->getScientificnameauthorship() . '</span></i> / </span>' : '';
+            !empty($specimen->getCatalognumber()) ? $text .= '<span>' . $specimen->getCatalognumber() . '</span>' : '';
         } else {
             $text = $this->translator->trans('label.notaxon');
         }
@@ -88,7 +91,7 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Specimen    $specimen
+     * @param Specimen $specimen
      * @param rCollection $collection
      * @return string
      */
@@ -118,9 +121,9 @@ class SpecimenExtension extends \Twig_Extension
      * @param Object $entity
      * @param string $typeEntity
      * @param string $fieldName
-     * @param bool   $printIfNull
+     * @param bool $printIfNull
      * @param string $endString
-     * @param array  $transParams
+     * @param array $transParams
      * @return string
      */
     public function printLabelAndField(
@@ -130,7 +133,8 @@ class SpecimenExtension extends \Twig_Extension
         $printIfNull = true,
         $endString = '',
         $transParams = []
-    ) {
+    )
+    {
         $value = $this->getFieldToString($entity, $fieldName);
         if ($printIfNull || !is_null($value)) {
             $label = $this->getFieldLabel($typeEntity, $fieldName);
@@ -144,63 +148,65 @@ class SpecimenExtension extends \Twig_Extension
     }
 
     /**
-     * @param Specimen $specimen
-     * @param String   $class
+     * @param Specimen|null $specimen
+     * @param String $class
      * @return Localisation|Recolte|Specimen|Stratigraphy|array|ArrayCollection
      */
-    public function getRelation(Specimen $specimen, $class)
+    public function getRelation(Specimen $specimen = null, $class)
     {
         $relation = null;
-        switch (strtolower($class)) {
-            case 'specimen':
-                $relation = $specimen;
-                break;
-            case 'bibliography':
-                $relation = $specimen->getBibliographies();
-                break;
-            case 'determination':
-                $relation = $specimen->getDeterminations();
-                break;
-            case 'localisation':
-                $relation = $specimen->getRecolte()->getLocalisation();
-                break;
-            case 'recolte':
-                $relation = $specimen->getRecolte();
-                break;
-            case 'stratigraphy':
-                $relation = $specimen->getStratigraphy();
-                break;
-            case 'multimedia':
-                $relation = $specimen->getMultimedias();
-                break;
-            case 'taxon':
-                $determinations = $specimen->getDeterminations();
-                $taxons = [];
-                foreach ($determinations as $determination) {
-                    $taxons[] = $determination->getTaxon();
-                }
-                $relation = $taxons;
-                break;
+        if (null !== $specimen) {
+            switch (strtolower($class)) {
+                case 'specimen':
+                    $relation = $specimen;
+                    break;
+                case 'bibliography':
+                    $relation = $specimen->getBibliographies();
+                    break;
+                case 'determination':
+                    $relation = $specimen->getDeterminations();
+                    break;
+                case 'localisation':
+                    $relation = $specimen->getRecolte()->getLocalisation();
+                    break;
+                case 'recolte':
+                    $relation = $specimen->getRecolte();
+                    break;
+                case 'stratigraphy':
+                    $relation = $specimen->getStratigraphy();
+                    break;
+                case 'multimedia':
+                    $relation = $specimen->getMultimedias();
+                    break;
+                case 'taxon':
+                    $determinations = $specimen->getDeterminations();
+                    $taxons = [];
+                    foreach ($determinations as $determination) {
+                        $taxons[] = $determination->getTaxon();
+                    }
+                    $relation = $taxons;
+                    break;
+            }
         }
 
         return $relation;
     }
 
     /**
-     * @param Specimen $specimen
-     * @param string   $class
-     * @param string   $id
+     * @param Specimen|null $specimen
+     * @param string $class
+     * @param string $id
      * @return Localisation|Recolte|Stratigraphy|array|mixed|null|object
      */
-    public function getRelationById(Specimen $specimen, $class, $id)
+    public function getRelationById(Specimen $specimen = null, $class, $id)
     {
         $relations = $this->getRelation($specimen, $class);
         $return = null;
-        if (!empty($relations)) {
+        if (null !== $relations) {
             $metadataInfo = $this->doctrine->getManager()
                 ->getClassMetadata(sprintf('AppBundle:%s', ucfirst($class)));
 
-            $getter = 'get'.current($metadataInfo->getIdentifier());
+            $getter = 'get' . current($metadataInfo->getIdentifier());
 
             if ($relations instanceof Collection ||
                 $relations instanceof PersistentCollection ||
@@ -222,25 +228,28 @@ class SpecimenExtension extends \Twig_Extension
     /**
      * Renvoie le nom minimum d'une extension d'un specimen
      * ex : pour la Récolte d'un specimen on aura la date et nom d'un récolteur
-     * @param Specimen $specimen
-     * @param string   $class
-     * @param string   $id
-     * @return string
+     * @param Specimen|null $specimen
+     * @param string $class
+     * @param string $id
+     * @return string|null
      */
-    public function getRelationByIdToString(Specimen $specimen, $class, $id)
+    public function getRelationByIdToString(Specimen $specimen = null, $class, $id)
     {
-        $relation = $this->getRelationById($specimen, $class, $id);
-        $toString = '';
-        if (!is_null($relation)) {
-            switch (get_class($relation)) {
-                case '\AppBundle\Entity\Determination':
-                    $toString = $this->getToStringDetermination($relation);
-                    break;
-                case '\AppBundle\Entity\Recolte':
-                    $toString = $this->getToStringRecolte($relation);
-                    break;
-                default:
-                    $toString = $relation->__toString();
+        $toString = null;
+        if (null !== $specimen) {
+            $relation = $this->getRelationById($specimen, $class, $id);
+            $toString = '';
+            if (null !== $relation) {
+                switch (get_class($relation)) {
+                    case '\AppBundle\Entity\Determination':
+                        $toString = $this->getToStringDetermination($relation);
+                        break;
+                    case '\AppBundle\Entity\Recolte':
+                        $toString = $this->getToStringRecolte($relation);
+                        break;
+                    default:
+                        $toString = $relation->__toString();
+                }
             }
         }
 
@@ -284,7 +293,7 @@ class SpecimenExtension extends \Twig_Extension
      */
     public function getFieldLabel($entity, $fieldName)
     {
-        if ($fieldName[strlen($fieldName) - 1] == '_') {
+        if ($fieldName[strlen($fieldName) - 1] === '_') {
             $fieldName = substr($fieldName, 0, -1);
         }
 
@@ -299,7 +308,7 @@ class SpecimenExtension extends \Twig_Extension
     public function getFieldToString($entity, $fieldName)
     {
         $returnString = null;
-        $getter = 'get'.$fieldName;
+        $getter = 'get' . $fieldName;
         if (!is_null($entity) && !is_null($fieldName) && method_exists($entity, $getter)) {
             $value = $entity->{$getter}();
             if ($value instanceof \DateTime) {
@@ -324,7 +333,22 @@ class SpecimenExtension extends \Twig_Extension
         if (count($determinations) > 0) {
             $taxon = $determinations[0]->getTaxon();
         }
+
         return $taxon;
+    }
+
+    public function getLonesome($collection, $catalogNumber, $db)
+    {
+        if ($db === 'recolnat') {
+            $specimen = $this->doctrine->getRepository('AppBundle\Entity\Specimen')
+                ->findByCatalogNumbers($collection,
+                $catalogNumber, AbstractQuery::HYDRATE_OBJECT);
+        } else {
+            $specimen = $this->doctrine->getRepository('AppBundle\Entity\Specimen','buffer')
+                ->findByCatalogNumbers($collection, $catalogNumber, AbstractQuery::HYDRATE_OBJECT);
+        }
+
+        return $specimen;
     }
 
     /**
@@ -335,13 +359,4 @@ class SpecimenExtension extends \Twig_Extension
         return \IntlDateFormatter::create(
             Locale::getDefault(), \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE);
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'specimen_extension';
-    }
-
 }

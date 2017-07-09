@@ -1,0 +1,59 @@
+
+{% set relationId = details.id %}
+{#{% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}#}
+{#{% set relationInstitution = relationById(specimenInstitution, className, relationId) %}#}
+{% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
+{% dump(details) %}
+
+{% set db = details.lonesomes %}
+{% dump(db[0] ? 'recolnat' : 'institution') %}
+{% set rowspan = 1 %}
+
+
+<tr data-classname="{{ className | lower }}" class="{{ className | lower }} light">
+    <td class="diff-class" rowspan="{{ rowspan }}" style="width: 10px !important;">
+        <div>{{ ('label.' ~ className | lower ~ '.abbr') |trans({},'entity')|capitalize }}</div>
+    </td>
+    <td colspan="2"><h4>{{ relationToString }}</h4></td>
+    <td>
+        <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner" data-class="{{ className }}"
+                data-type='diff-entity' name="{{ relationId }}" value="recolnat">
+            <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> {{ 'choix.erecolnat.all' | trans }}
+        </button>
+    </td>
+    <td>&nbsp;</td>
+    <td>
+        <button type="button" class="btn btn-default js_select_entity" aria-label="Tout sélectionner"
+                data-class="{{ className }}" data-type='diff-entity' name="{{ relationId }}" value="institution">
+            <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>&nbsp;
+            {{ 'choix.collection.all' | trans({'%collection%' : collectionCode}) }}
+        </button>
+    </td>
+</tr>
+
+{% dump('lonesome') %}
+{% set lonesome = getLonesome(collection, catalogNumber, db[0] ? 'recolnat' : 'institution') %}
+<tr data-classname="{{ className | lower }}" class="{{ className | lower }} lighter">
+    <td colspan="5">
+        LONESOME : {{ relationId }} {{ db[0] ? 'recolnat' : 'institution' }}
+    </td>
+</tr>
+{#{% set lonesome = getLonesome(collection, catalogNumber, lonesomes[0] ? 'recolnat' : 'institution') %}#}
+{#{{ getLonesome(collection, catalogNumber, lonesomes[0] ? 'recolnat' : 'institution') }}#}
+{#{% dump(lonesome) %}#}
+{#<tr data-classname="{{ className| lower }}" class="{{ className | lower }} lighter">
+    <td>
+
+        LONESOMES : {{ getFieldLabel(className, fieldName)|trans({},'entity') }}
+
+    </td>
+    <td colspan="2" class="field-radio">
+        <div class="pull-left">{{ fieldToString(relationRecolnat, fieldName) }}</div>
+        <div class="pull-right">{% include '@App/Front/partial/inputRadioDiff.html.twig' with { 'value' : 'recolnat'} %}</div>
+    </td>
+    <td colspan="2" class="field-radio">
+        <div class="pull-left">{{ fieldToString(relationInstitution, fieldName) }}</div>
+        <div class="pull-right">{% include '@App/Front/partial/inputRadioDiff.html.twig' with {'value' : 'institution'} %}</div>
+    </td>
+</tr>#}
+

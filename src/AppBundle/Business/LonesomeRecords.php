@@ -30,7 +30,7 @@ class LonesomeRecords extends AbstractFile
     {
         $keyRef = AbstractDiff::getKeysRef();
         $validClassesName = [];
-        if (!is_null($selectedClassesNames) && is_string($selectedClassesNames) && $selectedClassesNames != 'all') {
+        if (!is_null($selectedClassesNames) && is_string($selectedClassesNames) && $selectedClassesNames !== 'all') {
             $validClassesName = [$selectedClassesNames];
             array_walk($validClassesName, function(&$className) {
                 $className = ucfirst(strtolower($className));

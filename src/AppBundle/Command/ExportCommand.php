@@ -62,8 +62,8 @@ class ExportCommand extends ContainerAwareCommand
         $requestOptions,
         $apiRecolnatBaseUri,
         $apiRecolnatUserPath,
-        GenericEntityManager $genericEntityManager,
-        $maxNbSpecimenPerPass
+        $maxNbSpecimenPerPass,
+        GenericEntityManager $genericEntityManager
     ) {
         $this->serverLoginUrl = $serverLoginUrl;
         $this->serverTicket = $serverTicket;

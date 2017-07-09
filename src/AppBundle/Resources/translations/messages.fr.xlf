@@ -108,7 +108,7 @@
             </trans-unit>
             <trans-unit id="27">
                 <source>label.differences.abbr</source>
-                <target>{1}%count% diff.|]1,Inf]%count% diffs.</target>
+                <target>{0,1}%count% diff.|]1,Inf]%count% diffs.</target>
             </trans-unit>
             <trans-unit id="28">
                 <source>label.legend.origin</source>

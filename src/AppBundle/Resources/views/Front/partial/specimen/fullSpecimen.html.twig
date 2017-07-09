@@ -4,7 +4,7 @@
 
 {% if app.request.attributes.get('_route') != 'lonesomes' %}
     {% set specimenRecolnat = attribute(specimens.recolnat, catalogNumber) %}
-    {% set specimenInstitution = attribute(specimens.institution, catalogNumber) %}
+    {% set specimenInstitution = attribute(specimens.institution, catalogNumber)|default(null) %}
 {% else %}
     {% set specimenRecolnat = specimen %}
 {% endif %}

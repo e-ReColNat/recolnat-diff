@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\DiffHandler;
 use AppBundle\Business\User\User;
+use AppBundle\Manager\ExportManager;
+use AppBundle\Manager\UtilityService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -62,10 +64,10 @@ class BackendController extends Controller
      */
     public function setChoiceAction(UserInterface $user, Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         $choices = $request->get('choices');
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
         $exportManager->setChoices($choices);
 
         $response = new JsonResponse();
@@ -86,9 +88,9 @@ class BackendController extends Controller
      */
     public function setChoicesAction(UserInterface $user, Request $request, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         list($inputOrigin, $inputSpecimens, $inputClassesName, $page, $selectedSpecimens, $selectedClassName, $type) =
@@ -204,9 +206,9 @@ class BackendController extends Controller
      */
     public function deleteChoicesAction(UserInterface $user, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
         $choices = $diffHandler->getChoicesFile();
         $choices->deleteChoices();
@@ -227,9 +229,9 @@ class BackendController extends Controller
      */
     public function deleteDiffsAction(UserInterface $user, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
         $diffHandler = $exportManager->getDiffHandler();
         $diffs = $diffHandler->getDiffsFile();
         $diffs->deleteChoices();
@@ -253,9 +255,9 @@ class BackendController extends Controller
     {
         $session = $this->get('session');
         $action = $request->get('action');
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
 
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
 
         $catalogNumber = $request->get('catalogNumber');
         $selectedSpecimensHandler = $exportManager->getSelectedSpecimenHandler();

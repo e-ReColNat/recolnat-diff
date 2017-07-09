@@ -32,7 +32,7 @@ class ExportController extends Controller
      */
     public function setPrefsForExportAction(UserInterface $user, Request $request, $institutionCode, $collectionCode, $type)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         $statsManager = $this->get('statsmanager')->init($user, $collection);
 
         $exportPrefs = new ExportPrefs();

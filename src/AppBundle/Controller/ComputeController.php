@@ -33,7 +33,7 @@ class ComputeController extends Controller
      */
     public function configureSearchDiffAction(Request $request, UserInterface $user, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
 
         $defaults = array(
             'startDate' => new \DateTime('today'),
@@ -97,7 +97,7 @@ class ComputeController extends Controller
      */
     public function searchDiffActionStreamedAction(UserInterface $user, $institutionCode, $collectionCode, $startDate, $cookieTGC)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
 
         $startDate = \DateTime::createFromFormat('U', $startDate)->format('d/m/Y');
         $username = $user->getUsername();
@@ -182,7 +182,7 @@ class ComputeController extends Controller
      */
     public function debugSearchDiffAction(UserInterface $user, $institutionCode, $collectionCode, $startDate)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode);
         $diffHandler = new DiffHandler($user->getDataDirPath(), $collection,
             $this->getParameter('user_group'));
         $collectionPath = $diffHandler->getCollectionPath();
@@ -196,12 +196,12 @@ class ComputeController extends Controller
             throw new \Exception($this->get('translator')->trans('access.denied.wrongDateFormat', [], 'exceptions'));
         }
 
-        $diffManager = $this->get('diff.manager');
+        $diffManager = $this->get(DiffManager::class);
         $diffManager->setCollectionCode($collectionCode);
         $diffManager->setStartDate($startDate);
         $diffManager->harvestDiffs();
 
-        $diffComputer = $this->get('diff.computer');
+        $diffComputer = $this->get(DiffComputer::class);
         $diffComputer->setCollection($collection);
 
         $catalogNumbersFiles = $this->createCatalogNumbersFiles($diffManager, $diffHandler);
@@ -213,6 +213,8 @@ class ComputeController extends Controller
 
             $mergeResult = $this->mergeFiles($diffManager::ENTITIES_NAME, $diffHandler->getCollectionPath());
 
+            dump($mergeResult);
+            $this->cleanDiffs($mergeResult);
             $diffHandler->saveData($mergeResult['data']);
             $diffHandler->saveTaxons($mergeResult['taxons']);
 
@@ -247,8 +249,8 @@ class ComputeController extends Controller
 
     protected function searchDiff($institutionCode, $collectionCode, $savePath, $entityName)
     {
-        $diffComputer = $this->get('diff.computer');
-        $collection = $this->get('utility')->getCollection(
+        $diffComputer = $this->get(DiffComputer::class);
+        $collection = $this->get(UtilityService::class)->getCollection(
             $institutionCode,
             $collectionCode
         );
@@ -341,6 +343,34 @@ class ComputeController extends Controller
         foreach ($catalogNumbersFiles as $catalogNumbersFile) {
             if (is_file($catalogNumbersFile)) {
                 unlink($catalogNumbersFile);
+            }
+        }
+    }
+
+
+    /**
+     * Parcourt le tableau des enregistrements et supprime toutes les classes qui ont été détectées comme lonesomes
+     * si un enregistrement specimen est déjà qualifié de lonesome
+     */
+    private function cleanDiffs(&$diffs) {
+        if ($diffs['data']['datas']) {
+            foreach ($diffs['data']['datas'] as $catalogNumber => $rows) {
+                if (isset($rows['Specimen'], $rows['Specimen']['lonesomes'])) {
+                    $diffs['data']['datas'][$catalogNumber] = [];
+                    $diffs['data']['datas'][$catalogNumber]['Specimen'] = $rows['Specimen'];
+                    $this->cleanClasses($diffs, $catalogNumber);
+                }
+            }
+        }
+    }
+
+    private function cleanClasses(&$diffs, $catalogNumber)
+    {
+        foreach ($diffs['data']['classes'] as $className => $rows) {
+            if ($className !== 'Specimen' && in_array($catalogNumber, $rows, false)) {
+                $rows = array_flip($rows);
+                unset($rows[$catalogNumber]);
+                $diffs['data']['classes'][$className] = array_values(array_flip($rows));
             }
         }
     }

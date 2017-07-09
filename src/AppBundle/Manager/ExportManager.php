@@ -12,9 +12,10 @@ use AppBundle\Business\SessionHandler;
 use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Description of ExportManager
@@ -72,35 +73,35 @@ class ExportManager
     protected $userGroup;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
     /**
      * @param ManagerRegistry      $managerRegistry
-     * @param Session              $sessionManager
+     * @param SessionInterface              $sessionManager
      * @param GenericEntityManager $genericEntityManager
      * @param int                  $maxItemPerPage
      * @param DiffComputer         $diffComputer
      * @param string               $userGroup
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      */
     public function __construct(
-        ManagerRegistry $managerRegistry,
-        Session $sessionManager,
-        GenericEntityManager $genericEntityManager,
         $maxItemPerPage,
-        DiffComputer $diffComputer,
         $userGroup,
-        Logger $logger
+        ManagerRegistry $managerRegistry,
+        SessionInterface $sessionManager,
+        GenericEntityManager $genericEntityManager,
+        DiffComputer $diffComputer,
+        LoggerInterface $logger
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->sessionManager = $sessionManager;
         $this->genericEntityManager = $genericEntityManager;
-        $this->maxItemPerPage = $maxItemPerPage;
         $this->diffComputer = $diffComputer;
-        $this->userGroup = $userGroup;
         $this->logger = $logger;
+        $this->userGroup = $userGroup;
+        $this->maxItemPerPage = $maxItemPerPage;
     }
 
     /**

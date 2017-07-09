@@ -2,11 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Business\StatsManager;
 use AppBundle\Business\User\Prefs;
 use AppBundle\Business\User\User;
 use AppBundle\Entity\Collection;
 use AppBundle\Manager\AbstractDiff;
 use AppBundle\Manager\ExportManager;
+use AppBundle\Manager\UtilityService;
 use Doctrine\ORM\AbstractQuery;
 use Knp\Component\Pager\Pagination\AbstractPagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -26,7 +28,7 @@ class FrontController extends Controller
      */
     public function indexAction(UserInterface $user)
     {
-        $exportManager = $this->get('exportmanager')->init($user);
+        $exportManager = $this->get(ExportManager::class)->init($user);
 
         $managedCollectionsByInstitution = [];
         if ($user->isSuperAdmin()) {
@@ -64,9 +66,9 @@ class FrontController extends Controller
         /** @var Prefs $prefs */
         $prefs = $user->getPrefs();
 
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
 
-        $statsManager = $this->get('statsmanager')->init($user, $collection);
+        $statsManager = $this->get(StatsManager::class)->init($user, $collection);
 
         list($statsBySimilarity, $catalogNumbers) = $statsManager->getStatsBySimilarity([], $prefs->getCsvDateFormat());
         $sumStats = $statsManager->getSumStats();
@@ -76,7 +78,7 @@ class FrontController extends Controller
         $pagination = $paginator->paginate($statsBySimilarity, $page, 100);
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
         $taxons = $exportManager->getDiffHandler()->getTaxons($catalogNumbers);
 
         return $this->render('@App/Front/stats.html.twig', array(
@@ -98,10 +100,10 @@ class FrontController extends Controller
      */
     public function viewFileAction(UserInterface $user, $institutionCode, $collectionCode)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
 
-        $statsManager = $this->get('statsmanager')->init($user, $collection);
-        $this->get('exportmanager')->init($user)->setCollection($collection);
+        $statsManager = $this->get(StatsManager::class)->init($user, $collection);
+        $this->get(ExportManager::class)->init($user)->setCollection($collection);
 
 
         return $this->render('@App/Front/viewFile.html.twig', array(
@@ -138,22 +140,21 @@ class FrontController extends Controller
         $page = 1
     )
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         list($specimensWithChoices, $specimensWithoutChoices) = [[], []];
-        if ($request->get('_route') == 'choices') {
+        if ($request->get('_route') === 'choices') {
             $specimensWithChoices = array_keys($exportManager->getSessionHandler()->getChoicesByCatalogNumber());
         }
-        if ($request->get('_route') == 'todos') {
+        if ($request->get('_route') === 'todos') {
             $specimensWithoutChoices = $exportManager->sessionHandler->getChoices();
         }
 
         $diffs = $exportManager->getDiffs($request, $selectedClassName, $specimensWithChoices,
             $specimensWithoutChoices);
-
 
         $paginator = $this->get('knp_paginator');
 
@@ -201,10 +202,10 @@ class FrontController extends Controller
         $page = 1
     )
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
         $maxItemPerPage = $exportManager->getMaxItemPerPage($request);
 
         $lonesomeRecords = $exportManager->getDiffHandler()->getLonesomeRecords($db, $selectedClassName);
@@ -246,7 +247,7 @@ class FrontController extends Controller
      */
     public function viewSpecimenTabAction(UserInterface $user, $institutionCode, $collectionCode, $catalogNumber, $type, $db)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         if ($db == 'recolnat') {
             $specimen = $this->getDoctrine()->getRepository('AppBundle\Entity\Specimen')
                 ->findOneByCatalogNumber($collection, $catalogNumber);
@@ -283,8 +284,8 @@ class FrontController extends Controller
         $page = 1
     )
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
 
         $catalogNumbers = json_decode($jsonCatalogNumbers);
 
@@ -322,10 +323,10 @@ class FrontController extends Controller
                 ]
             );
         }
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
 
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
 
         $catalogNumbers = $exportManager->getDiffHandler()->search($search);
 
@@ -355,9 +356,9 @@ class FrontController extends Controller
      */
     public function listSpecimensAction(UserInterface $user, $institutionCode, $collectionCode, $type)
     {
-        $collection = $this->get('utility')->getCollection($institutionCode, $collectionCode, $user);
+        $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $exportManager = $this->get('exportmanager')->init($user)->setCollection($collection);
+        $exportManager = $this->get(ExportManager::class)->init($user)->setCollection($collection);
 
         $specimens = [];
         $orderSpecimens = [];

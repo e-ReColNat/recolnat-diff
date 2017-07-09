@@ -38,7 +38,7 @@ class Diffs extends AbstractFile
                     $returnDiffs['classes'][$className] = $diffs['classes'][$className];
                 }
             }
-            foreach ($returnDiffs['classes'] as $className => $catalogNumbers) {
+            foreach ($returnDiffs['classes'] as $catalogNumbers) {
                 foreach ($catalogNumbers as $catalogNumber) {
                     if (isset($diffs['datas'][$catalogNumber])) {
                         $returnDiffs['datas'][$catalogNumber] = $diffs['datas'][$catalogNumber];
@@ -46,7 +46,8 @@ class Diffs extends AbstractFile
                         foreach (array_keys($diffs['datas'][$catalogNumber]) as $className) {
                             if (!isset($returnDiffs['classes'][$className][$catalogNumber])) {
                                 $returnDiffs['classes'][$className][$catalogNumber] =
-                                    $diffs['datas'][$catalogNumber][$className]['fields'];
+                                    //$diffs['datas'][$catalogNumber][$className]['fields'];
+                                    $diffs['datas'][$catalogNumber][$className];
                             }
                         }
                     }
@@ -110,7 +111,7 @@ class Diffs extends AbstractFile
             }
             foreach ($tempChoices as $className => $choiceCatalogNumber) {
                 foreach ($choiceCatalogNumber as $catalogNumber => $comptFieldChoice) {
-                    if (isset($returnDiffs['classes'][$className]) && isset($returnDiffs['classes'][$className][$catalogNumber])
+                    if (isset($returnDiffs['classes'][$className], $returnDiffs['classes'][$className][$catalogNumber])
                     ) {
                         $totalDiffFields = count($returnDiffs['datas'][$catalogNumber][$className]['fields']);
                         if ($totalDiffFields == $comptFieldChoice) {
