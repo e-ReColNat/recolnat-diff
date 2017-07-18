@@ -86,8 +86,9 @@ class SpecimenExtension extends \Twig_Extension
         } else {
             $text = $this->translator->trans('label.notaxon');
         }
+        $title = $this->translator->trans('link.title.viewRecolnat');
 
-        return sprintf('<a href="%s" target="%s">%s</a>', $this->getLink($specimen, $collection), $target, $text);
+        return sprintf('<a href="%s" target="%s" title="%s">%s</a>', $this->getLink($specimen, $collection), $target, $title, $text);
     }
 
     /**

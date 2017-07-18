@@ -117,7 +117,7 @@ class SearchDiffCommand extends ContainerAwareCommand
         $this->institutionCode = $input->getArgument('institutionCode');
 
 
-        $this->collection = $this->getContainer()->get('utility')->getCollection($this->institutionCode, $this->collectionCode);
+        $this->collection = $this->getContainer()->get(UtilityService::class)->getCollection($this->institutionCode, $this->collectionCode);
 
         $this->setLogFilePath();
 
@@ -139,12 +139,12 @@ class SearchDiffCommand extends ContainerAwareCommand
         $this->log('startDate : '.$this->startDate->format('c'));
         $this->log('Collection Code : '.$this->collectionCode);
 
-        $diffManager = $this->getContainer()->get('diff.manager');
+        $diffManager = $this->getContainer()->get(DiffManager::class);
         $diffManager->setCollectionCode($this->collectionCode);
         $diffManager->setStartDate($this->startDate);
         $diffManager->harvestDiffs();
 
-        $diffComputer = $this->getContainer()->get('diff.computer');
+        $diffComputer = $this->getContainer()->get(DiffComputer::class);
         $diffComputer->setCollection($this->collection);
 
 

@@ -3,6 +3,8 @@
 namespace AppBundle\Command;
 
 
+use AppBundle\Manager\DiffComputer;
+use AppBundle\Manager\UtilityService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -40,8 +42,8 @@ class ComputeDiffCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $diffComputer = $this->getContainer()->get('diff.computer');
-        $collection = $this->getContainer()->get('utility')->getCollection(
+        $diffComputer = $this->getContainer()->get(DiffComputer::class);
+        $collection = $this->getContainer()->get(UtilityService::class)->getCollection(
             $input->getArgument('institutionCode'),
             $input->getArgument('collectionCode')
         );

@@ -4,10 +4,12 @@ namespace AppBundle\Controller;
 
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\Process;
+use AppBundle\Business\StatsManager;
 use AppBundle\Business\User\User;
 use AppBundle\Form\Type\ExportPrefsType;
 use AppBundle\Manager\AbstractDiff;
 use AppBundle\Manager\RecolnatServer;
+use AppBundle\Manager\UtilityService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -33,7 +35,7 @@ class ExportController extends Controller
     public function setPrefsForExportAction(UserInterface $user, Request $request, $institutionCode, $collectionCode, $type)
     {
         $collection = $this->get(UtilityService::class)->getCollection($institutionCode, $collectionCode, $user);
-        $statsManager = $this->get('statsmanager')->init($user, $collection);
+        $statsManager = $this->get(StatsManager::class)->init($user, $collection);
 
         $exportPrefs = new ExportPrefs();
 
@@ -49,9 +51,9 @@ class ExportController extends Controller
         ]);
         $form->add('cookieTGC', HiddenType::class, ['attr' => ['class' => 'js-cookieTGC']]);
         $form->add('collectionCode', HiddenType::class,
-                ['attr' => ['class' => 'js-collectionCode'], 'mapped' => false, 'data'=>$collectionCode])
+            ['attr' => ['class' => 'js-collectionCode'], 'mapped' => false, 'data' => $collectionCode])
             ->add('institutionCode', HiddenType::class,
-                ['attr' => ['class' => 'js-institutionCode'], 'mapped' => false, 'data'=>$institutionCode]);
+                ['attr' => ['class' => 'js-institutionCode'], 'mapped' => false, 'data' => $institutionCode]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -102,17 +104,17 @@ class ExportController extends Controller
     {
         $username = $user->getUsername();
         parse_str($request->get('exportPrefs'), $params);
-        $exportPrefs=new ExportPrefs();
+        $exportPrefs = new ExportPrefs();
         $exportPrefs->setCookieTGC($params['export_prefs']['cookieTGC']);
         $exportPrefs->setSideForChoicesNotSet($params['export_prefs']['sideForChoicesNotSet']);
         $exportPrefs->setSideForNewRecords($params['export_prefs']['sideForNewRecords']);
 
-        $consoleDir = realpath('/' . $this->get('kernel')->getRootDir() . '/../bin/console');
+        $consoleDir = dirname($this->get('kernel')->getRootDir()) . '/bin/console';
         $command = sprintf('%s diff:export %s %s %s %s --cookieTGC=%s',
             $consoleDir, $institutionCode, $collectionCode, $type, $username, $exportPrefs->getCookieTGC());
 
-        /*dump($command);
-        return $this->render('@App/base.html.twig');*/
+//        dump($command);
+//        return $this->render('@App/base.html.twig');
         $process = new Process($command);
         $process->setTimeout(null);
 
@@ -146,8 +148,7 @@ class ExportController extends Controller
                     foreach ($arrayJson as $value) {
                         $this->sendStep($server, \json_encode($value));
                     }
-                }
-                else {
+                } else {
                     $this->sendStep($server, $buffer);
                 }
             });
@@ -157,8 +158,8 @@ class ExportController extends Controller
 
     private function sendStep($server, $buffer)
     {
-     if (!is_null($buffer)) {
-            try{
+        if (!is_null($buffer)) {
+            try {
                 $bufferDecode = \json_decode($buffer);
                 if (isset($bufferDecode->total)) {
                     $server->total->send($buffer);
@@ -167,9 +168,8 @@ class ExportController extends Controller
                 } else {
                     $server->step->send($buffer);
                 }
-            }
-            catch(\Exception $e){
-                $this->get('logger')->addAlert('json decode erreur : '.$buffer);
+            } catch (\Exception $e) {
+                $this->get('logger')->addAlert('json decode erreur : ' . $buffer);
             }
         }
     }

@@ -10,6 +10,7 @@ use AppBundle\Entity\Collection;
 use AppBundle\Manager\ExportManager;
 use AppBundle\Manager\GenericEntityManager;
 use AppBundle\Manager\ProcessManager;
+use AppBundle\Manager\UtilityService;
 use epierce\CasRestClient;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -120,7 +121,7 @@ class ExportCommand extends ContainerAwareCommand
         $this->institutionCode = $input->getArgument('institutionCode');
         $this->translator = $this->getContainer()->get('translator');
         $this->user = $this->getUser($input);
-        $this->collection = $this->getContainer()->get('utility')
+        $this->collection = $this->getContainer()->get(UtilityService::class)
             ->getCollection($this->institutionCode, $this->collectionCode, $this->user);
 
         $this->setLogFilePath();
@@ -138,7 +139,7 @@ class ExportCommand extends ContainerAwareCommand
             throw new \Exception('parameters must be an instance of ExportPrefs');
         }
         /* @var $exportManager \AppBundle\Manager\ExportManager */
-        $this->exportManager = $this->getContainer()->get('exportmanager')->init($this->user)->setCollection($this->collection);
+        $this->exportManager = $this->getContainer()->get(ExportManager::class)->init($this->user)->setCollection($this->collection);
 
         $datasWithChoices = $this->getDiffRecords($output);
         $datasWithChoices = array_merge($datasWithChoices, $this->getLonesomesRecords($output));
@@ -218,7 +219,7 @@ class ExportCommand extends ContainerAwareCommand
      */
     private function mergeFiles(array $filePaths) {
         $mergeData = [];
-        $utilityService = $this->getContainer()->get('utility');
+        $utilityService = $this->getContainer()->get(UtilityService::class);
         if (count($filePaths)) {
             foreach ($filePaths as $filePath) {
                 $datas = json_decode(file_get_contents($filePath), true);
@@ -248,7 +249,7 @@ class ExportCommand extends ContainerAwareCommand
         $pollingInterval = 1000; // microseconds
         $processManager->runParallel($processes, $maxParallelProcesses, $pollingInterval, $output, $this->getLogFile());
 
-        $utilityService = $this->getContainer()->get('utility');
+        $utilityService = $this->getContainer()->get(UtilityService::class);
         $datas = $this->mergeFiles($filePaths);
         $utilityService::removeFiles($filePaths);
 

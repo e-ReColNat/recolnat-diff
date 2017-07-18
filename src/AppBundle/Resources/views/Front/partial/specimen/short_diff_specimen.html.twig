@@ -11,9 +11,7 @@
         <tbody>
         {% set specimen = attribute(diffs.datas, catalogNumber) %}
 
-        {% dump(diffs.datas) %}
         {% for className, details in specimen %}
-
             {% if details.fields is defined %}
                 {# Affichage des différences d'un item avec des différences #}
                 {% include '@App/Front/partial/specimen/specimen_diff_classname.html.twig' %}

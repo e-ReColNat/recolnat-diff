@@ -1,12 +1,10 @@
-
 {% set relationId = details.id %}
 {#{% set relationRecolnat = relationById(specimenRecolnat, className, relationId) %}#}
 {#{% set relationInstitution = relationById(specimenInstitution, className, relationId) %}#}
 {% set relationToString = relationByIdToString(specimenRecolnat, className, relationId) %}
-{% dump(details) %}
 
 {% set db = details.lonesomes %}
-{% dump(db[0] ? 'recolnat' : 'institution') %}
+{% set dbName = db[0] ? 'recolnat' : 'institution' %}
 {% set rowspan = 1 %}
 
 
@@ -31,11 +29,10 @@
     </td>
 </tr>
 
-{% dump('lonesome') %}
-{% set lonesome = getLonesome(collection, catalogNumber, db[0] ? 'recolnat' : 'institution') %}
+{% set lonesome = getLonesome(collection, catalogNumber, dbName) %}
 <tr data-classname="{{ className | lower }}" class="{{ className | lower }} lighter">
     <td colspan="5">
-        LONESOME : {{ relationId }} {{ db[0] ? 'recolnat' : 'institution' }}
+        LONESOME : {{ relationId|upper }} {{ dbName }}
     </td>
 </tr>
 {#{% set lonesome = getLonesome(collection, catalogNumber, lonesomes[0] ? 'recolnat' : 'institution') %}#}

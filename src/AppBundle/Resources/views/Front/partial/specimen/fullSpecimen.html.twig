@@ -65,11 +65,7 @@
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane fade in active diffs" id="{{ loop.index }}-diffs">
-                {% if app.request.attributes.get('_route') != 'lonesomes' %}
-                    {% include '@App/Front/partial/specimen/short_diff_specimen.html.twig' %}
-                {% else %}
-                    {% include '@App/Front/partial/specimen/short_lonesomes_specimen.html.twig' %}
-                {% endif %}
+                {% include '@App/Front/partial/specimen/short_diff_specimen.html.twig' %}
             </div>
             <div role="tabpanel" class="tab-pane fade specimen" id="{{ loop.index }}-specimen">
             </div>

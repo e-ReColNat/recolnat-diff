@@ -438,6 +438,10 @@
                 <source>label.export.lonesomes</source>
                 <target>Export des enregistrements orphelins</target>
             </trans-unit>
+            <trans-unit id="110">
+                <source>link.title.viewRecolnat</source>
+                <target>Voir le specimen sur le site de eRecolnat</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

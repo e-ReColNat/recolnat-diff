@@ -55,7 +55,7 @@ class ComputeController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             if (empty($data['cookieTGC'])) {
                 throw new AccessDeniedException('cookieTGC is empty - javascript must be enabled');

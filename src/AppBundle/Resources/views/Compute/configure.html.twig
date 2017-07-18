@@ -18,7 +18,7 @@
         </div>
     </div>
     {% include "@App/Front/partial/searchDiffModal.html.twig" %}
-    {#<script src="{{ asset('assets/AppBundle/js/eventsource.min.js') }}"></script>#}
+    <script src="{{ asset('assets/AppBundle/js/eventsource.min.js') }}"></script>
 {% endblock body %}
 
 {% block javascripts %}
@@ -51,7 +51,7 @@
             $('.js-cookieTGC').val(getTGCCookiesValue());
 
 
-            /*$(".js-formSearch").on('submit', function (event) {
+            $(".js-formSearch").on('submit', function (event) {
                 event.preventDefault();
                 $("#modal").modal({
                     backdrop: 'static',
@@ -115,7 +115,7 @@
 
                 } catch (e) {
                 }
-            });*/
+            });
             function progress(percent, $element, label) {
                 $element.css('width', percent + "%").html(Math.ceil(percent) + "%");
                 $element.parent().next().html(Translator.trans(label));

@@ -11,6 +11,8 @@ namespace AppBundle\Tests\Units\Manager;
 
 use AppBundle\Business\Exporter\ExportPrefs;
 use AppBundle\Business\User\User;
+use AppBundle\Manager\DiffComputer;
+use AppBundle\Manager\UtilityService;
 use atoum\AtoumBundle\Test\Units;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -51,7 +53,7 @@ class ExportManager extends Units\Test
             $this->container->get('session'),
             $this->container->get('genericentitymanager'),
             $this->container->getParameter('maxitemperpage')[1],
-            $this->container->get('diff.computer'),
+            $this->container->get(DiffComputer::class),
             $this->container->getParameter('user_group')
         );
 
@@ -59,7 +61,7 @@ class ExportManager extends Units\Test
             $this->container->getParameter('api_recolnat_user_path'),
             $this->container->getParameter('user_group'));
         $user->setExportPath($this->container->getParameter('export_path'));
-        $collection = $this->container->get('utility')->getCollection('MHNAIX', 'AIX');
+        $collection = $this->container->get(UtilityService::class)->getCollection('MHNAIX', 'AIX');
         $this->exportManager->init($user)->setCollection($collection);
     }
 

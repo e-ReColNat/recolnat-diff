@@ -36,7 +36,7 @@
 //            var institutionCode = $('.js-institutionCode').val();
 //            var collectionCode =  $('.js-collectionCode').val();
         $(".js-formExport").on('submit', function (event) {
-            /*window.location = Routing.generate('export',
+            window.location = Routing.generate('export',
                     {
                         'institutionCode': '{{ institutionCode }}',
                         'collectionCode': '{{ collectionCode }}',
@@ -44,7 +44,7 @@
                         'type':'{{ type }}',
                         'exportPrefs':$(".js-formExport").serialize()
                     }
-            );*/
+            );
             event.preventDefault();
             var modalWindow =  $("#modal");
             modalWindow.modal({
